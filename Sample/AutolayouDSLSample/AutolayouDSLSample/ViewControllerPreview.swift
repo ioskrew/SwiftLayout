@@ -1,0 +1,29 @@
+//
+//  ViewControllerPreview.swift
+//  AutolayouDSLSample
+//
+//  Created by oozoofrog on 2022/01/14.
+//
+
+import SwiftUI
+
+
+struct ViewController_Preview: PreviewProvider {
+    
+    struct ViewControllerView: UIViewControllerRepresentable {
+        
+        func makeUIViewController(context: Context) -> some UIViewController {
+            ViewController()
+        }
+        
+        func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
+            
+        }
+        
+    }
+    
+    static var previews: some View {
+        ViewControllerView().previewDevice(.init(rawValue: "iPhone 13 Pro Max"))
+    }
+    
+}
