@@ -4,11 +4,11 @@ import UIKit
 @resultBuilder
 public struct AutolayoutBuilder {
     
-    public static func buildBlock<C>(_ components: C...) -> Builder.Components<C> where C: AutolayoutComponent {
+    public static func buildBlock<C>(_ components: C...) -> Builder.Components where C: AutolayoutComponent {
         return Builder.Components(components)
     }
     
-    public static func buildArray<C>(_ components: [C]) -> Builder.Components<C> where C: AutolayoutComponent {
+    public static func buildArray<C>(_ components: [C]) -> Builder.Components where C: AutolayoutComponent {
         return Builder.Components(components)
     }
     

@@ -11,7 +11,7 @@ import AutolayoutDSL
 
 class ViewController: UIViewController {
     
-    let flag: Bool
+    var flag: Bool = true
     
     init(_ flag: Bool) {
         self.flag = flag
@@ -19,25 +19,38 @@ class ViewController: UIViewController {
     }
     
     required init?(coder: NSCoder) {
-        fatalError()
+        super.init(coder: coder)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        print("Start")
         view.backgroundColor = .white
         
         let yellow = UIView()
         yellow.backgroundColor = .yellow
-       
+        
+        let green = UIView()
+        green.backgroundColor = .green
+        
+        let red = UIView()
+        red.backgroundColor = .red
+        
         let blue = UIView()
         blue.backgroundColor = .blue
         
         view.fill {
             if flag {
-                yellow
+                Layout.Stack(axis: .x) {
+                    yellow
+                    green
+                }
             } else {
-                blue
+                Layout.Stack(axis: .x) {
+                    red
+                    blue
+                }
             }
         }.active()
     }

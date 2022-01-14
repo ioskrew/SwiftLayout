@@ -15,16 +15,15 @@ extension Layout {
         
         func constraints() -> [NSLayoutConstraint] {
             content.prepare()
-            guard let parent = to.view() else { return [] }
-            guard let child = content.view() else { return [] }
             
-            parent.addSubview(child)
+            to.addViews(content)
+            
             return [
-                child.leadingAnchor.constraint(equalTo: parent.leadingAnchor),
-                child.trailingAnchor.constraint(equalTo: parent.trailingAnchor),
-                child.topAnchor.constraint(equalTo: parent.topAnchor),
-                child.bottomAnchor.constraint(equalTo: parent.bottomAnchor),
-            ]
+                to.bindLeadingToLeading(content),
+                to.bindTrailingToTrailing(content),
+                to.bindTopToTop(content),
+                to.bindBottomToBottom(content),
+            ].flatMap({ $0 })
         }
         
     }

@@ -7,8 +7,8 @@ extension Builder {
         
         let content: AutolayoutComponent
         
-        public func view() -> UIView? {
-            content.view()
+        public func views() -> [UIView] {
+            content.views()
         }
     }
 }
