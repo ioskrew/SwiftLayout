@@ -12,8 +12,10 @@ struct ViewController_Preview: PreviewProvider {
     
     struct ViewControllerView: UIViewControllerRepresentable {
         
+        let flag: Bool
+        
         func makeUIViewController(context: Context) -> some UIViewController {
-            ViewController()
+            ViewController(flag)
         }
         
         func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
@@ -23,7 +25,8 @@ struct ViewController_Preview: PreviewProvider {
     }
     
     static var previews: some View {
-        ViewControllerView().previewDevice(.init(rawValue: "iPhone 13 Pro Max"))
+        ViewControllerView(flag: true).previewDevice(.init(rawValue: "iPhone 13 Pro Max"))
+        ViewControllerView(flag: false).previewDevice(.init(rawValue: "iPhone 13 Pro Max"))
     }
     
 }

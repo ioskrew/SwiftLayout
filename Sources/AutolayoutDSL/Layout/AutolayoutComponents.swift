@@ -10,6 +10,6 @@ public struct AutolayoutComponents<C>: AutolayoutComponent where C: AutolayoutCo
     }
     
     public func view() -> UIView? {
-        components.first(where: { $0 is UIView }) as? UIView
+        components.compactMap({ $0.view() }).first
     }
 }

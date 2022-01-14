@@ -13,10 +13,12 @@ public struct AutolayoutBuilder {
     }
     
     public static func buildEither<F, S>(first component: F) -> AutolayoutEither<F, S> {
+        print("First \(component)")
         return AutolayoutEither<F, S>(content: component)
     }
     
     public static func buildEither<F, S>(second component: S) -> AutolayoutEither<F, S> {
+        print("Second \(component)")
         return AutolayoutEither<F, S>(content: component)
     }
     

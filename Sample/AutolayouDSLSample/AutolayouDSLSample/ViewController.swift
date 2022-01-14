@@ -10,6 +10,17 @@ import UIKit
 import AutolayoutDSL
 
 class ViewController: UIViewController {
+    
+    let flag: Bool
+    
+    init(_ flag: Bool) {
+        self.flag = flag
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError()
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -18,9 +29,16 @@ class ViewController: UIViewController {
         
         let yellow = UIView()
         yellow.backgroundColor = .yellow
+       
+        let blue = UIView()
+        blue.backgroundColor = .blue
         
         view.fill {
-            yellow
+            if flag {
+                yellow
+            } else {
+                blue
+            }
         }.active()
     }
 
