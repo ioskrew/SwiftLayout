@@ -4,10 +4,6 @@ import UIKit
 
 extension AutolayoutComponent where Self: UIView {
     
-    public func view() -> UIView? {
-        self
-    }
-    
 }
 
 extension UIView: AutolayoutComponent {

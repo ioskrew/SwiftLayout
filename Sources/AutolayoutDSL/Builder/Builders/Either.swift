@@ -7,8 +7,5 @@ extension Builder {
         
         let content: AutolayoutComponent
         
-        public func views() -> [UIView] {
-            content.views()
-        }
     }
 }
