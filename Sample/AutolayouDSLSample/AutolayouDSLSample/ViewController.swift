@@ -30,27 +30,22 @@ class ViewController: UIViewController {
         
         let yellow = UIView()
         yellow.backgroundColor = .yellow
-        
+        yellow.accessibilityIdentifier = "YELLOW"
         let green = UIView()
         green.backgroundColor = .green
         
         let red = UIView()
         red.backgroundColor = .red
+        red.accessibilityIdentifier = "RED"
         
         let blue = UIView()
         blue.backgroundColor = .blue
         
         view.fill {
             if flag {
-                Layout.Stack(axis: .x) {
-                    yellow
-                    green
-                }
+                yellow
             } else {
-                Layout.Stack(axis: .x) {
-                    red
-                    blue
-                }
+                red
             }
         }.active()
     }
