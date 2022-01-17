@@ -2,10 +2,10 @@
 import Foundation
 import UIKit
 
-public protocol AutolayoutComponent {
+public protocol Constraint {
     func active()
 }
 
-extension AutolayoutComponent {
+extension Constraint {
     public func active() {}
 }

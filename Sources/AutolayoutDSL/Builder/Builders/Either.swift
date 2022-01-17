@@ -3,9 +3,9 @@ import Foundation
 import UIKit
 
 extension Builder {
-    public struct Either<First: AutolayoutComponent, Second: AutolayoutComponent>: AutolayoutComponent {
+    public struct Either<First: Constraint, Second: Constraint>: Constraint {
         
-        let content: AutolayoutComponent
+        let content: Constraint
         
     }
 }

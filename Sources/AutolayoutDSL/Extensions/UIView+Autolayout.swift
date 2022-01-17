@@ -2,9 +2,9 @@
 import Foundation
 import UIKit
 
-extension AutolayoutComponent where Self: UIView {
+extension Constraint where Self: UIView {
     
 }
 
-extension UIView: AutolayoutComponent {
+extension UIView: Constraint {
 }

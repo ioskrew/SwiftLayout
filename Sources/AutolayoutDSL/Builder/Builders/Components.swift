@@ -3,10 +3,10 @@ import Foundation
 import UIKit
 
 extension Builder {
-    public struct Components: AutolayoutComponent {
-        let components: [AutolayoutComponent]
+    public struct Components: Constraint {
+        let components: [Constraint]
         
-        public init(_ components: [AutolayoutComponent]) {
+        public init(_ components: [Constraint]) {
             self.components = components
         }
     }

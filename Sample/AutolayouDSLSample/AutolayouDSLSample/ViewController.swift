@@ -41,13 +41,6 @@ class ViewController: UIViewController {
         let blue = UIView()
         blue.backgroundColor = .blue
         
-        view.fill {
-            if flag {
-                yellow
-            } else {
-                red
-            }
-        }.active()
     }
 
 }
