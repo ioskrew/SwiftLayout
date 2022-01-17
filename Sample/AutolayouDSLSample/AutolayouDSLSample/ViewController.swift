@@ -40,13 +40,13 @@ class ViewController: UIViewController {
         let blue = UIView()
         blue.backgroundColor = .blue
         
-        let result = view {
+        let result = view.dsl.tag("VC.View") {
             yellow {
-                green
-            }
+                green.dsl.tag("GREEN")
+            }.tag("YELLOW")
             red {
-                blue
-            }
+                blue.dsl.tag("BLUE")
+            }.tag("RED")
         }
         
         print(result.debugDescription)

@@ -20,8 +20,19 @@ final class ViewContainer: ViewDSL {
         self.view = view
     }
     
-    public func tag(_ tag: String) -> Self {
+    func callAsFunction(_ content: () -> ViewBuilding) -> ViewDSL {
+        add(content().containers)
+        return self
+    }
+
+    func tag(_ tag: String) -> Self {
         self.tag = tag
+        return self
+    }
+    
+    func tag(_ tag: String, @ViewBuilder content: () -> ViewBuilding) -> Self {
+        self.tag = tag
+        add(content().containers)
         return self
     }
     
