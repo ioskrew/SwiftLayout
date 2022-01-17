@@ -11,11 +11,17 @@ import UIKit
 public extension UIView {
     
     @discardableResult
-    func callAsFunction(@ViewBuilder _ content: () -> ViewBuilding) -> ViewDSL {
+    func callAsFunction(@ViewDSLBuilder _ content: () -> ViewBuilding) -> ViewDSL {
         let container = ViewContainer(self)
         container.add(content().containers)
         return container
     }
     
-    var dsl: ViewDSL { ViewContainer(self) }
+    var dsl: ViewDSL { _dsl }
+}
+
+extension UIView {
+    
+    var _dsl: ViewContainer { ViewContainer(self) }
+    
 }

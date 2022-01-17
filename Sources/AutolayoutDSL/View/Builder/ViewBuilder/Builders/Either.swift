@@ -2,7 +2,7 @@
 import Foundation
 import UIKit
 
-extension ViewBuilder {
+extension ViewDSLBuilder {
     struct Either: ViewBuilding {
         let containers: [ViewDSL]
         

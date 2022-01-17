@@ -15,7 +15,9 @@ struct ViewController_Preview: PreviewProvider {
         let flag: Bool
         
         func makeUIViewController(context: Context) -> some UIViewController {
-            ViewController(flag)
+            let vc = ViewController(flag)
+            print(vc)
+            return vc
         }
         
         func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {

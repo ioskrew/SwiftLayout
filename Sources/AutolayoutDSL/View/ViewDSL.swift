@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 
 @resultBuilder
-public struct ViewBuilder {
+public struct ViewDSLBuilder {
     
     public static func buildBlock(_ containers: ViewDSL...) -> ViewBuilding {
         Self.Components(containers)
@@ -37,11 +37,11 @@ public struct ViewBuilder {
     }
 }
 
-public protocol ViewDSL: CustomDebugStringConvertible {
+public protocol ViewDSL: CustomDebugStringConvertible, ConstraintElements {
     var view: UIView { get }
     
     func tag(_ tag: String) -> Self
-    func tag(_ tag: String, @ViewBuilder content: () -> ViewBuilding) -> Self
+    func tag(_ tag: String, @ViewDSLBuilder content: () -> ViewBuilding) -> Self
     
-    func callAsFunction(@ViewBuilder _ content: () -> ViewBuilding) -> ViewDSL
+    func layout(@ConstraintBuilder _ content: () -> Constraints) -> Self
 }

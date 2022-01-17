@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-final class ViewContainer: ViewDSL {
+final class ViewContainer: ViewDSL, _ConstraintElements {
     
     let view: UIView
     
@@ -20,35 +20,31 @@ final class ViewContainer: ViewDSL {
         self.view = view
     }
     
-    func callAsFunction(_ content: () -> ViewBuilding) -> ViewDSL {
-        add(content().containers)
-        return self
-    }
-
     func tag(_ tag: String) -> Self {
         self.tag = tag
         return self
     }
     
-    func tag(_ tag: String, @ViewBuilder content: () -> ViewBuilding) -> Self {
+    func tag(_ tag: String, @ViewDSLBuilder content: () -> ViewBuilding) -> Self {
         self.tag = tag
         add(content().containers)
         return self
     }
     
+    func add(_ view: UIView) {
+        add(ViewContainer(view))
+    }
+    
     func add(_ container: ViewDSL) {
-        subcontainers.append(container)
-        view.addSubview(container.view)
+        add([container])
     }
     
     func add(_ containers: [ViewDSL]) {
         subcontainers.append(contentsOf: containers)
-        containers.map(\.view).forEach(view.addSubview)
-    }
-    
-    func add(_ view: UIView) {
-        subcontainers.append(ViewContainer(view))
-        view.addSubview(view)
+        for view in containers.map(\.view) {
+            view.translatesAutoresizingMaskIntoConstraints = false
+            self.view.addSubview(view)
+        }
     }
     
     var address: String {
@@ -65,5 +61,13 @@ final class ViewContainer: ViewDSL {
         } else {
             return "\(identity): [\(subcontainers.map(\.debugDescription).joined(separator: ", "))]"
         }
+    }
+    
+    // MARK: - Constraints
+    
+    func layout(_ content: () -> Constraints) -> Self {
+        let constraints = content().constraints
+        NSLayoutConstraint.activate(constraints)
+        return self
     }
 }
