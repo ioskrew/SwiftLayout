@@ -9,9 +9,9 @@ import Foundation
 import UIKit
 
 public protocol ViewBuilding {
-    var views: [UIView] { get }
+    var containers: [ViewDSL] { get }
 }
 
 extension UIView: ViewBuilding {
-    public var views: [UIView] { [self] }
+    public var containers: [ViewDSL] { [ViewContainer(self)] }
 }

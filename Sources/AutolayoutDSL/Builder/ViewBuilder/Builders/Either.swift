@@ -4,6 +4,14 @@ import UIKit
 
 extension ViewBuilder {
     struct Either: ViewBuilding {
-        let views: [UIView]
+        let containers: [ViewDSL]
+        
+        init(_ container: ViewDSL) {
+            self.containers = [container]
+        }
+        
+        init(_ view: UIView) {
+            self.init(ViewContainer(view))
+        }
     }
 }

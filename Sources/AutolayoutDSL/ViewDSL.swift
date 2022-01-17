@@ -4,54 +4,50 @@ import UIKit
 @resultBuilder
 public struct ViewBuilder {
     
+    public static func buildBlock(_ containers: ViewDSL...) -> ViewBuilding {
+        Self.Components(containers)
+    }
+    
+    public static func buildArray(_ container: [ViewDSL]) -> ViewBuilding {
+        Self.Components(container)
+    }
+    
+    public static func buildEither(first container: ViewDSL) -> ViewBuilding {
+        Self.Either(container)
+    }
+    
+    public static func buildEither(second container: ViewDSL) -> ViewBuilding {
+        Self.Either(container)
+    }
+    
     public static func buildBlock(_ views: UIView...) -> ViewBuilding {
-        Self.Components(views: views)
+        Self.Components(views)
     }
     
     public static func buildArray(_ views: [UIView]) -> ViewBuilding {
-        Self.Components(views: views)
+        Self.Components(views)
     }
     
     public static func buildEither(first view: UIView) -> ViewBuilding {
-        Self.Either(views: [view])
+        Self.Either(view)
     }
     
     public static func buildEither(second view: UIView) -> ViewBuilding {
-        Self.Either(views: [view])
+        Self.Either(view)
     }
-    
 }
 
 public extension UIView {
     
     @discardableResult
-    func callAsFunction(@ViewBuilder _ content: () -> ViewBuilding) -> UIView {
-        let building = content()
-        building.views.forEach(self.addSubview)
-        return self
+    func callAsFunction(@ViewBuilder _ content: () -> ViewBuilding) -> ViewDSL {
+        let container = ViewContainer(self)
+        container.add(content().containers)
+        return container
     }
     
-    var dsl: ViewDSL {
-        .init(view: self)
-    }
 }
 
-public struct ViewDSL: CustomDebugStringConvertible {
-    let view: UIView
-    
-    var address: String {
-        Unmanaged.passUnretained(view).toOpaque().debugDescription
-    }
-    
-    var identity: String {
-        view.accessibilityIdentifier ?? address
-    }
-    
-    public var debugDescription: String {
-        if view.subviews.isEmpty {
-            return identity
-        } else {
-            return "\(identity): [\(view.subviews.map(\.dsl.debugDescription).joined(separator: ", "))]"
-        }
-    }
+public protocol ViewDSL: CustomDebugStringConvertible {
+    var view: UIView { get }
 }

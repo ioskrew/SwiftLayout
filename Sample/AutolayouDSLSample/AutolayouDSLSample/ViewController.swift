@@ -27,23 +27,18 @@ class ViewController: UIViewController {
         
         print("Start")
         view.backgroundColor = .white
-        view.accessibilityIdentifier = "VC.View"
         
         let yellow = UIView()
         yellow.backgroundColor = .yellow
-        yellow.accessibilityIdentifier = "YELLOW"
         
         let green = UIView()
         green.backgroundColor = .green
-        green.accessibilityIdentifier = "GREEN"
         
         let red = UIView()
         red.backgroundColor = .red
-        red.accessibilityIdentifier = "RED"
         
         let blue = UIView()
         blue.backgroundColor = .blue
-        blue.accessibilityIdentifier = "BLUE"
         
         let result = view {
             yellow {
@@ -54,7 +49,7 @@ class ViewController: UIViewController {
             }
         }
         
-        print(result.dsl.debugDescription)
+        print(result.debugDescription)
     }
 
 }
