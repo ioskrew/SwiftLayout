@@ -26,7 +26,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         print("Start")
-        view.backgroundColor = .white
+        view.backgroundColor = .lightGray
         
         let yellow = UIView()
         yellow.backgroundColor = .yellow
@@ -40,16 +40,26 @@ class ViewController: UIViewController {
         let blue = UIView()
         blue.backgroundColor = .blue
         
-        let result = view.dsl.tag("VC.View") {
+        let result = view {
             yellow {
-                green.dsl.tag("GREEN")
-            }.tag("YELLOW")
+                green
+            }
             red {
-                blue.dsl.tag("BLUE")
-            }.tag("RED")
+                blue
+            }
+        }.layout {
+            if flag {
+                yellow.dsl.top.to(view)
+                yellow.dsl.bottom.to(view)
+                yellow.dsl.leading.to(view)
+                yellow.dsl.trailing.to(view)
+            } else {
+                red.dsl.top.bottom.leading.trailing.to(view)
+            }
         }
         
         print(result.debugDescription)
+        
     }
 
 }
