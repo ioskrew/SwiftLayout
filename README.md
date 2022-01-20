@@ -1,7 +1,8 @@
-# AutolayoutDSL
-Autolayout DSL library
+# SwiftLayout
+view hierarchy and autolayout DSL library
 
-목표는 코드로 표현하는 인터페이스 빌더입니다.
+# goal
+뷰의 계층구조와 constraint 관계를 편리하고 보기 쉽게 설정할 수 있는 라이브러리를 목표로 하고 있습니다.
 
 ```swift
     let yellow = UIView()
