@@ -16,8 +16,8 @@
 		7472CAFC279196EB00EB19D3 /* AutolayouDSLSampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7472CAFB279196EB00EB19D3 /* AutolayouDSLSampleTests.swift */; };
 		7472CB06279196EB00EB19D3 /* AutolayouDSLSampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7472CB05279196EB00EB19D3 /* AutolayouDSLSampleUITests.swift */; };
 		7472CB08279196EB00EB19D3 /* AutolayouDSLSampleUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7472CB07279196EB00EB19D3 /* AutolayouDSLSampleUITestsLaunchTests.swift */; };
-		7472CB182791978600EB19D3 /* AutolayoutDSL in Frameworks */ = {isa = PBXBuildFile; productRef = 7472CB172791978600EB19D3 /* AutolayoutDSL */; };
 		7472CB1A2791986400EB19D3 /* ViewControllerPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7472CB192791986400EB19D3 /* ViewControllerPreview.swift */; };
+		749CE1102799A7F200CCA97B /* SwiftLayout in Frameworks */ = {isa = PBXBuildFile; productRef = 749CE10F2799A7F200CCA97B /* SwiftLayout */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,8 +51,8 @@
 		7472CB01279196EB00EB19D3 /* AutolayouDSLSampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AutolayouDSLSampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7472CB05279196EB00EB19D3 /* AutolayouDSLSampleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutolayouDSLSampleUITests.swift; sourceTree = "<group>"; };
 		7472CB07279196EB00EB19D3 /* AutolayouDSLSampleUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutolayouDSLSampleUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		7472CB152791977200EB19D3 /* AutolayoutDSL */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = AutolayoutDSL; path = ../..; sourceTree = "<group>"; };
 		7472CB192791986400EB19D3 /* ViewControllerPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerPreview.swift; sourceTree = "<group>"; };
+		74F46C7D2799A7C700DC9FB5 /* SwiftLayout */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = SwiftLayout; path = ../..; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,7 +60,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7472CB182791978600EB19D3 /* AutolayoutDSL in Frameworks */,
+				749CE1102799A7F200CCA97B /* SwiftLayout in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -138,7 +138,7 @@
 		7472CB142791977200EB19D3 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
-				7472CB152791977200EB19D3 /* AutolayoutDSL */,
+				74F46C7D2799A7C700DC9FB5 /* SwiftLayout */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
@@ -167,7 +167,7 @@
 			);
 			name = AutolayouDSLSample;
 			packageProductDependencies = (
-				7472CB172791978600EB19D3 /* AutolayoutDSL */,
+				749CE10F2799A7F200CCA97B /* SwiftLayout */,
 			);
 			productName = AutolayouDSLSample;
 			productReference = 7472CAE1279196E900EB19D3 /* AutolayouDSLSample.app */;
@@ -627,9 +627,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		7472CB172791978600EB19D3 /* AutolayoutDSL */ = {
+		749CE10F2799A7F200CCA97B /* SwiftLayout */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = AutolayoutDSL;
+			productName = SwiftLayout;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

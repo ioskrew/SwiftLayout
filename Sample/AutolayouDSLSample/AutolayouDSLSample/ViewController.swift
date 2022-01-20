@@ -7,7 +7,7 @@
 
 import SwiftUI
 import UIKit
-import AutolayoutDSL
+import SwiftLayout
 
 class ViewController: UIViewController {
     
