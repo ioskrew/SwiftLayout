@@ -25,40 +25,36 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        print("Start")
         view.backgroundColor = .lightGray
+        view.accessibilityIdentifier = "PARENT"
         
         let yellow = UIView()
         yellow.backgroundColor = .yellow
+        yellow.accessibilityIdentifier = "YELLOW"
         
         let green = UIView()
         green.backgroundColor = .green
+        green.accessibilityIdentifier = "GREEN"
         
         let red = UIView()
         red.backgroundColor = .red
+        red.accessibilityIdentifier = "RED"
         
         let blue = UIView()
         blue.backgroundColor = .blue
+        blue.accessibilityIdentifier = "BLUE"
         
-        let result = view {
+        let result = view.layout {
             yellow {
-                green
-            }
-            red {
+                red
                 blue
             }
-        }.layout {
-            if flag {
-                yellow.dsl.top.to(view)
-                yellow.dsl.bottom.to(view)
-                yellow.dsl.leading.to(view)
-                yellow.dsl.trailing.to(view)
-            } else {
-                red.dsl.top.bottom.leading.trailing.to(view)
+            green {
+                blue
             }
         }
         
-        print(result.debugDescription)
+        print(result.active().debugDescription)
         
     }
 
