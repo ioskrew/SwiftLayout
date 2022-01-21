@@ -53,6 +53,22 @@ final class SwiftLayoutTests: XCTestCase {
             
             XCTAssertEqual(root.subviews.map(\.layoutIdentifier), [yellow, green].map(\.layoutIdentifier))
         }
+        
+        context("root: [yellow: [red], green]") {
+            let expect = LayoutTree(root, content: LayoutTree(branches: [LayoutTree(yellow, content: red), green]))
+            let dsl = root {
+                yellow {
+                    red
+                }
+                green
+            }
+            
+            XCTAssertEqual(dsl, expect)
+            XCTAssertEqual(dsl.debugDescription, "root: [yellow: [red], green]")
+            
+            XCTAssertEqual(root.subviews.map(\.layoutIdentifier), [yellow, green].map(\.layoutIdentifier))
+            XCTAssertEqual(red.superview, yellow)
+        }
     }
 }
 
