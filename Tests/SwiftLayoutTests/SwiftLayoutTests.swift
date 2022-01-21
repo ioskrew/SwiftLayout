@@ -12,9 +12,13 @@ final class SwiftLayoutTests: XCTestCase {
     let blue = UIView().tag.blue
     
     func testViewHierarchy() throws {
-        context("root 뷰 밑에 yellow뷰가 있을 때 (노드 직접 생성)") {
+        context("root 뷰 밑에 yellow뷰") {
             let expect = LayoutTree(view: .view(root), branches: [yellow])
             XCTAssertEqual(yellow.superview, root)
+            let dsl = root {
+                yellow
+            }
+            XCTAssertEqual(dsl, expect)
         }
         
         context("root 밑에 yellow, green 뷰가 있을 때") {

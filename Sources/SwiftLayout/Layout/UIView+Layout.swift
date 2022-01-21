@@ -9,6 +9,12 @@ import Foundation
 import UIKit
 
 extension UIView: Layoutable {
+    
+    @discardableResult
+    func callAsFunction(@LayoutBuilder _ layout: () -> Layoutable) -> LayoutTree {
+        LayoutTree(view: .view(self), branches: [layout()])
+    }
+    
     public func isEqualLayout(_ layoutable: Layoutable) -> Bool {
         guard let view = layoutable as? UIView else { return false }
         return self.isEqual(view)
