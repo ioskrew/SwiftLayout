@@ -5,15 +5,11 @@ import UIKit
 public struct ViewNodeBuilder {
     
     public static func buildBlock(_ nodes: ViewNodable...) -> ViewNode {
-        ViewChildren(children: nodes.map(\.node))
+        _ViewNode(child: .children(nodes.map(\.node)))
     }
     
     public static func buildArray(_ nodes: [ViewNodable]) -> ViewNode {
-        ViewChildren(children: nodes.map(\.node))
-    }
-    
-    public static func buildArray(_ views: [UIView]) -> ViewNode {
-        ViewChildren(children: views.map(ViewChild.init))
+        _ViewNode(child: .children(nodes.map(\.node)))
     }
     
 }

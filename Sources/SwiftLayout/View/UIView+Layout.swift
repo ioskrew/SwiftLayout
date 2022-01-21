@@ -12,12 +12,12 @@ public extension UIView {
     
     @discardableResult
     func callAsFunction(@ViewNodeBuilder _ content: () -> ViewNodable) -> ViewNode {
-        ViewParent(root: self, child: content().node)
+        _ViewNode(parent: .view(self), child: .child(content().node))
     }
 
     @discardableResult
     func layout(@ViewNodeBuilder _ content: () -> ViewNode) -> ViewNode {
-        ViewRoot(root: self, child: content())
+        _ViewNode(parent: .root(self), child: .child(content().node))
     }
     
 }
