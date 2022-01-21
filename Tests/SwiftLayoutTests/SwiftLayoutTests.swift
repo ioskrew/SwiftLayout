@@ -3,30 +3,24 @@ import UIKit
 @testable import SwiftLayout
 
 final class SwiftLayoutTests: XCTestCase {
-    func testDebugDescription() throws {
-        let root = UIView().tag.root
-        let yellow = UIView().tag.yellow
-        let green = UIView().tag.green
-        let red = UIView().tag.red
-        let blue = UIView().tag.blue
+    
+    let root = UIView().tag.root
+    let yellow = UIView().tag.yellow
+    let green = UIView().tag.green
+    let red = UIView().tag.red
+    let blue = UIView().tag.blue
+    
+    ///
+    /// ```swift
+    /// _ViewNode(view: root, children: [_ViewNode(view: yello)])
+    /// ```
+    func testViewHierarchyOneView() throws {
+
         let result = root.layout {
-            yellow {
-                blue
-            }
-            green {
-                red
-                blue
-            }
+            yellow
         }.active()
         
         XCTAssertEqual(yellow.superview, root)
-        XCTAssertEqual(green.superview, root)
-        XCTAssertEqual(red.superview, green)
-        XCTAssertEqual(blue.superview, green)
-        
-        XCTAssertNotEqual(blue.superview, yellow)
-        
-        XCTAssertEqual(result.debugDescription, "root: [yellow, green: [red, blue]]")
     }
 }
 
