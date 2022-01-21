@@ -1,6 +1,7 @@
 import XCTest
 import UIKit
 @testable import SwiftLayout
+import SwiftUI
 
 final class SwiftLayoutTests: XCTestCase {
     
@@ -12,15 +13,28 @@ final class SwiftLayoutTests: XCTestCase {
     
     ///
     /// ```swift
-    /// _ViewNode(view: root, children: [_ViewNode(view: yello)])
     /// ```
     func testViewHierarchyOneView() throws {
+        let expect =  _LayoutTree(up: nil,
+                                  element: _LayoutElement(view: root),
+                                  fork: _LayoutFork(view: yellow))
         let result = root.layout {
             yellow
         }.active()
         
-        XCTAssertEqual(yellow.superview, root)
-        XCTAssertEqual(result.debugDescription, "root: [yellow]")
+        XCTAssertEqual(result.debug.debugDescription, expect.debug.debugDescription, "\n\(result.debug.debugDescription)\n\(expect.debug.debugDescription)\n")
+    }
+}
+
+struct LayoutTreeDebug: CustomDebugStringConvertible {
+    let tree: LayoutTree
+    
+    var debugDescription: String { String(describing: tree) }
+}
+
+extension LayoutTree {
+    var debug: LayoutTreeDebug {
+        .init(tree: self)
     }
 }
 

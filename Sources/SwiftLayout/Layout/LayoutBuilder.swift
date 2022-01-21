@@ -9,7 +9,7 @@ public struct LayoutBuilder {
     }
     
     public static func buildArray(_ branches: [LayoutTree]) -> LayoutTree {
-       _LayoutFork(branches)
+        _LayoutFork(branches: branches)
     }
     
 }

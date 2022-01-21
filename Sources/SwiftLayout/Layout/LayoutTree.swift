@@ -8,36 +8,9 @@
 import Foundation
 import UIKit
 
-public protocol LayoutTree: CustomDebugStringConvertible {
+public protocol LayoutTree {
     @discardableResult
     func active() -> LayoutTree
-}
-
-final class _LayoutTree: LayoutTree, CustomDebugStringConvertible {
-    let up: LayoutTree?
-    let element: LayoutElement
-    let fork: LayoutFork?
-    
-    init(up: LayoutTree?, element: LayoutElement, fork: LayoutFork?) {
-        self.up = up
-        self.element = element
-        self.fork = fork
-    }
-    
-    convenience init(element: LayoutElement, @LayoutBuilder content: () -> LayoutTree) {
-        self.init(up: nil, element: element, fork: nil)
-    }
-    
-    func active() -> LayoutTree {
-        element.active()
-        fork?.active()
-        return self
-    }
-    
-    var debugDescription: String {
-        element.view.accessibilityIdentifier ?? element.view.address
-    }
-    
 }
 
 protocol LayoutElement: LayoutTree {
@@ -51,24 +24,32 @@ struct _LayoutElement: LayoutElement {
         view.active()
         return self
     }
-    
-    var debugDescription: String {
-        view.accessibilityIdentifier ?? "\(type(of: view))(\(view.address))"
-    }
 }
 
 protocol LayoutFork: LayoutTree {
     var branches: [LayoutTree] { get }
+    func linkToTree(_ tree: _LayoutTree)
 }
 
 struct _LayoutFork: LayoutFork {
     let branches: [LayoutTree]
     
-    init(_ content: LayoutTree) {
-        self.branches = []
+    init(element: LayoutElement) {
+        self.branches = [element]
     }
-    init(_ contents: [LayoutTree]) {
-        self.branches = contents
+    
+    init(view: UIView) {
+        self.branches = [_LayoutElement(view: view)]
+    }
+    
+    init(branches: [LayoutTree]) {
+        self.branches = branches.map({ tree in
+            if let view = tree as? UIView {
+                return _LayoutElement(view: view)
+            } else {
+                return tree
+            }
+        })
     }
     
     func active() -> LayoutTree {
@@ -76,7 +57,39 @@ struct _LayoutFork: LayoutFork {
         return self
     }
     
-    var debugDescription: String {
-        branches.map(\.debugDescription).joined(separator: ", ")
+    func linkToTree(_ tree: _LayoutTree) {
+        
+    }
+}
+
+struct _LayoutTree: LayoutTree {
+    let up: LayoutTree?
+    let element: LayoutElement
+    let fork: LayoutFork?
+    
+    init(up: LayoutTree?, element: LayoutElement, fork: LayoutFork?) {
+        self.up = up
+        self.element = element
+        self.fork = fork
+    }
+    
+    init(element: LayoutElement, @LayoutBuilder content: () -> LayoutTree) {
+        let tree = content()
+        if let forkContent = tree as? LayoutFork {
+            self.init(up: nil, element: element, fork: forkContent)
+        } else if let elementContent = tree as? LayoutElement {
+            self.init(up: nil, element: element, fork: _LayoutFork(element: elementContent))
+        } else if let viewContent = tree as? UIView {
+            self.init(up: nil, element: element, fork: _LayoutFork(view: viewContent))
+        } else {
+            self.init(up: nil, element: element, fork: nil)
+        }
+    }
+    
+    func active() -> LayoutTree {
+        element.active()
+        fork?.active()
+        fork?.linkToTree(self)
+        return self
     }
 }
