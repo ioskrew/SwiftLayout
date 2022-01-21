@@ -18,9 +18,8 @@ final class SwiftLayoutTests: XCTestCase {
             let dsl = root {
                 yellow
             }
-            print(expect)
-            print(dsl)
             XCTAssertEqual(dsl, expect)
+            XCTAssertEqual(dsl.debugDescription, "root(UIView): [yellow(UIView)]")
         }
         
         context("root 밑에 yellow, green 뷰가 있을 때") {
