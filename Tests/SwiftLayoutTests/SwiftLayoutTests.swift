@@ -18,6 +18,8 @@ final class SwiftLayoutTests: XCTestCase {
             let dsl = root {
                 yellow
             }
+            print(expect)
+            print(dsl)
             XCTAssertEqual(dsl, expect)
         }
         

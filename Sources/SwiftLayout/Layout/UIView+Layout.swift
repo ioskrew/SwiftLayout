@@ -19,4 +19,8 @@ extension UIView: Layoutable {
         guard let view = layoutable as? UIView else { return false }
         return self.isEqual(view)
     }
+    
+    public var layoutIdentifier: String {
+        "\(accessibilityIdentifier ?? address)(\(type(of: self)))"
+    }
 }

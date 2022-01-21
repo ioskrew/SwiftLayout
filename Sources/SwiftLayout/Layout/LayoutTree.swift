@@ -8,8 +8,9 @@
 import Foundation
 import UIKit
 
-public protocol Layoutable {
+public protocol Layoutable: CustomDebugStringConvertible {
     func isEqualLayout(_ layoutable: Layoutable) -> Bool
+    var layoutIdentifier: String { get }
 }
 
 public final class LayoutTree: Layoutable, Equatable {
@@ -63,6 +64,15 @@ public final class LayoutTree: Layoutable, Equatable {
             superview.addSubview(subview)
             subview.translatesAutoresizingMaskIntoConstraints = false
         }
+        
+        var layoutIdentifier: String {
+            switch self {
+            case .empty:
+                return "empty"
+            case .view(let uIView):
+                return uIView.layoutIdentifier
+            }
+        }
     }
     
     var up: TreeContainer = .empty {
@@ -102,5 +112,9 @@ public final class LayoutTree: Layoutable, Equatable {
         return up == tree.up && view == tree.view && branches.elementsEqual(tree.branches, by: { lhs, rhs in
             lhs.isEqualLayout(rhs)
         })
+    }
+    
+    public var layoutIdentifier: String {
+        view.layoutIdentifier
     }
 }
