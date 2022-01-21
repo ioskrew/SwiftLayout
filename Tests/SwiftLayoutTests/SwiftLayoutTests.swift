@@ -11,31 +11,33 @@ final class SwiftLayoutTests: XCTestCase {
     let red = UIView().tag.red
     let blue = UIView().tag.blue
     
-    func testViewHierarchyOneInOneView() throws {
-        let expect =  _LayoutTree(up: nil,
-                                  element: _LayoutElement(view: root),
-                                  fork: _LayoutFork(view: yellow))
-        let result = root.layout {
-            yellow
-        }.active()
+    func testViewHierarchy() throws {
+        context("root 뷰 밑에 yellow뷰가 있을 때") {
+            let expect =  _LayoutTree(up: nil,
+                                      element: _LayoutElement(view: root),
+                                      fork: _LayoutFork(view: yellow))
+            let result = root.layout {
+                yellow
+            }.active()
+            
+            XCTAssertEqual(result.debug.debugDescription, expect.debug.debugDescription, "\n\(result.debug.debugDescription)\n\(expect.debug.debugDescription)\n")
+            
+            XCTAssertEqual(yellow.superview, root)
+        }
         
-        XCTAssertEqual(result.debug.debugDescription, expect.debug.debugDescription, "\n\(result.debug.debugDescription)\n\(expect.debug.debugDescription)\n")
-        
-        XCTAssertEqual(yellow.superview, root)
-    }
-    
-    func testViewHierarchyTwoInOneView() throws {
-        let expect =  _LayoutTree(up: nil,
-                                  element: _LayoutElement(view: root),
-                                  fork: _LayoutFork(branches: [yellow, green]))
-        let result = root.layout {
-            yellow
-            green
-        }.active()
-        
-        XCTAssertEqual(result.debug.debugDescription, expect.debug.debugDescription, "\n\(result.debug.debugDescription)\n\(expect.debug.debugDescription)\n")
-        
-        XCTAssertEqual(root.subviews, [yellow, green])
+        context("root 밑에 yellow, green 뷰가 있을 때") {
+            let expect =  _LayoutTree(up: nil,
+                                      element: _LayoutElement(view: root),
+                                      fork: _LayoutFork(branches: [yellow, green]))
+            let result = root.layout {
+                yellow
+                green
+            }.active()
+            
+            XCTAssertEqual(result.debug.debugDescription, expect.debug.debugDescription, "\n\(result.debug.debugDescription)\n\(expect.debug.debugDescription)\n")
+            
+            XCTAssertEqual(root.subviews, [yellow, green])
+        }
     }
 }
 
