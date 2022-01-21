@@ -19,7 +19,7 @@ view hierarchy and autolayout DSL library
     
     // view의 계층구조에서 별도의 constraint를 지정하지 않으면 
     // 항상 부모뷰의 top, bottom, leading, parent에 붙습니다.
-    view.layout {
+    view {
         if flag {
             yellow {
                 green
