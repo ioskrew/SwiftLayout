@@ -21,6 +21,10 @@ final class LayoutTree: Layoutable, Equatable {
         self.updateBranch(branches)
     }
     
+    convenience init(view: UIView, content: @autoclosure () -> Layoutable) {
+        self.init(view: .view(view), branches: [content()])
+    }
+    
     public static func == (lhs: LayoutTree, rhs: LayoutTree) -> Bool {
         lhs.isEqualLayout(rhs)
     }

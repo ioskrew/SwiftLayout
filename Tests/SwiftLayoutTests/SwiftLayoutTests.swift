@@ -12,7 +12,7 @@ final class SwiftLayoutTests: XCTestCase {
     let blue = UIView().tag.blue
     
     func testViewHierarchy() throws {
-        context("root 뷰 밑에 yellow뷰") {
+        context("root: [yellow]") {
             let expect = LayoutTree(view: .view(root), branches: [yellow])
             XCTAssertEqual(yellow.superview, root)
             let dsl = root {
@@ -22,8 +22,16 @@ final class SwiftLayoutTests: XCTestCase {
             XCTAssertEqual(dsl.debugDescription, "root(UIView): [yellow(UIView)]")
         }
         
-        context("root 밑에 yellow, green 뷰가 있을 때") {
+        context("root: [yellow: [green]]") {
+            let expect = LayoutTree(view: .view(root), branches: [LayoutTree(view: yellow, content: green)])
+            let dsl = root {
+                yellow {
+                    green
+                }
+            }
             
+            XCTAssertEqual(dsl, expect)
+            XCTAssertEqual(dsl.debugDescription, "root(UIView): [yellow(UIView): [green(UIView)]")
         }
         
         context("root 밑에 yellow, yellow 밑에 blue뷰 구조를 직접 생성") {
