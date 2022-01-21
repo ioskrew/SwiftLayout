@@ -13,8 +13,18 @@ public protocol LayoutTree {
     func active() -> LayoutTree
 }
 
-protocol LayoutElement: LayoutTree {
+protocol LayoutTreeLink: LayoutTree {
+    func linkToTree(_ tree: _LayoutTree)
+}
+
+protocol LayoutElement: LayoutTreeLink {
     var view: UIView { get }
+}
+
+extension LayoutElement {
+    func linkToTree(_ tree: _LayoutTree) {
+        tree.element.view.addSubview(view)
+    }
 }
 
 struct _LayoutElement: LayoutElement {
@@ -26,13 +36,18 @@ struct _LayoutElement: LayoutElement {
     }
 }
 
-protocol LayoutFork: LayoutTree {
-    var branches: [LayoutTree] { get }
-    func linkToTree(_ tree: _LayoutTree)
+protocol LayoutFork: LayoutTreeLink {
+    var branches: [LayoutTreeLink] { get }
+}
+
+extension LayoutFork {
+    func linkToTree(_ tree: _LayoutTree) {
+        branches.forEach({ $0.linkToTree(tree) })
+    }
 }
 
 struct _LayoutFork: LayoutFork {
-    let branches: [LayoutTree]
+    let branches: [LayoutTreeLink]
     
     init(element: LayoutElement) {
         self.branches = [element]
@@ -43,11 +58,13 @@ struct _LayoutFork: LayoutFork {
     }
     
     init(branches: [LayoutTree]) {
-        self.branches = branches.map({ tree in
+        self.branches = branches.compactMap({ tree in
             if let view = tree as? UIView {
                 return _LayoutElement(view: view)
+            } else if let link = tree as? LayoutTreeLink {
+                return link
             } else {
-                return tree
+                return nil
             }
         })
     }
@@ -56,13 +73,9 @@ struct _LayoutFork: LayoutFork {
         branches.forEach({ $0.active() })
         return self
     }
-    
-    func linkToTree(_ tree: _LayoutTree) {
-        
-    }
 }
 
-struct _LayoutTree: LayoutTree {
+struct _LayoutTree: LayoutTreeLink {
     let up: LayoutTree?
     let element: LayoutElement
     let fork: LayoutFork?
@@ -91,5 +104,9 @@ struct _LayoutTree: LayoutTree {
         fork?.active()
         fork?.linkToTree(self)
         return self
+    }
+    
+    func linkToTree(_ tree: _LayoutTree) {
+        
     }
 }
