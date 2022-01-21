@@ -23,6 +23,8 @@ final class SwiftLayoutTests: XCTestCase {
         }.active()
         
         XCTAssertEqual(result.debug.debugDescription, expect.debug.debugDescription, "\n\(result.debug.debugDescription)\n\(expect.debug.debugDescription)\n")
+        
+        XCTAssertEqual(yellow.superview, root)
     }
 }
 
