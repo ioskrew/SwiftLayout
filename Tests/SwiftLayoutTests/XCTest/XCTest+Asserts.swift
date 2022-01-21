@@ -18,3 +18,13 @@ func XCTAssertEqual(_ expression1: Layoutable, _ expression2: Layoutable) {
     }
     XCTAssertEqual(expression1.debugDescription, expression2.debugDescription)
 }
+
+func XCTAssertNotEqual(_ expression1: Layoutable, _ expression2: Layoutable) {
+    if expression1.debugDescription.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+        XCTFail("expression1 is empty")
+    }
+    if expression2.debugDescription.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+        XCTFail("expression2 is empty")
+    }
+    XCTAssertNotEqual(expression1.debugDescription, expression2.debugDescription)
+}

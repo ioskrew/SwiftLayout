@@ -30,8 +30,13 @@ final class SwiftLayoutTests: XCTestCase {
                 }
             }
             
+            let dsl2 = root {
+                yellow
+            }
+            
             XCTAssertEqual(dsl, expect)
-            XCTAssertEqual(dsl.debugDescription, "root(UIView): [yellow(UIView): [green(UIView)]")
+            XCTAssertNotEqual(dsl2, expect)
+            XCTAssertEqual(dsl.debugDescription, "root(UIView): [yellow(UIView): [green(UIView)]]")
         }
         
         context("root 밑에 yellow, yellow 밑에 blue뷰 구조를 직접 생성") {
