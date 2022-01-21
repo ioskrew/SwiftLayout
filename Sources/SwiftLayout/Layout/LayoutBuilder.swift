@@ -4,12 +4,12 @@ import UIKit
 @resultBuilder
 public struct LayoutBuilder {
     
-    public static func buildBlock(_ branches: LayoutTree...) -> LayoutTree {
+    public static func buildBlock(_ branches: Layoutable...) -> Layoutable {
         buildArray(branches)
     }
     
-    public static func buildArray(_ branches: [LayoutTree]) -> LayoutTree {
-        _LayoutFork(branches: branches)
+    public static func buildArray(_ branches: [Layoutable]) -> Layoutable {
+        LayoutTree(branches: branches)
     }
     
 }
