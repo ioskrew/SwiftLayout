@@ -15,12 +15,12 @@ final class SwiftLayoutTests: XCTestCase {
     /// _ViewNode(view: root, children: [_ViewNode(view: yello)])
     /// ```
     func testViewHierarchyOneView() throws {
-
         let result = root.layout {
             yellow
         }.active()
         
         XCTAssertEqual(yellow.superview, root)
+        XCTAssertEqual(result.debugDescription, "root: [yellow]")
     }
 }
 
