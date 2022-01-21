@@ -76,11 +76,11 @@ struct _LayoutFork: LayoutFork {
 }
 
 struct _LayoutTree: LayoutTreeLink {
-    let up: LayoutTree?
-    let element: LayoutElement
-    let fork: LayoutFork?
+    var up: LayoutTree?
+    var element: LayoutElement
+    var fork: LayoutFork?
     
-    init(up: LayoutTree?, element: LayoutElement, fork: LayoutFork?) {
+    init(up: LayoutTree? = nil, element: LayoutElement, fork: LayoutFork? = nil) {
         self.up = up
         self.element = element
         self.fork = fork

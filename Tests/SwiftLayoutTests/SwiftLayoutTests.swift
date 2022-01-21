@@ -38,13 +38,30 @@ final class SwiftLayoutTests: XCTestCase {
             
             XCTAssertEqual(root.subviews, [yellow, green])
         }
+        
+        context("root 밑에 yellow, yellow 밑에 blue뷰 구조를 직접 생성") {
+            
+            var yellowTree = _LayoutTree(element: yellow.element,
+                                         fork: _LayoutFork(view: blue))
+            var rootTree = _LayoutTree(element: root.element,
+                                       fork: _LayoutFork(branches: [yellowTree]))
+            
+            var result = rootTree.active()
+            
+            XCTAssertNil(rootTree.up)
+            XCTAssertEqual(yellowTree.up, rootTree)
+            XCTAssertEqual(yellow.superview, root)
+            XCTAssertEqual(blue.superview, yellow)
+        }
     }
 }
 
 struct LayoutTreeDebug: CustomDebugStringConvertible {
     let tree: LayoutTree
     
-    var debugDescription: String { String(describing: tree) }
+    var debugDescription: String {
+        String(describing: tree)
+    }
 }
 
 extension LayoutTree {

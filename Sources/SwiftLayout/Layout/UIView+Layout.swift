@@ -24,4 +24,8 @@ extension UIView: LayoutTree {
         self.translatesAutoresizingMaskIntoConstraints = false
         return self
     }
+    
+    var element: LayoutElement {
+        _LayoutElement(view: self)
+    }
 }
