@@ -11,7 +11,7 @@ import UIKit
 extension UIView: Layoutable {
     @discardableResult
     func callAsFunction(@LayoutBuilder _ layout: () -> Layoutable) -> Layoutable {
-        LayoutTree(view: .view(self), branches: [layout()])
+        LayoutTree(self, content: layout())
     }
     
     public func isEqualLayout(_ layoutable: Layoutable) -> Bool {

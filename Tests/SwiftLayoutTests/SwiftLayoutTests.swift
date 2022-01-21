@@ -50,6 +50,8 @@ final class SwiftLayoutTests: XCTestCase {
             
             XCTAssertEqual(dsl, expect)
             XCTAssertEqual(dsl.debugDescription, "root: [yellow, green]")
+            
+            XCTAssertEqual(root.subviews.map(\.layoutIdentifier), [yellow, green].map(\.layoutIdentifier))
         }
     }
 }

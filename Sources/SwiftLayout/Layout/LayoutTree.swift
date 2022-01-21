@@ -49,6 +49,13 @@ final class LayoutTree: Layoutable, Equatable {
                 return layoutTree
             }
         }
+        
+        func addSubview(_ view: ViewContainer) {
+            guard let tree = tree else {
+                return
+            }
+            tree.view.addSubview(view)
+        }
     }
     
     enum ViewContainer: Equatable, CustomDebugStringConvertible {
@@ -98,7 +105,7 @@ final class LayoutTree: Layoutable, Equatable {
     
     var up: TreeContainer = .empty {
         didSet {
-            up.tree?.view.addSubview(view)
+            up.addSubview(view)
             branches.forEach({
                 if let tree = $0 as? LayoutTree {
                     tree.up = .tree(self)
@@ -111,7 +118,7 @@ final class LayoutTree: Layoutable, Equatable {
     
     func updateBranch(_ branches: [Layoutable]) {
         if branches.count == 1, let tree = branches[0] as? LayoutTree, tree.view == .empty {
-            self.branches = tree.branches
+            self.updateBranch(tree.branches)
         } else {
             self.branches = branches.compactMap({ layout in
                 if let view = layout as? UIView {
