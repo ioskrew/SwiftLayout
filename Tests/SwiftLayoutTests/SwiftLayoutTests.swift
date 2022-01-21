@@ -21,7 +21,7 @@ final class SwiftLayoutTests: XCTestCase {
                 green
             }
         }
-        XCTAssertEqual(dsl.debugDescription, "root: [yellow, green: [blue, red]]")
+        XCTAssertEqual(dsl.debugDescription, "root: [yellow, red: [blue, green]]")
     }
     
     func testViewHierarchy() throws {

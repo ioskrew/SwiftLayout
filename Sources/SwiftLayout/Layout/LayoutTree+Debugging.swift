@@ -15,20 +15,23 @@ struct LayoutableDebugDescriptionOptions: OptionSet {
     var rawValue: Int
     typealias Options = LayoutableDebugDescriptionOptions
     static let printType = Options(rawValue: 1)
+    static let printUp = Options(rawValue: 1 << 1)
 }
 
 extension Layoutable {
     func debugDescriptionWithOptions(_ options: LayoutableDebugDescriptionOptions) -> String {
-        let identifier: String
+        var identifier: String
         if options.contains(.printType) {
             identifier = self.layoutIdentifierWithType
         } else {
             identifier = self.layoutIdentifier
         }
-        if branches.isEmpty {
-            return identifier
-        } else {
-            return identifier + ": [\(branches.map({ $0.debugDescriptionWithOptions(options) }).joined(separator: ", "))]"
+        if !branches.isEmpty {
+            identifier = identifier + ": [\(branches.map({ $0.debugDescriptionWithOptions(options) }).joined(separator: ", "))]"
         }
+        if options.contains(.printUp), let tree = self as? LayoutTree, let upView = tree.up.tree?.view {
+            identifier = "\(upView.layoutIdentifier) -> \(identifier)"
+        }
+        return identifier
     }
 }

@@ -50,19 +50,71 @@ final class LayoutTree: Layoutable, Equatable {
         up == .empty && view == .empty && branches.isEmpty
     }
     
+    var isElement: Bool {
+        view != .empty && branches.isEmpty
+    }
+    
+    var isNode: Bool {
+        view != .empty && !branches.isEmpty
+    }
+    
+    var isRoot: Bool {
+        up == .empty && view != .empty
+    }
+    
     var up: TreeContainer = .empty {
         didSet {
             up.addSubview(view)
-            up.cleanDuplicatedViewBranches(self)
         }
     }
     var view: ViewContainer = .empty
     var branches: [Layoutable] = []
     
+    var trees: [LayoutTree] {
+        branches.compactMap({ $0 as? LayoutTree })
+    }
+    
     func active() {
-        branches.compactMap({ $0 as? LayoutTree }).forEach { layout in
+        trees.forEach { layout in
             layout.up = .tree(self)
             layout.active()
+        }
+        guard isRoot else { return }
+        guard isNode else { return }
+        self.clean(collectElements())
+    }
+    
+    func collectElements() -> [LayoutTree] {
+        let elements: [LayoutTree] = []
+        return trees.reduce(into: elements) { elements, layout in
+            if layout.isElement {
+                elements.append(layout)
+            } else if layout.isNode {
+                elements.append(contentsOf: layout.collectElements())
+            }
+        }
+    }
+    
+    func clean(_ elements: [LayoutTree]) {
+        var elements = elements
+        while !elements.isEmpty {
+            let uniqueTree = elements.removeLast()
+            elements.removeAll(where: { $0.view == uniqueTree.view })
+            clean(uniqueTree)
+        }
+    }
+    
+    func clean(_ uniqueTree: LayoutTree) {
+        self.branches = self.branches.filter { branch in
+            guard let layout = branch as? LayoutTree else { return true }
+            if layout.up != uniqueTree.up, layout.view == uniqueTree.view {
+                return false
+            } else if layout.isNode {
+                layout.clean(uniqueTree)
+                return true
+            } else {
+                return true
+            }
         }
     }
     
@@ -142,12 +194,6 @@ final class LayoutTree: Layoutable, Equatable {
             tree.view.addSubview(view)
         }
         
-        func cleanDuplicatedViewBranches(_ tree: LayoutTree) {
-            guard let root = root else {
-                return
-            }
-        }
-        
         func isEqual(_ tree: TreeContainer?) -> Bool {
             guard let tree = tree else {
                 return false
@@ -180,7 +226,7 @@ final class LayoutTree: Layoutable, Equatable {
             guard let view = view else {
                 return "empty"
             }
-            return "\(view.accessibilityIdentifier ?? view.address)(\(type(of: view)))"
+            return layoutIdentifier
         }
         
         func addSubview(_ container: ViewContainer) {
