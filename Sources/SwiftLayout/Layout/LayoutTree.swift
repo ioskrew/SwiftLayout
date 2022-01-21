@@ -13,7 +13,7 @@ public protocol Layoutable: CustomDebugStringConvertible {
     var layoutIdentifier: String { get }
 }
 
-public final class LayoutTree: Layoutable, Equatable {
+final class LayoutTree: Layoutable, Equatable {
     
     internal init(up: LayoutTree.TreeContainer = .empty, view: ViewContainer = .empty, branches: [Layoutable] = []) {
         self.up = up
