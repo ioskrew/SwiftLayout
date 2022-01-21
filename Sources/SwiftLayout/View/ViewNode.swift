@@ -24,7 +24,7 @@ extension ViewNodable {
     }
 }
 
-enum ViewNodeParent: Equatable, CustomDebugStringConvertible {
+enum ViewNodeParent: Equatable {
     case empty
     case root(UIView)
     case view(UIView)
@@ -49,20 +49,9 @@ enum ViewNodeParent: Equatable, CustomDebugStringConvertible {
         }
     }
     
-    var debugDescription: String {
-        switch self {
-        case .empty:
-            return ""
-        case .root(let view):
-            return view.accessibilityIdentifier ?? view.address
-        case .view(let view):
-            return view.accessibilityIdentifier ?? view.address
-        }
-    }
-    
 }
 
-enum ViewNodeChild: Equatable, CustomDebugStringConvertible {
+enum ViewNodeChild: Equatable {
     case empty
     case child(_ViewNode)
     case children([_ViewNode])
@@ -83,17 +72,6 @@ enum ViewNodeChild: Equatable, CustomDebugStringConvertible {
             child.updateParent(parent)
         }
     }
-    
-    var debugDescription: String {
-        switch self {
-        case .empty:
-            return ""
-        case .child(let node):
-            return node.debugDescription
-        case .children(let nodes):
-            return ": [\(nodes.map(\.debugDescription).joined(separator: ", "))]"
-        }
-    }
 }
 
 public protocol ViewNode: CustomDebugStringConvertible, ViewNodable {
@@ -106,22 +84,6 @@ protocol ViewNodeChain: ViewNode {
     var child: ViewNodeChild { get }
     
     func updateParent(_ parent: ViewNodeParent)
-    
-    func isSubviewOfParent(_ view: UIView) -> Bool
-}
-
-extension ViewNodeChain {
-    func isSubviewOfParent(_ view: UIView) -> Bool {
-        false
-    }
-    
-    public var debugDescription: String {
-        if child == .empty {
-            return parent.debugDescription
-        } else {
-            return "\(parent.debugDescription)\(child.debugDescription)"
-        }
-    }
 }
 
 extension ViewNodeChain {
@@ -160,5 +122,47 @@ final class _ViewNode: ViewNodeChain, Equatable {
     
     func updateParent(_ parent: ViewNodeParent) {
         self.parent = parent
+    }
+    
+    func isChildOfParentInViewHierarchy(_ parentView: UIView) -> Bool {
+        switch parent {
+        case .view(let uIView):
+            return uIView.superview == parentView
+        default:
+            return false
+        }
+    }
+    
+    // MARK: Debugging
+    var debugDescription: String {
+        let parent = parentDebugDescription
+        let child = childDebugDescription
+        if child.isEmpty {
+            return parent
+        } else {
+            return parent + child
+        }
+    }
+    
+    var parentDebugDescription: String {
+        switch parent {
+        case .empty:
+            return ""
+        case .root(let view):
+            return view.accessibilityIdentifier ?? view.address
+        case .view(let view):
+            return view.accessibilityIdentifier ?? view.address
+        }
+    }
+    
+    var childDebugDescription: String {
+        switch child {
+        case .empty:
+            return ""
+        case .child(let node):
+            return node.debugDescription
+        case .children(let nodes):
+            return ": [\(nodes.map(\.debugDescription).joined(separator: ", "))]"
+        }
     }
 }
