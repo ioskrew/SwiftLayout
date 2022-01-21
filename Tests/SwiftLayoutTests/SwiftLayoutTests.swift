@@ -13,17 +13,17 @@ final class SwiftLayoutTests: XCTestCase {
     
     func testViewHierarchy() throws {
         context("root: [yellow]") {
-            let expect = LayoutTree(view: .view(root), branches: [yellow])
-            XCTAssertEqual(yellow.superview, root)
+            let expect = LayoutTree(root, content: yellow)
             let dsl = root {
                 yellow
             }
             XCTAssertEqual(dsl, expect)
-            XCTAssertEqual(dsl.debugDescription, "root(UIView): [yellow(UIView)]")
+            XCTAssertEqual(dsl.debugDescription, "root: [yellow]")
+            XCTAssertEqual(yellow.superview, root)
         }
         
         context("root: [yellow: [green]]") {
-            let expect = LayoutTree(view: .view(root), branches: [LayoutTree(view: yellow, content: green)])
+            let expect = LayoutTree(root, content: LayoutTree(yellow, content: green))
             let dsl = root {
                 yellow {
                     green
@@ -36,11 +36,20 @@ final class SwiftLayoutTests: XCTestCase {
             
             XCTAssertEqual(dsl, expect)
             XCTAssertNotEqual(dsl2, expect)
-            XCTAssertEqual(dsl.debugDescription, "root(UIView): [yellow(UIView): [green(UIView)]]")
+            XCTAssertEqual(dsl.debugDescription, "root: [yellow: [green]]")
+            XCTAssertEqual(yellow.superview, root)
+            XCTAssertEqual(green.superview, yellow)
         }
         
         context("root: [yellow, green]") {
-            XCTFail()
+            let expect = LayoutTree(root, content: LayoutTree(branches: [yellow, green]))
+            let dsl = root {
+                yellow
+                green
+            }
+            
+            XCTAssertEqual(dsl, expect)
+            XCTAssertEqual(dsl.debugDescription, "root: [yellow, green]")
         }
     }
 }

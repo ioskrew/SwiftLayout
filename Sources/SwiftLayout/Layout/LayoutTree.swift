@@ -9,8 +9,16 @@ import Foundation
 import UIKit
 
 public protocol Layoutable: CustomDebugStringConvertible {
+    
+    var branches: [Layoutable] { get }
+    
     func isEqualLayout(_ layoutable: Layoutable) -> Bool
     var layoutIdentifier: String { get }
+    var layoutIdentifierWithType: String { get }
+}
+
+extension Layoutable {
+    public var branches: [Layoutable] { [] }
 }
 
 final class LayoutTree: Layoutable, Equatable {
@@ -21,7 +29,7 @@ final class LayoutTree: Layoutable, Equatable {
         self.updateBranch(branches)
     }
     
-    convenience init(view: UIView, content: @autoclosure () -> Layoutable) {
+    convenience init(_ view: UIView, content: @autoclosure () -> Layoutable) {
         self.init(view: .view(view), branches: [content()])
     }
     
@@ -77,6 +85,15 @@ final class LayoutTree: Layoutable, Equatable {
                 return uIView.layoutIdentifier
             }
         }
+        
+        var layoutIdentifierWithType: String {
+            switch self {
+            case .empty:
+                return "empty"
+            case .view(let uIView):
+                return uIView.layoutIdentifierWithType
+            }
+        }
     }
     
     var up: TreeContainer = .empty {
@@ -120,5 +137,9 @@ final class LayoutTree: Layoutable, Equatable {
     
     public var layoutIdentifier: String {
         view.layoutIdentifier
+    }
+    
+    var layoutIdentifierWithType: String {
+        view.layoutIdentifierWithType
     }
 }

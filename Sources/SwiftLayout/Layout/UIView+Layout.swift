@@ -9,7 +9,6 @@ import Foundation
 import UIKit
 
 extension UIView: Layoutable {
-    
     @discardableResult
     func callAsFunction(@LayoutBuilder _ layout: () -> Layoutable) -> Layoutable {
         LayoutTree(view: .view(self), branches: [layout()])
@@ -21,6 +20,10 @@ extension UIView: Layoutable {
     }
     
     public var layoutIdentifier: String {
+        accessibilityIdentifier ?? address
+    }
+    
+    public var layoutIdentifierWithType: String {
         "\(accessibilityIdentifier ?? address)(\(type(of: self)))"
     }
 }
