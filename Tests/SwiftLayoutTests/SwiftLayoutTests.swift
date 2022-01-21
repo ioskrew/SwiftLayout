@@ -11,10 +11,7 @@ final class SwiftLayoutTests: XCTestCase {
     let red = UIView().tag.red
     let blue = UIView().tag.blue
     
-    ///
-    /// ```swift
-    /// ```
-    func testViewHierarchyOneView() throws {
+    func testViewHierarchyOneInOneView() throws {
         let expect =  _LayoutTree(up: nil,
                                   element: _LayoutElement(view: root),
                                   fork: _LayoutFork(view: yellow))
@@ -25,6 +22,20 @@ final class SwiftLayoutTests: XCTestCase {
         XCTAssertEqual(result.debug.debugDescription, expect.debug.debugDescription, "\n\(result.debug.debugDescription)\n\(expect.debug.debugDescription)\n")
         
         XCTAssertEqual(yellow.superview, root)
+    }
+    
+    func testViewHierarchyTwoInOneView() throws {
+        let expect =  _LayoutTree(up: nil,
+                                  element: _LayoutElement(view: root),
+                                  fork: _LayoutFork(branches: [yellow, green]))
+        let result = root.layout {
+            yellow
+            green
+        }.active()
+        
+        XCTAssertEqual(result.debug.debugDescription, expect.debug.debugDescription, "\n\(result.debug.debugDescription)\n\(expect.debug.debugDescription)\n")
+        
+        XCTAssertEqual(root.subviews, [yellow, green])
     }
 }
 
