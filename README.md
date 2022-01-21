@@ -17,21 +17,17 @@ view hierarchy and autolayout DSL library
     let blue = UIView()
     blue.backgroundColor = .blue
     
-    let result = view {
-        yellow {
-            green
-        }
-        red {
-            blue
-        }
-    }.layout {
+    // view의 계층구조에서 별도의 constraint를 지정하지 않으면 
+    // 항상 부모뷰의 top, bottom, leading, parent에 붙습니다.
+    view {
         if flag {
-            yellow.dsl.top.to(view)
-            yellow.dsl.bottom.to(view)
-            yellow.dsl.leading.to(view)
-            yellow.dsl.trailing.to(view)
+            yellow {
+                green
+            }
         } else {
-            red.dsl.top.bottom.leading.trailing.to(view)
+            red {
+                blue
+            }
         }
     }
 ```
