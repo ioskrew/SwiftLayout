@@ -92,6 +92,24 @@ final class SwiftLayoutTests: XCTestCase {
             XCTAssertEqual(red.superview, yellow)
             XCTAssertEqual(blue.superview, green)
         }
+        
+        context("root: [yellow: [red], green: [blue]] 에서 red가 그린 트리에 포함되는 경우 yellow 트리에서 제거되고 superview도 green으로 이동한다") {
+            let dsl = root {
+                yellow {
+                    red
+                }
+                green {
+                    blue
+                    red
+                }
+            }
+            
+            XCTAssertEqual(dsl.debugDescription, "root: [yellow, green: [blue, red]]")
+            
+            XCTAssertEqual(root.subviews.map(\.layoutIdentifier), [yellow, green].map(\.layoutIdentifier))
+            XCTAssertEqual(red.superview, green)
+            XCTAssertEqual(blue.superview, green)
+        }
     }
 }
 
