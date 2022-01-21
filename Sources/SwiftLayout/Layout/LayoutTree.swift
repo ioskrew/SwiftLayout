@@ -13,6 +13,9 @@ public protocol Layoutable: CustomDebugStringConvertible {
     var branches: [Layoutable] { get }
     
     func isEqualLayout(_ layoutable: Layoutable) -> Bool
+    func isEqualView(_ layoutable: Layoutable) -> Bool
+    func isEqualView(_ view: UIView?) -> Bool
+    
     var layoutIdentifier: String { get }
     var layoutIdentifierWithType: String { get }
 }
@@ -29,12 +32,86 @@ final class LayoutTree: Layoutable, Equatable {
         self.updateBranch(branches)
     }
     
-    convenience init(_ view: UIView, content: @autoclosure () -> Layoutable) {
-        self.init(view: .view(view), branches: [content()])
+    init(_ view: UIView, @LayoutBuilder layout: () -> Layoutable) {
+        self.view = .view(view)
+        self.updateBranch([layout()])
     }
     
+    init(_ view: UIView, content: Layoutable) {
+        self.view = .view(view)
+        self.updateBranch([content])
+    }
+   
     public static func == (lhs: LayoutTree, rhs: LayoutTree) -> Bool {
         lhs.isEqualLayout(rhs)
+    }
+   
+    var isEmpty: Bool {
+        up == .empty && view == .empty && branches.isEmpty
+    }
+    
+    var up: TreeContainer = .empty {
+        didSet {
+            up.addSubview(view)
+            up.cleanDuplicatedViewBranches(self)
+        }
+    }
+    var view: ViewContainer = .empty
+    var branches: [Layoutable] = []
+    
+    func active() {
+        branches.compactMap({ $0 as? LayoutTree }).forEach { layout in
+            layout.up = .tree(self)
+            layout.active()
+        }
+    }
+    
+    func updateBranch(_ branches: [Layoutable]) {
+        if branches.count == 1, let tree = branches[0] as? LayoutTree, tree.view == .empty {
+            self.updateBranch(tree.branches)
+        } else {
+            self.branches = branches.compactMap({ layout in
+                if let view = layout as? UIView {
+                    let tree = LayoutTree(view: .view(view))
+                    return tree
+                } else if let tree = layout as? LayoutTree {
+                    return tree
+                } else {
+                    return nil
+                }
+            })
+        }
+    }
+    
+    func isEqualLayout(_ layoutable: Layoutable) -> Bool {
+        guard let tree = layoutable as? LayoutTree else { return false }
+        guard up.isEqual(tree.up) else { return false }
+        guard view.isEqual(tree.view) else { return false }
+        let left = branches.debugDescription
+        let right = tree.branches.debugDescription
+        return left == right
+    }
+    
+    func isEqualView(_ layoutable: Layoutable) -> Bool {
+        if let tree = layoutable as? LayoutTree {
+            return view == tree.view
+        } else if let view = layoutable as? UIView {
+            return self.view.isEqualView(view)
+        } else {
+            return false
+        }
+    }
+    
+    func isEqualView(_ view: UIView?) -> Bool {
+        self.view.view == view
+    }
+    
+    public var layoutIdentifier: String {
+        view.layoutIdentifier
+    }
+    
+    var layoutIdentifierWithType: String {
+        view.layoutIdentifierWithType
     }
     
     enum TreeContainer: Equatable {
@@ -50,11 +127,39 @@ final class LayoutTree: Layoutable, Equatable {
             }
         }
         
+        var root: LayoutTree? {
+            if tree?.up == .empty {
+                return tree
+            } else {
+                return tree?.up.tree
+            }
+        }
+        
         func addSubview(_ view: ViewContainer) {
             guard let tree = tree else {
                 return
             }
             tree.view.addSubview(view)
+        }
+        
+        func cleanDuplicatedViewBranches(_ tree: LayoutTree) {
+            guard let root = root else {
+                return
+            }
+        }
+        
+        func isEqual(_ tree: TreeContainer?) -> Bool {
+            guard let tree = tree else {
+                return false
+            }
+            switch (self, tree) {
+            case (.empty, .empty):
+                return true
+            case (.tree(let lhs), .tree(let rhs)):
+                return lhs.isEqualLayout(rhs)
+            default:
+                return false
+            }
         }
     }
     
@@ -84,6 +189,21 @@ final class LayoutTree: Layoutable, Equatable {
             subview.translatesAutoresizingMaskIntoConstraints = false
         }
         
+        func isEqual(_ container: ViewContainer?) -> Bool {
+            switch (self, container) {
+            case (.empty, .empty):
+                return true
+            case (.view(let lhs), .view(let rhs)):
+                return lhs.isEqual(rhs)
+            default:
+                return false
+            }
+        }
+        
+        func isEqualView(_ view: UIView) -> Bool {
+            self.view == view
+        }
+        
         var layoutIdentifier: String {
             switch self {
             case .empty:
@@ -103,50 +223,4 @@ final class LayoutTree: Layoutable, Equatable {
         }
     }
     
-    var up: TreeContainer = .empty {
-        didSet {
-            up.addSubview(view)
-            branches.forEach({
-                if let tree = $0 as? LayoutTree {
-                    tree.up = .tree(self)
-                }
-            })
-        }
-    }
-    var view: ViewContainer = .empty
-    var branches: [Layoutable] = []
-    
-    func updateBranch(_ branches: [Layoutable]) {
-        if branches.count == 1, let tree = branches[0] as? LayoutTree, tree.view == .empty {
-            self.updateBranch(tree.branches)
-        } else {
-            self.branches = branches.compactMap({ layout in
-                if let view = layout as? UIView {
-                    let tree = LayoutTree(view: .view(view))
-                    tree.up = .tree(self)
-                    return tree
-                } else if let tree = layout as? LayoutTree {
-                    tree.up = .tree(self)
-                    return tree
-                } else {
-                    return nil
-                }
-            })
-        }
-    }
-    
-    public func isEqualLayout(_ layoutable: Layoutable) -> Bool {
-        guard let tree = layoutable as? LayoutTree else { return false }
-        return up == tree.up && view == tree.view && branches.elementsEqual(tree.branches, by: { lhs, rhs in
-            lhs.isEqualLayout(rhs)
-        })
-    }
-    
-    public var layoutIdentifier: String {
-        view.layoutIdentifier
-    }
-    
-    var layoutIdentifierWithType: String {
-        view.layoutIdentifierWithType
-    }
 }

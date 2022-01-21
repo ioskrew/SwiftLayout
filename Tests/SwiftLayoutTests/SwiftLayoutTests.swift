@@ -11,10 +11,23 @@ final class SwiftLayoutTests: XCTestCase {
     let red = UIView().tag.red
     let blue = UIView().tag.blue
     
+    func testClearDuplicatedViewBranch() {
+        let dsl = root.layout {
+            yellow {
+                green
+            }
+            red {
+                blue
+                green
+            }
+        }
+        XCTAssertEqual(dsl.debugDescription, "root: [yellow, green: [blue, red]]")
+    }
+    
     func testViewHierarchy() throws {
         context("root: [yellow]") {
             let expect = LayoutTree(root, content: yellow)
-            let dsl = root {
+            let dsl = root.layout {
                 yellow
             }
             XCTAssertEqual(dsl, expect)
@@ -22,28 +35,9 @@ final class SwiftLayoutTests: XCTestCase {
             XCTAssertEqual(yellow.superview, root)
         }
         
-        context("root: [yellow: [green]]") {
-            let expect = LayoutTree(root, content: LayoutTree(yellow, content: green))
-            let dsl = root {
-                yellow {
-                    green
-                }
-            }
-            
-            let dsl2 = root {
-                yellow
-            }
-            
-            XCTAssertEqual(dsl, expect)
-            XCTAssertNotEqual(dsl2, expect)
-            XCTAssertEqual(dsl.debugDescription, "root: [yellow: [green]]")
-            XCTAssertEqual(yellow.superview, root)
-            XCTAssertEqual(green.superview, yellow)
-        }
-        
         context("root: [yellow, green]") {
             let expect = LayoutTree(root, content: LayoutTree(branches: [yellow, green]))
-            let dsl = root {
+            let dsl = root.layout {
                 yellow
                 green
             }
@@ -54,9 +48,28 @@ final class SwiftLayoutTests: XCTestCase {
             XCTAssertEqual(root.subviews.map(\.layoutIdentifier), [yellow, green].map(\.layoutIdentifier))
         }
         
+        context("root: [yellow: [green]]") {
+            let expect = LayoutTree(root, content: LayoutTree(yellow, content: green))
+            let dsl = root.layout {
+                yellow {
+                    green
+                }
+            }
+            
+            let dsl2 = root.layout {
+                yellow
+            }
+            
+            XCTAssertEqual(dsl, expect)
+            XCTAssertNotEqual(dsl2, expect)
+            XCTAssertEqual(dsl.debugDescription, "root: [yellow: [green]]")
+            XCTAssertEqual(yellow.superview, root)
+            XCTAssertEqual(green.superview, yellow)
+        }
+        
         context("root: [yellow: [red], green]") {
             let expect = LayoutTree(root, content: LayoutTree(branches: [LayoutTree(yellow, content: red), green]))
-            let dsl = root {
+            let dsl = root.layout {
                 yellow {
                     red
                 }
@@ -76,7 +89,7 @@ final class SwiftLayoutTests: XCTestCase {
             let yellowtree = LayoutTree(yellow, content: redtree)
             let greentree = LayoutTree(green, content: bluetree)
             let roottree = LayoutTree(root, content: LayoutTree(branches: [yellowtree, greentree]))
-            let dsl = root {
+            let dsl = root.layout {
                 yellow {
                     red
                 }
@@ -93,23 +106,6 @@ final class SwiftLayoutTests: XCTestCase {
             XCTAssertEqual(blue.superview, green)
         }
         
-        context("root: [yellow: [red], green: [blue]] 에서 red가 그린 트리에 포함되는 경우 yellow 트리에서 제거되고 superview도 green으로 이동한다") {
-            let dsl = root {
-                yellow {
-                    red
-                }
-                green {
-                    blue
-                    red
-                }
-            }
-            
-            XCTAssertEqual(dsl.debugDescription, "root: [yellow, green: [blue, red]]")
-            
-            XCTAssertEqual(root.subviews.map(\.layoutIdentifier), [yellow, green].map(\.layoutIdentifier))
-            XCTAssertEqual(red.superview, green)
-            XCTAssertEqual(blue.superview, green)
-        }
     }
 }
 
