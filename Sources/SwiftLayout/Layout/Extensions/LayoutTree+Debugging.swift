@@ -29,8 +29,8 @@ extension Layoutable {
         if !branches.isEmpty {
             identifier = identifier + ": [\(branches.map({ $0.debugDescriptionWithOptions(options) }).joined(separator: ", "))]"
         }
-        if options.contains(.printUp), let tree = self as? LayoutTree, let upView = tree.up.tree?.view {
-            identifier = "\(upView.layoutIdentifier) -> \(identifier)"
+        if options.contains(.printUp), let tree = self as? LayoutTree, let upContent = tree.up.tree?.content {
+            identifier = "\(upContent.layoutIdentifier) -> \(identifier)"
         }
         return identifier
     }
