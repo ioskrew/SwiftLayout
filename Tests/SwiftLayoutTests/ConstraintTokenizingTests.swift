@@ -44,10 +44,49 @@ class ConstraintTokenizingTests: XCTestCase {
         }
     }
     
-    func testConstraintBinding() {
+    func testLayoutConstraintBinding() {
         right {
-            left
+            left.top
         }
+        
+        let constraints = left.top.find(secondElement: right.top)
+        XCTAssertFalse(constraints.isEmpty)
+        XCTAssertTrue(constraints.map(\.equator).contains(left.topAnchor.constraint(equalTo: right.topAnchor).equator),
+                      constraints.debugDescription)
     }
     
+}
+
+extension Layoutable where Self: UIView {
+    func find(attribute: NSLayoutConstraint.Attribute, secondElement element: SwiftLayout.Element) -> [NSLayoutConstraint] {
+        constraints.filter { constraint in
+            let binding = constraint.binding
+            return binding.first.view == self && binding.first.attribute == attribute && binding.second == element
+        }
+    }
+}
+
+protocol ElementLayoutable: Layoutable {}
+
+extension SwiftLayout.Element: ElementLayoutable {
+    public func isEqualLayout(_ layoutable: Layoutable) -> Bool {
+        return self == layoutable as? Self
+    }
+    
+    public func isEqualView(_ layoutable: Layoutable) -> Bool {
+        return false
+    }
+    
+    public func isEqualView(_ view: UIView?) -> Bool {
+        self.view == view
+    }
+    
+    public var layoutIdentifier: String {
+        "Element.\(item.debugDescription).\(attribute)"
+    }
+    
+    func find(secondElement element: SwiftLayout.Element) -> [NSLayoutConstraint] {
+        guard let view = self.view else { return [] }
+        return view.find(attribute: self.attribute, secondElement: element)
+    }
 }
