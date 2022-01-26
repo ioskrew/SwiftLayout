@@ -51,13 +51,13 @@ class ConstraintTests: XCTestCase {
                 left.bottom
             }
             
-            context("top constraint가 만들어진다.") {
+            context("top constraint 성공") {
                 let constraint = left.top.find(secondElement: right.top)[0]
                 let compare = left.topAnchor.constraint(equalTo: right.topAnchor)
                 XCTAssertLayoutEqual(constraint, compare)
             }
-            context("bottom constraint가 만들어진다.") {
-                let constraint = left.top.find(secondElement: right.top)[1]
+            context("bottom constraint 성공") {
+                let constraint = left.bottom.find(secondElement: right.bottom)[0]
                 let compare = left.topAnchor.constraint(equalTo: right.topAnchor)
                 XCTAssertLayoutEqual(constraint, compare)
             }
@@ -66,8 +66,8 @@ class ConstraintTests: XCTestCase {
     
 }
 
-func XCTAssertLayoutEqual(_ lhs: NSLayoutConstraint, _ rhs: NSLayoutConstraint) {
-    XCTAssertEqual(lhs.equator,
-                   rhs.equator,
-                   lhs.binding.debugDescription + " is not " + rhs.binding.debugDescription)
+func XCTAssertLayoutEqual(_ lhs: NSLayoutConstraint, _ rhs: NSLayoutConstraint, file: StaticString = #filePath, line: UInt = #line) {
+    guard lhs.equator != rhs.equator else { return }
+    XCTFail(lhs.binding.debugDescription + " is not " + rhs.binding.debugDescription,
+            file: file, line: line)
 }
