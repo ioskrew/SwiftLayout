@@ -5,6 +5,7 @@
 //  Created by oozoofrog on 2022/01/24.
 //
 
+import UIKit
 import XCTest
 @testable import SwiftLayout
 
@@ -29,6 +30,15 @@ class ConstraintTokenizingTests: XCTestCase {
                 let binding = SwiftLayout.Binding(first: left.top, second: right.top)
                 context("동일하다") {
                     XCTAssertEqual(bindingFromView, binding)
+                }
+            }
+        }
+        context("직접 생성한 NSLayoutConstraint와") {
+            let constraint: NSLayoutConstraint = left.topAnchor.constraint(equalTo: right.topAnchor)
+            context("binding에서 생성한 constraint는") {
+                let binding: NSLayoutConstraint = SwiftLayout.Binding(first: left.top, second: right.top, rule: SwiftLayout.Rule.equal).bind()
+                context("동일하다") {
+                    XCTAssertEqual(constraint, binding)
                 }
             }
         }

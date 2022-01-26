@@ -83,7 +83,7 @@ public extension SwiftLayout {
         }
     }
     
-    struct Rule: Equatable, CustomDebugStringConvertible {
+    struct Rule: Hashable, CustomDebugStringConvertible {
         internal init(relation: NSLayoutConstraint.Relation = .equal, multiplier: CGFloat = 1.0, constant: CGFloat = 0.0) {
             self.relation = relation
             self.multiplier = multiplier
@@ -99,12 +99,12 @@ public extension SwiftLayout {
             return "\(relation)(\(constant < 0.0 ? "-" : "+")\(constant) x \(multiplier))"
         }
         
-        static var `default`: Self {
-            .init()
+        static var equal: Self {
+            Rule()
         }
     }
     
-    struct Element: Equatable, CustomDebugStringConvertible {
+    struct Element: Hashable, CustomDebugStringConvertible {
         let item: Item
         let attribute: NSLayoutConstraint.Attribute
         
@@ -120,7 +120,7 @@ public extension SwiftLayout {
             "\(item.debugDescription).\(attribute.debugDescription)"
         }
         
-        enum Item: Equatable, CustomDebugStringConvertible {
+        enum Item: Hashable, CustomDebugStringConvertible {
             case view(UIView), guide(UILayoutGuide), none
             
             init(_ item: AnyObject?) {
@@ -174,14 +174,14 @@ public extension SwiftLayout {
     
     ///
     /// Binding
-    struct Binding: Equatable, CustomDebugStringConvertible {
+    struct Binding: Hashable, CustomDebugStringConvertible {
         
         /// Binding 생성자
         /// - Parameters:
         ///   - first: layout constraint의 첫번째 item
         ///   - second: layout constraint의 두번째 item
         ///   - rule: 각 item의 결합 규칙
-        internal init(first: SwiftLayout.Element, second: SwiftLayout.Element?, rule: SwiftLayout.Rule = .default) {
+        internal init(first: SwiftLayout.Element, second: SwiftLayout.Element?, rule: SwiftLayout.Rule = Rule.equal) {
             self.first = first
             self.second = second
             self.rule = rule
@@ -199,7 +199,6 @@ public extension SwiftLayout {
                                                 attribute: second?.attribute ?? .notAnAttribute,
                                                 multiplier: rule.multiplier,
                                                 constant: rule.constant)
-            constraint.isActive = true
             return constraint
         }
         
