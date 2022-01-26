@@ -45,16 +45,21 @@ class ConstraintTests: XCTestCase {
     }
     
     func testLayoutConstraintBinding() {
-        right.layout {
-            left.top
+        context("left.top == right.top") {
+            right.layout {
+                left.top
+            }
+            
+            let constraint = left.top.find(secondElement: right.top)[0]
+            let compare = left.topAnchor.constraint(equalTo: right.topAnchor)
+            XCTAssertLayoutEqual(constraint, compare)
         }
-        
-        let constraints = left.top.find(secondElement: right.top)
-        print(right.constraints.map(\.binding).debugDescription)
-        print(left.constraints.map(\.binding).debugDescription)
-        XCTAssertFalse(constraints.isEmpty)
-        XCTAssertTrue(constraints.map(\.equator).contains(left.topAnchor.constraint(equalTo: right.topAnchor).equator),
-                      constraints.debugDescription)
     }
     
+}
+
+func XCTAssertLayoutEqual(_ lhs: NSLayoutConstraint, _ rhs: NSLayoutConstraint) {
+    XCTAssertEqual(lhs.equator,
+                   rhs.equator,
+                   lhs.binding.debugDescription + " is not " + rhs.binding.debugDescription)
 }
