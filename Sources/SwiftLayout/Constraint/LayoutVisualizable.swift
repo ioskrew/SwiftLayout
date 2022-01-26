@@ -10,14 +10,16 @@ import UIKit
 
 public protocol LayoutVisualize {
     
-    var top: SwiftLayout.Element { get }
+    typealias Element = SwiftLayout.Element
+    
+    var top: Element { get }
+    var bottom: Element { get }
     
 }
 
 extension LayoutVisualize where Self: UIView {
     
-    public var top: SwiftLayout.Element {
-        SwiftLayout.Element(item: .view(self), attribute: .top)
-    }
+    public var top: Element { element(.top) }
+    public var bottom: Element { element(.bottom) }
     
 }

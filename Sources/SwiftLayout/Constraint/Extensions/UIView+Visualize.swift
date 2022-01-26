@@ -8,4 +8,8 @@
 import Foundation
 import UIKit
 
-extension UIView: LayoutVisualize {}
+extension UIView: LayoutVisualize {
+    func element(_ attribute: NSLayoutConstraint.Attribute) -> SwiftLayout.Element {
+        SwiftLayout.Element(item: .view(self), attribute: attribute)
+    }
+}

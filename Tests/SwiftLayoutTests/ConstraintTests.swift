@@ -45,15 +45,22 @@ class ConstraintTests: XCTestCase {
     }
     
     func testLayoutConstraintBinding() {
-        context("left.top == right.top") {
+        context("left의 top, bottom을 right에 연결하면") {
             right.layout {
                 left.top
-                left.leading
+                left.bottom
             }
             
-            let constraint = left.top.find(secondElement: right.top)[0]
-            let compare = left.topAnchor.constraint(equalTo: right.topAnchor)
-            XCTAssertLayoutEqual(constraint, compare)
+            context("top constraint가 만들어진다.") {
+                let constraint = left.top.find(secondElement: right.top)[0]
+                let compare = left.topAnchor.constraint(equalTo: right.topAnchor)
+                XCTAssertLayoutEqual(constraint, compare)
+            }
+            context("bottom constraint가 만들어진다.") {
+                let constraint = left.top.find(secondElement: right.top)[1]
+                let compare = left.topAnchor.constraint(equalTo: right.topAnchor)
+                XCTAssertLayoutEqual(constraint, compare)
+            }
         }
     }
     
