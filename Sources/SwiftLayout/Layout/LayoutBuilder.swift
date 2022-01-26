@@ -8,6 +8,10 @@ public struct LayoutBuilder {
         buildArray(branches)
     }
     
+    public static func buildBlock(_ branches: Layoutable?...) -> Layoutable {
+        buildArray(branches.flatten)
+    }
+    
     public static func buildArray(_ branches: [Layoutable]) -> Layoutable {
         LayoutTree(branches: branches)
     }

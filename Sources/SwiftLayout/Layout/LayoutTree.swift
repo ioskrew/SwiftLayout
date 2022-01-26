@@ -8,37 +8,25 @@
 import Foundation
 import UIKit
 
-public protocol Layoutable: CustomDebugStringConvertible {
-    
-    var branches: [Layoutable] { get }
-    
-    func isEqualLayout(_ layoutable: Layoutable) -> Bool
-    func isEqualView(_ layoutable: Layoutable) -> Bool
-    func isEqualView(_ view: UIView?) -> Bool
-    
-    var layoutIdentifier: String { get }
-    var layoutIdentifierWithType: String { get }
-}
-
-extension Layoutable {
-    public var branches: [Layoutable] { [] }
-}
-
 final class LayoutTree: Layoutable, Equatable {
     
-    internal init(up: LayoutTree.TreeContainer = .empty, view: ViewContainer = .empty, branches: [Layoutable] = []) {
+    typealias LayoutBinding = SwiftLayout.Binding
+    typealias LayoutElement = SwiftLayout.Element
+    typealias LayoutRule = SwiftLayout.Rule
+    
+    internal init(up: LayoutTree.TreeContainer = .empty, content: ContentContainer = .empty, branches: [Layoutable] = []) {
         self.up = up
-        self.view = view
+        self.content = content
         self.updateBranch(branches)
     }
     
     init(_ view: UIView, @LayoutBuilder layout: () -> Layoutable) {
-        self.view = .view(view)
+        self.content = .view(view)
         self.updateBranch([layout()])
     }
     
     init(_ view: UIView, content: Layoutable) {
-        self.view = .view(view)
+        self.content = .view(view)
         self.updateBranch([content])
     }
    
@@ -47,27 +35,27 @@ final class LayoutTree: Layoutable, Equatable {
     }
    
     var isEmpty: Bool {
-        up == .empty && view == .empty && branches.isEmpty
+        up == .empty && content == .empty && branches.isEmpty
     }
     
     var isElement: Bool {
-        view != .empty && branches.isEmpty
+        content != .empty && branches.isEmpty
     }
     
     var isNode: Bool {
-        view != .empty && !branches.isEmpty
+        content != .empty && !branches.isEmpty
     }
     
     var isRoot: Bool {
-        up == .empty && view != .empty
+        up == .empty && content != .empty
     }
     
     var up: TreeContainer = .empty {
         didSet {
-            up.addSubview(view)
+            up.addSubview(content)
         }
     }
-    var view: ViewContainer = .empty
+    var content: ContentContainer = .empty
     var branches: [Layoutable] = []
     
     var trees: [LayoutTree] {
@@ -99,7 +87,7 @@ final class LayoutTree: Layoutable, Equatable {
         var elements = elements
         while !elements.isEmpty {
             let uniqueTree = elements.removeLast()
-            elements.removeAll(where: { $0.view == uniqueTree.view })
+            elements.removeAll(where: { $0.content == uniqueTree.content })
             clean(uniqueTree)
         }
     }
@@ -107,7 +95,7 @@ final class LayoutTree: Layoutable, Equatable {
     func clean(_ uniqueTree: LayoutTree) {
         self.branches = self.branches.filter { branch in
             guard let layout = branch as? LayoutTree else { return true }
-            if layout.up != uniqueTree.up, layout.view == uniqueTree.view {
+            if layout.up != uniqueTree.up, layout.content == uniqueTree.content {
                 return false
             } else if layout.isNode {
                 layout.clean(uniqueTree)
@@ -119,15 +107,16 @@ final class LayoutTree: Layoutable, Equatable {
     }
     
     func updateBranch(_ branches: [Layoutable]) {
-        if branches.count == 1, let tree = branches[0] as? LayoutTree, tree.view == .empty {
+        if branches.count == 1, let tree = branches[0] as? LayoutTree, tree.content == .empty {
             self.updateBranch(tree.branches)
         } else {
             self.branches = branches.compactMap({ layout in
-                if let view = layout as? UIView {
-                    let tree = LayoutTree(view: .view(view))
+                if let tree = layout as? LayoutTree {
                     return tree
-                } else if let tree = layout as? LayoutTree {
-                    return tree
+                } else if let view = layout as? UIView {
+                    return LayoutTree(content: .view(view))
+                } else if let first = layout as? LayoutElement {
+                    return LayoutTree(content: .element(first))
                 } else {
                     return nil
                 }
@@ -138,7 +127,7 @@ final class LayoutTree: Layoutable, Equatable {
     func isEqualLayout(_ layoutable: Layoutable) -> Bool {
         guard let tree = layoutable as? LayoutTree else { return false }
         guard up.isEqual(tree.up) else { return false }
-        guard view.isEqual(tree.view) else { return false }
+        guard content.isEqual(tree.content) else { return false }
         let left = branches.debugDescription
         let right = tree.branches.debugDescription
         return left == right
@@ -146,24 +135,20 @@ final class LayoutTree: Layoutable, Equatable {
     
     func isEqualView(_ layoutable: Layoutable) -> Bool {
         if let tree = layoutable as? LayoutTree {
-            return view == tree.view
+            return content == tree.content
         } else if let view = layoutable as? UIView {
-            return self.view.isEqualView(view)
+            return self.content.isEqualView(view)
         } else {
             return false
         }
     }
     
     func isEqualView(_ view: UIView?) -> Bool {
-        self.view.view == view
+        self.content.view == view
     }
     
     public var layoutIdentifier: String {
-        view.layoutIdentifier
-    }
-    
-    var layoutIdentifierWithType: String {
-        view.layoutIdentifierWithType
+        content.layoutIdentifier
     }
     
     enum TreeContainer: Equatable {
@@ -187,11 +172,11 @@ final class LayoutTree: Layoutable, Equatable {
             }
         }
         
-        func addSubview(_ view: ViewContainer) {
+        func addSubview(_ content: ContentContainer) {
             guard let tree = tree else {
                 return
             }
-            tree.view.addSubview(view)
+            tree.content.addSubcontent(content)
         }
         
         func isEqual(_ tree: TreeContainer?) -> Bool {
@@ -209,9 +194,10 @@ final class LayoutTree: Layoutable, Equatable {
         }
     }
     
-    enum ViewContainer: Equatable, CustomDebugStringConvertible {
+    enum ContentContainer: Equatable, CustomDebugStringConvertible {
         case empty
         case view(UIView)
+        case element(LayoutElement)
         
         var view: UIView? {
             switch self {
@@ -219,23 +205,24 @@ final class LayoutTree: Layoutable, Equatable {
                 return nil
             case .view(let uIView):
                 return uIView
+            case .element(let element):
+                if let view = element.view {
+                    return view
+                } else {
+                    return nil
+                }
             }
         }
         
         var debugDescription: String {
-            guard let view = view else {
+            if view == nil {
                 return "empty"
+            } else {
+                return layoutIdentifier
             }
-            return layoutIdentifier
         }
-        
-        func addSubview(_ container: ViewContainer) {
-            guard let superview = view, let subview = container.view else { return }
-            superview.addSubview(subview)
-            subview.translatesAutoresizingMaskIntoConstraints = false
-        }
-        
-        func isEqual(_ container: ViewContainer?) -> Bool {
+         
+        func isEqual(_ container: ContentContainer?) -> Bool {
             switch (self, container) {
             case (.empty, .empty):
                 return true
@@ -256,15 +243,8 @@ final class LayoutTree: Layoutable, Equatable {
                 return "empty"
             case .view(let uIView):
                 return uIView.layoutIdentifier
-            }
-        }
-        
-        var layoutIdentifierWithType: String {
-            switch self {
-            case .empty:
-                return "empty"
-            case .view(let uIView):
-                return uIView.layoutIdentifierWithType
+            case .element(let element):
+                return element.layoutIdentifier
             }
         }
     }

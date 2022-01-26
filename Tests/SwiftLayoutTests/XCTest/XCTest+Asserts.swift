@@ -9,7 +9,7 @@ import Foundation
 import XCTest
 import SwiftLayout
 
-func XCTAssertEqual(_ expression1: Layoutable, _ expression2: Layoutable) {
+func XCTAssertLayoutEqual(_ expression1: Layoutable, _ expression2: Layoutable) {
     if expression1.debugDescription.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
         XCTFail("expression1 is empty")
     }
@@ -19,7 +19,7 @@ func XCTAssertEqual(_ expression1: Layoutable, _ expression2: Layoutable) {
     XCTAssertEqual(expression1.debugDescription, expression2.debugDescription)
 }
 
-func XCTAssertNotEqual(_ expression1: Layoutable, _ expression2: Layoutable) {
+func XCTAssertLayoutNotEqual(_ expression1: Layoutable, _ expression2: Layoutable) {
     if expression1.debugDescription.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
         XCTFail("expression1 is empty")
     }
