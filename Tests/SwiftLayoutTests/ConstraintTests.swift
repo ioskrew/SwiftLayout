@@ -58,7 +58,7 @@ class ConstraintTests: XCTestCase {
             }
             context("bottom constraint 성공") {
                 let constraint = left.bottom.find(secondElement: right.bottom)[0]
-                let compare = left.topAnchor.constraint(equalTo: right.topAnchor)
+                let compare = left.bottomAnchor.constraint(equalTo: right.bottomAnchor)
                 XCTAssertLayoutEqual(constraint, compare)
             }
         }
