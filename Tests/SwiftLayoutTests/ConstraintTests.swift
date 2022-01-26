@@ -48,6 +48,7 @@ class ConstraintTests: XCTestCase {
         context("left.top == right.top") {
             right.layout {
                 left.top
+                left.leading
             }
             
             let constraint = left.top.find(secondElement: right.top)[0]
