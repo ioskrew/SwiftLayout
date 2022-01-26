@@ -65,9 +65,9 @@ public extension SwiftLayout {
         func removeDuplicate(with target: Constraint) -> Constraint {
             let constraints = view.constraints
             for constraint in constraints {
-                guard constraint.firstView == view, constraint.firstAttribute == attribute else { continue }
-                guard constraint.secondView == target.view, constraint.secondAttribute == target.attribute else { continue }
-                view.removeConstraint(constraint)
+//                guard constraint.firstView == view, constraint.firstAttribute == attribute else { continue }
+//                guard constraint.secondView == target.view, constraint.secondAttribute == target.attribute else { continue }
+//                view.removeConstraint(constraint)
             }
             return self
         }
@@ -75,9 +75,9 @@ public extension SwiftLayout {
         func removeDuplicate(with view: UIView) -> Constraint {
             let constraints = view.constraints
             for constraint in constraints {
-                guard constraint.firstView == self.view, constraint.firstAttribute == attribute else { continue }
-                guard constraint.secondView == view, constraint.secondAttribute == attribute else { continue }
-                view.removeConstraint(constraint)
+//                guard constraint.firstView == self.view, constraint.firstAttribute == attribute else { continue }
+//                guard constraint.secondView == view, constraint.secondAttribute == attribute else { continue }
+//                view.removeConstraint(constraint)
             }
             return self
         }
@@ -205,18 +205,13 @@ public extension SwiftLayout {
         
         public var debugDescription: String {
             var descriptions: [String] = []
-            descriptions.append("first: \(first)")
+            descriptions.append("\(first)")
             descriptions.append(rule.debugDescription)
             if let second = second {
-                descriptions.append("second: \(second)")
+                descriptions.append("\(second)")
             }
-            return descriptions.joined(separator: ", ")
+            return descriptions.joined(separator: " ").trimmingCharacters(in: .whitespaces)
         }
     }
     
-}
-
-extension NSLayoutConstraint {
-    var firstView: UIView? { firstItem as? UIView }
-    var secondView: UIView? { secondItem as? UIView }
 }

@@ -21,7 +21,7 @@ extension NSLayoutConstraint {
     }
     
     private var secondConstraintElement: SwiftLayout.Element? {
-        return SwiftLayout.Element(item: .none, attribute: secondAttribute)
+        return SwiftLayout.Element(item: SwiftLayout.Element.Item(self.secondItem), attribute: secondAttribute)
     }
     
     private var constraintRule: SwiftLayout.Rule {
