@@ -43,4 +43,11 @@ class ConstraintTokenizingTests: XCTestCase {
             }
         }
     }
+    
+    func testConstraintBinding() {
+        right {
+            left
+        }
+    }
+    
 }
