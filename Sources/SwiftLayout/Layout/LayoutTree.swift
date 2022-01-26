@@ -10,6 +10,10 @@ import UIKit
 
 final class LayoutTree: Layoutable, Equatable {
     
+    typealias LayoutBinding = SwiftLayout.Binding
+    typealias LayoutElement = SwiftLayout.Element
+    typealias LayoutRule = SwiftLayout.Rule
+    
     internal init(up: LayoutTree.TreeContainer = .empty, content: ContentContainer = .empty, branches: [Layoutable] = []) {
         self.up = up
         self.content = content
@@ -111,8 +115,8 @@ final class LayoutTree: Layoutable, Equatable {
                     return tree
                 } else if let view = layout as? UIView {
                     return LayoutTree(content: .view(view))
-                } else if let constraint = layout as? SwiftLayout.Constraint {
-                    return LayoutTree(content: .constraint(constraint))
+                } else if let first = layout as? LayoutElement {
+                    return LayoutTree(content: .element(first))
                 } else {
                     return nil
                 }
@@ -193,7 +197,7 @@ final class LayoutTree: Layoutable, Equatable {
     enum ContentContainer: Equatable, CustomDebugStringConvertible {
         case empty
         case view(UIView)
-        case constraint(SwiftLayout.Constraint)
+        case element(LayoutElement)
         
         var view: UIView? {
             switch self {
@@ -201,8 +205,12 @@ final class LayoutTree: Layoutable, Equatable {
                 return nil
             case .view(let uIView):
                 return uIView
-            case .constraint(let constraint):
-                return constraint.view
+            case .element(let element):
+                if let view = element.view {
+                    return view
+                } else {
+                    return nil
+                }
             }
         }
         
@@ -213,23 +221,7 @@ final class LayoutTree: Layoutable, Equatable {
                 return layoutIdentifier
             }
         }
-        
-        func addSubcontent(_ container: ContentContainer) {
-            guard let superview = self.view, let view = container.view else { return }
-            superview.addSubview(view)
-            
-            switch (self, container) {
-            case (.view(let superview), .constraint(let constraint)):
-                constraint.attach(to: superview)
-            case (.constraint(let constraint), .constraint(let target)):
-                target.attach(to: constraint)
-            case (.constraint(let constraint), .view(let view)):
-                constraint.attach(from: view)
-            default:
-                break
-            }
-        }
-        
+         
         func isEqual(_ container: ContentContainer?) -> Bool {
             switch (self, container) {
             case (.empty, .empty):
@@ -251,8 +243,8 @@ final class LayoutTree: Layoutable, Equatable {
                 return "empty"
             case .view(let uIView):
                 return uIView.layoutIdentifier
-            case .constraint(let constraint):
-                return constraint.layoutIdentifier
+            case .element(let element):
+                return element.layoutIdentifier
             }
         }
     }
