@@ -33,3 +33,7 @@ struct Equator<NoHashable: NoHashableImpl>: Hashable {
     }
     
 }
+
+extension Equator: CustomDebugStringConvertible where NoHashable: CustomDebugStringConvertible {
+    var debugDescription: String { from.debugDescription }
+}

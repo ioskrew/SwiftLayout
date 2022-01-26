@@ -38,7 +38,7 @@ class ConstraintTokenizingTests: XCTestCase {
             context("binding에서 생성한 constraint는") {
                 let binding: NSLayoutConstraint = SwiftLayout.Binding(first: left.top, second: right.top, rule: SwiftLayout.Rule.equal).bind()
                 context("동일하다") {
-                    XCTAssertEqual(constraint, binding)
+                    XCTAssertEqual(constraint.equator, binding.equator)
                 }
             }
         }
