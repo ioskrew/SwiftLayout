@@ -10,8 +10,12 @@ import XCTest
 
 class ConstraintTokenizingTests: XCTestCase {
 
+    var left: UIView!
+    var right: UIView!
+    
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        left = UIView().tag.left
+        right = UIView().tag.right
     }
 
     override func tearDownWithError() throws {

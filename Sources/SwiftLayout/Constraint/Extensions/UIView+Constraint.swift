@@ -10,8 +10,8 @@ import UIKit
 
 public extension UIView {
     
-    var top: SwiftLayout.Constraint {
-        SwiftLayout.Constraint(rule: .default, element: .init(item: .view(self), attribute: .top))
+    var top: SwiftLayout.Element {
+        SwiftLayout.Element(item: .view(self), attribute: .top)
     }
     
 }

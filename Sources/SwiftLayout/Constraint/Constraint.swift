@@ -10,10 +10,6 @@ import UIKit
 
 public extension SwiftLayout {
     
-    internal typealias ConstraintRule = SwiftLayout.Constraint.Rule
-    internal typealias ConstraintElement = SwiftLayout.Constraint.Element
-    internal typealias ConstraintElementItem = SwiftLayout.Constraint.Element.Item
-    
     struct Constraint: Equatable {
         
         var rule: Rule
@@ -85,83 +81,82 @@ public extension SwiftLayout {
             }
             return self
         }
-        
-        struct Rule: Equatable {
-            internal init(relation: NSLayoutConstraint.Relation = .equal, multiplier: CGFloat = 1.0, constant: CGFloat = 0.0) {
-                self.relation = relation
-                self.multiplier = multiplier
-                self.constant = constant
-            }
-            
-            let relation: NSLayoutConstraint.Relation
-            
-            var multiplier: CGFloat = 1.0
-            var constant: CGFloat = 0.0
-            
-            static var `default`: Self {
-                .init()
-            }
+    }
+    
+    struct Rule: Equatable {
+        internal init(relation: NSLayoutConstraint.Relation = .equal, multiplier: CGFloat = 1.0, constant: CGFloat = 0.0) {
+            self.relation = relation
+            self.multiplier = multiplier
+            self.constant = constant
         }
         
-        struct Element: Equatable {
-            let item: Item
-            let attribute: NSLayoutConstraint.Attribute
+        let relation: NSLayoutConstraint.Relation
+        
+        var multiplier: CGFloat = 1.0
+        var constant: CGFloat = 0.0
+        
+        static var `default`: Self {
+            .init()
+        }
+    }
+    
+    struct Element: Equatable {
+        let item: Item
+        let attribute: NSLayoutConstraint.Attribute
+        
+        var view: UIView? {
+            item.view
+        }
+        
+        var object: AnyObject? {
+            item.item
+        }
+        
+        enum Item: Equatable {
+            case view(UIView), guide(UILayoutGuide), none
+            
+            init(_ item: AnyObject?) {
+                if let item = item {
+                    if let view = item as? UIView {
+                        self = .view(view)
+                    } else if let guide = item as? UILayoutGuide {
+                        self = .guide(guide)
+                    } else {
+                        fatalError()
+                    }
+                } else {
+                    self = .none
+                }
+            }
+            
+            var item: AnyObject? {
+                switch self {
+                case .view(let uIView):
+                    return uIView
+                case .guide(let uILayoutGuide):
+                    return uILayoutGuide
+                case .none:
+                    return nil
+                }
+            }
             
             var view: UIView? {
-                item.view
-            }
-            
-            var object: AnyObject? {
-                item.item
-            }
-            
-            enum Item: Equatable {
-                case view(UIView), guide(UILayoutGuide), none
-                
-                init(_ item: AnyObject?) {
-                    if let item = item {
-                        if let view = item as? UIView {
-                            self = .view(view)
-                        } else if let guide = item as? UILayoutGuide {
-                            self = .guide(guide)
-                        } else {
-                            fatalError()
-                        }
-                    } else {
-                        self = .none
-                    }
-                }
-                
-                var item: AnyObject? {
-                    switch self {
-                    case .view(let uIView):
-                        return uIView
-                    case .guide(let uILayoutGuide):
-                        return uILayoutGuide
-                    case .none:
-                        return nil
-                    }
-                }
-                
-                var view: UIView? {
-                    switch self {
-                    case .view(let uIView):
-                        return uIView
-                    case .guide(let uILayoutGuide):
-                        return uILayoutGuide.owningView
-                    case .none:
-                        return nil
-                    }
+                switch self {
+                case .view(let uIView):
+                    return uIView
+                case .guide(let uILayoutGuide):
+                    return uILayoutGuide.owningView
+                case .none:
+                    return nil
                 }
             }
         }
-       
     }
     
     struct Binding: Equatable {
-        let first: SwiftLayout.ConstraintElement
-        let second: SwiftLayout.ConstraintElement?
-        let rule: SwiftLayout.ConstraintRule
+        let first: SwiftLayout.Element
+        let second: SwiftLayout.Element?
+        let rule: SwiftLayout.Rule
         
         func bind() -> NSLayoutConstraint {
             let constraint = NSLayoutConstraint(item: first.view!,
