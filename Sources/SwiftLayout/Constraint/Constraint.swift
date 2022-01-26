@@ -83,7 +83,7 @@ public extension SwiftLayout {
         }
     }
     
-    struct Rule: Equatable {
+    struct Rule: Equatable, CustomDebugStringConvertible {
         internal init(relation: NSLayoutConstraint.Relation = .equal, multiplier: CGFloat = 1.0, constant: CGFloat = 0.0) {
             self.relation = relation
             self.multiplier = multiplier
@@ -95,12 +95,16 @@ public extension SwiftLayout {
         var multiplier: CGFloat = 1.0
         var constant: CGFloat = 0.0
         
+        public var debugDescription: String {
+            "relation: \(relation), multiplier: \(multiplier), constant: \(constant)"
+        }
+        
         static var `default`: Self {
             .init()
         }
     }
     
-    struct Element: Equatable {
+    struct Element: Equatable, CustomDebugStringConvertible {
         let item: Item
         let attribute: NSLayoutConstraint.Attribute
         
@@ -112,7 +116,11 @@ public extension SwiftLayout {
             item.item
         }
         
-        enum Item: Equatable {
+        public var debugDescription: String {
+            "item: item.debugDescription, attribute: \(attribute.debugDescription)"
+        }
+        
+        enum Item: Equatable, CustomDebugStringConvertible {
             case view(UIView), guide(UILayoutGuide), none
             
             init(_ item: AnyObject?) {
@@ -150,12 +158,23 @@ public extension SwiftLayout {
                     return nil
                 }
             }
+            
+            var debugDescription: String {
+                switch self {
+                case .view(let uIView):
+                    return "view(\(uIView.layoutIdentifierWithType))"
+                case .guide(let uILayoutGuide):
+                    return "guide(\(uILayoutGuide.owningView?.layoutIdentifierWithType ?? "nil"))"
+                case .none:
+                    return "none"
+                }
+            }
         }
     }
     
     ///
     /// Binding
-    struct Binding: Equatable {
+    struct Binding: Equatable, CustomDebugStringConvertible {
         
         /// Binding 생성자
         /// - Parameters:
@@ -182,6 +201,16 @@ public extension SwiftLayout {
                                                 constant: rule.constant)
             constraint.isActive = true
             return constraint
+        }
+        
+        public var debugDescription: String {
+            var descriptions: [String] = []
+            descriptions.append("first: \(first) -> ")
+            descriptions.append(rule.debugDescription)
+            if let second = second {
+                descriptions.append("second: \(second)")
+            }
+            return descriptions.joined(separator: ", ")
         }
     }
     
