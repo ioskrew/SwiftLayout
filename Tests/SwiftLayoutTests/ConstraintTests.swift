@@ -9,7 +9,7 @@ import UIKit
 import XCTest
 @testable import SwiftLayout
 
-class ConstraintTokenizingTests: XCTestCase {
+class ConstraintTests: XCTestCase {
 
     var left: UIView!
     var right: UIView!
