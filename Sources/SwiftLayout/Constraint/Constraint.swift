@@ -153,7 +153,21 @@ public extension SwiftLayout {
         }
     }
     
+    ///
+    /// Binding
     struct Binding: Equatable {
+        
+        /// Binding 생성자
+        /// - Parameters:
+        ///   - first: layout constraint의 첫번째 item
+        ///   - second: layout constraint의 두번째 item
+        ///   - rule: 각 item의 결합 규칙
+        internal init(first: SwiftLayout.Element, second: SwiftLayout.Element?, rule: SwiftLayout.Rule = .default) {
+            self.first = first
+            self.second = second
+            self.rule = rule
+        }
+        
         let first: SwiftLayout.Element
         let second: SwiftLayout.Element?
         let rule: SwiftLayout.Rule

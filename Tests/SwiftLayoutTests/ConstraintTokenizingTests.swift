@@ -22,7 +22,15 @@ class ConstraintTokenizingTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
     
-    func testConstraint() {
-        
+    func testBinding() {
+        context("NSLayoutConstraint에서 가져온 Binding과") {
+            let bindingFromView = left.topAnchor.constraint(equalTo: right.topAnchor).binding
+            context("직접 생성한 Binding은") {
+                let binding = SwiftLayout.Binding(first: left.top, second: right.top)
+                context("동일하다") {
+                    XCTAssertEqual(bindingFromView, binding)
+                }
+            }
+        }
     }
 }
