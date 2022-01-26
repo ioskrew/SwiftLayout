@@ -28,6 +28,7 @@ class ConstraintTokenizingTests: XCTestCase {
             context("직접 생성한 Binding은") {
                 let binding = SwiftLayout.Binding(first: left.top, second: right.top)
                 context("동일하다") {
+                    print(bindingFromView)
                     XCTAssertEqual(bindingFromView, binding)
                 }
             }

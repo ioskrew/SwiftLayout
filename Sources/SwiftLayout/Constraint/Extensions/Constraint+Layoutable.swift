@@ -27,12 +27,8 @@ extension SwiftLayout.Constraint: Layoutable {
         return attribute.debugDescription + ":" + view.layoutIdentifier
     }
     
-    public var layoutIdentifierWithType: String {
-        return attribute.debugDescription + ":" + view.layoutIdentifierWithType
-    }
-    
     public var debugDescription: String {
-        layoutIdentifierWithType
+        layoutIdentifier
     }
     
 }

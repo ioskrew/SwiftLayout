@@ -147,10 +147,6 @@ final class LayoutTree: Layoutable, Equatable {
         content.layoutIdentifier
     }
     
-    var layoutIdentifierWithType: String {
-        content.layoutIdentifierWithType
-    }
-    
     enum TreeContainer: Equatable {
         case empty
         case tree(LayoutTree)
@@ -255,17 +251,6 @@ final class LayoutTree: Layoutable, Equatable {
                 return "empty"
             case .view(let uIView):
                 return uIView.layoutIdentifier
-            case .constraint(let constraint):
-                return constraint.layoutIdentifier
-            }
-        }
-        
-        var layoutIdentifierWithType: String {
-            switch self {
-            case .empty:
-                return "empty"
-            case .view(let uIView):
-                return uIView.layoutIdentifierWithType
             case .constraint(let constraint):
                 return constraint.layoutIdentifier
             }

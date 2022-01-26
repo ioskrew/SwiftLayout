@@ -19,7 +19,6 @@ public protocol Layoutable: CustomDebugStringConvertible {
     func isEqualView(_ view: UIView?) -> Bool
     
     var layoutIdentifier: String { get }
-    var layoutIdentifierWithType: String { get }
 }
 
 extension Layoutable {

@@ -96,7 +96,7 @@ public extension SwiftLayout {
         var constant: CGFloat = 0.0
         
         public var debugDescription: String {
-            "relation: \(relation), multiplier: \(multiplier), constant: \(constant)"
+            return "\(relation)(\(constant < 0.0 ? "-" : "+")\(constant) x \(multiplier))"
         }
         
         static var `default`: Self {
@@ -117,7 +117,7 @@ public extension SwiftLayout {
         }
         
         public var debugDescription: String {
-            "item: item.debugDescription, attribute: \(attribute.debugDescription)"
+            "\(item.debugDescription).\(attribute.debugDescription)"
         }
         
         enum Item: Equatable, CustomDebugStringConvertible {
@@ -162,9 +162,9 @@ public extension SwiftLayout {
             var debugDescription: String {
                 switch self {
                 case .view(let uIView):
-                    return "view(\(uIView.layoutIdentifierWithType))"
+                    return "view(\(uIView.layoutIdentifier))"
                 case .guide(let uILayoutGuide):
-                    return "guide(\(uILayoutGuide.owningView?.layoutIdentifierWithType ?? "nil"))"
+                    return "guide(\(uILayoutGuide.owningView?.layoutIdentifier ?? "nil"))"
                 case .none:
                     return "none"
                 }
@@ -205,7 +205,7 @@ public extension SwiftLayout {
         
         public var debugDescription: String {
             var descriptions: [String] = []
-            descriptions.append("first: \(first) -> ")
+            descriptions.append("first: \(first)")
             descriptions.append(rule.debugDescription)
             if let second = second {
                 descriptions.append("second: \(second)")

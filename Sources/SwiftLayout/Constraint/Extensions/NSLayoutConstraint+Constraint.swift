@@ -41,7 +41,40 @@ extension NSLayoutConstraint.Attribute: CustomDebugStringConvertible {
             return "leading"
         case .trailing:
             return "trailing"
+        case .left:
+            return "left"
+        case .right:
+            return "right"
+        case .centerX:
+            return "center.x"
+        case .centerY:
+            return "center.y"
+        case .firstBaseline:
+            return "baseline.first"
+        case .lastBaseline:
+            return "baseline.last"
+        case .width:
+            return "width"
+        case .height:
+            return "height"
+        case .notAnAttribute:
+            return "none"
         default:
+            return ""
+        }
+    }
+}
+
+extension NSLayoutConstraint.Relation: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        switch self {
+        case .equal:
+            return "=="
+        case .greaterThanOrEqual:
+            return ">="
+        case .lessThanOrEqual:
+            return "<="
+        @unknown default:
             return ""
         }
     }
