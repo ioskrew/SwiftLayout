@@ -23,6 +23,10 @@ class ConstraintTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
     
+    func testAnchorBox() {
+        let leftTopBox = ConstraintAnchorBox(left.topAnchor)
+    }
+    
     func testBinding() {
         context("NSLayoutConstraint에서 가져온 Binding과") {
             let bindingFromView = left.topAnchor.constraint(equalTo: right.topAnchor).binding
