@@ -31,3 +31,8 @@ view hierarchy and autolayout DSL library
         }
     }
 ```
+
+## Principal
+
+- 외부로 노출하는 API는 UIView에서 사용가능한것 외에 새로운 것을 사용하지 않는다.
+
