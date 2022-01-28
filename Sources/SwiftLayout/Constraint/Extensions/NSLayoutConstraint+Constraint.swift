@@ -16,15 +16,15 @@ extension NSLayoutConstraint {
                             rule: constraintRule)
     }
     
-    private var firstConstraintElement: SwiftLayout.Element {
+    var firstConstraintElement: SwiftLayout.Element {
         SwiftLayout.Element(item: SwiftLayout.Element.Item(self.firstItem), attribute: firstAttribute)
     }
     
-    private var secondConstraintElement: SwiftLayout.Element? {
+    var secondConstraintElement: SwiftLayout.Element? {
         return SwiftLayout.Element(item: SwiftLayout.Element.Item(self.secondItem), attribute: secondAttribute)
     }
     
-    private var constraintRule: SwiftLayout.Rule {
+    var constraintRule: SwiftLayout.Rule {
         .init(relation: relation, multiplier: multiplier, constant: constant)
     }
     

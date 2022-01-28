@@ -8,19 +8,35 @@
 import Foundation
 import UIKit
 
-/// NSLayoutConstraint의 Equator는 attribute와 item간의 관계
-/// 만 바라봅니다.
+///
+/// NSLayoutConstraint가 서로 같다고 판단할 수 있는 경우
+///
+/// - firstItem
+/// - firstAttribute
+/// - priority
+/// - secondItem
+/// - secondAttribute
+///
 extension NSLayoutConstraint: NoHashableImpl {
     
     var equator: Equator<NSLayoutConstraint> {
-        Equator(from: self)
+        Equator(self)
+    }
+    
+    func isEqual(with object: NoHashableImpl) -> Bool {
+        guard let constraint = object as? Self else { return false }
+        if self.hashValue == constraint.hashValue {
+            return true
+        } else {
+            return self.firstConstraintElement == constraint.firstConstraintElement
+            && self.secondConstraintElement == constraint.secondConstraintElement
+        }
     }
     
     func combineToHasher(_ hasher: inout Hasher) {
-        hasher.combine(self.firstItem as? NSObject)
-        hasher.combine(self.firstAttribute)
-        hasher.combine(self.secondItem as? NSObject)
-        hasher.combine(self.secondAttribute)
+        hasher.combine(self.hashValue)
+        hasher.combine(self.firstConstraintElement)
+        hasher.combine(self.secondConstraintElement)
     }
     
 }

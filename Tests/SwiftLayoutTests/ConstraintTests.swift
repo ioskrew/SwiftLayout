@@ -28,6 +28,12 @@ class ConstraintTests: XCTestCase {
         let rightTopBox = LayoutAnchorBox(right.topAnchor)
         
         let constraint = leftTopBox.constraint(equalTo: rightTopBox)!
+        
+        XCTAssertEqual(constraint.firstConstraintElement.view, left)
+        XCTAssertEqual(constraint.firstConstraintElement.attribute, .top)
+        XCTAssertEqual(constraint.secondConstraintElement?.view, right)
+        XCTAssertEqual(constraint.secondConstraintElement?.attribute, .top)
+        XCTAssertEqual(constraint.constraintRule, .equal)
     }
     
     func testBinding() {

@@ -8,6 +8,7 @@
 import Foundation
 
 protocol NoHashableImpl {
+    func isEqual(with object: NoHashableImpl) -> Bool
     func combineToHasher(_ hasher: inout Hasher)
 }
 
@@ -17,23 +18,27 @@ protocol NoHashableEquatable: NoHashableImpl {
 
 extension NoHashableEquatable {
     var equator: Equator<Self> {
-        Equator(from: self)
+        Equator(self)
     }
 }
 
 struct Equator<NoHashable: NoHashableImpl>: Hashable {
+    
+    internal init(_ noHashable: NoHashable) {
+        self.noHashable = noHashable
+    }
+    
     static func == (lhs: Equator<NoHashable>, rhs: Equator<NoHashable>) -> Bool {
-        lhs.hashValue == rhs.hashValue
+        lhs.noHashable.isEqual(with: rhs.noHashable)
     }
  
-    let from: NoHashable
+    let noHashable: NoHashable
     
     func hash(into hasher: inout Hasher) {
-        from.combineToHasher(&hasher)
+        noHashable.combineToHasher(&hasher)
     }
-    
 }
 
 extension Equator: CustomDebugStringConvertible where NoHashable: CustomDebugStringConvertible {
-    var debugDescription: String { from.debugDescription }
+    var debugDescription: String { noHashable.debugDescription }
 }
