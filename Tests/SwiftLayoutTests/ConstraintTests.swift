@@ -24,7 +24,8 @@ class ConstraintTests: XCTestCase {
     }
     
     func testAnchorBox() {
-        let leftTopBox = ConstraintAnchorBox(left.topAnchor)
+        let leftTopBox = LayoutAnchorBox(left.topAnchor)
+        let rightTopBox = LayoutAnchorBox(right.topAnchor)
     }
     
     func testBinding() {
