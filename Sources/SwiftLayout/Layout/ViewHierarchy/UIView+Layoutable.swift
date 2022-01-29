@@ -8,7 +8,11 @@
 import Foundation
 import UIKit
 
-extension UIView: Layoutable {
+extension UIView: ViewContainLayoutable {
+    var view: UIView {
+        self
+    }
+    
     public func moveToSuperlayoutable(_ layoutable: Layoutable) -> Layoutable {
         guard let view = layoutable as? UIView else { return layoutable }
         view.addSubview(self)
