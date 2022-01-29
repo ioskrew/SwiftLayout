@@ -20,6 +20,14 @@ final class SwiftLayoutTests: XCTestCase {
         
     }
     
+    func testLayoutTreeBuild() {
+        let tree = root {
+            yellow
+        }
+        
+        XCTAssertEqual(type(of: tree), LayoutTree.self)
+    }
+    
     func testLayoutContainableDoNotContain() {
         context("root의 layoutable을 보관하지 않으면") {
             root {

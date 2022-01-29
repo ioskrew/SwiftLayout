@@ -13,7 +13,7 @@ view hierarchy and autolayout DSL library
 
 ### View Hierarhcy DSL
 
-- view의 부모와 자식의 관계는 아래와 같이 이루어진다.
+- view의 부모와 자식의 관계는 아래와 같이 더해진다.
 ```swift
 parent {
     child1
