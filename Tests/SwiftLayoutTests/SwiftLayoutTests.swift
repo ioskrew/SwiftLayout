@@ -45,6 +45,22 @@ final class SwiftLayoutTests: XCTestCase {
         XCTAssertEqual(Set(root.subviews), Set([yellow, green]))
     }
     
+    func testNDepthViewHierarchy() {
+        root {
+            yellow {
+                green
+                red {
+                    blue
+                }
+            }
+        }
+        
+        XCTAssertEqual(blue.superview, red)
+        XCTAssertEqual(red.superview, yellow)
+        XCTAssertEqual(green.superview, yellow)
+        XCTAssertEqual(yellow.superview, root)
+    }
+    
 }
 extension UIView {
 
