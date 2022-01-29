@@ -20,6 +20,17 @@ final class SwiftLayoutTests: XCTestCase {
         
     }
     
+    func testLayoutContainableDoNotContain() {
+        context("root의 layoutable을 보관하지 않으면") {
+            root {
+                yellow
+            }
+            context("yellow의 superview는 사라진다") {
+                XCTAssertNil(yellow.superview)
+            }
+        }
+    }
+    
     func testSimpleViewHierarchy() {
         root {
             yellow
