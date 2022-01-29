@@ -9,5 +9,5 @@ import Foundation
 import UIKit
 
 public protocol Layoutable {
-  
+    func moveToSuperlayoutable(_ layoutable: Layoutable) -> Layoutable
 }
