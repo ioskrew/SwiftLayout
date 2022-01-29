@@ -1,17 +1,22 @@
 //
-//  LayoutComponents.swift
+//  LayoutableComponents.swift
 //  
 //
 //  Created by oozoofrog on 2022/01/29.
 //
 
 import Foundation
+import UIKit
 
-struct LayoutComponents: Layoutable {
+struct LayoutableComponents: Layoutable {
     let layoutables: [Layoutable]
     
     var views: [UIView] {
         layoutables.compactMap(cast(UIView.self))
+    }
+    
+    init(_ layoutables: [Layoutable]) {
+        self.layoutables = layoutables
     }
     
     func moveToSuperlayoutable(_ layoutable: Layoutable) -> Layoutable {

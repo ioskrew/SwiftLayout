@@ -23,7 +23,7 @@ public struct LayoutBuilder {
     }
     
     public static func buildArray(_ components: [Layoutable]) -> Layoutable {
-        LayoutComponents(layoutables: components)
+        LayoutableComponents(components)
     }
     
     internal struct EmptyLayout: Layoutable {
