@@ -14,12 +14,22 @@ public struct LayoutBuilder {
        buildArray(components)
     }
     
+    public static func buildOptional(_ component: Layoutable?) -> Layoutable {
+        component ?? EmptyLayout()
+    }
+    
     public static func buildEither(first component: Layoutable) -> Layoutable {
         buildArray([component])
     }
     
     public static func buildArray(_ components: [Layoutable]) -> Layoutable {
         LayoutComponents(layoutables: components)
+    }
+    
+    internal struct EmptyLayout: Layoutable {
+        func moveToSuperlayoutable(_ layoutable: Layoutable) -> Layoutable {
+            layoutable
+        }
     }
     
     internal struct LayoutComponents: Layoutable {
