@@ -15,6 +15,12 @@ final class SwiftLayoutTests: XCTestCase {
         try super.setUpWithError()
     }
     
+    func testSimpleViewHierarchy() {
+        root {
+            yellow
+        }
+    }
+    
 }
 extension UIView {
 
