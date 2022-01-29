@@ -1,7 +1,6 @@
 import XCTest
 import UIKit
 @testable import SwiftLayout
-import SwiftUI
 
 final class SwiftLayoutTests: XCTestCase {
     
