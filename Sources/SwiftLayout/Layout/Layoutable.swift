@@ -11,3 +11,7 @@ import UIKit
 public protocol Layoutable {
     func moveToSuperlayoutable(_ layoutable: Layoutable) -> Layoutable
 }
+
+protocol ViewContainLayoutable: Layoutable {
+    var view: UIView { get }
+}

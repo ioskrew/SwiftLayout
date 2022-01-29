@@ -37,7 +37,7 @@ final class SwiftLayoutTests: XCTestCase {
         XCTAssertEqual(Set(root.subviews), Set([yellow, green]))
     }
     
-    func testViewArrayHierarchy() {
+    func testAnyLayoutable() {
         root {
             [yellow, green].anyLayoutable()
         }

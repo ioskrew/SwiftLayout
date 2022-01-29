@@ -12,7 +12,7 @@ struct LayoutableComponents: Layoutable {
     let layoutables: [Layoutable]
     
     var views: [UIView] {
-        layoutables.compactMap(cast(UIView.self))
+        layoutables.compactMap(cast(ViewContainLayoutable.self)).compactMap(\.view)
     }
     
     init(_ layoutables: [Layoutable]) {
