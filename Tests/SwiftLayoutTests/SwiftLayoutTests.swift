@@ -37,6 +37,14 @@ final class SwiftLayoutTests: XCTestCase {
         XCTAssertEqual(Set(root.subviews), Set([yellow, green]))
     }
     
+    func testViewArrayHierarchy() {
+        root {
+            [yellow, green].anyLayoutable()
+        }
+        
+        XCTAssertEqual(Set(root.subviews), Set([yellow, green]))
+    }
+    
 }
 extension UIView {
 
