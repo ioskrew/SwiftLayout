@@ -34,10 +34,6 @@ public struct LayoutBuilder {
         component
     }
     
-    internal struct EmptyLayout: Layoutable {
-        func moveToSuperlayoutable(_ layoutable: Layoutable) -> Layoutable {
-            layoutable
-        }
-    }
+    internal struct EmptyLayout: Layoutable {}
     
 }
