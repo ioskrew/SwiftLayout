@@ -7,3 +7,18 @@ view hierarchy and autolayout DSL library
 2. 가능한 기존 API와 인수등을 그대로 혹시 비슷하게 사용할 수 있도록 합니다
    - constraint의 relation, multiplier, constant
    - view의 hugging, compression등
+
+## Version
+### 0.1
+
+- View Add Subview의 DSL 추가
+
+```swift
+let parent: UIView
+let child: UIView
+// child.superview == parent
+parent {
+  child
+}
+```
+
