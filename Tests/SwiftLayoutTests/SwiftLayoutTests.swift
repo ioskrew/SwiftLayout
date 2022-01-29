@@ -28,8 +28,13 @@ final class SwiftLayoutTests: XCTestCase {
         XCTAssertEqual(yellow.superview, root)
     }
     
-    func testViewsHierarchy() {
+    func testViewBlockHierarchy() {
+        root {
+            yellow
+            green
+        }
         
+        XCTAssertEqual(Set(root.subviews), Set([yellow, green]))
     }
     
 }
