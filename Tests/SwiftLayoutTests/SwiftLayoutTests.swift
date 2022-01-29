@@ -25,7 +25,7 @@ final class SwiftLayoutTests: XCTestCase {
             yellow
         }
         
-        XCTAssertEqual(type(of: tree), LayoutTree.self)
+        XCTAssertTrue(tree is LayoutTree, "\(type(of: tree)) is not LayoutTree")
     }
     
     func testLayoutContainableDoNotContain() {

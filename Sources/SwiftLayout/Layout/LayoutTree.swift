@@ -11,6 +11,6 @@ import UIKit
 struct LayoutTree: Layoutable {
     
     let view: UIView
-    let subviews: [UIView]
+    let subtree: [LayoutTree]
     
 }

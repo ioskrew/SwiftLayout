@@ -8,13 +8,7 @@
 import Foundation
 import UIKit
 
-extension UIView: Layoutable {
-    public func addSublayoutable(_ layoutable: Layoutable) -> Layoutable {
-        guard let view = layoutable as? UIView else { return layoutable }
-        view.addSubview(self)
-        return layoutable
-    }
-}
+extension UIView: Layoutable {}
 
 public extension Layoutable where Self: UIView {
     
