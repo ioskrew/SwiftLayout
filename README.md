@@ -24,7 +24,7 @@ parent {
     ...
 }
 ```
-
+- Layoutable과 LayoutBuilder의 조합은 ViewHierarchy의 tree구조를 생성한다.
 - 관계 DSL은 `Layoutable`을 반환하며, 해당 layoutable을 레퍼런스로 들고 있지 않으면 부모 자식 관계는 사라진다.
 
 ## Version
