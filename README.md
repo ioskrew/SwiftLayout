@@ -1,33 +1,9 @@
 # SwiftLayout
 view hierarchy and autolayout DSL library
 
-# goal
-뷰의 계층구조와 constraint 관계를 편리하고 보기 쉽게 설정할 수 있는 라이브러리를 목표로 하고 있습니다.
+## 원칙
 
-```swift
-    let yellow = UIView()
-    yellow.backgroundColor = .yellow
-    
-    let green = UIView()
-    green.backgroundColor = .green
-    
-    let red = UIView()
-    red.backgroundColor = .red
-    
-    let blue = UIView()
-    blue.backgroundColor = .blue
-    
-    // view의 계층구조에서 별도의 constraint를 지정하지 않으면 
-    // 항상 부모뷰의 top, bottom, leading, parent에 붙습니다.
-    view {
-        if flag {
-            yellow {
-                green
-            }
-        } else {
-            red {
-                blue
-            }
-        }
-    }
-```
+1. 사용자가 새로 배워야 하는 API는 최소한으로 합니다
+2. 가능한 기존 API와 인수등을 그대로 혹시 비슷하게 사용할 수 있도록 합니다
+   - constraint의 relation, multiplier, constant
+   - view의 hugging, compression등
