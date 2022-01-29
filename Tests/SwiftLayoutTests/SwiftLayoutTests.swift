@@ -4,20 +4,32 @@ import UIKit
 
 final class SwiftLayoutTests: XCTestCase {
     
-    let root = UIView().tag.root
-    let yellow = UIView().tag.yellow
-    let green = UIView().tag.green
-    let red = UIView().tag.red
-    let blue = UIView().tag.blue
+    var root: UIView!
+    var yellow: UIView!
+    var green: UIView!
+    var red: UIView!
+    var blue: UIView!
     
-    override func setUp() async throws {
-        try super.setUpWithError()
+    override func setUp() {
+        
+        root = UIView().tag.root
+        yellow = UIView().tag.yellow
+        green = UIView().tag.green
+        red = UIView().tag.red
+        blue = UIView().tag.blue
+        
     }
     
     func testSimpleViewHierarchy() {
         root {
             yellow
         }
+        
+        XCTAssertEqual(yellow.superview, root)
+    }
+    
+    func testViewsHierarchy() {
+        
     }
     
 }
