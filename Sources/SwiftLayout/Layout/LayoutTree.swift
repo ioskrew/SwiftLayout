@@ -8,12 +8,21 @@
 import Foundation
 import UIKit
 
-struct LayoutTree: Layoutable {
+public class LayoutTree: Layoutable {
+    
+    internal init(view: UIView, subtree: [LayoutTree] = []) {
+        self.view = view
+        self.subtree = subtree
+    }
     
     let view: UIView
-    let subtree: [LayoutTree]
+    var subtree: [LayoutTree]
     
-    func active() -> Layoutable {
+    public func active() -> Layoutable {
+        self
+    }
+    
+    public func layoutTree(in parent: UIView) -> LayoutTree {
         self
     }
     

@@ -19,4 +19,8 @@ struct LayoutableComponents: Layoutable {
         layoutables.forEach({ $0.active() })
         return self
     }
+    
+    func layoutTree(in parent: UIView) -> LayoutTree {
+        LayoutTree(view: parent, subtree: layoutables.map({ $0.layoutTree(in: parent) }))
+    }
 }
