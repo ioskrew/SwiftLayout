@@ -17,9 +17,9 @@ public class LayoutTree: Layoutable, CustomDebugStringConvertible {
     
     deinit {
         #if DEBUG
-        print("<====DEINIT LAYOUT_TREE=====>")
-        print(self.debugDescription)
-        print("<\\===DEINIT LAYOUT_TREE=====>")
+        print("<deinit LayoutTree>")
+        print(self.tagDescription(prefix: "\t"))
+        print("</deinit LayoutTree>")
         #endif
         deactive()
     }
@@ -54,16 +54,16 @@ public class LayoutTree: Layoutable, CustomDebugStringConvertible {
     }
     
     public var debugDescription: String {
-        var tag = TagDescriptor(view).debugDescription
-        if !subtrees.isEmpty {
-            let subs = subtrees.map(\.debugDescription)
-            let count = tag.count
-            let elementPrefix = " ".repeated(count + 3)
-            let parenthesisPrefix = " ".repeated(count)
-            tag += " {\n"
-            tag += subs.map(elementPrefix+).joined(separator: "\n")
-            tag += "\n" + parenthesisPrefix + " }\n"
-        }
-        return tag
+        tagDescription(prefix: "")
     }
+    
+    private func tagDescription(prefix: String) -> String {
+        var description = prefix + view.tagDescription
+        if !subtrees.isEmpty {
+            description += "\n"
+            description += subtrees.map({ $0.tagDescription(prefix: prefix + "\t") }).joined(separator: "\n")
+        }
+        return description
+    }
+    
 }

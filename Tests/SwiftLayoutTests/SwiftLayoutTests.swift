@@ -89,6 +89,7 @@ final class SwiftLayoutTests: XCTestCase {
             }
         }.active()
         
+        print(layoutable!)
         XCTAssertEqual(blue.superview, red)
         XCTAssertEqual(red.superview, yellow)
         XCTAssertEqual(green.superview, yellow)

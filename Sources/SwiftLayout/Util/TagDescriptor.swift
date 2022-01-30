@@ -24,7 +24,15 @@ struct TagDescriptor<Value>: CustomDebugStringConvertible where Value: UIAccessi
     }
     
     var debugDescription: String {
-        "\(type(of: self))(\(identifier))"
+        "\(type(of: self.value))(\(identifier))"
+    }
+    
+}
+
+extension UIView {
+    
+    var tagDescription: String {
+        TagDescriptor(self).debugDescription
     }
     
 }
