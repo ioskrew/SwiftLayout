@@ -13,4 +13,8 @@ struct LayoutTree: Layoutable {
     let view: UIView
     let subtree: [LayoutTree]
     
+    func active() -> Layoutable {
+        self
+    }
+    
 }

@@ -14,4 +14,9 @@ struct LayoutableComponents: Layoutable {
     init(_ layoutables: [Layoutable]) {
         self.layoutables = layoutables
     }
+    
+    func active() -> Layoutable {
+        layoutables.forEach({ $0.active() })
+        return self
+    }
 }

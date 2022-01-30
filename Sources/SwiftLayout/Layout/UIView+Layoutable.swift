@@ -8,7 +8,11 @@
 import Foundation
 import UIKit
 
-extension UIView: Layoutable {}
+extension UIView: Layoutable {
+    public func active() -> Layoutable {
+        self
+    }
+}
 
 public extension Layoutable where Self: UIView {
     
