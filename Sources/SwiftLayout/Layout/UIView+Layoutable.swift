@@ -12,13 +12,17 @@ extension UIView: Layoutable {
     public func active() -> Layoutable {
         self
     }
+    
+    public func layoutTree(in parent: UIView) -> LayoutTree {
+        LayoutTree(view: parent, subtree: [LayoutTree(view: self)])
+    }
 }
 
 public extension Layoutable where Self: UIView {
     
     @discardableResult
     func callAsFunction(@LayoutBuilder _ content: () -> Layoutable) -> Layoutable {
-        self
+        content().layoutTree(in: self)
     }
     
 }

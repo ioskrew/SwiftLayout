@@ -11,4 +11,5 @@ import UIKit
 public protocol Layoutable {
     @discardableResult
     func active() -> Layoutable
+    func layoutTree(in parent: UIView) -> LayoutTree
 }

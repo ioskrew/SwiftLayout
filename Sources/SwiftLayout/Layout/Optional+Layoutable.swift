@@ -6,9 +6,14 @@
 //
 
 import Foundation
+import UIKit
 
 extension Optional: Layoutable where Wrapped: Layoutable {
     public func active() -> Layoutable {
-        self
+        self?.active() ?? EmptyLayout()
+    }
+    
+    public func layoutTree(in parent: UIView) -> LayoutTree {
+        self?.layoutTree(in: parent) ?? LayoutTree(view: parent)
     }
 }
