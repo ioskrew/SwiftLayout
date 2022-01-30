@@ -41,12 +41,8 @@ public class LayoutTree: Layoutable, CustomDebugStringConvertible {
     }
     
     public func deactive() {
-        subtrees.forEach({ $0.deactiveChild() })
-    }
-    
-    public func deactiveChild() {
         view.removeFromSuperview()
-        subtrees.forEach({ $0.deactiveChild() })
+        subtrees.forEach({ $0.deactive() })
     }
     
     public func layoutTree(in parent: UIView) -> LayoutTree {

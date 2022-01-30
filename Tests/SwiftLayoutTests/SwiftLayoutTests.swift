@@ -4,6 +4,8 @@ import UIKit
 
 final class SwiftLayoutTests: XCTestCase {
     
+    var superview: UIView!
+    
     var root: UIView!
     var yellow: UIView!
     var green: UIView!
@@ -13,6 +15,8 @@ final class SwiftLayoutTests: XCTestCase {
     var layoutable: Layoutable?
     
     override func setUp() {
+        
+        superview = UIView().tag.superview
         
         root = UIView().tag.root
         yellow = UIView().tag.yellow
@@ -45,6 +49,18 @@ final class SwiftLayoutTests: XCTestCase {
                 tree.deactive()
                 context("LayoutTree의 view hierarchy를 모두 제거한다.") {
                     XCTAssertTrue(tree is LayoutTree, "\(type(of: tree)) is not LayoutTree")
+                    XCTAssertNil(yellow.superview)
+                }
+            }
+        }
+        context("LayoutTree 생성 후") {
+            let tree = root {
+                yellow
+            }.active()
+            context("deactive상태가 되면") {
+                tree.deactive()
+                context("root tree의 뷰의 superview는 해제되지 않는다.") {
+                    XCTAssertEqual(root.superview, self.superview)
                     XCTAssertNil(yellow.superview)
                 }
             }
