@@ -50,10 +50,10 @@ final class SwiftLayoutTests: XCTestCase {
     }
     
     func testViewBlockHierarchy() {
-        root {
+        layoutable = root {
             yellow
             green
-        }
+        }.active()
         
         XCTAssertEqual(Set(root.subviews), Set([yellow, green]))
     }

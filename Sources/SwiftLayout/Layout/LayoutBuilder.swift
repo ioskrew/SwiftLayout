@@ -15,11 +15,7 @@ public struct LayoutBuilder {
     }
     
     public static func buildArray(_ components: [Layoutable]) -> Layoutable {
-        if components.count == 1 {
-            return components[0]
-        } else {
-            return LayoutableComponents(components)
-        }
+        LayoutableComponents(components)
     }
     
     public static func buildOptional(_ component: Layoutable?) -> Layoutable {

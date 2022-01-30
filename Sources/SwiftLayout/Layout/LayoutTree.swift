@@ -12,11 +12,11 @@ public class LayoutTree: Layoutable {
     
     internal init(view: UIView, subtree: [LayoutTree] = []) {
         self.view = view
-        self.subtree = subtree
+        self.subtrees = subtree
     }
     
     let view: UIView
-    var subtree: [LayoutTree]
+    var subtrees: [LayoutTree]
     
     func addToParentView(to parent: UIView) {
         parent.addSubview(view)
@@ -24,7 +24,7 @@ public class LayoutTree: Layoutable {
     
     @discardableResult
     public func active() -> Layoutable {
-        subtree.forEach({
+        subtrees.forEach({
             $0.addToParentView(to: view)
             $0.active()
         })
