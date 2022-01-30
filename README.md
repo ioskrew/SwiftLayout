@@ -24,7 +24,12 @@ parent {
     ...
 }
 ```
-- Layoutable과 LayoutBuilder의 조합은 LayoutTree의 tree구조를 생성한다.
+- Layoutable과 LayoutBuilder의 조합을 active() 함수로 반환할 때 LayoutTree의 tree구조를 생성한다. 해당 구조를 인스턴스로 들고 있어야 view의 addsubview tree가 유지된다.
+```swift
+let layoutable = parent {
+    child
+}.active()
+```
 - view와 subview의 관계는 항상 LayoutTree가 필요하며 그 외의 계층구조는 만들지 않는다.
 - 관계 DSL은 `Layoutable`을 반환하며, 해당 layoutable을 레퍼런스로 들고 있지 않으면 부모 자식 관계는 사라진다.
 
