@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-public class LayoutTree: Layoutable, CustomDebugStringConvertible, Equatable {
+public class LayoutTree: Layoutable, CustomDebugStringConvertible, Hashable {
     
     public static func == (lhs: LayoutTree, rhs: LayoutTree) -> Bool {
         lhs.uuid == rhs.uuid
@@ -20,43 +20,62 @@ public class LayoutTree: Layoutable, CustomDebugStringConvertible, Equatable {
     }
     
     deinit {
-        #if DEBUG
-        print("<deinit LayoutTree>")
-        print(self.tagDescription(prefix: "\t"))
-        print("</deinit LayoutTree>")
-        #endif
         deactive()
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(uuid)
     }
     
     private let uuid = UUID()
     
-    private weak var parentTree: LayoutTree?
+    private var parentTree: ParentTree = .none
     let view: UIView
     var subtrees: [LayoutTree]
     
-    func addToParentView(to parent: LayoutTree) {
+    func attachToParent(_ parent: LayoutTree) {
         parent.view.addSubview(view)
-        parentTree = parent
+        parentTree = .tree(parent)
+        subtrees.forEach { tree in
+            tree.attachToParent(self)
+        }
+        #if DEBUG
+        print(parent.view.tagDescription + " <- " + view.tagDescription)
+        #endif
+    }
+    
+    func detachFromParent(_ parent: LayoutTree) {
+        if parentTree == .tree(parent) {
+            if view.superview == parent.view {
+                view.removeFromSuperview()
+            }
+            parentTree = .none
+        }
+        #if DEBUG
+        print(parent.view.tagDescription + " <|> " + view.tagDescription)
+        #endif
     }
     
     @discardableResult
-    public func active() -> Layoutable {
-        subtrees.forEach({
-            $0.addToParentView(to: self)
-            $0.active()
-        })
-        return self
+    public func active() -> AnyLayoutable {
+        subtrees.forEach { tree in
+            tree.attachToParent(self)
+        }
+        return AnyLayoutable(self)
     }
     
     public func deactive() {
-        if parentTree != nil {
-            view.removeFromSuperview()
+        subtrees.forEach { tree in
+            tree.detachFromParent(self)
         }
-        subtrees.forEach({ $0.deactive() })
     }
     
     public func layoutTree(in parent: UIView) -> LayoutTree {
         self
+    }
+    
+    public var equation: AnyHashable {
+        AnyHashable(uuid)
     }
     
     public var debugDescription: String {
@@ -72,6 +91,10 @@ public class LayoutTree: Layoutable, CustomDebugStringConvertible, Equatable {
         return description
     }
     
+    enum ParentTree: Hashable {
+        case none
+        case tree(LayoutTree)
+    }
 }
 
 extension Collection where Element: LayoutTree, Self: CustomDebugStringConvertible, Self: CustomStringConvertible {

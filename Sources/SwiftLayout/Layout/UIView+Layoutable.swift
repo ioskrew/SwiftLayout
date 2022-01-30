@@ -9,12 +9,16 @@ import Foundation
 import UIKit
 
 extension UIView: Layoutable {
-    public func active() -> Layoutable {
-        self
+    public func active() -> AnyLayoutable {
+        AnyLayoutable(self)
     }
     
     public func layoutTree(in parent: UIView) -> LayoutTree {
         LayoutTree(view: self, subtree: [])
+    }
+    
+    public var equation: AnyHashable {
+        AnyHashable(self)
     }
 }
 

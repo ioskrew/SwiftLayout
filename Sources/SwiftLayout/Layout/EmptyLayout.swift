@@ -9,10 +9,14 @@ import Foundation
 import UIKit
 
 struct EmptyLayout: Layoutable {
-    func active() -> Layoutable {
-        self
+    func active() -> AnyLayoutable {
+        AnyLayoutable(nil)
     }
     func layoutTree(in parent: UIView) -> LayoutTree {
         LayoutTree(view: parent, subtree: [])
+    }
+    
+    var equation: AnyHashable {
+        AnyHashable(0)
     }
 }

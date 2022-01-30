@@ -12,7 +12,7 @@ final class SwiftLayoutTests: XCTestCase {
     var red: UIView!
     var blue: UIView!
     
-    var layoutable: Layoutable?
+    var layoutable: AnyLayoutable?
     
     override func setUp() {
         
@@ -32,7 +32,7 @@ final class SwiftLayoutTests: XCTestCase {
                 yellow
             }.active()
             context("LayoutTree를 반환한다.") {
-                XCTAssertTrue(tree is LayoutTree, "\(type(of: tree)) is not LayoutTree")
+                XCTAssertTrue(tree.layoutable is LayoutTree, "\(type(of: tree)) is not LayoutTree")
                 XCTAssertEqual(yellow.superview, root)
             }
         }
@@ -48,12 +48,13 @@ final class SwiftLayoutTests: XCTestCase {
             context("deactive()를 호출하면 ") {
                 tree.deactive()
                 context("LayoutTree의 view hierarchy를 모두 제거한다.") {
-                    XCTAssertTrue(tree is LayoutTree, "\(type(of: tree)) is not LayoutTree")
+                    XCTAssertTrue(tree.layoutable is LayoutTree, "\(type(of: tree)) is not LayoutTree")
                     XCTAssertNil(yellow.superview)
                 }
             }
         }
         context("LayoutTree 생성 후") {
+            superview.addSubview(root)
             let tree = root {
                 yellow
             }.active()

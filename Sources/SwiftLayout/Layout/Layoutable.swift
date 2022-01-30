@@ -10,9 +10,11 @@ import UIKit
 
 public protocol Layoutable {
     @discardableResult
-    func active() -> Layoutable
+    func active() -> AnyLayoutable
     func deactive()
     func layoutTree(in parent: UIView) -> LayoutTree
+    
+    var equation: AnyHashable { get }
 }
 
 extension Layoutable {

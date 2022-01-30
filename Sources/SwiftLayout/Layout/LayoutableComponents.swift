@@ -15,12 +15,16 @@ struct LayoutableComponents: Layoutable {
         self.layoutables = layoutables
     }
     
-    func active() -> Layoutable {
+    func active() -> AnyLayoutable {
         layoutables.forEach({ $0.active() })
-        return self
+        return AnyLayoutable(self)
     }
     
     func layoutTree(in parent: UIView) -> LayoutTree {
         LayoutTree(view: parent, subtree: layoutables.map({ $0.layoutTree(in: parent) }))
+    }
+    
+    var equation: AnyHashable {
+        AnyHashable(layoutables.map(\.equation))
     }
 }
