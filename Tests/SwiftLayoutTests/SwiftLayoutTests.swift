@@ -59,14 +59,14 @@ final class SwiftLayoutTests: XCTestCase {
     }
     
     func testNDepthViewHierarchy() {
-        root {
+        layoutable = root {
             yellow {
                 green
                 red {
                     blue
                 }
             }
-        }
+        }.active()
         
         XCTAssertEqual(blue.superview, red)
         XCTAssertEqual(red.superview, yellow)
