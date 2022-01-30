@@ -45,7 +45,7 @@ final class SwiftLayoutTests: XCTestCase {
                 tree.deactive()
                 context("LayoutTree의 view hierarchy를 모두 제거한다.") {
                     XCTAssertTrue(tree is LayoutTree, "\(type(of: tree)) is not LayoutTree")
-                    XCTAssertEqual(yellow.superview, root)
+                    XCTAssertNil(yellow.superview)
                 }
             }
         }
