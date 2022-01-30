@@ -23,14 +23,31 @@ final class SwiftLayoutTests: XCTestCase {
     }
     
     func testLayoutTreeBuild() {
-        let tree = root {
-            yellow
-        }.active()
-        
-        XCTAssertTrue(tree is LayoutTree, "\(type(of: tree)) is not LayoutTree")
-        XCTAssertEqual(yellow.superview, root)
-        context("tree가 사라지면 view hierarchy도 사라진다") {
-            XCTAssertNil(yellow.superview)
+        context("Layoutable.active() 호출은") {
+            let tree = root {
+                yellow
+            }.active()
+            context("LayoutTree를 반환한다.") {
+                XCTAssertTrue(tree is LayoutTree, "\(type(of: tree)) is not LayoutTree")
+                XCTAssertEqual(yellow.superview, root)
+            }
+        }
+        context("LayoutTree의 인스턴스를 보관하지 않으면") {
+            context("LayoutTree가 deinit될 때 view hierarchy도 사라진다") {
+                XCTAssertNil(yellow.superview)
+            }
+        }
+        context("Layoutable 생성 후") {
+            let tree = root {
+                yellow
+            }.active()
+            context("deactive()를 호출하면 ") {
+                tree.deactive()
+                context("LayoutTree의 view hierarchy를 모두 제거한다.") {
+                    XCTAssertTrue(tree is LayoutTree, "\(type(of: tree)) is not LayoutTree")
+                    XCTAssertEqual(yellow.superview, root)
+                }
+            }
         }
     }
     
