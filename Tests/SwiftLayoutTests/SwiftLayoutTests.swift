@@ -25,9 +25,13 @@ final class SwiftLayoutTests: XCTestCase {
     func testLayoutTreeBuild() {
         let tree = root {
             yellow
-        }
+        }.active()
         
         XCTAssertTrue(tree is LayoutTree, "\(type(of: tree)) is not LayoutTree")
+        XCTAssertEqual(yellow.superview, root)
+        context("tree가 사라지면 view hierarchy도 사라진다") {
+            XCTAssertNil(yellow.superview)
+        }
     }
     
     func testLayoutContainableDoNotContain() {
