@@ -14,7 +14,7 @@ extension UIView: Layoutable {
     }
     
     public func layoutTree(in parent: UIView) -> LayoutTree {
-        LayoutTree(view: parent, subtree: [LayoutTree(view: self)])
+        LayoutTree(view: self, subtree: [])
     }
 }
 
