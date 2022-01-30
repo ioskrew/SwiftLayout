@@ -48,3 +48,22 @@ parent {
 }
 ```
 
+### 0.2
+
+- layoutable의 계층은 LayoutTree로 표현하며, Layoutable의 active함수를 호출하면서 만들어진다
+
+- LayoutTree 인스턴스가 메모리에서 사라지면, 해당 계층구조가 들고 있는 모든 view가 superview로부터 제거된다. [^주1]
+
+
+```swift
+let tree = root {
+	child
+}.active()
+
+// deinit tree or tree.deactive()
+// child.superview == nil
+```
+
+[^주1]: DSL 계층의 최상단의 뷰는 자기 자신을 superview로 부터 제거하지 않는다.
+
+  
