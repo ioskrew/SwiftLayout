@@ -11,5 +11,12 @@ import UIKit
 public protocol Layoutable {
     @discardableResult
     func active() -> Layoutable
+    func deactive()
+    func deactiveChild()
     func layoutTree(in parent: UIView) -> LayoutTree
+}
+
+extension Layoutable {
+    public func deactive() {}
+    public func deactiveChild() {}
 }

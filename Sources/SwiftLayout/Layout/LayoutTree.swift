@@ -16,11 +16,12 @@ public class LayoutTree: Layoutable, CustomDebugStringConvertible {
     }
     
     deinit {
-        #if !DEBUG
+        #if DEBUG
         print("<====DEINIT LAYOUT_TREE=====>")
         print(self.debugDescription)
         print("<\\===DEINIT LAYOUT_TREE=====>")
         #endif
+        deactive()
     }
     
     let view: UIView
@@ -37,6 +38,15 @@ public class LayoutTree: Layoutable, CustomDebugStringConvertible {
             $0.active()
         })
         return self
+    }
+    
+    public func deactive() {
+        subtrees.forEach({ $0.deactiveChild() })
+    }
+    
+    public func deactiveChild() {
+        view.removeFromSuperview()
+        subtrees.forEach({ $0.deactiveChild() })
     }
     
     public func layoutTree(in parent: UIView) -> LayoutTree {
