@@ -10,6 +10,8 @@ final class SwiftLayoutTests: XCTestCase {
     var red: UIView!
     var blue: UIView!
     
+    var layoutable: Layoutable?
+    
     override func setUp() {
         
         root = UIView().tag.root
@@ -40,9 +42,9 @@ final class SwiftLayoutTests: XCTestCase {
     }
     
     func testSimpleViewHierarchy() {
-        root {
+        layoutable = root {
             yellow
-        }
+        }.active()
         
         XCTAssertEqual(yellow.superview, root)
     }
