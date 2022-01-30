@@ -34,6 +34,10 @@ public struct LayoutBuilder {
         component
     }
     
-    internal struct EmptyLayout: Layoutable {}
+    internal struct EmptyLayout: Layoutable {
+        func active() -> Layoutable {
+            self
+        }
+    }
     
 }

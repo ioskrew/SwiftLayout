@@ -8,5 +8,7 @@
 import Foundation
 
 extension Optional: Layoutable where Wrapped: Layoutable {
-  
+    public func active() -> Layoutable {
+        self
+    }
 }

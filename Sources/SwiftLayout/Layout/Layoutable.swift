@@ -8,4 +8,7 @@
 import Foundation
 import UIKit
 
-public protocol Layoutable {}
+public protocol Layoutable {
+    @discardableResult
+    func active() -> Layoutable
+}
