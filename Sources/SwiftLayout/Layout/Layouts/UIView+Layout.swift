@@ -1,24 +1,25 @@
 //
-//  UIView+Layoutable.swift
+//  UIView+Layout.swift
 //  
 //
-//  Created by maylee on 2022/01/29.
+//  Created by oozoofrog on 2022/02/01.
 //
 
 import Foundation
 import UIKit
 
-extension UIView: AttachableLayout {
+extension UIView: LayoutAttachable {
     
     public func active() -> AnyLayout {
-        AnyLayout(self)
+        return AnyLayout(nil)
     }
     
     public func deactive() {
         removeFromSuperview()
     }
     
-    public func attachLayout(_ layout: AttachableLayout) {
+    public func attachLayout(_ layout: LayoutAttachable) {
+        translatesAutoresizingMaskIntoConstraints = false
         layout.addSubview(self)
     }
     
@@ -35,3 +36,4 @@ public extension Layout where Self: UIView {
     }
     
 }
+
