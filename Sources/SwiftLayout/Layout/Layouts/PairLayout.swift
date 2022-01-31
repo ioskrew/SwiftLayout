@@ -13,6 +13,8 @@ public struct PairLayout<Left, Right>: Layout where Left: Layout, Right: Layout 
     let left: Left
     let right: Right
     
-    public var equation: AnyHashable
+    public var equation: AnyHashable {
+        AnyHashable([left.equation, right.equation])
+    }
     
 }
