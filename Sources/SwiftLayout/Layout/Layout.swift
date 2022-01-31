@@ -1,5 +1,5 @@
 //
-//  Layoutable.swift
+//  Layout.swift
 //  
 //
 //  Created by oozoofrog on 2022/01/26.
@@ -12,16 +12,14 @@ public protocol Layout {
     @discardableResult
     func active() -> AnyLayout
     func deactive()
-    func layoutTree(in parent: UIView) -> LayoutTree
     
     var equation: AnyHashable { get }
 }
 
-extension Layout {
-    
-    public func active() -> AnyLayout {
+public extension Layout {
+    func active() -> AnyLayout {
         AnyLayout(self)
     }
     
-    public func deactive() {}
+    func deactive() {}
 }

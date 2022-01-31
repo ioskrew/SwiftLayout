@@ -38,10 +38,6 @@ final public class AnyLayout: Hashable, Layout {
         layoutable?.deactive()
     }
     
-    public func layoutTree(in parent: UIView) -> LayoutTree {
-        layoutable?.layoutTree(in: parent) ?? LayoutTree(view: parent)
-    }
-    
     public var equation: AnyHashable {
         AnyHashable(layoutable?.equation)
     }

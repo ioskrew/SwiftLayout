@@ -13,16 +13,10 @@ public struct SuperSubLayout<SuperView, Sub>: Layout where SuperView: UIView, Su
     let superview: SuperView
     let subLayout: Sub
     
-    public func active() -> AnyLayout {
-        layoutTree(in: superview).active()
-    }
-    
-    public func layoutTree(in parent: UIView) -> LayoutTree {
-        subLayout.layoutTree(in: superview)
-    }
-    
     public var equation: AnyHashable {
-       AnyHashable(0)
+        let superHash = superview.equation
+        let subHash = subLayout.equation
+        return AnyHashable([superHash, subHash])
     }
     
 }
