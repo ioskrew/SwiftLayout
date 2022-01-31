@@ -8,23 +8,20 @@
 import Foundation
 import UIKit
 
-public struct TupleLayout<Tuple>: AttachableLayout, LayoutContainable {
+public struct TupleLayout<Tuple>: LayoutAttachable, LayoutContainable {
     
     let tuple: Tuple
     
-    public var layouts: [AttachableLayout] { [] }
+    public var layouts: [LayoutAttachable] { castArrayFromTuple() }
     
-    public func attachLayout(_ layout: AttachableLayout) {
-        
-    }
+    public func deactive() {}
     
-    public func deactive() {
-        
+    func castArrayFromTuple() -> [LayoutAttachable] {
+       []
     }
     
     public var equation: AnyHashable {
         AnyHashable(0)
     }
-    
     
 }

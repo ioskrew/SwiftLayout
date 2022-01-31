@@ -8,32 +8,18 @@
 import Foundation
 import UIKit
 
-public struct SuperSubLayout<Superview, Sub>: AttachableLayout, LayoutContainable where Superview: UIView, Sub: AttachableLayout {
+public struct SuperSubLayout<Superview, Sub>: LayoutAttachable, LayoutContainable, UIViewContainable where Superview: UIView, Sub: LayoutAttachable {
     
     internal init(superview: Superview, subLayout: Sub) {
         self.view = superview
         self.subLayout = subLayout
     }
     
-    let view: Superview
+    public let view: Superview
     let subLayout: Sub
     
-    public var layouts: [AttachableLayout] { [subLayout] }
+    public var layouts: [LayoutAttachable] { [subLayout] }
    
-    public func deactive() {
-        view.deactive()
-        subLayout.deactive()
-    }
-    
-    public func attachLayout(_ layout: AttachableLayout) {
-        layout.addSubview(view)
-        subLayout.attachLayout(self)
-    }
-    
-    public func addSubview(_ view: UIView) {
-        self.view.addSubview(view)
-    }
-    
     public var equation: AnyHashable {
         let superHash = view.equation
         let subHash = subLayout.equation

@@ -9,6 +9,6 @@ import Foundation
 
 public protocol LayoutContainable {
     
-    var layouts: [AttachableLayout] { get }
+    var layouts: [LayoutAttachable] { get }
     
 }
