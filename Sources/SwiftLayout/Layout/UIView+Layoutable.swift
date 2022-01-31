@@ -9,6 +9,15 @@ import Foundation
 import UIKit
 
 extension UIView: Layout {
+    
+    public func active() -> AnyLayout {
+        AnyLayout(self)
+    }
+    
+    public func deactive() {
+        
+    }
+    
     public var equation: AnyHashable {
         AnyHashable(self)
     }

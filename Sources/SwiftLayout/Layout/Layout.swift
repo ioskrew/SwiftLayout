@@ -16,23 +16,19 @@ public protocol Layout {
     var equation: AnyHashable { get }
 }
 
-public extension Layout {
-    func active() -> AnyLayout {
-        AnyLayout(self)
-    }
-    
-    func deactive() {}
-}
-
-protocol ViewLayout {
+public protocol ViewLayout {
     func attachSuperlayout(_ superlayout: ViewLayout)
     func addSubview(_ view: UIView)
+}
+
+public protocol ContainLayout: Layout {
+    func attachViewLayout(_ viewlayout: ViewLayout)
 }
 
 extension UIView: ViewLayout {
     var view: UIView { self }
     
-    func attachSuperlayout(_ superlayout: ViewLayout) {
+    public func attachSuperlayout(_ superlayout: ViewLayout) {
         superlayout.addSubview(self)
     }
 }

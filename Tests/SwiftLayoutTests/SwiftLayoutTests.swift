@@ -1,6 +1,6 @@
 import XCTest
 import UIKit
-@testable import SwiftLayout
+import SwiftLayout
 
 final class SwiftLayoutTests: XCTestCase {
     
@@ -27,7 +27,7 @@ final class SwiftLayoutTests: XCTestCase {
     
     func testSuperSubLayoutTypeCheck() {
         
-        let layout: Any = root {
+        let layout: some Layout = root {
             button
         }
         
@@ -44,12 +44,12 @@ final class SwiftLayoutTests: XCTestCase {
     }
     
     func testPairLayoutTypeCheck() {
-        let layout = root {
+        let layout: some Layout = root {
             button
             label
-        }.active()
+        }
         
-        XCTAssertTrue(layout.layoutable is SuperSubLayout<UIView, PairLayout<UIButton, UIView>>, "\(layout.layoutable!)")
+        XCTAssertTrue(layout is SuperSubLayout<UIView, PairLayout<UIButton, UIView>>, "\(layout)")
     }
 //    func testLayoutTreeBuild() {
 //        context("Layoutable.active() 호출은") {
