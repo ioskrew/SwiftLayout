@@ -22,7 +22,7 @@ final public class AnyLayout: Hashable, Layout {
         hasher.combine(layoutable?.equation)
     }
     
-    var layoutable: Layout?
+    public var layoutable: Layout?
     
     deinit {
         layoutable?.deactive()

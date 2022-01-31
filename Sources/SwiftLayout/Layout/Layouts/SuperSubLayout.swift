@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-public struct SuperSubLayout<SuperView, Sub>: Layout, ViewLayout where SuperView: UIView, Sub: Layout {
+public struct SuperSubLayout<SuperView, Sub>: ContainLayout where SuperView: UIView, Sub: Layout {
     
     internal init(superview: SuperView, subLayout: Sub) {
         self.view = superview
@@ -18,12 +18,16 @@ public struct SuperSubLayout<SuperView, Sub>: Layout, ViewLayout where SuperView
     let view: SuperView
     let subLayout: Sub
     
-    func addSubview(_ view: UIView) {
-        self.view.addSubview(view)
+    public func active() -> AnyLayout {
+        return AnyLayout(self)
     }
     
-    func attachSuperlayout(_ superlayout: ViewLayout) {
-        superlayout.addSubview(view)
+    public func deactive() {
+        
+    }
+    
+    public func attachViewLayout(_ viewlayout: ViewLayout) {
+        viewlayout.addSubview(view)
     }
     
     public var equation: AnyHashable {
@@ -34,9 +38,18 @@ public struct SuperSubLayout<SuperView, Sub>: Layout, ViewLayout where SuperView
     
 }
 
-extension SuperSubLayout where Sub: ViewLayout {
+public extension SuperSubLayout where Sub: ContainLayout {
+    @discardableResult
     func active() -> AnyLayout {
-        self.subLayout.attachSuperlayout(self)
+        subLayout.attachViewLayout(view)
+        return AnyLayout(self)
+    }
+}
+
+public extension SuperSubLayout where Sub: ViewLayout {
+    @discardableResult
+    func active() -> AnyLayout {
+        subLayout.attachSuperlayout(view)
         return AnyLayout(self)
     }
 }
