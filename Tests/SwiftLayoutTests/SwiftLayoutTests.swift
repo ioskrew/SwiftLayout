@@ -52,6 +52,16 @@ final class SwiftLayoutTests: XCTestCase {
         XCTAssertTrue(layout is SuperSubLayout<UIView, PairLayout<UIButton, UIView>>, "\(layout)")
     }
     
+    func testPairLayoutActive() {
+        let layout: some Layout = root {
+            button
+            label
+        }.active()
+        
+        XCTAssertEqual(button.superview, root)
+        XCTAssertEqual(label.superview, root)
+    }
+    
 }
 
 @dynamicMemberLookup
