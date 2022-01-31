@@ -7,22 +7,22 @@ final class SwiftLayoutTests: XCTestCase {
     var superview: UIView!
     
     var root: UIView!
-    var yellow: UIView!
-    var green: UIView!
-    var red: UIView!
-    var blue: UIView!
+    var button: UIButton!
+    var label: UIView!
+    var redView: UIView!
+    var image: UIImageView!
     
     var layoutable: AnyLayoutable?
     
     override func setUp() {
         
-        superview = UIView().tag.superview
+        superview = UIView().viewTag.superview
         
-        root = UIView().tag.root
-        yellow = UIView().tag.yellow
-        green = UIView().tag.green
-        red = UIView().tag.red
-        blue = UIView().tag.blue
+        root = UIView().viewTag.root
+        button = UIButton().viewTag.button
+        label = UILabel().viewTag.label
+        redView = UIView().viewTag.redView
+        image = UIImageView().viewTag.image
         
     }
     
@@ -119,17 +119,19 @@ final class SwiftLayoutTests: XCTestCase {
 //    }
     
 }
-extension UIView {
 
-    var tag: Tag { .init(view: self) }
+@dynamicMemberLookup
+struct Tag<Taggable> where Taggable: UIAccessibilityIdentification {
+    let taggable: Taggable
     
-    @dynamicMemberLookup
-    struct Tag {
-        let view: UIView
-        
-        subscript(dynamicMember tag: String) -> UIView {
-            view.accessibilityIdentifier = tag
-            return view
-        }
+    subscript(dynamicMember tag: String) -> Taggable {
+        taggable.accessibilityIdentifier = tag
+        return taggable
+    }
+}
+
+extension UIAccessibilityIdentification {
+    var viewTag: Tag<Self> {
+        Tag(taggable: self)
     }
 }
