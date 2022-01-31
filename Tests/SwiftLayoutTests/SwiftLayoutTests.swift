@@ -27,12 +27,13 @@ final class SwiftLayoutTests: XCTestCase {
     
     func testLayoutTypes() {
         
-        context("ParentChildLayout")
-        let layout = root {
-            button
+        context("type check SuperSubLayout") {
+            let layout = root {
+                button
+            }
+            
+            XCTAssertTrue(layout is SuperSubLayout<UIView, UIButton>, "\(type(of: layout))")
         }
-        
-        XCTAssertTrue(layout is ParentChildLayout<UIView, UIButton>, "\(type(of: layout))")
     }
     
 //    func testLayoutTreeBuild() {
