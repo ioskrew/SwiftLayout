@@ -6,24 +6,23 @@ final class SwiftLayoutTests: XCTestCase {
     
     var superview: UIView!
     
-    var root: UIView!
-    var button: UIButton!
-    var label: UIView!
-    var redView: UIView!
-    var image: UIImageView!
+    var root: UIView = UIView().viewTag.root
+    var button: UIButton = UIButton().viewTag.button
+    var label: UIView = UILabel().viewTag.label
+    var redView: UIView = UIView().viewTag.redView
+    var image: UIImageView = UIImageView().viewTag.image
     
     var layoutable: AnyLayoutable?
     
     override func setUp() {
         
         superview = UIView().viewTag.superview
-        
-        root = UIView().viewTag.root
-        button = UIButton().viewTag.button
-        label = UILabel().viewTag.label
-        redView = UIView().viewTag.redView
-        image = UIImageView().viewTag.image
-        
+       
+        root.removeFromSuperview()
+        button.removeFromSuperview()
+        label.removeFromSuperview()
+        redView.removeFromSuperview()
+        image.removeFromSuperview()
     }
     
     func testLayoutTypes() {
