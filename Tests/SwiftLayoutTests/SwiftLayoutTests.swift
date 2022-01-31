@@ -135,7 +135,7 @@ final class SwiftLayoutTests: XCTestCase {
         XCTAssertEqual(optionalView?.superview, root)
         XCTAssertEqual(button.superview, root)
     }
-    
+   
 }
 
 func typeString<T>(of value: T) -> String {
