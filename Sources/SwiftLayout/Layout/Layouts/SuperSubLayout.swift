@@ -8,26 +8,30 @@
 import Foundation
 import UIKit
 
-public struct SuperSubLayout<SuperView, Sub>: ContainLayout where SuperView: UIView, Sub: Layout {
+public struct SuperSubLayout<Superview, Sub>: AttachableLayout, LayoutContainable where Superview: UIView, Sub: AttachableLayout {
     
-    internal init(superview: SuperView, subLayout: Sub) {
+    internal init(superview: Superview, subLayout: Sub) {
         self.view = superview
         self.subLayout = subLayout
     }
     
-    let view: SuperView
+    let view: Superview
     let subLayout: Sub
     
-    public func active() -> AnyLayout {
-        return AnyLayout(self)
-    }
-    
+    public var layouts: [AttachableLayout] { [subLayout] }
+   
     public func deactive() {
-        
+        view.deactive()
+        subLayout.deactive()
     }
     
-    public func attachViewLayout(_ viewlayout: ViewLayout) {
-        viewlayout.addSubview(view)
+    public func attachLayout(_ layout: AttachableLayout) {
+        layout.addSubview(view)
+        subLayout.attachLayout(self)
+    }
+    
+    public func addSubview(_ view: UIView) {
+        self.view.addSubview(view)
     }
     
     public var equation: AnyHashable {
@@ -36,20 +40,4 @@ public struct SuperSubLayout<SuperView, Sub>: ContainLayout where SuperView: UIV
         return AnyHashable([superHash, subHash])
     }
     
-}
-
-public extension SuperSubLayout where Sub: ContainLayout {
-    @discardableResult
-    func active() -> AnyLayout {
-        subLayout.attachViewLayout(view)
-        return AnyLayout(self)
-    }
-}
-
-public extension SuperSubLayout where Sub: ViewLayout {
-    @discardableResult
-    func active() -> AnyLayout {
-        subLayout.attachSuperlayout(view)
-        return AnyLayout(self)
-    }
 }
