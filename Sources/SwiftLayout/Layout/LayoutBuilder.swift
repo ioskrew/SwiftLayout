@@ -10,23 +10,23 @@ import UIKit
 
 @resultBuilder
 public struct LayoutBuilder {
-    public static func buildBlock(_ components: Layoutable...) -> Layoutable {
+    public static func buildBlock(_ components: Layout...) -> Layout {
         buildArray(components)
     }
     
-    public static func buildArray(_ components: [Layoutable]) -> Layoutable {
+    public static func buildArray(_ components: [Layout]) -> Layout {
         LayoutableComponents(components)
     }
     
-    public static func buildOptional(_ component: Layoutable?) -> Layoutable {
+    public static func buildOptional(_ component: Layout?) -> Layout {
         component ?? EmptyLayout()
     }
     
-    public static func buildEither(first component: Layoutable) -> Layoutable {
+    public static func buildEither(first component: Layout) -> Layout {
         component
     }
     
-    public static func buildEither(second component: Layoutable) -> Layoutable {
+    public static func buildEither(second component: Layout) -> Layout {
         component
     }
     

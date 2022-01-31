@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-public protocol Layoutable {
+public protocol Layout {
     @discardableResult
     func active() -> AnyLayoutable
     func deactive()
@@ -17,6 +17,6 @@ public protocol Layoutable {
     var equation: AnyHashable { get }
 }
 
-extension Layoutable {
+extension Layout {
     public func deactive() {}
 }
