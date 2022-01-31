@@ -14,7 +14,7 @@ public struct SuperSubLayout<SuperView, Sub>: Layout where SuperView: UIView, Su
     let subLayout: Sub
     
     public func active() -> AnyLayout {
-        AnyLayout(self)
+        layoutTree(in: superview).active()
     }
     
     public func layoutTree(in parent: UIView) -> LayoutTree {

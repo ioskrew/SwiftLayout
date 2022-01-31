@@ -11,7 +11,7 @@ import UIKit
 extension UIView: Layout {
  
     public func layoutTree(in parent: UIView) -> LayoutTree {
-        LayoutTree(view: self, subtree: [])
+        LayoutTree(view: parent, subtree: [LayoutTree(view: self)])
     }
     
     public var equation: AnyHashable {

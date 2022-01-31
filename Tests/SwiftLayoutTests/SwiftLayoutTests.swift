@@ -25,15 +25,22 @@ final class SwiftLayoutTests: XCTestCase {
         image.removeFromSuperview()
     }
     
-    func testLayoutTypes() {
+    func testSuperSubLayoutTypeCheck() {
         
-        context("type check SuperSubLayout") {
-            let layout: Any = root {
-                button
-            }
-            
-            XCTAssertTrue(layout is SuperSubLayout<UIView, UIButton>, "\(type(of: layout))")
+        let layout: Any = root {
+            button
         }
+        
+        XCTAssertTrue(layout is SuperSubLayout<UIView, UIButton>, "\(type(of: layout))")
+        
+    }
+    
+    func testSuperSubLayoutActive() {
+        let layout = root {
+            button
+        }.active()
+        
+        XCTAssertEqual(button.superview, root)
     }
     
 //    func testLayoutTreeBuild() {
