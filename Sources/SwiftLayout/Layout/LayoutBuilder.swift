@@ -21,4 +21,12 @@ public struct LayoutBuilder {
     public static func buildBlock<A, B, C>(_ a: A, _ b: B, _ c: C) -> TupleLayout<(A, B, C)> where A: Layout, B: Layout, C: Layout {
         TupleLayout(tuple: (a, b, c))
     }
+    
+    public static func buildBlock<A, B, C, D>(_ a: A, _ b: B, _ c: C, _ d: D) -> TupleLayout<(A, B, C, D)> where A: Layout, B: Layout, C: Layout, D: Layout {
+        TupleLayout(tuple: (a, b, c, d))
+    }
+    
+    public static func buildBlock<A, B, C, D, E>(_ a: A, _ b: B, _ c: C, _ d: D, _ e: E) -> TupleLayout<(A, B, C, D, E)> where A: Layout, B: Layout, C: Layout, D: Layout, E: Layout {
+        TupleLayout(tuple: (a, b, c, d, e))
+    }
 }
