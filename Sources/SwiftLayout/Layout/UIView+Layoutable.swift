@@ -9,10 +9,7 @@ import Foundation
 import UIKit
 
 extension UIView: Layout {
-    public func active() -> AnyLayoutable {
-        AnyLayoutable(self)
-    }
-    
+ 
     public func layoutTree(in parent: UIView) -> LayoutTree {
         LayoutTree(view: self, subtree: [])
     }
@@ -25,8 +22,8 @@ extension UIView: Layout {
 public extension Layout where Self: UIView {
     
     @discardableResult
-    func callAsFunction(@LayoutBuilder _ content: () -> Layout) -> Layout {
-        content().layoutTree(in: self)
+    func callAsFunction<Sub>(@LayoutBuilder _ content: () -> Sub) -> SuperSubLayout<Self, Sub> where Sub: Layout {
+        SuperSubLayout<Self, Sub>(superview: self, subLayout: content())
     }
     
 }

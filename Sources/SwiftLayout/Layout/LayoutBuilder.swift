@@ -10,8 +10,8 @@ import UIKit
 
 @resultBuilder
 public struct LayoutBuilder {
-    public static func buildBlock(_ components: Layout...) -> Layout {
-        buildArray(components)
+    public static func buildBlock<Component>(_ component: Component) -> Component where Component: Layout {
+        component
     }
     
     public static func buildArray(_ components: [Layout]) -> Layout {

@@ -9,9 +9,10 @@ import Foundation
 import UIKit
 
 struct EmptyLayout: Layout {
-    func active() -> AnyLayoutable {
-        AnyLayoutable(nil)
+    func active() -> AnyLayout {
+        AnyLayout(nil)
     }
+    
     func layoutTree(in parent: UIView) -> LayoutTree {
         LayoutTree(view: parent, subtree: [])
     }

@@ -12,7 +12,7 @@ final class SwiftLayoutTests: XCTestCase {
     var redView: UIView = UIView().viewTag.redView
     var image: UIImageView = UIImageView().viewTag.image
     
-    var layoutable: AnyLayoutable?
+    var layoutable: AnyLayout?
     
     override func setUp() {
         
@@ -28,7 +28,7 @@ final class SwiftLayoutTests: XCTestCase {
     func testLayoutTypes() {
         
         context("type check SuperSubLayout") {
-            let layout = root {
+            let layout: Any = root {
                 button
             }
             
