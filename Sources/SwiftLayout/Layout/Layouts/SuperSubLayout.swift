@@ -20,10 +20,4 @@ public struct SuperSubLayout<Superview, Sub>: LayoutAttachable, LayoutContainabl
     
     public var layouts: [LayoutAttachable] { [subLayout] }
    
-    public var equation: AnyHashable {
-        let superHash = view.equation
-        let subHash = subLayout.equation
-        return AnyHashable([superHash, subHash])
-    }
-    
 }

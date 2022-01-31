@@ -28,8 +28,4 @@ public struct TupleLayout<Tuple>: LayoutAttachable, LayoutContainable {
         }
     }
     
-    public var equation: AnyHashable {
-        AnyHashable(0)
-    }
-    
 }
