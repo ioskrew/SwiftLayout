@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-extension Optional: Layoutable where Wrapped: Layoutable {
+extension Optional: Layout where Wrapped: Layout {
     public func active() -> AnyLayoutable {
         self?.active() ?? AnyLayoutable(nil)
     }

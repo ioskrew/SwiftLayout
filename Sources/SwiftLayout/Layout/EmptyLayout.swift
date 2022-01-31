@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-struct EmptyLayout: Layoutable {
+struct EmptyLayout: Layout {
     func active() -> AnyLayoutable {
         AnyLayoutable(nil)
     }

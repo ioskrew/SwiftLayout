@@ -8,13 +8,13 @@
 import Foundation
 import UIKit
 
-final public class AnyLayoutable: Hashable, Layoutable {
+final public class AnyLayoutable: Hashable, Layout {
     
     public static func == (lhs: AnyLayoutable, rhs: AnyLayoutable) -> Bool {
         lhs.layoutable?.equation == rhs.layoutable?.equation
     }
     
-    internal init(_ layoutable: Layoutable?) {
+    internal init(_ layoutable: Layout?) {
         self.layoutable = layoutable
     }
     
@@ -22,7 +22,7 @@ final public class AnyLayoutable: Hashable, Layoutable {
         hasher.combine(layoutable?.equation)
     }
     
-    var layoutable: Layoutable?
+    var layoutable: Layout?
     
     deinit {
         layoutable?.deactive()

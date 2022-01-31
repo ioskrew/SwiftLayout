@@ -8,10 +8,10 @@
 import Foundation
 import UIKit
 
-struct LayoutableComponents: Layoutable {
-    let layoutables: [Layoutable]
+struct LayoutableComponents: Layout {
+    let layoutables: [Layout]
     
-    init(_ layoutables: [Layoutable]) {
+    init(_ layoutables: [Layout]) {
         self.layoutables = layoutables
     }
     

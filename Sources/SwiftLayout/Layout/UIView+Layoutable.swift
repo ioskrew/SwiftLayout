@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-extension UIView: Layoutable {
+extension UIView: Layout {
     public func active() -> AnyLayoutable {
         AnyLayoutable(self)
     }
@@ -22,10 +22,10 @@ extension UIView: Layoutable {
     }
 }
 
-public extension Layoutable where Self: UIView {
+public extension Layout where Self: UIView {
     
     @discardableResult
-    func callAsFunction(@LayoutBuilder _ content: () -> Layoutable) -> Layoutable {
+    func callAsFunction(@LayoutBuilder _ content: () -> Layout) -> Layout {
         content().layoutTree(in: self)
     }
     

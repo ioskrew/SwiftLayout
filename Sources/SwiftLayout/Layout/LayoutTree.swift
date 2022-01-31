@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-public class LayoutTree: Layoutable, CustomDebugStringConvertible, Hashable {
+public class LayoutTree: Layout, CustomDebugStringConvertible, Hashable {
     
     public static func == (lhs: LayoutTree, rhs: LayoutTree) -> Bool {
         lhs.uuid == rhs.uuid
