@@ -18,6 +18,14 @@ public struct LayoutBuilder {
         layoutable
     }
     
+    public static func buildEither<TrueLayout, FalseLayout>(first component: TrueLayout) -> some LayoutAttachable where TrueLayout: LayoutAttachable, FalseLayout: LayoutAttachable {
+        ConditionalLayout<TrueLayout, FalseLayout>(layout: component)
+    }
+    
+    public static func buildEither<TrueLayout, FalseLayout>(second component: FalseLayout) -> some LayoutAttachable where TrueLayout: LayoutAttachable, FalseLayout: LayoutAttachable {
+        ConditionalLayout<TrueLayout, FalseLayout>(layout: component)
+    }
+    
     public static func buildBlock<Left, Right>(_ left: Left, _ right: Right) -> PairLayout<Left, Right> where Left: Layout, Right: Layout {
         PairLayout(left: left, right: right)
     }
