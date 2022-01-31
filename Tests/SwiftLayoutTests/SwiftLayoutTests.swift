@@ -95,6 +95,27 @@ final class SwiftLayoutTests: XCTestCase {
         XCTAssertEqual(typeString(of: layout), "SuperSubLayout<UIView, PairLayout<GroupLayout<UIButton>, GroupLayout<UILabel>>>")
     }
     
+    func testGroupLayoutActive() {
+        
+        let a = UIView().viewTag.a
+        let b = UIView().viewTag.b
+        let c = UIView().viewTag.c
+        layout = root {
+            GroupLayout {
+                button
+                redView
+            }
+            GroupLayout {
+                label
+                image
+                a
+                b
+                c
+            }
+        }.active()
+        
+        XCTAssertEqual(Set(root.subviews), Set([a, b, c, button, redView, label, image]))
+    }
 }
 
 func typeString<T>(of value: T) -> String {
