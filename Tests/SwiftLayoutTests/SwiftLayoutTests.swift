@@ -36,7 +36,7 @@ final class SwiftLayoutTests: XCTestCase {
     }
     
     func testSuperSubLayoutActive() {
-        root {
+        let _ = root {
             button
         }.active()
         
@@ -53,7 +53,7 @@ final class SwiftLayoutTests: XCTestCase {
     }
     
     func testPairLayoutActive() {
-        let layout: some Layout = root {
+        let _ = root {
             button
             label
         }.active()

@@ -8,14 +8,18 @@
 import Foundation
 import UIKit
 
-extension UIView: Layout {
+extension UIView: AttachableLayout {
     
     public func active() -> AnyLayout {
         AnyLayout(self)
     }
     
     public func deactive() {
-        
+        removeFromSuperview()
+    }
+    
+    public func attachLayout(_ layout: AttachableLayout) {
+        layout.addSubview(self)
     }
     
     public var equation: AnyHashable {

@@ -16,19 +16,22 @@ public protocol Layout {
     var equation: AnyHashable { get }
 }
 
-public protocol ViewLayout {
-    func attachSuperlayout(_ superlayout: ViewLayout)
+public protocol AttachableLayout: Layout {
+    func attachLayout(_ layout: AttachableLayout)
     func addSubview(_ view: UIView)
 }
 
-public protocol ContainLayout: Layout {
-    func attachViewLayout(_ viewlayout: ViewLayout)
+extension AttachableLayout {
+    
+    public func addSubview(_ view: UIView) {}
+    
 }
 
-extension UIView: ViewLayout {
-    var view: UIView { self }
+extension AttachableLayout where Self: LayoutContainable {
     
-    public func attachSuperlayout(_ superlayout: ViewLayout) {
-        superlayout.addSubview(self)
+    public func active() -> AnyLayout {
+        layouts.forEach({ $0.attachLayout(self) })
+        return AnyLayout(self)
     }
+    
 }
