@@ -86,6 +86,19 @@ final class SwiftLayoutTests: XCTestCase {
         XCTAssertEqual(Set(root.subviews), Set([button, label, redView]))
     }
     
+    func testGroupLayoutTypeCheck() {
+        let layout: some Layout = root {
+            GroupLayout { button }
+            GroupLayout { label }
+        }
+        
+        XCTAssertEqual(typeString(of: layout), "SuperSubLayout<UIView, PairLayout<GroupLayout<UIButton>, GroupLayout<UILabel>>>")
+    }
+    
+}
+
+func typeString<T>(of value: T) -> String {
+    String(describing: type(of: value))
 }
 
 @dynamicMemberLookup

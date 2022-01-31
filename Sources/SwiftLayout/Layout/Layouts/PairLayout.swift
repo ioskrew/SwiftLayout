@@ -15,8 +15,4 @@ public struct PairLayout<Left, Right>: LayoutAttachable, LayoutContainable where
     
     public var layouts: [LayoutAttachable] { [left, right] }
     
-    public var equation: AnyHashable {
-        AnyHashable([left.equation, right.equation])
-    }
-    
 }
