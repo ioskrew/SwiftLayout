@@ -116,6 +116,26 @@ final class SwiftLayoutTests: XCTestCase {
         
         XCTAssertEqual(Set(root.subviews), Set([a, b, c, button, redView, label, image]))
     }
+    
+    func testOptionalLayoutIsExist() {
+        
+        let optionalView: UIView? = UIView()
+        
+        let layout: some Layout = root {
+            optionalView
+        }
+        
+        XCTAssertEqual(typeString(of: layout), "SuperSubLayout<UIView, Optional<UIView>>")
+        
+        self.layout = root {
+            optionalView
+            button
+        }.active()
+        
+        XCTAssertEqual(optionalView?.superview, root)
+        XCTAssertEqual(button.superview, root)
+    }
+    
 }
 
 func typeString<T>(of value: T) -> String {

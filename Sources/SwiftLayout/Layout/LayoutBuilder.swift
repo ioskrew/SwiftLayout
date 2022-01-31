@@ -10,8 +10,12 @@ import UIKit
 
 @resultBuilder
 public struct LayoutBuilder {
-    public static func buildBlock<Component>(_ component: Component) -> Component where Component: Layout {
-        component
+    public static func buildBlock<Layoutable>(_ layoutable: Layoutable) -> Layoutable where Layoutable: Layout {
+        layoutable
+    }
+    
+    public static func buildOptional<Layoutable>(_ layoutable: Layoutable) -> Layoutable where Layoutable: LayoutOptionable {
+        layoutable
     }
     
     public static func buildBlock<Left, Right>(_ left: Left, _ right: Right) -> PairLayout<Left, Right> where Left: Layout, Right: Layout {
