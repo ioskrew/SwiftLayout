@@ -16,7 +16,7 @@ final class SwiftLayoutTests: XCTestCase {
     }()
     var image: UIImageView = UIImageView().viewTag.image
     
-    var layoutable: AnyLayout?
+    var layout: AnyLayout?
     
     override func setUp() {
         
@@ -40,7 +40,7 @@ final class SwiftLayoutTests: XCTestCase {
     }
     
     func testSuperSubLayoutActive() {
-        layoutable = root {
+        layout = root {
             button
         }.active()
         
@@ -57,7 +57,7 @@ final class SwiftLayoutTests: XCTestCase {
     }
     
     func testPairLayoutActive() {
-        layoutable = root {
+        layout = root {
             button
             label
         }.active()
@@ -74,6 +74,16 @@ final class SwiftLayoutTests: XCTestCase {
         }
         
         XCTAssertTrue(layout is SuperSubLayout<UIView, TupleLayout<(UIButton, UILabel, UIView)>>, String(describing: type(of: layout)))
+    }
+    
+    func testTupleLayoutTypeActive() {
+        layout = root {
+            button
+            label
+            redView
+        }.active()
+        
+        XCTAssertEqual(Set(root.subviews), Set([button, label, redView]))
     }
     
 }
