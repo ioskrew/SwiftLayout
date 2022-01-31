@@ -27,7 +27,12 @@ final class SwiftLayoutTests: XCTestCase {
     
     func testLayoutTypes() {
         
+        context("ParentChildLayout")
+        let layout = root {
+            button
+        }
         
+        XCTAssertTrue(layout is ParentChildLayout<UIView, UIButton>, "\(type(of: layout))")
     }
     
 //    func testLayoutTreeBuild() {
