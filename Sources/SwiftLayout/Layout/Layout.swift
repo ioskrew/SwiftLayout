@@ -23,3 +23,16 @@ public extension Layout {
     
     func deactive() {}
 }
+
+protocol ViewLayout {
+    func attachSuperlayout(_ superlayout: ViewLayout)
+    func addSubview(_ view: UIView)
+}
+
+extension UIView: ViewLayout {
+    var view: UIView { self }
+    
+    func attachSuperlayout(_ superlayout: ViewLayout) {
+        superlayout.addSubview(self)
+    }
+}
