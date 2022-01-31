@@ -8,9 +8,9 @@
 import Foundation
 import UIKit
 
-final public class AnyLayoutable: Hashable, Layout {
+final public class AnyLayout: Hashable, Layout {
     
-    public static func == (lhs: AnyLayoutable, rhs: AnyLayoutable) -> Bool {
+    public static func == (lhs: AnyLayout, rhs: AnyLayout) -> Bool {
         lhs.layoutable?.equation == rhs.layoutable?.equation
     }
     
@@ -29,7 +29,7 @@ final public class AnyLayoutable: Hashable, Layout {
         layoutable = nil
     }
     
-    public func active() -> AnyLayoutable {
+    public func active() -> AnyLayout {
         layoutable?.active()
         return self
     }

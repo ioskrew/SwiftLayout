@@ -57,11 +57,11 @@ public class LayoutTree: Layout, CustomDebugStringConvertible, Hashable {
     }
     
     @discardableResult
-    public func active() -> AnyLayoutable {
+    public func active() -> AnyLayout {
         subtrees.forEach { tree in
             tree.attachToParent(self)
         }
-        return AnyLayoutable(self)
+        return AnyLayout(self)
     }
     
     public func deactive() {

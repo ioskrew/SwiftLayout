@@ -15,9 +15,9 @@ struct LayoutableComponents: Layout {
         self.layoutables = layoutables
     }
     
-    func active() -> AnyLayoutable {
+    func active() -> AnyLayout {
         layoutables.forEach({ $0.active() })
-        return AnyLayoutable(self)
+        return AnyLayout(self)
     }
     
     func layoutTree(in parent: UIView) -> LayoutTree {

@@ -9,8 +9,8 @@ import Foundation
 import UIKit
 
 extension Optional: Layout where Wrapped: Layout {
-    public func active() -> AnyLayoutable {
-        self?.active() ?? AnyLayoutable(nil)
+    public func active() -> AnyLayout {
+        self?.active() ?? AnyLayout(nil)
     }
     
     public func layoutTree(in parent: UIView) -> LayoutTree {

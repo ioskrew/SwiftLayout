@@ -10,7 +10,7 @@ import UIKit
 
 public protocol Layout {
     @discardableResult
-    func active() -> AnyLayoutable
+    func active() -> AnyLayout
     func deactive()
     func layoutTree(in parent: UIView) -> LayoutTree
     
@@ -18,5 +18,10 @@ public protocol Layout {
 }
 
 extension Layout {
+    
+    public func active() -> AnyLayout {
+        AnyLayout(self)
+    }
+    
     public func deactive() {}
 }
