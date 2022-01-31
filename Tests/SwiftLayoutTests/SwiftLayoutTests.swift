@@ -43,6 +43,12 @@ final class SwiftLayoutTests: XCTestCase {
         XCTAssertEqual(button.superview, root)
     }
     
+    func testPairLayoutTypeCheck() {
+        let layout = root {
+            button
+            label
+        }
+    }
 //    func testLayoutTreeBuild() {
 //        context("Layoutable.active() 호출은") {
 //            let tree = root {
