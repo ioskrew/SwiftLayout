@@ -68,4 +68,6 @@ let tree = root {
 
 [^주1]: DSL 계층의 최상단의 뷰는 자기 자신을 superview로 부터 제거하지 않는다.
 
-  
+ ### 0.4
+ 
+ - UIView의 constraint 조합을 DSL로 구현한다. (어떻게 하징...?)
