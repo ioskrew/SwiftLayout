@@ -207,6 +207,21 @@ final class SwiftLayoutTests: XCTestCase {
         XCTAssertEqual(label.superview, root)
         XCTAssertNil(button.superview)
     }
+    
+    func testActiveDeactiveAndExludes() {
+        context("layout hierarchy에 속하지 않는 subviews는") {
+            root.addSubview(redView)
+            context("root layout의 deactive 시에도") {
+                self.layout = root { button }.active()
+                XCTAssertEqual(button.superview, root)
+                self.layout?.deactive()
+                XCTAssertNil(button.superview)
+                context("남아있다") {
+                    XCTAssertEqual(redView.superview, root)
+                }
+            }
+        }
+    }
 }
 
 func typeString<T>(of value: T) -> String {
