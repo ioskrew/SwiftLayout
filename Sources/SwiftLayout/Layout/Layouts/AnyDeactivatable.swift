@@ -12,7 +12,7 @@ protocol _AnyDeactiveLayout {
     func active<Layoutable>(_ layout: Layoutable) where Layoutable: Layout
     func deactive()
     
-    func append<Layoutable>(_ layout: Layoutable) where Layoutable: Layout
+    func bind<Layoutable>(_ layout: Layoutable) where Layoutable: Layout
 }
 
 final class AnyDeactiveBox<Layoutable: Layout>: _AnyDeactiveLayout {
@@ -23,7 +23,7 @@ final class AnyDeactiveBox<Layoutable: Layout>: _AnyDeactiveLayout {
     
     var layoutables: [Layout]
     
-    func append<Layoutable>(_ layout: Layoutable) where Layoutable : Layout {
+    func bind<Layoutable>(_ layout: Layoutable) where Layoutable : Layout {
         layoutables.append(layout)
     }
     
@@ -70,8 +70,11 @@ public final class AnyDeactivatable {
         box?.deactive()
     }
     
-    public func append<Layoutable>(_ layout: Layoutable) where Layoutable: Layout {
-        box?.append(layout)
+    public func bind<Layoutable>(_ layout: Layoutable) where Layoutable: Layout {
+        if let layout = layout as? SuperSubLayoutable {
+            layout.deactivatable = self
+        }
+        box?.bind(layout)
     }
     
     public func active() {

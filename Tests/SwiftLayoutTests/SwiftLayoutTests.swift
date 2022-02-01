@@ -273,7 +273,7 @@ final class SwiftLayoutTests: XCTestCase {
         
         deactivable = first.active()
         
-        deactivable?.append(second)
+        deactivable?.bind(second)
         XCTAssertEqual(button.superview, root)
         XCTAssertNil(label.superview)
         
@@ -288,6 +288,10 @@ final class SwiftLayoutTests: XCTestCase {
         deactivable = second.active()
         XCTAssertNil(button.superview)
         XCTAssertEqual(label.superview, root)
+        
+        deactivable = first.active()
+        XCTAssertEqual(button.superview, root)
+        XCTAssertNil(label.superview)
     }
     
     func testHashable() {
@@ -304,7 +308,7 @@ final class SwiftLayoutTests: XCTestCase {
         XCTAssertNotEqual(first.hashable, second.hashable)
         
         deactivable = first.active()
-        deactivable?.append(second)
+        deactivable?.bind(second)
         XCTAssertEqual(button.superview, root)
         
         deactivable?.active(second)

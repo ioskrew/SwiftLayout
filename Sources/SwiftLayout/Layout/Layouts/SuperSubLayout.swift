@@ -8,7 +8,13 @@
 import Foundation
 import UIKit
 
-public struct SuperSubLayout<Superview, Sub>: LayoutAttachable, LayoutContainable, UIViewContainable where Superview: UIView, Sub: LayoutAttachable {
+protocol SuperSubLayoutable: AnyObject {
+    var deactivatable: AnyDeactivatable? { get set }
+}
+
+public final class SuperSubLayout<Superview, Sub>: LayoutAttachable, LayoutContainable, UIViewContainable, SuperSubLayoutable where Superview: UIView, Sub: LayoutAttachable {
+    
+    weak var deactivatable: AnyDeactivatable?
     
     internal init(superview: Superview, subLayout: Sub) {
         self.view = superview

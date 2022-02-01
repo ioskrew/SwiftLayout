@@ -51,8 +51,22 @@ public extension Layout where Self: LayoutContainable {
 public extension LayoutAttachable where Self: LayoutContainable, Self: UIViewContainable {
     
     func active() -> AnyDeactivatable {
-        reactive()
-        return AnyDeactivatable(self)
+        if let superSubLayout = self as? SuperSubLayoutable {
+            if let deactivatable = superSubLayout.deactivatable  {
+                deactivatable.active(self)
+                return deactivatable
+            } else {
+                let deactivatable = AnyDeactivatable(self)
+                superSubLayout.deactivatable = deactivatable
+                reactive()
+                return deactivatable
+            }
+        } else {
+            let deactivatable = AnyDeactivatable(self)
+            reactive()
+            return deactivatable
+        }
+        
     }
     
     func reactive() {
