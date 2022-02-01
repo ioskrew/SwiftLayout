@@ -136,6 +136,77 @@ final class SwiftLayoutTests: XCTestCase {
         XCTAssertEqual(button.superview, root)
     }
    
+    func testOptionalTrueLayout() {
+        let flag = true
+        let layout: some Layout = root {
+            if flag {
+                button
+            }
+        }
+        
+        XCTAssertEqual(typeString(of: layout), "SuperSubLayout<UIView, Optional<UIButton>>")
+        
+        self.layout = layout.active()
+        
+        XCTAssertEqual(button.superview, root)
+    }
+    
+    func testOptionalFalseLayoutSubviewsOfRootViewIsEmpty() {
+        let flag = false
+        let layout: some Layout = root {
+            if flag {
+                button
+            }
+        }
+        
+        XCTAssertEqual(typeString(of: layout), "SuperSubLayout<UIView, Optional<UIButton>>")
+        
+        self.layout = layout.active()
+        
+        XCTAssertEqual(root.subviews, [])
+    }
+    
+    func testEitherTrue() {
+        let flag = true
+        
+        @LayoutBuilder
+        func build() -> some Layout {
+            root {
+                if flag {
+                    button
+                } else {
+                    label
+                }
+            }
+        }
+        
+        let layout: some Layout = build()
+        XCTAssertEqual(typeString(of: layout), "SuperSubLayout<UIView, EitherLayout<UIButton, UILabel>>")
+        self.layout = layout.active()
+        XCTAssertEqual(button.superview, root)
+        XCTAssertNil(label.superview)
+    }
+    
+    func testEitherFalse() {
+        let flag = false
+        
+        @LayoutBuilder
+        func build() -> some Layout {
+            root {
+                if flag {
+                    button
+                } else {
+                    label
+                }
+            }
+        }
+        
+        let layout: some Layout = build()
+        XCTAssertEqual(typeString(of: layout), "SuperSubLayout<UIView, EitherLayout<UIButton, UILabel>>")
+        self.layout = layout.active()
+        XCTAssertEqual(label.superview, root)
+        XCTAssertNil(button.superview)
+    }
 }
 
 func typeString<T>(of value: T) -> String {
