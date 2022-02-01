@@ -8,10 +8,17 @@
 import Foundation
 
 postfix operator +
+prefix operator ==
 
 postfix func +<S: StringProtocol>(lhs: S) -> (_ rhs: S) -> String {
     { rhs in
         lhs.appending(rhs)
+    }
+}
+
+prefix func ==(rhs: Layout) -> (_ lhs: Layout) -> Bool {
+    { lhs in
+        lhs.hashable == rhs.hashable
     }
 }
 

@@ -15,12 +15,15 @@ public protocol Layout {
     func deactive()
     func deactiveRoot()
     
+    var isActivating: Bool { get }
+    
     var hashable: AnyHashable { get }
     
     var tagDescription: String { get }
 }
 
 extension Layout {
+    public var isActivating: Bool { false }
     public var tagDescription: String { "" }
 }
 
