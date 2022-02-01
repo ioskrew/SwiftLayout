@@ -11,6 +11,7 @@ import UIKit
 public protocol Layout {
     @discardableResult
     func active() -> AnyDeactivatable
+    func reactive()
     func deactive()
     func deactiveRoot()
     
@@ -18,6 +19,7 @@ public protocol Layout {
 }
 
 extension Layout {
+    public func reactive() {}
     public func deactiveRoot() {
         deactive()
     }
@@ -39,10 +41,14 @@ public extension Layout where Self: LayoutContainable {
 public extension LayoutAttachable where Self: LayoutContainable, Self: UIViewContainable {
     
     func active() -> AnyDeactivatable {
+        reactive()
+        return AnyDeactivatable(self)
+    }
+    
+    func reactive() {
         layouts.forEach({ layout in
             layout.attachLayout(self)
         })
-        return AnyDeactivatable(self)
     }
     
     func attachLayout(_ layout: LayoutAttachable) {

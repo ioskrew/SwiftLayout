@@ -16,7 +16,7 @@ struct AnyDeactiveBox<Layoutable: Layout>: _AnyDeactiveLayout {
     let layoutable: Layoutable
     
     func active() {
-        layoutable.active()
+        layoutable.reactive()
     }
     
     func deactive() {
