@@ -21,7 +21,6 @@ extension LayoutAttachable where Self: UIViewContainable {
     
     public func addSubview(_ view: UIView) {
         self.view.addSubview(view)
-        print(self.view.tagDescription + " < " + view.tagDescription)
     }
     
 }

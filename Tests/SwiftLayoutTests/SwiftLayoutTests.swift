@@ -4,7 +4,7 @@ import UIKit
 
 final class SwiftLayoutTests: XCTestCase {
     
-    var superview: UIView!
+    var superview: UIView = UIView().viewTag.superview
     
     var root: UIView = UIView().viewTag.root
     var button: UIButton = UIButton().viewTag.button
@@ -19,9 +19,6 @@ final class SwiftLayoutTests: XCTestCase {
     var deactivable: AnyDeactivatable?
     
     override func setUp() {
-        
-        superview = UIView().viewTag.superview
-       
         root.removeFromSuperview()
         button.removeFromSuperview()
         label.removeFromSuperview()
@@ -243,7 +240,7 @@ final class SwiftLayoutTests: XCTestCase {
         XCTAssertEqual(redView.superview, root, redView.superview!.tagDescription)
     }
     
-    func testActiveAfterDeactive() {
+    func testDeactivable() {
         superview.addSubview(root)
         deactivable = root {
             redView {
@@ -253,17 +250,12 @@ final class SwiftLayoutTests: XCTestCase {
         
         XCTAssertEqual(button.superview, redView, button.superview!.tagDescription)
         XCTAssertEqual(redView.superview, root)
+        XCTAssertEqual(root.superview, superview)
         
         deactivable?.deactive()
         
         XCTAssertNil(button.superview)
         XCTAssertNil(redView.superview)
-        XCTAssertEqual(root.superview, superview)
-        
-        deactivable?.active()
-        
-        XCTAssertEqual(button.superview, redView)
-        XCTAssertEqual(redView.superview, root)
         XCTAssertEqual(root.superview, superview)
     }
 }
