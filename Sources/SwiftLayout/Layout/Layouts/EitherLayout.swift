@@ -7,17 +7,9 @@
 
 import Foundation
 
-public struct EitherFirstLayout<First, Second>: LayoutAttachable, LayoutContainable where First: LayoutAttachable, Second: LayoutAttachable {
+public struct EitherLayout<First, Second>: LayoutAttachable, LayoutContainable where First: LayoutAttachable, Second: LayoutAttachable {
     
-    var layout: First
-    
-    public var layouts: [LayoutAttachable] { [layout] }
-    
-}
-
-public struct EitherSecondLayout<First, Second>: LayoutAttachable, LayoutContainable where First: LayoutAttachable, Second: LayoutAttachable {
-    
-    var layout: Second
+    var layout: LayoutAttachable
     
     public var layouts: [LayoutAttachable] { [layout] }
     

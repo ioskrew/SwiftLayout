@@ -18,12 +18,12 @@ public struct LayoutBuilder {
         component
     }
     
-    public static func buildEither<First, Second>(first component: First) -> EitherFirstLayout<First, Second> where First: LayoutAttachable, Second: LayoutAttachable {
-        EitherFirstLayout<First, Second>(layout: component)
+    public static func buildEither<First, Second>(first component: First) -> EitherLayout<First, Second> where First: LayoutAttachable, Second: LayoutAttachable {
+        EitherLayout<First, Second>(layout: component)
     }
     
-    public static func buildEither<First, Second>(second component: Second) -> EitherSecondLayout<First, Second> where First: LayoutAttachable, Second: LayoutAttachable {
-        EitherSecondLayout<First, Second>(layout: component)
+    public static func buildEither<First, Second>(second component: Second) -> EitherLayout<First, Second> where First: LayoutAttachable, Second: LayoutAttachable {
+        EitherLayout<First, Second>(layout: component)
     }
     
     public static func buildBlock<Left, Right>(_ left: Left, _ right: Right) -> PairLayout<Left, Right> where Left: Layout, Right: Layout {
