@@ -21,3 +21,9 @@ public struct SuperSubLayout<Superview, Sub>: LayoutAttachable, LayoutContainabl
     public var layouts: [LayoutAttachable] { [subLayout] }
    
 }
+
+extension SuperSubLayout: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        "SuperSubLayout<\(view.tagDescription), \(subLayout.tagDescription)>"
+    }
+}

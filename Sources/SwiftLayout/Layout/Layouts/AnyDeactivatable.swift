@@ -9,18 +9,40 @@ import Foundation
 
 protocol _AnyDeactiveLayout {
     func active()
+    func active<Layoutable>(_ layout: Layoutable) where Layoutable: Layout
     func deactive()
+    
+    func append<Layoutable>(_ layout: Layoutable) where Layoutable: Layout
 }
 
-struct AnyDeactiveBox<Layoutable: Layout>: _AnyDeactiveLayout {
-    let layoutable: Layoutable
+final class AnyDeactiveBox<Layoutable: Layout>: _AnyDeactiveLayout {
+    
+    internal init(_ layout: Layoutable) {
+        self.layoutables = [layout]
+    }
+    
+    var layoutables: [Layout]
+    
+    func append<Layoutable>(_ layout: Layoutable) where Layoutable : Layout {
+        layoutables.append(layout)
+    }
     
     func active() {
-        layoutable.reactive()
+        layoutables.forEach { layout in
+            layout.reactive()
+        }
+    }
+    
+    func active<Layoutable>(_ layout: Layoutable) where Layoutable: Layout {
+        for layoutable in layoutables where layoutable.equation == layout.equation {
+            print("[SwiftLayout] active " + String(describing: layout))
+        }
     }
     
     func deactive() {
-        layoutable.deactiveRoot()
+        layoutables.forEach { layout in
+            layout.deactiveRoot()
+        }
     }
 }
 
@@ -33,7 +55,10 @@ public final class AnyDeactivatable {
     }
     
     convenience init<Layoutable: Layout>(_ layout: Layoutable) {
-        self.init(AnyDeactiveBox(layoutable: layout))
+        self.init(AnyDeactiveBox(layout))
+        #if DEBUG
+        print("[SwiftLayout] current activated is \(layout)")
+        #endif
     }
     
     init<Box: _AnyDeactiveLayout>(_ box: Box?) {
@@ -44,8 +69,16 @@ public final class AnyDeactivatable {
         box?.deactive()
     }
     
+    public func append<Layoutable>(_ layout: Layoutable) where Layoutable: Layout {
+        box?.append(layout)
+    }
+    
     public func active() {
         self.box?.active()
+    }
+    
+    public func active<Layoutable>(_ layout: Layoutable) where Layoutable: Layout {
+        self.box?.active(layout)
     }
     
     public func deactive() {

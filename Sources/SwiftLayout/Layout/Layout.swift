@@ -16,6 +16,12 @@ public protocol Layout {
     func deactiveRoot()
     
     var equation: AnyHashable { get }
+    
+    var tagDescription: String { get }
+}
+
+extension Layout {
+    public var tagDescription: String { "" }
 }
 
 extension Layout {
