@@ -10,7 +10,7 @@ import UIKit
 
 public protocol Layout {
     @discardableResult
-    func active() -> AnyLayout
+    func active() -> AnyDeactivatable
     func deactive()
     
     var equation: AnyHashable { get }
@@ -18,9 +18,9 @@ public protocol Layout {
 
 public extension Layout where Self: LayoutContainable {
     
-    func active() -> AnyLayout {
+    func active() -> AnyDeactivatable {
         layouts.forEach({ layout in _ = layout.active() })
-        return AnyLayout(nil)
+        return AnyDeactivatable()
     }
     
     func deactive() {
@@ -31,11 +31,11 @@ public extension Layout where Self: LayoutContainable {
 
 public extension Layout where Self: LayoutAttachable, Self: LayoutContainable, Self: UIViewContainable {
     
-    func active() -> AnyLayout {
+    func active() -> AnyDeactivatable {
         layouts.forEach({ layout in
             layout.attachLayout(self)
         })
-        return AnyLayout(self)
+        return AnyDeactivatable(self)
     }
     
     func attachLayout(_ layout: LayoutAttachable) {

@@ -10,8 +10,8 @@ import UIKit
 
 extension UIView: LayoutAttachable {
     
-    public func active() -> AnyLayout {
-        return AnyLayout(nil)
+    public func active() -> AnyDeactivatable {
+        return AnyDeactivatable()
     }
     
     public func deactive() {

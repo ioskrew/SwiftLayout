@@ -16,7 +16,7 @@ final class SwiftLayoutTests: XCTestCase {
     }()
     var image: UIImageView = UIImageView().viewTag.image
     
-    var layout: AnyLayout?
+    var layout: AnyDeactivatable?
     
     override func setUp() {
         

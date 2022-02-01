@@ -8,8 +8,8 @@
 import Foundation
 
 extension Optional: Layout where Wrapped: Layout {
-    public func active() -> AnyLayout {
-        self?.active() ?? AnyLayout(nil)
+    public func active() -> AnyDeactivatable {
+        self?.active() ?? AnyDeactivatable()
     }
     
     public func deactive() {

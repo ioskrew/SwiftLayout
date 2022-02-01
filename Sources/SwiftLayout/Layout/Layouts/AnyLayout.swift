@@ -29,9 +29,8 @@ final public class AnyLayout: Hashable, LayoutAttachable {
         layout = nil
     }
     
-    public func active() -> AnyLayout {
-        layout?.active()
-        return self
+    public func active() -> AnyDeactivatable {
+        return layout?.active() ?? AnyDeactivatable()
     }
     
     public func deactive() {
