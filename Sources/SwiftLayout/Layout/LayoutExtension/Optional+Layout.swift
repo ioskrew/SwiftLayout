@@ -16,8 +16,8 @@ extension Optional: Layout where Wrapped: Layout {
         self?.deactive()
     }
     
-    public var equation: AnyHashable {
-        self?.equation ?? AnyHashable(0)
+    public var hashable: AnyHashable {
+        self?.hashable ?? AnyHashable(0)
     }
 }
 

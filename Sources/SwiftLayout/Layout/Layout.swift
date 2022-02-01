@@ -15,7 +15,7 @@ public protocol Layout {
     func deactive()
     func deactiveRoot()
     
-    var equation: AnyHashable { get }
+    var hashable: AnyHashable { get }
     
     var tagDescription: String { get }
 }
@@ -40,6 +40,10 @@ public extension Layout where Self: LayoutContainable {
     
     func deactive() {
         layouts.forEach({ layout in layout.deactive() })
+    }
+    
+    var hashable: AnyHashable {
+        AnyHashable([typeString(of: self)] + layouts.map(\.hashable))
     }
     
 }
@@ -71,4 +75,7 @@ public extension LayoutAttachable where Self: LayoutContainable, Self: UIViewCon
         layouts.forEach({ layout in layout.deactive() })
     }
     
+    var hashable: AnyHashable {
+        AnyHashable([typeString(of: self)] + [view] + layouts.map(\.hashable))
+    }
 }

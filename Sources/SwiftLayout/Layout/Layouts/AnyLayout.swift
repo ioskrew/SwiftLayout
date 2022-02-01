@@ -11,7 +11,7 @@ import UIKit
 final public class AnyLayout: Hashable, LayoutAttachable {
     
     public static func == (lhs: AnyLayout, rhs: AnyLayout) -> Bool {
-        lhs.layout?.equation == rhs.layout?.equation
+        lhs.layout?.hashable == rhs.layout?.hashable
     }
     
     internal init(_ layoutable: LayoutAttachable?) {
@@ -19,7 +19,7 @@ final public class AnyLayout: Hashable, LayoutAttachable {
     }
     
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(layout?.equation)
+        hasher.combine(layout?.hashable)
     }
     
     public var layout: LayoutAttachable?
@@ -41,7 +41,7 @@ final public class AnyLayout: Hashable, LayoutAttachable {
         self.layout?.attachLayout(layout)
     }
     
-    public var equation: AnyHashable {
-        AnyHashable(layout?.equation)
+    public var hashable: AnyHashable {
+        AnyHashable(layout?.hashable)
     }
 }

@@ -14,3 +14,7 @@ postfix func +<S: StringProtocol>(lhs: S) -> (_ rhs: S) -> String {
         lhs.appending(rhs)
     }
 }
+
+func typeString<T>(of value: T) -> String {
+    String(describing: type(of: value))
+}

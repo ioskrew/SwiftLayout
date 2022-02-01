@@ -15,8 +15,8 @@ public protocol LayoutContainable {
 
 extension LayoutContainable where Self: LayoutAttachable {
     
-    public var equation: AnyHashable {
-        AnyHashable(layouts.map(\.equation))
+    public var hashable: AnyHashable {
+        AnyHashable(layouts.map(\.hashable))
     }
     
 }

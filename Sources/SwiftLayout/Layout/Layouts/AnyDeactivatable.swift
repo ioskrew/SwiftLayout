@@ -35,7 +35,7 @@ final class AnyDeactiveBox<Layoutable: Layout>: _AnyDeactiveLayout {
     
     func active<Layoutable>(_ layout: Layoutable) where Layoutable: Layout {
         for layoutable in layoutables {
-            if layoutable.equation == layout.equation {
+            if layoutable.hashable == layout.hashable {
                 layoutable.reactive()
             } else {
                 layoutable.deactive()

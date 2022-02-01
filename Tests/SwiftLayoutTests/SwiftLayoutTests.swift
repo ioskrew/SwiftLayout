@@ -287,10 +287,6 @@ final class SwiftLayoutTests: XCTestCase {
     }
 }
 
-func typeString<T>(of value: T) -> String {
-    String(describing: type(of: value))
-}
-
 @dynamicMemberLookup
 struct Tag<Taggable> where Taggable: UIAccessibilityIdentification {
     let taggable: Taggable

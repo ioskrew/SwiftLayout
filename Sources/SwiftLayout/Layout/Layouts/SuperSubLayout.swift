@@ -19,7 +19,7 @@ public struct SuperSubLayout<Superview, Sub>: LayoutAttachable, LayoutContainabl
     let subLayout: Sub
     
     public var layouts: [LayoutAttachable] { [subLayout] }
-   
+
 }
 
 extension SuperSubLayout: CustomDebugStringConvertible {

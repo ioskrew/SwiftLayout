@@ -23,7 +23,7 @@ extension UIView: LayoutAttachable {
         layout.addSubview(self)
     }
     
-    public var equation: AnyHashable {
+    public var hashable: AnyHashable {
         AnyHashable(self)
     }
 }
