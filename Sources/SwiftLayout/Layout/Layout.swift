@@ -12,8 +12,15 @@ public protocol Layout {
     @discardableResult
     func active() -> AnyDeactivatable
     func deactive()
+    func deactiveRoot()
     
     var equation: AnyHashable { get }
+}
+
+extension Layout {
+    public func deactiveRoot() {
+        deactive()
+    }
 }
 
 public extension Layout where Self: LayoutContainable {
@@ -45,6 +52,10 @@ public extension LayoutAttachable where Self: LayoutContainable, Self: UIViewCon
     
     func deactive() {
         view.deactive()
+        layouts.forEach({ layout in layout.deactive() })
+    }
+    
+    func deactiveRoot() {
         layouts.forEach({ layout in layout.deactive() })
     }
     

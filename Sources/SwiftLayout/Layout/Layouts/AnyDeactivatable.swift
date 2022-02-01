@@ -20,7 +20,7 @@ struct AnyDeactiveBox<Layoutable: Layout>: _AnyDeactiveLayout {
     }
     
     func deactive() {
-        layoutable.deactive()
+        layoutable.deactiveRoot()
     }
 }
 
