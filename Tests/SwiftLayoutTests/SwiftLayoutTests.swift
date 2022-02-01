@@ -303,13 +303,24 @@ final class SwiftLayoutTests: XCTestCase {
         let first = root {
             button
         }
+        
+        let first2 = root {
+            button
+        }
+        
+        let first3 = root {
+            UIButton().viewTag.button2
+        }
+        
+        XCTAssertEqual(first, first2)
+        XCTAssertNotEqual(first, first3)
+        
         let second = root {
             if true {
                 button
             }
         }
         
-        XCTAssertNotEqual(typeString(of: first), typeString(of: second))
         XCTAssertNotEqual(first.hashable, second.hashable)
         
         deactivable = first.active()
