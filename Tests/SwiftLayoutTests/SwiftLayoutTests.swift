@@ -293,8 +293,8 @@ final class SwiftLayoutTests: XCTestCase {
         XCTAssertEqual(button.superview, root)
         XCTAssertNil(label.superview)
         
-        XCTAssertTrue(deactivable!.layoutIsActived(first))
-        XCTAssertFalse(deactivable!.layoutIsActived(second))
+        XCTAssertTrue(deactivable!.layoutIsActivating(first))
+        XCTAssertFalse(deactivable!.layoutIsActivating(second))
                       
         XCTAssertTrue(first.isActivating)
         XCTAssertFalse(second.isActivating)

@@ -33,6 +33,14 @@ public final class SuperSubLayout<Superview, Sub>: LayoutAttachable, LayoutConta
     public func hash(into hasher: inout Hasher) {
         hashable.hash(into: &hasher)
     }
+    
+    public var isActivating: Bool {
+        if let deactivatable = deactivatable {
+            return deactivatable.layoutIsActivating(self)
+        } else {
+            return false
+        }
+    }
 }
 
 extension SuperSubLayout: CustomDebugStringConvertible {

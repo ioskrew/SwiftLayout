@@ -14,6 +14,7 @@ protocol _AnyDeactiveLayout {
     func active()
     func active<Layoutable>(_ layout: Layoutable) where Layoutable: Layout
     func deactive()
+    func layoutIsActivating<Layoutable>(_ layout: Layoutable) -> Bool where Layoutable: Layout
     
     func bind<Layoutable>(_ layout: Layoutable) where Layoutable: Layout
 }
@@ -25,6 +26,8 @@ final class AnyDeactiveBox<Layoutable: Layout>: _AnyDeactiveLayout {
     }
     
     var layouts: [Layout]
+    
+    var activatedLayout: Layout?
     
     func bind<Layoutable>(_ layout: Layoutable) where Layoutable : Layout {
         layouts.append(layout)
@@ -39,6 +42,7 @@ final class AnyDeactiveBox<Layoutable: Layout>: _AnyDeactiveLayout {
     func active<Layoutable>(_ layout: Layoutable) where Layoutable: Layout {
         for layoutable in layouts {
             if layoutable.hashable == layout.hashable {
+                activatedLayout = layoutable
                 layoutable.reactive()
             } else {
                 layoutable.deactive()
@@ -50,6 +54,10 @@ final class AnyDeactiveBox<Layoutable: Layout>: _AnyDeactiveLayout {
         layouts.forEach { layout in
             layout.deactiveRoot()
         }
+    }
+    
+    func layoutIsActivating<Layoutable>(_ layout: Layoutable) -> Bool where Layoutable : Layout {
+        activatedLayout?.hashable == layout.hashable
     }
 }
 
@@ -92,11 +100,11 @@ public final class AnyDeactivatable {
         self.box?.deactive()
     }
     
-    public func layoutIsActived<Layoutable>(_ layout: Layoutable) -> Bool where Layoutable: Layout {
+    public func layoutIsActivating<Layoutable>(_ layout: Layoutable) -> Bool where Layoutable: Layout {
         guard let box = box else {
             return false
         }
-        return false
+        return box.layoutIsActivating(layout)
     }
 }
 
