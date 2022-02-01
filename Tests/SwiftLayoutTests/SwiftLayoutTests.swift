@@ -285,6 +285,27 @@ final class SwiftLayoutTests: XCTestCase {
         XCTAssertEqual(button.superview, root)
         XCTAssertNil(label.superview)
     }
+    
+    func testHashable() {
+        let first = root {
+            button
+        }
+        let second = root {
+            if true {
+                button
+            }
+        }
+        
+        XCTAssertNotEqual(typeString(of: first), typeString(of: second))
+        XCTAssertNotEqual(first.hashable, second.hashable)
+        
+        deactivable = first.active()
+        deactivable?.append(second)
+        XCTAssertEqual(button.superview, root)
+        
+        deactivable?.active(second)
+        XCTAssertEqual(button.superview, root)
+    }
 }
 
 @dynamicMemberLookup
