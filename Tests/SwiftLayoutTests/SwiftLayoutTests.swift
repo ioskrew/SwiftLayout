@@ -263,23 +263,27 @@ final class SwiftLayoutTests: XCTestCase {
     }
     
     func testMultipleLayoutActive() {
-        deactivable = root {
+        let first = root {
             button
-        }.active()
+        }
         
         let second = root {
             label
         }
         
-        deactivable?.append(second)
+        deactivable = first.active()
         
+        deactivable?.append(second)
         XCTAssertEqual(button.superview, root)
         XCTAssertNil(label.superview)
         
         deactivable?.active(second)
-        
         XCTAssertNil(button.superview)
         XCTAssertEqual(label.superview, root)
+        
+        deactivable?.active(first)
+        XCTAssertEqual(button.superview, root)
+        XCTAssertNil(label.superview)
     }
 }
 

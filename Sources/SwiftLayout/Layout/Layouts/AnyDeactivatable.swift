@@ -34,8 +34,12 @@ final class AnyDeactiveBox<Layoutable: Layout>: _AnyDeactiveLayout {
     }
     
     func active<Layoutable>(_ layout: Layoutable) where Layoutable: Layout {
-        for layoutable in layoutables where layoutable.equation == layout.equation {
-            print("[SwiftLayout] active " + String(describing: layout))
+        for layoutable in layoutables {
+            if layoutable.equation == layout.equation {
+                layoutable.reactive()
+            } else {
+                layoutable.deactive()
+            }
         }
     }
     
@@ -56,9 +60,6 @@ public final class AnyDeactivatable {
     
     convenience init<Layoutable: Layout>(_ layout: Layoutable) {
         self.init(AnyDeactiveBox(layout))
-        #if DEBUG
-        print("[SwiftLayout] current activated is \(layout)")
-        #endif
     }
     
     init<Box: _AnyDeactiveLayout>(_ box: Box?) {
