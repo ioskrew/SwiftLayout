@@ -1,6 +1,6 @@
 import XCTest
 import UIKit
-import SwiftLayout
+@testable import SwiftLayout
 
 final class SwiftLayoutTests: XCTestCase {
     
@@ -16,7 +16,7 @@ final class SwiftLayoutTests: XCTestCase {
     }()
     var image: UIImageView = UIImageView().viewTag.image
     
-    var layout: AnyDeactivatable?
+    var deactivable: AnyDeactivatable?
     
     override func setUp() {
         
@@ -40,7 +40,7 @@ final class SwiftLayoutTests: XCTestCase {
     }
     
     func testSuperSubLayoutActive() {
-        layout = root {
+        deactivable = root {
             button
         }.active()
         
@@ -57,7 +57,7 @@ final class SwiftLayoutTests: XCTestCase {
     }
     
     func testPairLayoutActive() {
-        layout = root {
+        deactivable = root {
             button
             label
         }.active()
@@ -77,7 +77,7 @@ final class SwiftLayoutTests: XCTestCase {
     }
     
     func testTupleLayoutTypeActive() {
-        layout = root {
+        deactivable = root {
             button
             label
             redView
@@ -100,7 +100,7 @@ final class SwiftLayoutTests: XCTestCase {
         let a = UIView().viewTag.a
         let b = UIView().viewTag.b
         let c = UIView().viewTag.c
-        layout = root {
+        deactivable = root {
             GroupLayout {
                 button
                 redView
@@ -127,7 +127,7 @@ final class SwiftLayoutTests: XCTestCase {
         
         XCTAssertEqual(typeString(of: layout), "SuperSubLayout<UIView, Optional<UIView>>")
         
-        self.layout = root {
+        self.deactivable = root {
             optionalView
             button
         }.active()
@@ -146,7 +146,7 @@ final class SwiftLayoutTests: XCTestCase {
         
         XCTAssertEqual(typeString(of: layout), "SuperSubLayout<UIView, Optional<UIButton>>")
         
-        self.layout = layout.active()
+        self.deactivable = layout.active()
         
         XCTAssertEqual(button.superview, root)
     }
@@ -161,7 +161,7 @@ final class SwiftLayoutTests: XCTestCase {
         
         XCTAssertEqual(typeString(of: layout), "SuperSubLayout<UIView, Optional<UIButton>>")
         
-        self.layout = layout.active()
+        self.deactivable = layout.active()
         
         XCTAssertEqual(root.subviews, [])
     }
@@ -182,7 +182,7 @@ final class SwiftLayoutTests: XCTestCase {
         
         let layout: some Layout = build()
         XCTAssertEqual(typeString(of: layout), "SuperSubLayout<UIView, EitherLayout<UIButton, UILabel>>")
-        self.layout = layout.active()
+        self.deactivable = layout.active()
         XCTAssertEqual(button.superview, root)
         XCTAssertNil(label.superview)
     }
@@ -203,7 +203,7 @@ final class SwiftLayoutTests: XCTestCase {
         
         let layout: some Layout = build()
         XCTAssertEqual(typeString(of: layout), "SuperSubLayout<UIView, EitherLayout<UIButton, UILabel>>")
-        self.layout = layout.active()
+        self.deactivable = layout.active()
         XCTAssertEqual(label.superview, root)
         XCTAssertNil(button.superview)
     }
@@ -212,15 +212,59 @@ final class SwiftLayoutTests: XCTestCase {
         context("layout hierarchy에 속하지 않는 subviews는") {
             root.addSubview(redView)
             context("root layout의 deactive 시에도") {
-                self.layout = root { button }.active()
+                self.deactivable = root { button }.active()
                 XCTAssertEqual(button.superview, root)
-                self.layout?.deactive()
+                self.deactivable?.deactive()
                 XCTAssertNil(button.superview)
                 context("남아있다") {
                     XCTAssertEqual(redView.superview, root)
                 }
             }
         }
+    }
+    
+    func testLayoutTree() {
+        let green = UIView().viewTag.green
+        green.backgroundColor = .green
+        let blue = UIView().viewTag.blue
+        blue.backgroundColor = .blue
+        let layout: some Layout = root {
+            redView {
+                green {
+                    blue
+                }
+                button
+            }
+        }
+        deactivable = layout.active()
+        XCTAssertEqual(button.superview, redView, button.superview!.tagDescription)
+        XCTAssertEqual(green.superview, redView)
+        XCTAssertEqual(blue.superview, green)
+        XCTAssertEqual(redView.superview, root, redView.superview!.tagDescription)
+    }
+    
+    func testActiveAfterDeactive() {
+        superview.addSubview(root)
+        deactivable = root {
+            redView {
+                button
+            }
+        }.active()
+        
+        XCTAssertEqual(button.superview, redView, button.superview!.tagDescription)
+        XCTAssertEqual(redView.superview, root)
+        
+        deactivable?.deactive()
+        
+        XCTAssertNil(button.superview)
+        XCTAssertNil(redView.superview)
+        XCTAssertEqual(root.superview, superview)
+        
+        deactivable?.active()
+        
+        XCTAssertEqual(button.superview, redView)
+        XCTAssertEqual(redView.superview, root)
+        XCTAssertEqual(root.superview, superview)
     }
 }
 

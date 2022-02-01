@@ -29,7 +29,7 @@ public extension Layout where Self: LayoutContainable {
     
 }
 
-public extension Layout where Self: LayoutAttachable, Self: LayoutContainable, Self: UIViewContainable {
+public extension LayoutAttachable where Self: LayoutContainable, Self: UIViewContainable {
     
     func active() -> AnyDeactivatable {
         layouts.forEach({ layout in

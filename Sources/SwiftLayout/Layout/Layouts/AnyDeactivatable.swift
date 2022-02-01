@@ -8,11 +8,16 @@
 import Foundation
 
 protocol _AnyDeactiveLayout {
+    func active()
     func deactive()
 }
 
 struct AnyDeactiveBox<Layoutable: Layout>: _AnyDeactiveLayout {
     let layoutable: Layoutable
+    
+    func active() {
+        layoutable.active()
+    }
     
     func deactive() {
         layoutable.deactive()
@@ -37,6 +42,10 @@ public final class AnyDeactivatable {
     
     deinit {
         box?.deactive()
+    }
+    
+    public func active() {
+        self.box?.active()
     }
     
     public func deactive() {
