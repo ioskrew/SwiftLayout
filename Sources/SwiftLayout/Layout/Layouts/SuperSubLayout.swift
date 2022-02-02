@@ -30,6 +30,12 @@ public final class SuperSubLayout<Superview, Sub>: LayoutAttachable, LayoutConta
     
     public var layouts: [LayoutAttachable] { [subLayout] }
 
+    public func attachConstraint(_ constraint: Constraint) {
+        layouts.forEach { layout in
+            layout.attachConstraint(constraint)
+        }
+    }
+    
     public func hash(into hasher: inout Hasher) {
         hashable.hash(into: &hasher)
     }

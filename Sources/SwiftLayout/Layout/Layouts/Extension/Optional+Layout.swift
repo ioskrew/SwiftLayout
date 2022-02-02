@@ -16,6 +16,10 @@ extension Optional: Layout where Wrapped: Layout {
         self?.deactive()
     }
     
+    public func attachConstraint(_ constraint: Constraint) {
+        self?.attachConstraint(constraint)
+    }
+    
     public var hashable: AnyHashable {
         self?.hashable ?? AnyHashable(0)
     }

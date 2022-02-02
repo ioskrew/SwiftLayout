@@ -12,10 +12,27 @@ public protocol NSLayoutAnchorConstraint: Constraint {}
 
 extension NSLayoutAnchor: NSLayoutAnchorConstraint {}
 
-extension Constraint where Self: NSLayoutAnchorConstraint {
-    public func constraints(with view: UIView) -> [NSLayoutConstraint] {
-        []
+extension Constraint where Self: NSLayoutAnchorConstraint, Self: NSObject {
+    
+    var item: Any? {
+        self.value(forKey: "item")
     }
+    
+    var view: UIView? {
+        item as? UIView
+    }
+    
+    var attribute: NSLayoutConstraint.Attribute {
+        guard let view = view else {
+            return .notAnAttribute
+        }
+        return view.attribute(self)
+    }
+    
+    public func constraints(with view: UIView) {
+        print("attribute of current anchor is \(self.view!.attribute(self))")
+    }
+    
 }
 
 extension NSLayoutConstraint.Attribute: CustomStringConvertible {

@@ -15,6 +15,8 @@ public protocol Layout {
     func deactive()
     func deactiveRoot()
     
+    func attachConstraint(_ constraint: Constraint)
+    
     var isActivating: Bool { get }
     
     var hashable: AnyHashable { get }

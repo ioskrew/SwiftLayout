@@ -36,6 +36,12 @@ class ConstraintsTests: XCTestCase {
         XCTAssertEqual(typeString(of: top), "LayoutConstraint<SuperSubLayout<UIView, UIView>, Array<NSLayoutYAxisAnchor>>")
     }
     
+    func testAttributeFromAnchor() {
+        let top = child.topAnchor
+        
+        XCTAssertEqual(top.attribute, .top)
+    }
+    
     func testConstraintTop() {
         let layout: some Layout = root {
             child

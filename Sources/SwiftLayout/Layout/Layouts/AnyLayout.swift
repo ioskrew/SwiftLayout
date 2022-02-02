@@ -41,6 +41,10 @@ final public class AnyLayout: Hashable, LayoutAttachable {
         self.layout?.attachLayout(layout)
     }
     
+    public func attachConstraint(_ constraint: Constraint) {
+        self.layout?.attachConstraint(constraint)
+    }
+    
     public var hashable: AnyHashable {
         AnyHashable(layout?.hashable)
     }

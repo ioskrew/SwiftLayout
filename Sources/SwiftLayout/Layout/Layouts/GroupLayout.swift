@@ -16,4 +16,9 @@ public struct GroupLayout<SomeLayout>: LayoutAttachable, LayoutContainable where
         layouts = [layout()]
     }
     
+    public func attachConstraint(_ constraint: Constraint) {
+        layouts.forEach { layout in
+            layout.attachConstraint(constraint)
+        }
+    }
 }
