@@ -6,7 +6,7 @@
 //
 
 import XCTest
-import SwiftLayout
+@testable import SwiftLayout
 
 class ConstraintsTests: XCTestCase {
 
@@ -24,23 +24,18 @@ class ConstraintsTests: XCTestCase {
         deactivatable = nil
     }
 
-    func testTypeOfAnchors() {
+    func testTypeOfConstraints() {
+        let layout: some Layout = root {
+            child
+        }
         
+        let top: some Constraint = layout.constraint {
+            child.topAnchor
+        }
+        
+        XCTAssertEqual(typeString(of: top), "")
     }
-//    func testAxisAnchors() throws {
-//        deactivatable = root {
-//            child
-//        }.active()
-//
-//        XCTAssertEqual(child.superview, root)
-//        XCTAssertFalse(child.translatesAutoresizingMaskIntoConstraints)
-//        XCTAssertEqual(child.constraints.count, 1)
-//        let constraint = child.constraints.first!
-//        XCTAssertConstraint(constraint,
-//                            first: .init(item: child, attribute: .top),
-//                            second: .init(item: root, attribute: .top))
-//    }
-
+    
 }
 
 typealias Attribute = NSLayoutConstraint.Attribute
