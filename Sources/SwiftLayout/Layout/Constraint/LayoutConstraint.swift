@@ -13,4 +13,5 @@ public struct LayoutConstraint<Layoutable, Constraintable>: Constraint where Lay
     let layout: Layoutable
     let constraint: Constraintable
     
+    public var constraints: [NSLayoutConstraint] { [] }
 }

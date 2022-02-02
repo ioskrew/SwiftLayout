@@ -8,7 +8,13 @@
 import Foundation
 import UIKit
 
-extension NSLayoutAnchor: Constraint {}
+public protocol NSLayoutAnchorConstraint: Constraint {}
+
+extension NSLayoutAnchor: NSLayoutAnchorConstraint {}
+
+extension Constraint where Self: NSLayoutAnchorConstraint {
+    public var constraints: [NSLayoutConstraint] { [] }
+}
 
 extension NSLayoutConstraint.Attribute: CustomStringConvertible {
     public var description: String {
