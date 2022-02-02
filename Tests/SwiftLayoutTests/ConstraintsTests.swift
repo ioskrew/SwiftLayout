@@ -37,9 +37,30 @@ class ConstraintsTests: XCTestCase {
     }
     
     func testAttributeFromAnchor() {
-        let top = child.topAnchor
+        XCTAssertEqual(child.topAnchor.attribute, .top)
+        XCTAssertEqual(child.bottomAnchor.attribute, .bottom)
+        XCTAssertEqual(child.leadingAnchor.attribute, .leading)
+        XCTAssertEqual(child.trailingAnchor.attribute, .trailing)
+        XCTAssertEqual(child.leftAnchor.attribute, .left)
+        XCTAssertEqual(child.rightAnchor.attribute, .right)
+        XCTAssertEqual(child.widthAnchor.attribute, .width)
+        XCTAssertEqual(child.heightAnchor.attribute, .height)
+        XCTAssertEqual(child.centerXAnchor.attribute, .centerX)
+        XCTAssertEqual(child.centerYAnchor.attribute, .centerY)
+        XCTAssertEqual(child.lastBaselineAnchor.attribute, .lastBaseline)
+        XCTAssertEqual(child.firstBaselineAnchor.attribute, .firstBaseline)
         
-        XCTAssertEqual(top.attribute, .top)
+        let guide = child.safeAreaLayoutGuide
+        XCTAssertEqual(guide.topAnchor.attribute, .top)
+        XCTAssertEqual(guide.bottomAnchor.attribute, .bottom)
+        XCTAssertEqual(guide.leadingAnchor.attribute, .leading)
+        XCTAssertEqual(guide.trailingAnchor.attribute, .trailing)
+        XCTAssertEqual(guide.leftAnchor.attribute, .left)
+        XCTAssertEqual(guide.rightAnchor.attribute, .right)
+        XCTAssertEqual(guide.widthAnchor.attribute, .width)
+        XCTAssertEqual(guide.heightAnchor.attribute, .height)
+        XCTAssertEqual(guide.centerXAnchor.attribute, .centerX)
+        XCTAssertEqual(guide.centerYAnchor.attribute, .centerY)
     }
     
     func testConstraintTop() {

@@ -22,15 +22,28 @@ extension Constraint where Self: NSLayoutAnchorConstraint, Self: NSObject {
         item as? UIView
     }
     
+    var guide: UILayoutGuide? {
+        item as? UILayoutGuide
+    }
+    
     var attribute: NSLayoutConstraint.Attribute {
-        guard let view = view else {
+        if let view = view {
+            return view.attribute(self)
+        } else if let guide = self.guide {
+            return guide.attribute(self)
+        } else {
             return .notAnAttribute
         }
-        return view.attribute(self)
     }
     
     public func constraints(with view: UIView) {
-        print("attribute of current anchor is \(self.view!.attribute(self))")
+        if let view = self.view {
+            print("attribute of current anchor is \(view.attribute(self))")
+        } else if let guide = guide {
+            print("attribute of current anchor is \(guide.attribute(self))")
+        } else {
+            print("unknown")
+        }
     }
     
 }
