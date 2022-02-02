@@ -13,7 +13,9 @@ public protocol NSLayoutAnchorConstraint: Constraint {}
 extension NSLayoutAnchor: NSLayoutAnchorConstraint {}
 
 extension Constraint where Self: NSLayoutAnchorConstraint {
-    public var constraints: [NSLayoutConstraint] { [] }
+    public func constraints(with view: UIView) -> [NSLayoutConstraint] {
+        []
+    }
 }
 
 extension NSLayoutConstraint.Attribute: CustomStringConvertible {

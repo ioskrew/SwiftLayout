@@ -14,4 +14,12 @@ public struct LayoutConstraint<Layoutable, Constraintable>: Constraint where Lay
     let constraint: Constraintable
     
     public var constraints: [NSLayoutConstraint] { [] }
+    
+    public func active() -> AnyDeactivatable {
+        layout.active()
+    }
+    
+    public func constraints(with view: UIView) -> [NSLayoutConstraint] {
+        constraint.constraints(with: view)
+    }
 }

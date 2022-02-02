@@ -45,7 +45,11 @@ class ConstraintsTests: XCTestCase {
             child.topAnchor // equal to topAnchor of root
         }
         
-        let constraints = constraint.constraints
+        deactivatable = constraint.active()
+        
+        XCTAssertEqual(child.superview, root)
+        
+        let constraints = child.constraints
         XCTAssertEqual(constraints.count, 1)
         let top = constraints.first
         XCTAssertEqual(String(describing: top?.firstItem), String(describing: child))

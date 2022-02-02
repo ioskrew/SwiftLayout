@@ -9,11 +9,20 @@ import Foundation
 import UIKit
 
 public protocol Constraint {
-    var constraints: [NSLayoutConstraint] { get }
+    func constraints(with view: UIView) -> [NSLayoutConstraint]
+    func active() -> AnyDeactivatable
+}
+
+extension Constraint {
+    public func active() -> AnyDeactivatable {
+        .init()
+    }
 }
 
 extension Array: Constraint where Element: Constraint {
-    public var constraints: [NSLayoutConstraint] {
-        flatMap(\.constraints)
+    public func constraints(with view: UIView) -> [NSLayoutConstraint] {
+        flatMap({ constraint in
+            constraint.constraints(with: view)
+        })
     }
 }
