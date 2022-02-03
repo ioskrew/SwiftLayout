@@ -59,7 +59,11 @@ extension LayoutConstraintAttachable where Self: NSObject {
     }
     
     public func attachLayout(_ layout: LayoutAttachable) {
-        
+        if let view = view {
+            layout.addSubview(view)
+        } else if let view = guide?.owningView {
+            layout.addSubview(view)
+        }
     }
     
     public func deactive() {
