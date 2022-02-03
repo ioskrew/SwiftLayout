@@ -8,14 +8,15 @@
 import Foundation
 import UIKit
 
-public protocol NSLayoutAnchorConstraint: Constraint {
-    var guide: UILayoutGuide? { get }
-    var view: UIView? { get }
+extension LayoutConstraintAttachable {
+    public func active() -> AnyDeactivatable {
+        AnyDeactivatable()
+    }
 }
 
-extension NSLayoutAnchor: NSLayoutAnchorConstraint {}
+extension NSLayoutAnchor: LayoutConstraintAttachable {}
 
-extension Constraint where Self: NSLayoutAnchorConstraint, Self: NSObject {
+extension LayoutConstraintAttachable where Self: NSObject {
     
     var item: Any? {
         self.value(forKey: "item")
@@ -57,6 +58,21 @@ extension Constraint where Self: NSLayoutAnchorConstraint, Self: NSObject {
         }
     }
     
+    public func attachLayout(_ layout: LayoutAttachable) {
+        
+    }
+    
+    public func deactive() {
+        
+    }
+    
+    public func attachConstraint(_ constraint: LayoutConstraintAttachable) {
+        
+    }
+    
+    public var hashable: AnyHashable {
+        AnyHashable(self)
+    }
 }
 
 extension NSLayoutConstraint.Attribute: CustomStringConvertible {

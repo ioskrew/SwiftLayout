@@ -8,7 +8,14 @@
 import Foundation
 import UIKit
 
-public struct LayoutConstraint<Layoutable, Constraintable>: Constraint where Layoutable: Layout, Constraintable: Constraint {
+public struct LayoutConstraint<Layoutable, Constraintable>: LayoutConstraintAttachable where Layoutable: Layout, Constraintable: LayoutConstraintAttachable {
+    
+    public var guide: UILayoutGuide? {
+        constraint.guide
+    }
+    public var view: UIView? {
+        constraint.view
+    }
     
     let layout: Layoutable
     let constraint: Constraintable
@@ -18,7 +25,23 @@ public struct LayoutConstraint<Layoutable, Constraintable>: Constraint where Lay
         return layout.active()
     }
     
+    public func deactive() {
+        
+    }
+    
     public func constraints(with view: UIView) {
         constraint.constraints(with: view)
+    }
+    
+    public func attachLayout(_ layout: LayoutAttachable) {
+        
+    }
+    
+    public func attachConstraint(_ constraint: LayoutConstraintAttachable) {
+        
+    }
+    
+    public var hashable: AnyHashable {
+        AnyHashable(0)
     }
 }

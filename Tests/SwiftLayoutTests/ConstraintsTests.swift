@@ -39,6 +39,16 @@ class ConstraintsTests: XCTestCase {
             child.trailingAnchor
         }), "SuperSubLayout<UIView, TupleLayout<(NSLayoutYAxisAnchor, NSLayoutYAxisAnchor, NSLayoutXAxisAnchor, NSLayoutXAxisAnchor)>>")
     }
+    
+    func testLayoutFromAnchor() {
+        let layout: some Layout = root {
+            child.topAnchor
+        }
+        
+        deactivatable = layout.active()
+        
+        XCTAssertEqual(child.superview, root)
+    }
         
     func testAttributeFromAnchor() {
         XCTAssertEqual(child.topAnchor.attribute, .top)

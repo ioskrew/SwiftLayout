@@ -30,7 +30,7 @@ public final class SuperSubLayout<Superview, Sub>: LayoutAttachable, LayoutConta
     
     public var layouts: [LayoutAttachable] { [subLayout] }
 
-    public func attachConstraint(_ constraint: Constraint) {
+    public func attachConstraint(_ constraint: LayoutConstraintAttachable) {
         layouts.forEach { layout in
             layout.attachConstraint(constraint)
         }

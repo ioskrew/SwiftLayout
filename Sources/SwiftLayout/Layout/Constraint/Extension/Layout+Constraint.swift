@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 extension Layout {
-    public func constraint<Constraintable>(@ConstraintBuilder _ constraint: () -> Constraintable) -> LayoutConstraint<Self, Constraintable> where Constraintable: Constraint {
+    public func constraint<Constraintable>(@ConstraintBuilder _ constraint: () -> Constraintable) -> LayoutConstraint<Self, Constraintable> where Constraintable: LayoutConstraintAttachable {
         .init(layout: self, constraint: constraint())
     }
 }

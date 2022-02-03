@@ -15,7 +15,7 @@ public struct PairLayout<Left, Right>: LayoutAttachable, LayoutContainable where
     
     public var layouts: [LayoutAttachable] { [left, right] }
     
-    public func attachConstraint(_ constraint: Constraint) {
+    public func attachConstraint(_ constraint: LayoutConstraintAttachable) {
         left.attachConstraint(constraint)
         right.attachConstraint(constraint)
     }

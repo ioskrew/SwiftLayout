@@ -23,7 +23,7 @@ extension UIView: LayoutAttachable {
         layout.addSubview(self)
     }
     
-    public func attachConstraint(_ constraint: Constraint) {
+    public func attachConstraint(_ constraint: LayoutConstraintAttachable) {
         constraint.constraints(with: self)
     }
     

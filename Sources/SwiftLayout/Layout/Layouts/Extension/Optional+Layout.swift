@@ -16,7 +16,7 @@ extension Optional: Layout where Wrapped: Layout {
         self?.deactive()
     }
     
-    public func attachConstraint(_ constraint: Constraint) {
+    public func attachConstraint(_ constraint: LayoutConstraintAttachable) {
         self?.attachConstraint(constraint)
     }
     
