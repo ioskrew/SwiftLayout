@@ -10,10 +10,6 @@ import UIKit
 
 @resultBuilder
 public struct LayoutBuilder {
-    public static func buildBlock<Anchor, AnchorType>(_ anchor: Anchor) -> AnchorLayout<Anchor> where Anchor: NSLayoutAnchor<AnchorType>, AnchorType: NSObject {
-        AnchorLayout(anchor)
-    }
-    
     public static func buildBlock<Layoutable>(_ layoutable: Layoutable) -> Layoutable where Layoutable: Layout {
         layoutable
     }

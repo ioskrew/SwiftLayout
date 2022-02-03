@@ -25,13 +25,21 @@ class ConstraintsTests: XCTestCase {
     }
 
     func testTypeOfConstraints() {
-        let layout: some Layout = root {
+        XCTAssertEqual(typeString(of: root {
             child.topAnchor
-        }
-        
-        XCTAssertEqual(typeString(of: layout), "SuperSubLayout<UIView, AnchorLayout<NSLayoutYAxisAnchor>>")
+        }), "SuperSubLayout<UIView, NSLayoutYAxisAnchor>")
+        XCTAssertEqual(typeString(of: root {
+            child.topAnchor
+            child.bottomAnchor
+        }), "SuperSubLayout<UIView, PairLayout<NSLayoutYAxisAnchor, NSLayoutYAxisAnchor>>")
+        XCTAssertEqual(typeString(of: root {
+            child.topAnchor
+            child.bottomAnchor
+            child.leadingAnchor
+            child.trailingAnchor
+        }), "SuperSubLayout<UIView, TupleLayout<(NSLayoutYAxisAnchor, NSLayoutYAxisAnchor, NSLayoutXAxisAnchor, NSLayoutXAxisAnchor)>>")
     }
-    
+        
     func testAttributeFromAnchor() {
         XCTAssertEqual(child.topAnchor.attribute, .top)
         XCTAssertEqual(child.bottomAnchor.attribute, .bottom)

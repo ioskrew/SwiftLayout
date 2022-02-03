@@ -7,13 +7,13 @@
 
 import Foundation
 
-public struct AnchorLayout<A>: LayoutAttachable where A: NSLayoutAnchorConstraint, A: NSObject {
+public struct AnchorLayout<Anchor>: LayoutAttachable where Anchor: NSLayoutAnchorConstraint, Anchor: NSObject {
     
-    internal init(_ anchor: A) {
-        self.anchor = anchor
+    internal init(_ anchors: [Anchor]) {
+        self.anchors = anchors
     }
     
-    let anchor: A
+    let anchors: [Anchor]
     
     public func active() -> AnyDeactivatable {
         AnyDeactivatable()
@@ -32,7 +32,7 @@ public struct AnchorLayout<A>: LayoutAttachable where A: NSLayoutAnchorConstrain
     }
     
     public var hashable: AnyHashable {
-        AnyHashable(anchor)
+        AnyHashable(anchors)
     }
     
 }
