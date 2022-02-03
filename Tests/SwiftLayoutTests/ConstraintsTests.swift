@@ -26,14 +26,10 @@ class ConstraintsTests: XCTestCase {
 
     func testTypeOfConstraints() {
         let layout: some Layout = root {
-            child
+            child.topAnchor
         }
         
-        let top: some Constraint = layout.constraint {
-            child.topAnchor // equal to topAnchor of root
-        }
-        
-        XCTAssertEqual(typeString(of: top), "LayoutConstraint<SuperSubLayout<UIView, UIView>, Array<NSLayoutYAxisAnchor>>")
+        XCTAssertEqual(typeString(of: layout), "SuperSubLayout<UIView, AnchorLayout<NSLayoutYAxisAnchor>>")
     }
     
     func testAttributeFromAnchor() {
@@ -63,31 +59,30 @@ class ConstraintsTests: XCTestCase {
         XCTAssertEqual(guide.centerYAnchor.attribute, .centerY)
     }
     
-    func testConstraintTop() {
-        let layout: some Layout = root {
-            child
-        }
-        
-        let constraint: some Constraint = layout.constraint {
-            child.topAnchor // equal to topAnchor of root
-        }
-        
-        deactivatable = constraint.active()
-        
-        XCTAssertEqual(child.superview, root)
-        
-        let constraints = child.constraints
-        XCTAssertEqual(constraints.count, 1)
-        let top = constraints.first
-        XCTAssertEqual(String(describing: top?.firstItem), String(describing: child))
-        XCTAssertEqual(String(describing: top?.secondItem), String(describing: root))
-        XCTAssertEqual(top?.firstAttribute, .top)
-        XCTAssertEqual(top?.secondAttribute, .top)
-        XCTAssertEqual(top?.relation, .equal)
-        XCTAssertEqual(top?.constant, 0.0)
-        XCTAssertEqual(top?.multiplier, 1.0)
-    }
-
+//    func testConstraintTop() {
+//        let layout: some Layout = root {
+//            child
+//        }
+//
+//        let constraint: some Constraint = layout.constraint {
+//            child.topAnchor // equal to topAnchor of root
+//        }
+//
+//        deactivatable = constraint.active()
+//
+//        XCTAssertEqual(child.superview, root)
+//
+//        let constraints = child.constraints
+//        XCTAssertEqual(constraints.count, 1)
+//        let top = constraints.first
+//        XCTAssertEqual(String(describing: top?.firstItem), String(describing: child))
+//        XCTAssertEqual(String(describing: top?.secondItem), String(describing: root))
+//        XCTAssertEqual(top?.firstAttribute, .top)
+//        XCTAssertEqual(top?.secondAttribute, .top)
+//        XCTAssertEqual(top?.relation, .equal)
+//        XCTAssertEqual(top?.constant, 0.0)
+//        XCTAssertEqual(top?.multiplier, 1.0)
+//    }
     
 }
 //

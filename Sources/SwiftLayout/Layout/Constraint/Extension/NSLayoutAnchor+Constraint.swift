@@ -8,7 +8,10 @@
 import Foundation
 import UIKit
 
-public protocol NSLayoutAnchorConstraint: Constraint {}
+public protocol NSLayoutAnchorConstraint: Constraint {
+    var guide: UILayoutGuide? { get }
+    var view: UIView? { get }
+}
 
 extension NSLayoutAnchor: NSLayoutAnchorConstraint {}
 
@@ -18,12 +21,20 @@ extension Constraint where Self: NSLayoutAnchorConstraint, Self: NSObject {
         self.value(forKey: "item")
     }
     
-    var view: UIView? {
-        item as? UIView
+    public var guide: UILayoutGuide? {
+        if item is UILayoutGuide {
+            return item as? UILayoutGuide
+        } else {
+            return nil
+        }
     }
     
-    var guide: UILayoutGuide? {
-        item as? UILayoutGuide
+    public var view: UIView? {
+        if item is UIView {
+            return item as? UIView
+        } else {
+            return nil
+        }
     }
     
     var attribute: NSLayoutConstraint.Attribute {
