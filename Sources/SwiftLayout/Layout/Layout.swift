@@ -49,6 +49,12 @@ public extension Layout where Self: LayoutContainable {
         AnyHashable([typeString(of: self)] + layouts.map(\.hashable))
     }
     
+    func constraints(with view: UIView) -> [NSLayoutConstraint] {
+        layouts.flatMap { layout in
+            layout.constraints(with: view)
+        }
+    }
+    
 }
 
 public extension LayoutAttachable where Self: LayoutContainable, Self: UIViewContainable {

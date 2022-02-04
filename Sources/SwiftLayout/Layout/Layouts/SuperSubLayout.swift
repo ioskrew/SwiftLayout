@@ -44,10 +44,11 @@ public final class SuperSubLayout<Superview, Sub>: LayoutAttachable, LayoutConta
         }
     }
     
-    public func addConstraint(_ constraint: NSLayoutConstraint?) {
-        guard let constraint = constraint else { return }
-        constraints.insert(constraint)
-        constraint.isActive = true
+    public func addConstraint(_ constraints: [NSLayoutConstraint]) {
+        self.constraints.formUnion(constraints)
+        self.constraints.forEach { constraint in
+            constraint.isActive = true
+        }
     }
     
 }

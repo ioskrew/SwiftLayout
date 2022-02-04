@@ -52,13 +52,9 @@ extension LayoutConstraintAttachable where Self: NSObject {
         .init(self)
     }
     
-    public func constraints(with view: UIView) -> NSLayoutConstraint? {
-        switch attribute {
-        case .top:
-            return anchorType.equal(with: view.topAnchor.anchorType)
-        default:
-            return nil
-        }
+    public func constraints(with view: UIView) -> [NSLayoutConstraint] {
+        guard let constraint = anchorType.constraint(to: view.anchor(for: attribute), relation: .equal, constant: .zero) else { return [] }
+        return [constraint]
     }
     
     public func attachLayout(_ layout: LayoutAttachable) {
@@ -77,6 +73,41 @@ extension LayoutConstraintAttachable where Self: NSObject {
     public var hashable: AnyHashable {
         AnyHashable(item)
     }
+}
+
+extension UIView {
+    
+    func anchor(for attribute: NSLayoutConstraint.Attribute) -> LayoutAnchorType {
+        switch attribute {
+        case .top:
+            return topAnchor.anchorType
+        case .bottom:
+            return bottomAnchor.anchorType
+        case .leading:
+            return leadingAnchor.anchorType
+        case .trailing:
+            return trailingAnchor.anchorType
+        case .left:
+            return leftAnchor.anchorType
+        case .right:
+            return rightAnchor.anchorType
+        case .width:
+            return widthAnchor.anchorType
+        case .height:
+            return heightAnchor.anchorType
+        case .centerX:
+            return centerXAnchor.anchorType
+        case .centerY:
+            return centerYAnchor.anchorType
+        case .firstBaseline:
+            return firstBaselineAnchor.anchorType
+        case .lastBaseline:
+            return lastBaselineAnchor.anchorType
+        default:
+            return .idontknow
+        }
+    }
+    
 }
 
 extension NSLayoutConstraint.Attribute: CustomStringConvertible {
@@ -145,19 +176,19 @@ extension NSLayoutConstraint.Relation: CustomStringConvertible {
     }
 }
 
-protocol LayoutAnchorTypeInterface {
+public protocol LayoutAnchorTypeInterface {
     var anchorType: LayoutAnchorType { get }
 }
 
 extension LayoutAnchorTypeInterface where Self: LayoutConstraintAttachable, Self: NSObject {
-    var anchorType: LayoutAnchorType {
+    public var anchorType: LayoutAnchorType {
         LayoutAnchorType(self)
     }
 }
 
 extension NSLayoutAnchor: LayoutAnchorTypeInterface {}
 
-enum LayoutAnchorType: LayoutAnchorTypeInterface {
+public enum LayoutAnchorType: LayoutAnchorTypeInterface {
     case x(NSLayoutXAxisAnchor)
     case y(NSLayoutYAxisAnchor)
     case size(NSLayoutDimension)
@@ -175,7 +206,7 @@ enum LayoutAnchorType: LayoutAnchorTypeInterface {
         }
     }
     
-    var anchorType: LayoutAnchorType { self }
+    public var anchorType: LayoutAnchorType { self }
     
     func relation<Anchor, AnchorType>(first: Anchor, relation: NSLayoutConstraint.Relation) -> (Anchor, CGFloat) -> NSLayoutConstraint where Anchor: NSLayoutAnchor<AnchorType> {
         switch relation {

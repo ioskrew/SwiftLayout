@@ -28,7 +28,7 @@ public struct LayoutConstraint<Layoutable, Constraintable>: LayoutConstraintAtta
         
     }
     
-    public func constraints(with view: UIView) -> NSLayoutConstraint? {
+    public func constraints(with view: UIView) -> [NSLayoutConstraint] {
         constraint.constraints(with: view)
     }
     
