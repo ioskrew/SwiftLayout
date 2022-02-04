@@ -13,6 +13,7 @@ public struct TupleLayout<Tuple>: LayoutAttachable, LayoutContainable {
     let tuple: Tuple
     
     public var layouts: [LayoutAttachable] { castArrayFromTuple() }
+    public var constraints: [NSLayoutConstraint] = []
     
     public func deactive() {}
     

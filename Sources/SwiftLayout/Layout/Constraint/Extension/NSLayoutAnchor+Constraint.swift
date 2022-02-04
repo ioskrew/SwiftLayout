@@ -70,7 +70,8 @@ extension LayoutConstraintAttachable where Self: NSObject {
     }
     
     public func deactive() {
-        
+        view?.removeFromSuperview()
+        guide?.owningView?.removeFromSuperview()
     }
     
     public var hashable: AnyHashable {

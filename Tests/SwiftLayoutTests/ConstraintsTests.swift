@@ -49,7 +49,11 @@ class ConstraintsTests: XCTestCase {
         
         XCTAssertEqual(child.superview, root)
         XCTAssertFalse(root.constraints.isEmpty)
-        XCTAssertNotNil(root.constraints.first(LayoutConstraint(f: child, fa: .top, s: root, sa: .top, relation: .equal)))
+        XCTAssertTrue(root.constraints.first(LayoutConstraint(f: child, fa: .top, s: root, sa: .top, relation: .equal))!.isActive)
+        
+        deactivatable?.deactive()
+        XCTAssertNil(child.superview)
+        XCTAssertTrue(root.constraints.isEmpty)
     }
         
     func testAttributeFromAnchor() {

@@ -11,6 +11,7 @@ import UIKit
 public protocol LayoutContainable {
     
     var layouts: [LayoutAttachable] { get }
+    var constraints: [NSLayoutConstraint] { get }
     
     func addConstraint(_ constraint: NSLayoutConstraint?)
     
