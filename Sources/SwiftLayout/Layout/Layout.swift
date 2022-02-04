@@ -86,7 +86,9 @@ public extension LayoutAttachable where Self: LayoutContainable, Self: UIViewCon
     
     func attachLayout(_ layout: LayoutAttachable) {
         layout.addSubview(view)
-        layouts.forEach({ layout in layout.attachLayout(self) })
+        for layout in layouts {
+            layout.attachLayout(self)
+        }
     }
     
     func deactive() {
@@ -95,12 +97,13 @@ public extension LayoutAttachable where Self: LayoutContainable, Self: UIViewCon
     }
     
     func deactiveRoot() {
-        constraints.forEach({ constraint in
+        for constraint in constraints {
             constraint.isActive = false
-        })
-        layouts.forEach({ layout in
+        }
+        setConstraint([])
+        for layout in layouts {
             layout.deactive()
-        })
+        }
     }
     
     var hashable: AnyHashable {

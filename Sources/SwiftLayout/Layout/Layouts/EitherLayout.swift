@@ -8,11 +8,20 @@
 import Foundation
 import UIKit
 
-public struct EitherLayout<First, Second>: LayoutAttachable, LayoutContainable where First: LayoutAttachable, Second: LayoutAttachable {
+public final class EitherLayout<First, Second>: LayoutAttachable, LayoutContainable where First: LayoutAttachable, Second: LayoutAttachable {
+    
+    internal init(layout: LayoutAttachable, constraints: Set<NSLayoutConstraint> = []) {
+        self.layout = layout
+        self.constraints = constraints
+    }
     
     var layout: LayoutAttachable
     
     public var layouts: [LayoutAttachable] { [layout] }
     public var constraints: Set<NSLayoutConstraint> = []
+    
+    public func setConstraint(_ constraints: [NSLayoutConstraint]) {
+        self.constraints = []
+    }
     
 }

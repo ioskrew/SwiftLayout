@@ -51,7 +51,7 @@ final class AnyDeactiveBox<Layoutable: Layout>: _AnyDeactiveLayout {
     }
     
     func deactive() {
-        layouts.forEach { layout in
+        for layout in layouts {
             layout.deactiveRoot()
         }
     }

@@ -51,6 +51,10 @@ public final class SuperSubLayout<Superview, Sub>: LayoutAttachable, LayoutConta
         }
     }
     
+    public func setConstraint(_ constraints: [NSLayoutConstraint]) {
+        self.constraints = Set(constraints)
+    }
+    
 }
 
 extension SuperSubLayout: CustomDebugStringConvertible {

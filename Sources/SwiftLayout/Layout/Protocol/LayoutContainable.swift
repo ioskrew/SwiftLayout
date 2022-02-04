@@ -14,17 +14,29 @@ public protocol LayoutContainable {
     var constraints: Set<NSLayoutConstraint> { get }
     
     func addConstraint(_ constraints: [NSLayoutConstraint])
+    func setConstraint(_ constraints: [NSLayoutConstraint])
     
 }
 
 extension LayoutContainable {
     public func addConstraint(_ constraints: [NSLayoutConstraint]) {}
+    public func setConstraint(_ constraints: [NSLayoutConstraint]) {}
 }
 
 extension LayoutContainable where Self: LayoutAttachable {
     
     public var hashable: AnyHashable {
         AnyHashable(layouts.map(\.hashable))
+    }
+    
+    public func deactive() {
+        for constraint in constraints {
+            constraint.isActive = false
+        }
+        setConstraint([])
+        for layout in layouts {
+            layout.deactive()
+        }
     }
     
 }

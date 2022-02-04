@@ -8,14 +8,17 @@
 import Foundation
 import UIKit
 
-public struct TupleLayout<Tuple>: LayoutAttachable, LayoutContainable {
+public final class TupleLayout<Tuple>: LayoutAttachable, LayoutContainable {
+    
+    internal init(tuple: Tuple, constraints: Set<NSLayoutConstraint> = []) {
+        self.tuple = tuple
+        self.constraints = constraints
+    }
     
     let tuple: Tuple
     
     public var layouts: [LayoutAttachable] { castArrayFromTuple() }
     public var constraints: Set<NSLayoutConstraint> = []
-    
-    public func deactive() {}
     
     func castArrayFromTuple() -> [LayoutAttachable] {
         if let tuple = tuple as? (LayoutAttachable, LayoutAttachable, LayoutAttachable) {
@@ -29,4 +32,7 @@ public struct TupleLayout<Tuple>: LayoutAttachable, LayoutContainable {
         }
     }
     
+    public func setConstraint(_ constraints: [NSLayoutConstraint]) {
+        self.constraints = Set(constraints)
+    }
 }
