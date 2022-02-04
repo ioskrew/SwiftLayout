@@ -18,8 +18,8 @@ extension NSLayoutAnchor: LayoutConstraintAttachable {}
 
 extension LayoutConstraintAttachable where Self: NSObject {
     
-    var item: Any? {
-        self.value(forKey: "item")
+    var item: AnyHashable? {
+        self.value(forKey: "item") as? AnyHashable
     }
     
     public var guide: UILayoutGuide? {
@@ -75,7 +75,7 @@ extension LayoutConstraintAttachable where Self: NSObject {
     }
     
     public var hashable: AnyHashable {
-        AnyHashable(self)
+        AnyHashable(item)
     }
 }
 

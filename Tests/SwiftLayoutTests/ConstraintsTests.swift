@@ -46,7 +46,6 @@ class ConstraintsTests: XCTestCase {
         }
         
         deactivatable = layout.active()
-        
         XCTAssertEqual(child.superview, root)
         XCTAssertFalse(root.constraints.isEmpty)
         XCTAssertTrue(root.constraints.first(LayoutConstraint(f: child, fa: .top, s: root, sa: .top, relation: .equal))!.isActive)
@@ -54,6 +53,11 @@ class ConstraintsTests: XCTestCase {
         deactivatable?.deactive()
         XCTAssertNil(child.superview)
         XCTAssertTrue(root.constraints.isEmpty)
+        
+        deactivatable = layout.active()
+        XCTAssertEqual(child.superview, root)
+        XCTAssertFalse(root.constraints.isEmpty)
+        XCTAssertTrue(root.constraints.first(LayoutConstraint(f: child, fa: .top, s: root, sa: .top, relation: .equal))!.isActive)
     }
         
     func testAttributeFromAnchor() {
