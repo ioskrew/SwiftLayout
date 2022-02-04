@@ -13,6 +13,6 @@ public struct EitherLayout<First, Second>: LayoutAttachable, LayoutContainable w
     var layout: LayoutAttachable
     
     public var layouts: [LayoutAttachable] { [layout] }
-    public var constraints: [NSLayoutConstraint] = []
+    public var constraints: Set<NSLayoutConstraint> = []
     
 }

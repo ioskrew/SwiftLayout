@@ -73,9 +73,9 @@ public extension LayoutAttachable where Self: LayoutContainable, Self: UIViewCon
     }
     
     func reactive() {
-        layouts.forEach({ layout in
+        for layout in layouts {
             layout.attachLayout(self)
-        })
+        }
     }
     
     func attachLayout(_ layout: LayoutAttachable) {

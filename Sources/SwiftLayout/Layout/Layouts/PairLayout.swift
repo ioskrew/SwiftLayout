@@ -14,6 +14,6 @@ public struct PairLayout<Left, Right>: LayoutAttachable, LayoutContainable where
     let right: Right
     
     public var layouts: [LayoutAttachable] { [left, right] }
-    public var constraints: [NSLayoutConstraint] = []
+    public var constraints: Set<NSLayoutConstraint> = []
     
 }

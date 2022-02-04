@@ -11,7 +11,7 @@ import UIKit
 public struct GroupLayout<SomeLayout>: LayoutAttachable, LayoutContainable where SomeLayout: LayoutAttachable {
     
     public let layouts: [LayoutAttachable]
-    public var constraints: [NSLayoutConstraint] = []
+    public var constraints: Set<NSLayoutConstraint> = []
     
     public init(@LayoutBuilder _ layout: () -> SomeLayout) {
         layouts = [layout()]

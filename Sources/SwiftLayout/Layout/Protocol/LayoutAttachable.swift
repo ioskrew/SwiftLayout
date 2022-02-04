@@ -34,7 +34,7 @@ extension LayoutAttachable where Self: UIViewContainable, Self: LayoutContainabl
     public func addSubview(_ view: UIView) {
         guard view.superview != self.view else { return }
         self.view.addSubview(view)
-        self.layouts.forEach { layout in
+        for layout in layouts {
             addConstraint(layout.constraints(with: self.view))
         }
     }

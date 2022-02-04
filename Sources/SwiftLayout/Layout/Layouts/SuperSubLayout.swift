@@ -30,7 +30,7 @@ public final class SuperSubLayout<Superview, Sub>: LayoutAttachable, LayoutConta
     
     public var layouts: [LayoutAttachable] { [subLayout] }
     
-    public var constraints: [NSLayoutConstraint] = []
+    public var constraints: Set<NSLayoutConstraint> = []
 
     public func hash(into hasher: inout Hasher) {
         hashable.hash(into: &hasher)
@@ -46,7 +46,7 @@ public final class SuperSubLayout<Superview, Sub>: LayoutAttachable, LayoutConta
     
     public func addConstraint(_ constraint: NSLayoutConstraint?) {
         guard let constraint = constraint else { return }
-        constraints.append(constraint)
+        constraints.insert(constraint)
         constraint.isActive = true
     }
     
