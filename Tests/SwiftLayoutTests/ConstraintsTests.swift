@@ -47,7 +47,7 @@ class ConstraintsTests: XCTestCase {
         
         deactivatable = layout.active()
         XCTAssertEqual(child.superview, root)
-        XCTAssertFalse(root.constraints.isEmpty)
+        XCTAssertEqual(root.constraints.count, 1)
         XCTAssertTrue(root.constraints.first(LayoutConstraint(f: child, fa: .top, s: root, sa: .top, relation: .equal))!.isActive)
         
         deactivatable?.deactive()
@@ -56,7 +56,7 @@ class ConstraintsTests: XCTestCase {
         
         deactivatable = layout.active()
         XCTAssertEqual(child.superview, root)
-        XCTAssertFalse(root.constraints.isEmpty)
+        XCTAssertEqual(root.constraints.count, 1)
         XCTAssertTrue(root.constraints.first(LayoutConstraint(f: child, fa: .top, s: root, sa: .top, relation: .equal))!.isActive)
     }
         
