@@ -13,9 +13,4 @@ public struct EitherLayout<First, Second>: LayoutAttachable, LayoutContainable w
     
     public var layouts: [LayoutAttachable] { [layout] }
     
-    public func attachConstraint(_ constraint: LayoutConstraintAttachable) {
-        layouts.forEach { layout in
-            layout.attachConstraint(constraint)
-        }
-    }
 }

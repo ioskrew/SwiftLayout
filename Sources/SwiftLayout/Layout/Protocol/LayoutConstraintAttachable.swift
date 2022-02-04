@@ -11,7 +11,4 @@ import UIKit
 public protocol LayoutConstraintAttachable: LayoutAttachable {
     var guide: UILayoutGuide? { get }
     var view: UIView? { get }
-    
-    func constraints(with view: UIView)
 }
-

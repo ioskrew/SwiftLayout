@@ -47,14 +47,17 @@ extension LayoutConstraintAttachable where Self: NSObject {
             return .notAnAttribute
         }
     }
+  
+    var anchorType: LayoutAnchorType {
+        .init(self)
+    }
     
-    public func constraints(with view: UIView) {
-        if let view = self.view {
-            print("attribute of current anchor is \(view.attribute(self))")
-        } else if let guide = guide {
-            print("attribute of current anchor is \(guide.attribute(self))")
-        } else {
-            print("unknown")
+    public func constraints(with view: UIView) -> NSLayoutConstraint? {
+        switch attribute {
+        case .top:
+            return anchorType.equal(with: view.topAnchor.anchorType)
+        default:
+            return nil
         }
     }
     
@@ -67,10 +70,6 @@ extension LayoutConstraintAttachable where Self: NSObject {
     }
     
     public func deactive() {
-        
-    }
-    
-    public func attachConstraint(_ constraint: LayoutConstraintAttachable) {
         
     }
     
@@ -143,4 +142,68 @@ extension NSLayoutConstraint.Relation: CustomStringConvertible {
             return "NSLayoutConstraint.Attribute.unknown"
         }
     }
+}
+
+protocol LayoutAnchorTypeInterface {
+    var anchorType: LayoutAnchorType { get }
+}
+
+extension LayoutAnchorTypeInterface where Self: LayoutConstraintAttachable, Self: NSObject {
+    var anchorType: LayoutAnchorType {
+        LayoutAnchorType(self)
+    }
+}
+
+extension NSLayoutAnchor: LayoutAnchorTypeInterface {}
+
+enum LayoutAnchorType: LayoutAnchorTypeInterface {
+    case x(NSLayoutXAxisAnchor)
+    case y(NSLayoutYAxisAnchor)
+    case size(NSLayoutDimension)
+    case idontknow
+    
+    init(_ anchor: AnyObject?) {
+        if let x = anchor as? NSLayoutXAxisAnchor {
+            self = .x(x)
+        } else if let y = anchor as? NSLayoutYAxisAnchor {
+            self = .y(y)
+        } else if let size = anchor as? NSLayoutDimension {
+            self = .size(size)
+        } else {
+            self = .idontknow
+        }
+    }
+    
+    var anchorType: LayoutAnchorType { self }
+    
+    func relation<Anchor, AnchorType>(first: Anchor, relation: NSLayoutConstraint.Relation) -> (Anchor, CGFloat) -> NSLayoutConstraint where Anchor: NSLayoutAnchor<AnchorType> {
+        switch relation {
+        case .equal:
+            return first.constraint(equalTo:constant:)
+        case .greaterThanOrEqual:
+            return first.constraint(greaterThanOrEqualTo:constant:)
+        case .lessThanOrEqual:
+            return first.constraint(lessThanOrEqualTo:constant:)
+        @unknown default:
+            return first.constraint(equalTo:constant:)
+        }
+    }
+    
+    func constraint<A: LayoutAnchorTypeInterface>(to second: A?, relation: NSLayoutConstraint.Relation, constant: CGFloat) -> NSLayoutConstraint? {
+        switch (self, second?.anchorType) {
+        case let (.x(first), .x(second)):
+            return self.relation(first: first, relation: relation)(second, constant)
+        case let (.y(first), .y(second)):
+            return self.relation(first: first, relation: relation)(second, constant)
+        case let (.size(first), .size(second)):
+            return self.relation(first: first, relation: relation)(second, constant)
+        default:
+            return nil
+        }
+    }
+    
+    func equal<A: LayoutAnchorTypeInterface>(with second: A, constant: CGFloat = CGFloat.zero) -> NSLayoutConstraint? {
+        constraint(to: second, relation: .equal, constant: constant)
+    }
+    
 }

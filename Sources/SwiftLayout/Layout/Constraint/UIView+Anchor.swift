@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 extension UIView {
-    func attribute<Anchor>(_ anchor: Anchor) -> NSLayoutConstraint.Attribute where Anchor: LayoutConstraintAttachable {
+    func attribute<Anchor>(_ anchor: Anchor) -> NSLayoutConstraint.Attribute where Anchor: LayoutConstraintAttachable, Anchor: NSObject {
         if self.topAnchor.isEqual(anchor) {
             return .top
         } else if self.bottomAnchor.isEqual(anchor) {

@@ -21,7 +21,6 @@ public struct LayoutConstraint<Layoutable, Constraintable>: LayoutConstraintAtta
     let constraint: Constraintable
     
     public func active() -> AnyDeactivatable {
-        layout.attachConstraint(constraint)
         return layout.active()
     }
     
@@ -29,15 +28,11 @@ public struct LayoutConstraint<Layoutable, Constraintable>: LayoutConstraintAtta
         
     }
     
-    public func constraints(with view: UIView) {
+    public func constraints(with view: UIView) -> NSLayoutConstraint? {
         constraint.constraints(with: view)
     }
     
     public func attachLayout(_ layout: LayoutAttachable) {
-        
-    }
-    
-    public func attachConstraint(_ constraint: LayoutConstraintAttachable) {
         
     }
     

@@ -28,9 +28,4 @@ public struct TupleLayout<Tuple>: LayoutAttachable, LayoutContainable {
         }
     }
     
-    public func attachConstraint(_ constraint: LayoutConstraintAttachable) {
-        layouts.forEach { layout in
-            layout.attachConstraint(constraint)
-        }
-    }
 }

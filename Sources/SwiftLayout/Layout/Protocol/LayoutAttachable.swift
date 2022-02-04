@@ -11,16 +11,30 @@ import UIKit
 public protocol LayoutAttachable: Layout {
     func attachLayout(_ layout: LayoutAttachable)
     func addSubview(_ view: UIView)
+    
+    func constraints(with view: UIView) -> NSLayoutConstraint?
 }
 
 extension LayoutAttachable {
     public func addSubview(_ view: UIView) {}
+    public func constraints(with view: UIView) -> NSLayoutConstraint? { nil }
 }
 
 extension LayoutAttachable where Self: UIViewContainable {
     
     public func addSubview(_ view: UIView) {
         self.view.addSubview(view)
+    }
+    
+}
+
+extension LayoutAttachable where Self: UIViewContainable, Self: LayoutContainable {
+    
+    public func addSubview(_ view: UIView) {
+        self.view.addSubview(view)
+        self.layouts.forEach { layout in
+            addConstraint(layout.constraints(with: self.view))
+        }
     }
     
 }
