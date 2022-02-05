@@ -20,7 +20,8 @@ public protocol Layout {
 extension Layout {
     
     public func active() -> AnyDeactivatable {
-        AnyDeactivatable(self)
+        attachSuperview()
+        return AnyDeactivatable(self)
     }
     
     public func attachSuperview() {

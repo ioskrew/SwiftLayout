@@ -2,7 +2,7 @@ import XCTest
 import UIKit
 @testable import SwiftLayout
 
-final class SwiftLayoutTests: XCTestCase {
+final class LayoutViewTreeTests: XCTestCase {
     
     var superview: UIView = UIView().viewTag.superview
     
@@ -24,6 +24,30 @@ final class SwiftLayoutTests: XCTestCase {
         label.removeFromSuperview()
         redView.removeFromSuperview()
         image.removeFromSuperview()
+    }
+    
+    func testViewHierarchy() {
+        let grand = UIView().viewTag.grand
+        XCTAssertNil(image.superview)
+        XCTAssertNil(grand.superview)
+        XCTAssertNil(label.superview)
+        XCTAssertNil(button.superview)
+        XCTAssertNil(redView.superview)
+        
+        deactivable = root {
+            redView {
+                button
+                label
+                grand {
+                    image
+                }
+            }
+        }.active()
+        XCTAssertEqual(image.superview, grand)
+        XCTAssertEqual(grand.superview, redView)
+        XCTAssertEqual(label.superview, redView)
+        XCTAssertEqual(button.superview, redView)
+        XCTAssertEqual(redView.superview, root)
     }
 }
 

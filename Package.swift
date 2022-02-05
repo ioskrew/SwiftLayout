@@ -25,6 +25,5 @@ let package = Package(
         .testTarget(
             name: "SwiftLayoutTests",
             dependencies: ["SwiftLayout"]),
-        .testTarget(name: "IndependentTests"),
     ]
 )
