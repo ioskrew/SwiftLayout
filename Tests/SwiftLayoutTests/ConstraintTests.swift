@@ -14,19 +14,19 @@ class ConstraintTests: XCTestCase {
     
     var root = UIView().viewTag.root
     var child = UIView().viewTag.child
-
+    
     override func setUpWithError() throws {
         continueAfterFailure = false
     }
-
+    
     override func tearDownWithError() throws {
         root = UIView().viewTag.root
         child = UIView().viewTag.child
         deactivatable.deactive()
     }
-
+    
     func testConstraintToLayout() {
-   
+        
         let constraint: some Layout = root.constraint {
             
         }
@@ -85,6 +85,19 @@ class ConstraintTests: XCTestCase {
                     }
                 }.active()
                 context("second item은 root가 된다") {
+                    XCTAssertEqual(child.superview, root)
+                    XCTAssertEqual(root.constraints.count, 1)
+                    XCTAssertNotNil(root.constraints.first(LayoutConstraint(f: child, fa: .top, s: root, sa: .top, relation: .equal)))
+                }
+                deactivatable = AnyDeactivatable()
+            }
+            context("first item과 second item이 없는 경우") {
+                deactivatable = root {
+                    child.constraint {
+                        ConstraintBuilder.Binding(firstAttribute: .top, secondAttribute: .top)
+                    }
+                }.active()
+                context("first item은 child, second item은 root가 된다") {
                     XCTAssertEqual(child.superview, root)
                     XCTAssertEqual(root.constraints.count, 1)
                     XCTAssertNotNil(root.constraints.first(LayoutConstraint(f: child, fa: .top, s: root, sa: .top, relation: .equal)))
