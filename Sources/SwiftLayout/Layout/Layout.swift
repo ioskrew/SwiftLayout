@@ -49,6 +49,12 @@ public extension Layout where Self: LayoutContainable {
         AnyHashable([typeString(of: self)] + layouts.map(\.hashable))
     }
     
+    func constraints(with view: UIView) -> [NSLayoutConstraint] {
+        layouts.flatMap { layout in
+            layout.constraints(with: view)
+        }
+    }
+    
 }
 
 public extension LayoutAttachable where Self: LayoutContainable, Self: UIViewContainable {
@@ -73,23 +79,31 @@ public extension LayoutAttachable where Self: LayoutContainable, Self: UIViewCon
     }
     
     func reactive() {
-        layouts.forEach({ layout in
+        for layout in layouts {
             layout.attachLayout(self)
-        })
+        }
     }
     
     func attachLayout(_ layout: LayoutAttachable) {
         layout.addSubview(view)
-        layouts.forEach({ layout in layout.attachLayout(self) })
+        for layout in layouts {
+            layout.attachLayout(self)
+        }
     }
     
     func deactive() {
         view.deactive()
-        layouts.forEach({ layout in layout.deactive() })
+        deactiveRoot()
     }
     
     func deactiveRoot() {
-        layouts.forEach({ layout in layout.deactive() })
+        for constraint in constraints {
+            constraint.isActive = false
+        }
+        setConstraint([])
+        for layout in layouts {
+            layout.deactive()
+        }
     }
     
     var hashable: AnyHashable {

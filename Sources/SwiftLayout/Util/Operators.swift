@@ -2,7 +2,7 @@
 //  Operators.swift
 //  
 //
-//  Created by maylee on 2022/01/30.
+//  Created by oozoofrog on 2022/01/30.
 //
 
 import Foundation

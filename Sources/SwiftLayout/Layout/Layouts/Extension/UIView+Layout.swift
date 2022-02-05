@@ -23,6 +23,10 @@ extension UIView: LayoutAttachable {
         layout.addSubview(self)
     }
     
+    public func constraints(with view: UIView) -> [NSLayoutConstraint] {
+        []
+    }
+    
     public var hashable: AnyHashable {
         AnyHashable(self)
     }

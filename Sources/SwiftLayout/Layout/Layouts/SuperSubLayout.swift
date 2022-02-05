@@ -29,6 +29,8 @@ public final class SuperSubLayout<Superview, Sub>: LayoutAttachable, LayoutConta
     let subLayout: Sub
     
     public var layouts: [LayoutAttachable] { [subLayout] }
+    
+    public var constraints: Set<NSLayoutConstraint> = []
 
     public func hash(into hasher: inout Hasher) {
         hashable.hash(into: &hasher)
@@ -41,6 +43,18 @@ public final class SuperSubLayout<Superview, Sub>: LayoutAttachable, LayoutConta
             return false
         }
     }
+    
+    public func addConstraint(_ constraints: [NSLayoutConstraint]) {
+        self.constraints.formUnion(constraints)
+        self.constraints.forEach { constraint in
+            constraint.isActive = true
+        }
+    }
+    
+    public func setConstraint(_ constraints: [NSLayoutConstraint]) {
+        self.constraints = Set(constraints)
+    }
+    
 }
 
 extension SuperSubLayout: CustomDebugStringConvertible {

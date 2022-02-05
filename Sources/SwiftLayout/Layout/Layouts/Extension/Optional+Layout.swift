@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 extension Optional: Layout where Wrapped: Layout {
     public func active() -> AnyDeactivatable {
@@ -24,5 +25,9 @@ extension Optional: Layout where Wrapped: Layout {
 extension Optional: LayoutAttachable where Wrapped: LayoutAttachable {
     public func attachLayout(_ layout: LayoutAttachable) {
         self?.attachLayout(layout)
+    }
+    
+    public func constraints(with view: UIView) -> [NSLayoutConstraint] {
+        self?.constraints(with: view) ?? []
     }
 }
