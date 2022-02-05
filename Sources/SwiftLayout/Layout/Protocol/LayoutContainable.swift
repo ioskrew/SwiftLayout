@@ -2,41 +2,37 @@
 //  LayoutContainable.swift
 //  
 //
-//  Created by oozoofrog on 2022/02/01.
+//  Created by oozoofrog on 2022/02/06.
 //
 
 import Foundation
 import UIKit
 
-public protocol LayoutContainable {
-    
-    var layouts: [LayoutAttachable] { get }
-    var constraints: Set<NSLayoutConstraint> { get }
-    
-    func addConstraint(_ constraints: [NSLayoutConstraint])
-    func setConstraint(_ constraints: [NSLayoutConstraint])
-    
+public protocol LayoutContainable: Layout {
+    var layouts: [Layout] { get }
 }
 
 extension LayoutContainable {
-    public func addConstraint(_ constraints: [NSLayoutConstraint]) {}
-    public func setConstraint(_ constraints: [NSLayoutConstraint]) {}
-}
-
-extension LayoutContainable where Self: LayoutAttachable {
+    public func attachSuperview(_ superview: UIView?) {
+        for layout in layouts {
+            layout.attachSuperview(superview)
+        }
+    }
+    public func detachFromSuperview(_ superview: UIView?) {
+        for layout in layouts {
+            layout.detachFromSuperview(superview)
+        }
+    }
     
     public var hashable: AnyHashable {
         AnyHashable(layouts.map(\.hashable))
     }
-    
-    public func deactive() {
-        for constraint in constraints {
-            constraint.isActive = false
-        }
-        setConstraint([])
-        for layout in layouts {
-            layout.deactive()
-        }
-    }
-    
 }
+
+extension Layout where Self: LayoutContainable, Self: Collection, Element == Layout {
+    public var layouts: [Layout] {
+        map({ $0 as Layout })
+    }
+}
+
+extension Array: LayoutContainable where Self.Element == Layout {}

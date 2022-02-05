@@ -35,7 +35,7 @@ final class AnyDeactiveBox<Layoutable: Layout>: _AnyDeactiveLayout {
     
     func active() {
         layouts.forEach { layout in
-            layout.reactive()
+            layout.attachSuperview()
         }
     }
     
@@ -43,16 +43,16 @@ final class AnyDeactiveBox<Layoutable: Layout>: _AnyDeactiveLayout {
         for layoutable in layouts {
             if layoutable.hashable == layout.hashable {
                 activatedLayout = layoutable
-                layoutable.reactive()
+                layoutable.attachSuperview()
             } else {
-                layoutable.deactive()
+                layoutable.detachFromSuperview()
             }
         }
     }
     
     func deactive() {
         for layout in layouts {
-            layout.deactiveRoot()
+            layout.detachFromSuperview()
         }
     }
     
@@ -78,14 +78,7 @@ public final class AnyDeactivatable {
     }
     
     deinit {
-        box?.deactive()
-    }
-    
-    public func bind<Layoutable>(_ layout: Layoutable) where Layoutable: Layout {
-        if let layout = layout as? SuperSubLayoutable {
-            layout.deactivatable = self
-        }
-        box?.bind(layout)
+        deactive()
     }
     
     public func active() {
@@ -101,11 +94,5 @@ public final class AnyDeactivatable {
         self.box = nil
     }
     
-    public func layoutIsActivating<Layoutable>(_ layout: Layoutable) -> Bool where Layoutable: Layout {
-        guard let box = box else {
-            return false
-        }
-        return box.layoutIsActivating(layout)
-    }
 }
 
