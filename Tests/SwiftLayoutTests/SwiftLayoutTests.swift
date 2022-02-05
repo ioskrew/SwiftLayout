@@ -257,8 +257,8 @@ final class SwiftLayoutTests: XCTestCase {
         XCTAssertEqual(root.superview, superview)
         
         deactivable?.active()
-        XCTAssertEqual(button.superview, redView, button.superview!.tagDescription)
-        XCTAssertEqual(redView.superview, root)
+        XCTAssertNil(button.superview)
+        XCTAssertNil(redView.superview)
         XCTAssertEqual(root.superview, superview)
     }
     

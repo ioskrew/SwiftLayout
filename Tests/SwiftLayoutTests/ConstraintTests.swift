@@ -76,6 +76,7 @@ class ConstraintTests: XCTestCase {
                     XCTAssertEqual(root.constraints.count, 1)
                     XCTAssertNotNil(root.constraints.first(LayoutConstraint(f: child, fa: .top, s: root, sa: .top, relation: .equal)))
                 }
+                deactivatable = AnyDeactivatable()
             }
             context("first item이 있고, second item이 없는 경우") {
                 deactivatable = root {
@@ -88,6 +89,7 @@ class ConstraintTests: XCTestCase {
                     XCTAssertEqual(root.constraints.count, 1)
                     XCTAssertNotNil(root.constraints.first(LayoutConstraint(f: child, fa: .top, s: root, sa: .top, relation: .equal)))
                 }
+                deactivatable = AnyDeactivatable()
             }
         }
     }

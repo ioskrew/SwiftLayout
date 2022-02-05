@@ -50,9 +50,11 @@ public extension Layout where Self: LayoutContainable {
     }
     
     func constraints(with view: UIView) -> [NSLayoutConstraint] {
-        layouts.flatMap { layout in
-            layout.constraints(with: view)
+        var constraints: [NSLayoutConstraint] = []
+        for layout in layouts {
+            constraints.append(contentsOf: layout.constraints(with: view))
         }
+        return constraints
     }
     
 }
