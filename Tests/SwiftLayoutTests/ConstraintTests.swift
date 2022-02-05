@@ -56,4 +56,8 @@ class ConstraintTests: XCTestCase {
         }
     }
     
+    func testSyntaticSugarOfBindingForConstraint() {
+        
+    }
+    
 }
