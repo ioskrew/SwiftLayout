@@ -9,5 +9,5 @@ import Foundation
 import UIKit
 
 public protocol Constraint {
-   func constraints() -> [NSLayoutConstraint]
+    func constraints(item: AnyObject?) -> [NSLayoutConstraint]
 }

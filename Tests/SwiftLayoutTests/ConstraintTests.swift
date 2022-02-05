@@ -11,18 +11,20 @@ import XCTest
 class ConstraintTests: XCTestCase {
     
     var deactivatable: AnyDeactivatable = .init()
+    
+    var root = UIView().viewTag.root
+    var child = UIView().viewTag.child
 
     override func setUpWithError() throws {
         continueAfterFailure = false
     }
 
     override func tearDownWithError() throws {
+        root = UIView().viewTag.root
+        child = UIView().viewTag.child
     }
 
     func testConstraintToLayout() {
-        
-        let root = UIView().viewTag.root
-        let child = UIView().viewTag.child
    
         let constraint: some Layout = root.constraint {
             
@@ -57,7 +59,17 @@ class ConstraintTests: XCTestCase {
     }
     
     func testSyntaticSugarOfBindingForConstraint() {
-        
+        context("child의 ConstraintBuilder.Binding에 first item이 없는 경우") {
+            deactivatable = root {
+                child.constraint {
+                    ConstraintBuilder.Binding(firstAttribute: .top, secondAttribute: .top, secondItem: root)
+                }
+            }.active()
+            context("first item은 child가 된다") {
+                XCTAssertEqual(root.constraints.count, 1)
+                XCTAssertNotNil(root.constraints.first(LayoutConstraint(f: child, fa: .top, s: root, sa: .top, relation: .equal)))
+            }
+        }
     }
     
 }
