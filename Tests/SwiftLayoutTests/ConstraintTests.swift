@@ -59,15 +59,28 @@ class ConstraintTests: XCTestCase {
     }
     
     func testSyntaticSugarOfBindingForConstraint() {
-        context("child의 ConstraintBuilder.Binding에 first item이 없는 경우") {
-            deactivatable = root {
-                child.constraint {
-                    ConstraintBuilder.Binding(firstAttribute: .top, secondAttribute: .top, secondItem: root)
+        context("child의 ConstraintBuilder.Binding의") {
+            context("first item이 없는 경우") {
+                deactivatable = root {
+                    child.constraint {
+                        ConstraintBuilder.Binding(firstAttribute: .top, secondAttribute: .top, secondItem: root)
+                    }
+                }.active()
+                context("first item은 child가 된다") {
+                    XCTAssertEqual(root.constraints.count, 1)
+                    XCTAssertNotNil(root.constraints.first(LayoutConstraint(f: child, fa: .top, s: root, sa: .top, relation: .equal)))
                 }
-            }.active()
-            context("first item은 child가 된다") {
-                XCTAssertEqual(root.constraints.count, 1)
-                XCTAssertNotNil(root.constraints.first(LayoutConstraint(f: child, fa: .top, s: root, sa: .top, relation: .equal)))
+            }
+            context("first item이 있고, second item이 없는 경우") {
+                deactivatable = root {
+                    child.constraint {
+                        ConstraintBuilder.Binding(firstAttribute: .top, firstItem: child, secondAttribute: .top)
+                    }
+                }.active()
+                context("second item은 root가 된다") {
+                    XCTAssertEqual(root.constraints.count, 1)
+                    XCTAssertNotNil(root.constraints.first(LayoutConstraint(f: child, fa: .top, s: root, sa: .top, relation: .equal)))
+                }
             }
         }
     }
