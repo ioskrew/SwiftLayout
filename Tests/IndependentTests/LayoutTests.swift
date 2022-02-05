@@ -11,17 +11,18 @@ import XCTest
 extension UIView: _Layout {}
 
 protocol _Layout {
-    func active()
     func attachSuperview(_ superview: UIView?)
     func attachSuperview()
+    func detachFromSuperview(_ superview: UIView?)
+    func detachFromSuperview()
 }
 
 extension _Layout {
-    func active() {
-        attachSuperview()
-    }
     func attachSuperview() {
         attachSuperview(nil)
+    }
+    func detachFromSuperview() {
+        detachFromSuperview(nil)
     }
 }
 
@@ -35,6 +36,11 @@ extension _LayoutContainable {
             layout.attachSuperview(superview)
         }
     }
+    func detachFromSuperview(_ superview: UIView?) {
+        for layout in layouts {
+            layout.detachFromSuperview(superview)
+        }
+    }
 }
 
 protocol _LayoutViewContainable: _LayoutContainable {
@@ -46,6 +52,14 @@ extension _LayoutViewContainable {
         superview?.addSubview(self.view)
         for layout in layouts {
             layout.attachSuperview(self.view)
+        }
+    }
+    func detachFromSuperview(_ superview: UIView?) {
+        if self.view.superview == superview {
+            self.view.removeFromSuperview()
+        }
+        for layout in layouts {
+            layout.detachFromSuperview(self.view)
         }
     }
 }
@@ -64,6 +78,10 @@ struct _OptionalLayout<L>: _Layout where L: _Layout {
     
     func attachSuperview(_ superview: UIView?) {
         layout?.attachSuperview(superview)
+    }
+    
+    func detachFromSuperview(_ superview: UIView?) {
+        layout?.detachFromSuperview(superview)
     }
 }
 
@@ -102,6 +120,11 @@ extension _Layout where Self: UIView {
     func attachSuperview(_ superview: UIView?) {
         superview?.addSubview(self)
     }
+    
+    func detachFromSuperview(_ superview: UIView?) {
+        guard self.superview == superview else { return }
+        removeFromSuperview()
+    }
 }
 
 final class LayoutTests: XCTestCase {
@@ -131,11 +154,16 @@ final class LayoutTests: XCTestCase {
         }
         
         print(layout)
-        layout.active()
+        layout.attachSuperview()
         
         XCTAssertEqual(grandChild1.superview, child)
         XCTAssertEqual(grandChild2.superview, child)
         XCTAssertEqual(child.superview, root)
+        
+        layout.detachFromSuperview()
+        XCTAssertNil(grandChild1.superview)
+        XCTAssertNil(grandChild2.superview)
+        XCTAssertNil(child.superview)
     }
     
 }
