@@ -11,7 +11,7 @@ import UIKit
 extension Layout where Self: UIView {
     
     public func constraint<C>(@ConstraintBuilder _ content: () -> C) -> ConstraintLayout<Self, C> where C: Constraint {
-        .init(view: self, constraints: content())
+        .init(view: self, constraint: content())
     }
     
 }
