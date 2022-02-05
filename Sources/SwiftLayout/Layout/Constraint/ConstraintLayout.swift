@@ -18,7 +18,7 @@ public struct ConstraintLayout<V, C>: LayoutAttachable where V: UIView, C: Const
     }
     
     public func deactive() {
-        
+        view.removeFromSuperview()
     }
     
     public func attachLayout(_ layout: LayoutAttachable) {

@@ -15,7 +15,9 @@ extension XCTestCase {
         }
     }
     
-    func context(_ description: String, _ block: () -> Void) {
+    func context(skip: Bool = false, _ description: String, _ block: () -> Void) {
+        guard !skip else { return }
         XCTContext.runActivity(named: description, block: { _ in block() })
     }
+    
 }
