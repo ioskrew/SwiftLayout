@@ -8,13 +8,13 @@
 import Foundation
 import XCTest
 
-extension UIView: _Layout {}
-
 protocol _Layout {
     func attachSuperview(_ superview: UIView?)
     func attachSuperview()
     func detachFromSuperview(_ superview: UIView?)
     func detachFromSuperview()
+    
+    var hashable: AnyHashable { get }
 }
 
 extension _Layout {
@@ -41,6 +41,10 @@ extension _LayoutContainable {
             layout.detachFromSuperview(superview)
         }
     }
+    
+    var hashable: AnyHashable {
+        AnyHashable(layouts.map(\.hashable))
+    }
 }
 
 protocol _LayoutViewContainable: _LayoutContainable {
@@ -62,6 +66,10 @@ extension _LayoutViewContainable {
             layout.detachFromSuperview(self.view)
         }
     }
+    
+    var hashable: AnyHashable {
+        AnyHashable(layouts.map(\.hashable) + [self.view.hashable])
+    }
 }
 
 extension _Layout where Self: _LayoutContainable, Self: Collection, Element == _Layout {
@@ -82,6 +90,10 @@ struct _OptionalLayout<L>: _Layout where L: _Layout {
     
     func detachFromSuperview(_ superview: UIView?) {
         layout?.detachFromSuperview(superview)
+    }
+    
+    var hashable: AnyHashable {
+        AnyHashable(layout?.hashable)
     }
 }
 
@@ -125,7 +137,14 @@ extension _Layout where Self: UIView {
         guard self.superview == superview else { return }
         removeFromSuperview()
     }
+    
+    var hashable: AnyHashable {
+        AnyHashable(self)
+    }
 }
+
+extension UIView: _Layout {}
+
 
 final class LayoutTests: XCTestCase {
 
