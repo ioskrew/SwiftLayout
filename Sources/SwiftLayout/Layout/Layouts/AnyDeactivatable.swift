@@ -63,7 +63,7 @@ final class AnyDeactiveBox<Layoutable: Layout>: _AnyDeactiveLayout {
 
 public final class AnyDeactivatable {
     
-    let box: _AnyDeactiveLayout?
+    private(set) var box: _AnyDeactiveLayout?
     
     init() {
         box = nil
@@ -98,6 +98,7 @@ public final class AnyDeactivatable {
     
     public func deactive() {
         self.box?.deactive()
+        self.box = nil
     }
     
     public func layoutIsActivating<Layoutable>(_ layout: Layoutable) -> Bool where Layoutable: Layout {
