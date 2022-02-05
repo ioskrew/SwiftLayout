@@ -8,30 +8,10 @@
 import Foundation
 import UIKit
 
-public struct ConstraintLayout<V, C>: LayoutAttachable where V: UIView, C: Constraint {
+public struct ConstraintLayout<C>: LayoutViewContainable where C: Constraint {
 
-    let view: V
+    public let view: UIView
     let constraint: C
-    
-    public func active() -> AnyDeactivatable {
-        AnyDeactivatable()
-    }
-    
-    public func deactive() {
-        view.removeFromSuperview()
-    }
-    
-    public func attachLayout(_ layout: LayoutAttachable) {
-        layout.addSubview(view)
-    }
-    
-    public func constraints(with view: UIView) -> [NSLayoutConstraint] {
-        constraint.constraints(item: self.view, toItem: view)
-    }
-    
-    public var hashable: AnyHashable {
-        AnyHashable(0)
-    }
-    
+    public var layouts: [Layout] = []
     
 }

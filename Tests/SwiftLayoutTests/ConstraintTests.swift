@@ -108,3 +108,41 @@ class ConstraintTests: XCTestCase {
     }
     
 }
+
+protocol LayoutConstraintInterface {
+    func isEqual(_ interface: LayoutConstraintInterface) -> Bool
+    func isEqual(_ constraint: NSLayoutConstraint) -> Bool
+}
+
+struct LayoutConstraint<F, S>: LayoutConstraintInterface where F: NSObject, S: NSObject {
+    typealias Attribute = NSLayoutConstraint.Attribute
+    typealias Relation = NSLayoutConstraint.Relation
+    let f: F
+    let fa: NSLayoutConstraint.Attribute
+    let s: S?
+    let sa: NSLayoutConstraint.Attribute
+    
+    let relation: Relation
+    
+    func isEqual(_ interface: LayoutConstraintInterface) -> Bool {
+        guard let constraint = interface as? Self else { return false }
+        return f == constraint.f && s == constraint.s && relation == constraint.relation
+    }
+    
+    func isEqual(_ constraint: NSLayoutConstraint) -> Bool {
+        let second = constraint.secondItem as? S
+        return f.isEqual(constraint.firstItem) && s == second && relation == constraint.relation
+    }
+}
+
+extension Collection where Element: NSLayoutConstraint {
+    
+    func first(_ constraint: LayoutConstraintInterface) -> Element? {
+        self.first(where:constraint.isEqual)
+    }
+    
+    func filter(_ constaint: LayoutConstraintInterface) -> [Element] {
+        self.filter(constaint.isEqual)
+    }
+    
+}

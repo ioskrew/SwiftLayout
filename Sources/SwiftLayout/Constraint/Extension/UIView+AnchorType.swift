@@ -9,7 +9,40 @@ import Foundation
 import UIKit
 
 extension UIView {
-    func attribute<Anchor>(_ anchor: Anchor) -> NSLayoutConstraint.Attribute where Anchor: LayoutConstraintAttachable, Anchor: NSObject {
+    func anchor(for attribute: NSLayoutConstraint.Attribute) -> AnchorType {
+        switch attribute {
+        case .top:
+            return topAnchor.anchorType
+        case .bottom:
+            return bottomAnchor.anchorType
+        case .leading:
+            return leadingAnchor.anchorType
+        case .trailing:
+            return trailingAnchor.anchorType
+        case .left:
+            return leftAnchor.anchorType
+        case .right:
+            return rightAnchor.anchorType
+        case .width:
+            return widthAnchor.anchorType
+        case .height:
+            return heightAnchor.anchorType
+        case .centerX:
+            return centerXAnchor.anchorType
+        case .centerY:
+            return centerYAnchor.anchorType
+        case .firstBaseline:
+            return firstBaselineAnchor.anchorType
+        case .lastBaseline:
+            return lastBaselineAnchor.anchorType
+        default:
+            return .idontknow
+        }
+    }
+}
+
+extension UIView {
+    func attribute<Anchor>(_ anchor: Anchor) -> NSLayoutConstraint.Attribute where Anchor: NSObject {
         if self.topAnchor.isEqual(anchor) {
             return .top
         } else if self.bottomAnchor.isEqual(anchor) {
@@ -41,7 +74,7 @@ extension UIView {
 }
 
 extension UILayoutGuide {
-    func attribute<Anchor>(_ anchor: Anchor) -> NSLayoutConstraint.Attribute where Anchor: LayoutConstraintAttachable {
+    func attribute<Anchor>(_ anchor: Anchor) -> NSLayoutConstraint.Attribute where Anchor: NSObject {
         if self.topAnchor.isEqual(anchor) {
             return .top
         } else if self.bottomAnchor.isEqual(anchor) {
