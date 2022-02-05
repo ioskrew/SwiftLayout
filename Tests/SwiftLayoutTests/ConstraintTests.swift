@@ -30,7 +30,7 @@ class ConstraintTests: XCTestCase {
         let constraint: some Layout = root.constraint {
             
         }
-        XCTAssertEqual(typeString(of: constraint), "ConstraintLayout<UIView, Array<Binding>>")
+        XCTAssertEqual(typeString(of: constraint), "ConstraintLayout<Array<Binding>>")
         
         let layout: some Layout = root {
             child.constraint {
@@ -43,7 +43,6 @@ class ConstraintTests: XCTestCase {
                 ConstraintBuilder.Binding(firstAttribute: .centerX, firstItem: child, secondAttribute: .centerX, secondItem: root, relation: .equal)
             }
         }
-        XCTAssertEqual(typeString(of: layout), "SuperSubLayout<UIView, ConstraintLayout<UIView, Array<Binding>>>")
         
         deactivatable = layout.active()
         XCTAssertEqual(child.superview, root)
