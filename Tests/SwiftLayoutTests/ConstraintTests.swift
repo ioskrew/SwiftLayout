@@ -27,11 +27,6 @@ class ConstraintTests: XCTestCase {
     
     func testConstraintToLayout() {
         
-        let constraint: some Layout = root.constraint {
-            
-        }
-        XCTAssertEqual(typeString(of: constraint), "ConstraintLayout<Array<Binding>>")
-        
         let layout: some Layout = root {
             child.constraint {
                 ConstraintBuilder.Binding(firstAttribute: .top, firstItem: child, secondAttribute: .top, secondItem: root, relation: .equal)
@@ -76,6 +71,8 @@ class ConstraintTests: XCTestCase {
                     XCTAssertNotNil(root.constraints.first(LayoutConstraint(f: child, fa: .top, s: root, sa: .top, relation: .equal)))
                 }
                 deactivatable = AnyDeactivatable()
+                XCTAssertNil(child.superview)
+                XCTAssertEqual(child.constraints.count, 0)
             }
             context("first item이 있고, second item이 없는 경우") {
                 deactivatable = root {

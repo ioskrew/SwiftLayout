@@ -8,10 +8,25 @@
 import Foundation
 import UIKit
 
-public struct ConstraintLayout<C>: LayoutViewContainable where C: Constraint {
-
+public final class ConstraintLayout<C>: LayoutViewContainable where C: Constraint {
+   
+    internal init(view: UIView, constraint: C) {
+        self.view = view
+        self.constraint = constraint
+    }
+    
     public let view: UIView
     let constraint: C
+    
     public var layouts: [Layout] = []
+    var constraints: [NSLayoutConstraint] = []
+    
+    public func attachSuperview(_ superview: UIView?) {
+        superview?.addSubview(self.view)
+        self.constraints = constraint.constraints(item: view, toItem: superview)
+        for constraint in constraints {
+            constraint.isActive = true
+        }
+    }
     
 }

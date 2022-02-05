@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-protocol LayoutViewContainable: LayoutContainable {
+public protocol LayoutViewContainable: LayoutContainable {
     var view: UIView { get }
 }
 

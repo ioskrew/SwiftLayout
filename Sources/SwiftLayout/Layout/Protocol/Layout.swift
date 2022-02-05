@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-public protocol Layout {
+public protocol Layout: CustomDebugStringConvertible {
     func attachSuperview(_ superview: UIView?)
     func attachSuperview()
     func detachFromSuperview(_ superview: UIView?)
