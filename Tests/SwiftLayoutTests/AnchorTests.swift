@@ -8,7 +8,7 @@
 import XCTest
 @testable import SwiftLayout
 
-class ConstraintsTests: XCTestCase {
+class AnchorTests: XCTestCase {
 
     var deactivatable: AnyDeactivatable?
     
