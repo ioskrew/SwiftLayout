@@ -19,7 +19,7 @@ public struct ConstraintBuilder {
         
         internal init(firstAttribute: NSLayoutConstraint.Attribute,
                       firstItem: AnyObject? = nil,
-                      secondAttribute: NSLayoutConstraint.Attribute,
+                      secondAttribute: NSLayoutConstraint.Attribute = .notAnAttribute,
                       secondItem: AnyObject? = nil,
                       relation: NSLayoutConstraint.Relation = .equal) {
             self.firstAttribute = firstAttribute
@@ -35,8 +35,8 @@ public struct ConstraintBuilder {
         var secondItem: AnyObject?
         var relation: NSLayoutConstraint.Relation = .equal
         
-        func constraint() -> NSLayoutConstraint? {
-            guard let item = firstItem else { return nil }
+        func constraint(item: AnyObject?) -> NSLayoutConstraint? {
+            guard let item = firstItem ?? item else { return nil }
             return NSLayoutConstraint(item: item, attribute: firstAttribute,
                                       relatedBy: relation,
                                       toItem: secondItem, attribute: secondAttribute,
@@ -48,9 +48,9 @@ public struct ConstraintBuilder {
 }
 
 extension Array: Constraint where Element == ConstraintBuilder.Binding {
-    public func constraints() -> [NSLayoutConstraint] {
+    public func constraints(item: AnyObject?) -> [NSLayoutConstraint] {
         compactMap { binding in
-            binding.constraint()
+            binding.constraint(item: item)
         }
     }
 }

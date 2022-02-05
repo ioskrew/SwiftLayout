@@ -26,7 +26,7 @@ public struct ConstraintLayout<V, C>: LayoutAttachable where V: UIView, C: Const
     }
     
     public func constraints(with view: UIView) -> [NSLayoutConstraint] {
-        constraint.constraints()
+        constraint.constraints(item: self.view)
     }
     
     public var hashable: AnyHashable {
