@@ -21,19 +21,19 @@ class ConstraintTests: XCTestCase {
         let root = UIView().viewTag.root
         let child = UIView().viewTag.child
    
-        let constraint: some Layout = root.constraint { _ in
+        let constraint: some Layout = root.constraint {
             
         }
         
-        XCTAssertEqual(typeString(of: constraint), "ConstraintLayout<UIView, Array<ConstraintBinder>>")
+        XCTAssertEqual(typeString(of: constraint), "ConstraintLayout<UIView, Array<Binding>>")
         
         let layout: some Layout = root {
-            child.constraint { builder in
-                builder.top.equal.to.top.of(root)
+            child.constraint {
+//                builder.top.equal.to.top.of(root)
             }
         }
         
-        XCTAssertEqual(typeString(of: layout), "SuperSubLayout<UIView, ConstraintLayout<UIView, Array<ConstraintBinder>>>")
+        XCTAssertEqual(typeString(of: layout), "SuperSubLayout<UIView, ConstraintLayout<UIView, Array<Binding>>>")
     }
     
 }
