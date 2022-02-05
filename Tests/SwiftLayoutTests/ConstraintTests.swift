@@ -22,6 +22,7 @@ class ConstraintTests: XCTestCase {
     override func tearDownWithError() throws {
         root = UIView().viewTag.root
         child = UIView().viewTag.child
+        deactivatable.deactive()
     }
 
     func testConstraintToLayout() {
@@ -56,6 +57,10 @@ class ConstraintTests: XCTestCase {
                 XCTFail(constraint.debugDescription)
             }
         }
+        
+        deactivatable.deactive()
+        XCTAssertNil(child.superview)
+        XCTAssertEqual(root.constraints.count, 0)
     }
     
     func testSyntaticSugarOfBindingForConstraint() {
@@ -67,6 +72,7 @@ class ConstraintTests: XCTestCase {
                     }
                 }.active()
                 context("first item은 child가 된다") {
+                    XCTAssertEqual(child.superview, root)
                     XCTAssertEqual(root.constraints.count, 1)
                     XCTAssertNotNil(root.constraints.first(LayoutConstraint(f: child, fa: .top, s: root, sa: .top, relation: .equal)))
                 }
@@ -78,6 +84,7 @@ class ConstraintTests: XCTestCase {
                     }
                 }.active()
                 context("second item은 root가 된다") {
+                    XCTAssertEqual(child.superview, root)
                     XCTAssertEqual(root.constraints.count, 1)
                     XCTAssertNotNil(root.constraints.first(LayoutConstraint(f: child, fa: .top, s: root, sa: .top, relation: .equal)))
                 }
