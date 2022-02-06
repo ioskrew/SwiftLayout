@@ -27,7 +27,8 @@ final class ViewController: UIViewController, LayoutBuilding, LayoutViewControll
     
     var layout: some Layout {
         view {
-            red.constraint(.top, .leading, .trailing, .bottom)
+            red.constraint(.top, .leading, .trailing).constraint(.bottom, to: (blue, .top))
+            blue.constraint(.leading, .trailing, .bottom).constraint(.height, toItem: red)
         }
     }
     
