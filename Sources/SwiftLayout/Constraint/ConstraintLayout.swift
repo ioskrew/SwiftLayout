@@ -28,9 +28,14 @@ public final class ConstraintLayout: LayoutViewContainable {
             layout.attachSuperview(self.view)
         }
         self.constraints = constraint.constraints(item: view, toItem: superview)
-        for constraint in constraints {
-            constraint.isActive = true
-        }
+    }
+    
+    public func activeConstraints() {
+        NSLayoutConstraint.activate(self.constraints)
+    }
+    
+    public func deactiveConstraints() {
+        NSLayoutConstraint.deactivate(self.constraints)
     }
     
     public func layout<L>(@LayoutBuilder _ build: () -> L) -> ViewLayout<L> where L: Layout {

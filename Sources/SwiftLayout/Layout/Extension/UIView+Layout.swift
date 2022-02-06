@@ -23,6 +23,9 @@ extension Layout where Self: UIView {
         removeFromSuperview()
     }
     
+    public func activeConstraints() {}
+    public func deactiveConstraints() {}
+    
     public var hashable: AnyHashable {
         AnyHashable(self)
     }

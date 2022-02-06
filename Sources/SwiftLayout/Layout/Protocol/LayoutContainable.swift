@@ -12,15 +12,25 @@ public protocol LayoutContainable: Layout {
     var layouts: [Layout] { get }
 }
 
-extension LayoutContainable {
-    public func attachSuperview(_ superview: UIView?) {
+public extension LayoutContainable {
+    func attachSuperview(_ superview: UIView?) {
         for layout in layouts {
             layout.attachSuperview(superview)
         }
     }
-    public func detachFromSuperview(_ superview: UIView?) {
+    func detachFromSuperview(_ superview: UIView?) {
         for layout in layouts {
             layout.detachFromSuperview(superview)
+        }
+    }
+    func activeConstraints() {
+        for layout in layouts {
+            layout.activeConstraints()
+        }
+    }
+    func deactiveConstraints() {
+        for layout in layouts {
+            layout.deactiveConstraints()
         }
     }
     

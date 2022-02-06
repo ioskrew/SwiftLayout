@@ -8,22 +8,6 @@
 import Foundation
 import UIKit
 
-struct OptionalLayout<L>: Layout where L: Layout {
-    let layout: L?
-    
-    func attachSuperview(_ superview: UIView?) {
-        layout?.attachSuperview(superview)
-    }
-    
-    func detachFromSuperview(_ superview: UIView?) {
-        layout?.detachFromSuperview(superview)
-    }
-    
-    var hashable: AnyHashable {
-        AnyHashable(layout?.hashable)
-    }
-}
-
 extension Optional: Layout where Wrapped: Layout {
     
     public func attachSuperview(_ superview: UIView?) {
@@ -32,6 +16,14 @@ extension Optional: Layout where Wrapped: Layout {
     
     public func detachFromSuperview(_ superview: UIView?) {
         self?.detachFromSuperview(superview)
+    }
+    
+    public func activeConstraints() {
+        self?.activeConstraints()
+    }
+    
+    public func deactiveConstraints() {
+        self?.deactiveConstraints()
     }
     
     public var hashable: AnyHashable {
