@@ -23,10 +23,19 @@ public final class ConstraintLayout: LayoutViewContainable {
     
     public func attachSuperview(_ superview: UIView?) {
         superview?.addSubview(self.view)
+        for layout in layouts {
+            layout.attachSuperview(self.view)
+        }
         self.constraints = constraint.constraints(item: view, toItem: superview)
         for constraint in constraints {
             constraint.isActive = true
         }
+    }
+    
+    public func layout<L>(@LayoutBuilder _ build: () -> L) -> ViewLayout<L> where L: Layout {
+        let layout: ViewLayout<L> = ViewLayout(view: self.view, layoutable: build())
+        layouts.append(layout)
+        return layout
     }
     
 }

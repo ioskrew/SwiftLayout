@@ -14,14 +14,20 @@ class ConstraintTests: XCTestCase {
     
     var root = UIView().viewTag.root
     var child = UIView().viewTag.child
+    var red = UIView().viewTag.red
+    var blue = UIView().viewTag.blue
+    var green = UIView().viewTag.green
     
     override func setUpWithError() throws {
         continueAfterFailure = false
+        root = UIView().viewTag.root
+        child = UIView().viewTag.child
+        red = UIView().viewTag.red
+        blue = UIView().viewTag.blue
+        green = UIView().viewTag.green
     }
     
     override func tearDownWithError() throws {
-        root = UIView().viewTag.root
-        child = UIView().viewTag.child
         deactivatable.deactive()
     }
     
@@ -43,13 +49,7 @@ class ConstraintTests: XCTestCase {
         XCTAssertEqual(child.superview, root)
         XCTAssertEqual(root.constraints.count, 6)
         for attrib in [NSLayoutConstraint.Attribute.top, .leading, .trailing, .bottom, .centerX, .centerY] {
-//            let constraint = root.constraints.first(LayoutConstraint(f: child, fa: attrib, s: root, sa: attrib, relation: .equal))
-//            XCTAssertNotNil(constraint)
-//            if let constraint = constraint {
-//                XCTAssertTrue(constraint.isActive)
-//            } else {
-//                XCTFail(constraint.debugDescription)
-//            }
+            XCTAssertNotNil(root.constraints.filter(child, firstAttribute: attrib, relation: .equal, toItem: root))
         }
         
         deactivatable.deactive()
@@ -103,20 +103,45 @@ class ConstraintTests: XCTestCase {
         }
     }
     
+    func testConstraintWithAnchors() {
+        root.addSubview(child)
+        root.addSubview(red)
+        
+        NSLayoutConstraint.activate([
+            child.topAnchor.constraint(equalTo: root.topAnchor),
+            child.leadingAnchor.constraint(equalTo: root.leadingAnchor),
+            child.trailingAnchor.constraint(equalTo: red.leadingAnchor),
+            child.bottomAnchor.constraint(equalTo: root.bottomAnchor),
+            red.topAnchor.constraint(equalTo: root.topAnchor),
+            red.trailingAnchor.constraint(equalTo: root.trailingAnchor),
+            red.bottomAnchor.constraint(equalTo: root.bottomAnchor)
+        ])
+       
+        // root가 constraint를 다 가져감
+        XCTAssertEqual(root.constraints.count, 7)
+        for attr in [NSLayoutConstraint.Attribute.top, .leading, .bottom] {
+            XCTAssertNotNil(root.constraints.filter(child, firstAttribute: attr, toItem: root).first)
+        }
+        XCTAssertNotNil(root.constraints.filter(child, firstAttribute: .trailing, toItem: red).first)
+        for attr in [NSLayoutConstraint.Attribute.top, .trailing, .bottom] {
+            XCTAssertNotNil(root.constraints.filter(red, firstAttribute: attr, toItem: root).first)
+        }
+    }
+    
     func testConstraintDSL() {
-        let red = UIView().viewTag.red
-        let blue = UIView().viewTag.blue
-        let green = UIView().viewTag.green
         deactivatable = root {
             child.constraint(.top, .leading, .bottom)
             red.constraint(.leading, toItem: child).constraint(.top, .trailing, .bottom, toItem: root)
         }.active()
         
-        XCTAssertEqual(root.constraints.count, 6)
-        XCTAssertEqual(child.constraints.count, 4)
-        XCTAssertEqual(red.constraints.count, 4)
-        for attr in [NSLayoutConstraint.Attribute.top, .leading, .trailing, .bottom] {
-            XCTAssertNotNil(root.constraints.filter(child, firstAttribute: attr, relation: .equal, toItem: root).first)
+        // root가 constraint를 다 가져감
+        XCTAssertEqual(root.constraints.count, 7)
+        for attr in [NSLayoutConstraint.Attribute.top, .leading, .bottom] {
+            XCTAssertNotNil(root.constraints.filter(child, firstAttribute: attr, toItem: root).first)
+        }
+        XCTAssertNotNil(root.constraints.filter(red, firstAttribute: .trailing, toItem: child).first)
+        for attr in [NSLayoutConstraint.Attribute.top, .trailing, .bottom] {
+            XCTAssertNotNil(root.constraints.filter(red, firstAttribute: attr, toItem: root).first)
         }
     }
     
