@@ -18,7 +18,7 @@ public protocol LayoutBuilding: AnyObject {
     
 }
 
-extension LayoutBuilding {
+public extension LayoutBuilding {
     
     func updateLayout() {
         let layout: some Layout = self.layout
