@@ -23,6 +23,7 @@ public final class ConstraintLayout: LayoutViewContainable {
     
     public func attachSuperview(_ superview: UIView?) {
         superview?.addSubview(self.view)
+        self.view.translatesAutoresizingMaskIntoConstraints = false
         for layout in layouts {
             layout.attachSuperview(self.view)
         }
