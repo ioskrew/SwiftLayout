@@ -1,5 +1,5 @@
 //
-//  ConstraintAssistant.swift
+//  NSLayoutConstraint+Description.swift
 //  
 //
 //  Created by oozoofrog on 2022/02/02.
@@ -8,8 +8,56 @@
 import Foundation
 import UIKit
 
-extension NSLayoutConstraint.Attribute: CustomStringConvertible {
+extension NSLayoutConstraint.Attribute: CustomStringConvertible, CustomDebugStringConvertible {
     public var description: String {
+        switch self {
+        case .left:
+            return "left"
+        case .right:
+            return "right"
+        case .top:
+            return "top"
+        case .bottom:
+            return "bottom"
+        case .leading:
+            return "leading"
+        case .trailing:
+            return "trailing"
+        case .width:
+            return "width"
+        case .height:
+            return "height"
+        case .centerX:
+            return "centerX"
+        case .centerY:
+            return "centerY"
+        case .lastBaseline:
+            return "lastBaseline"
+        case .firstBaseline:
+            return "firstBaseline"
+        case .leftMargin:
+            return "leftMargin"
+        case .rightMargin:
+            return "rightMargin"
+        case .topMargin:
+            return "topMargin"
+        case .bottomMargin:
+            return "bottomMargin"
+        case .leadingMargin:
+            return "leadingMargin"
+        case .trailingMargin:
+            return "trailingMargin"
+        case .centerXWithinMargins:
+            return "centerXWithinMargins"
+        case .centerYWithinMargins:
+            return "centerYWithinMargins"
+        case .notAnAttribute:
+            return "notAnAttribute"
+        @unknown default:
+            return "unknown"
+        }
+    }
+    public var debugDescription: String {
         switch self {
         case .left:
             return "NSLayoutConstraint.Attribute.left"
@@ -59,8 +107,20 @@ extension NSLayoutConstraint.Attribute: CustomStringConvertible {
     }
 }
 
-extension NSLayoutConstraint.Relation: CustomStringConvertible {
+extension NSLayoutConstraint.Relation: CustomStringConvertible, CustomDebugStringConvertible {
     public var description: String {
+        switch self {
+        case .lessThanOrEqual:
+            return "<="
+        case .equal:
+            return "=="
+        case .greaterThanOrEqual:
+            return ">="
+        @unknown default:
+            return "???"
+        }
+    }
+    public var debugDescription: String {
         switch self {
         case .lessThanOrEqual:
             return "NSLayoutConstraint.Attribute.lessThanOrEqual"
