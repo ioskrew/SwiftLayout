@@ -22,6 +22,10 @@ public struct ConstraintBinding {
         self.relation = relation
     }
     
+    static func attribute(_ attribute: NSLayoutConstraint.Attribute) -> Self {
+        ConstraintBinding(firstAttribute: attribute, secondAttribute: attribute)
+    }
+    
     var firstAttribute: NSLayoutConstraint.Attribute
     var firstItem: AnyObject?
     var secondAttribute: NSLayoutConstraint.Attribute
