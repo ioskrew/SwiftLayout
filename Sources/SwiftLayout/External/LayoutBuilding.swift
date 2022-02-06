@@ -14,16 +14,19 @@ public protocol LayoutBuilding: AnyObject {
     var deactivatable: AnyDeactivatable? { get set }
     var layout: LayoutContent { get }
     
-    func update()
+    func updateLayout()
     
 }
 
 extension LayoutBuilding {
     
-    func update() {
+    func updateLayout() {
         let layout: some Layout = self.layout
-        self.deactivatable?.deactive()
-        self.deactivatable = nil
+        if let deactivatable = self.deactivatable {
+            guard deactivatable.isNew(layout) else { return }
+            self.deactivatable?.deactive()
+            self.deactivatable = nil
+        }
         self.deactivatable = AnyDeactivatable(layout)
         self.deactivatable?.active()
     }

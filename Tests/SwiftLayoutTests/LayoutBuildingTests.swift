@@ -27,25 +27,31 @@ class LayoutBuildingTests: XCTestCase {
     func testViewControllerWithLayoutBuilding() throws {
         
         vc.flag = true
+        XCTAssertEqual(vc.deactivatableSetterCount, 1)
         XCTAssertEqual(vc.root.superview, vc.view)
         XCTAssertEqual(vc.flagged.superview, vc.root)
         XCTAssertNil(vc.noflagged.superview)
         
         vc.flag = true
+        XCTAssertEqual(vc.deactivatableSetterCount, 1)
         XCTAssertEqual(vc.root.superview, vc.view)
         XCTAssertEqual(vc.flagged.superview, vc.root)
         XCTAssertNil(vc.noflagged.superview)
         
         vc.flag = false
+        XCTAssertEqual(vc.deactivatableSetterCount, 2)
         XCTAssertEqual(vc.root.superview, vc.view)
         XCTAssertEqual(vc.noflagged.superview, vc.root)
         XCTAssertNil(vc.flagged.superview)
         
         vc.flag = true
+        XCTAssertEqual(vc.deactivatableSetterCount, 3)
         let flaggedHashable = vc.layout.hashable
         let flaggedHashable2 = vc.layout.hashable
         XCTAssertEqual(flaggedHashable, flaggedHashable2)
+        
         vc.flag = false
+        XCTAssertEqual(vc.deactivatableSetterCount, 4)
         let noFlaggedHashable = vc.layout.hashable
         XCTAssertNotEqual(flaggedHashable, noFlaggedHashable)
     }
@@ -63,13 +69,14 @@ final class ViewController: UIViewController, LayoutBuilding {
     }()
     
     var flag: Bool = true {
-        didSet { update() }
+        didSet { updateLayout() }
     }
     
-    var updateCount = 0
+    var deactivatableSetterCount = 0
     var deactivatable: AnyDeactivatable? {
         didSet {
-            
+            guard deactivatable != nil else { return }
+            deactivatableSetterCount += 1
         }
     }
     
@@ -90,7 +97,7 @@ final class ViewController: UIViewController, LayoutBuilding {
         
         _ = view.viewTag.viewController
         
-        update()
+        updateLayout()
     }
     
 }
