@@ -12,14 +12,14 @@ public protocol LayoutViewContainable: LayoutContainable {
     var view: UIView { get }
 }
 
-extension LayoutViewContainable {
-    public func attachSuperview(_ superview: UIView?) {
+public extension LayoutViewContainable {
+    func attachSuperview(_ superview: UIView?) {
         superview?.addSubview(self.view)
         for layout in layouts {
             layout.attachSuperview(self.view)
         }
     }
-    public func detachFromSuperview(_ superview: UIView?) {
+    func detachFromSuperview(_ superview: UIView?) {
         if let superview = superview, self.view.superview == superview {
             self.view.removeFromSuperview()
         }
@@ -28,7 +28,7 @@ extension LayoutViewContainable {
         }
     }
     
-    public var hashable: AnyHashable {
+    var hashable: AnyHashable {
         AnyHashable(layouts.map(\.hashable) + [self.view.hashable])
     }
 }

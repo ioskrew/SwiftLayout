@@ -139,7 +139,7 @@ class ConstraintTests: XCTestCase {
         for attr in [NSLayoutConstraint.Attribute.top, .leading, .bottom] {
             XCTAssertNotNil(root.constraints.filter(child, firstAttribute: attr, toItem: root).first)
         }
-        XCTAssertNotNil(root.constraints.filter(red, firstAttribute: .leading, toItem: child, toAttribute: .leading).first)
+        XCTAssertNotNil(root.constraints.filter(child, firstAttribute: .trailing, toItem: red, toAttribute: .leading).first)
         for attr in [NSLayoutConstraint.Attribute.top, .trailing, .bottom] {
             XCTAssertNotNil(root.constraints.filter(red, firstAttribute: attr, toItem: root).first)
         }

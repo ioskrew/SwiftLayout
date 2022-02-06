@@ -13,6 +13,9 @@ public protocol Layout: CustomDebugStringConvertible {
     func attachSuperview()
     func detachFromSuperview(_ superview: UIView?)
     func detachFromSuperview()
+   
+    func activeConstraints()
+    func deactiveConstraints()
     
     var hashable: AnyHashable { get }
 }
@@ -26,8 +29,10 @@ extension Layout {
     
     public func attachSuperview() {
         attachSuperview(nil)
+        activeConstraints()
     }
     public func detachFromSuperview() {
+        deactiveConstraints()
         detachFromSuperview(nil)
     }
 }
