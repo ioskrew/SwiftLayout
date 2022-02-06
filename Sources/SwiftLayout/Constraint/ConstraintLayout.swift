@@ -8,15 +8,15 @@
 import Foundation
 import UIKit
 
-public final class ConstraintLayout<C>: LayoutViewContainable where C: Constraint {
+public final class ConstraintLayout: LayoutViewContainable {
    
-    internal init(view: UIView, constraint: C) {
+    internal init(view: UIView, constraint: [ConstraintBinding]) {
         self.view = view
         self.constraint = constraint
     }
     
     public let view: UIView
-    let constraint: C
+    var constraint: [ConstraintBinding]
     
     public var layouts: [Layout] = []
     var constraints: [NSLayoutConstraint] = []
@@ -30,3 +30,5 @@ public final class ConstraintLayout<C>: LayoutViewContainable where C: Constrain
     }
     
 }
+
+extension ConstraintLayout: ConstraintCreating {}

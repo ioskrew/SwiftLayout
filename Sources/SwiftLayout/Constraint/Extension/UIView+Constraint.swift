@@ -10,8 +10,10 @@ import UIKit
 
 extension Layout where Self: UIView {
     
-    public func constraint<C>(@ConstraintBuilder _ content: () -> C) -> ConstraintLayout<C> where C: Constraint {
+    public func constraint(@ConstraintBuilder _ content: () -> [ConstraintBinding]) -> ConstraintLayout {
         .init(view: self, constraint: content())
     }
     
 }
+
+extension UIView: ConstraintCreating {}
