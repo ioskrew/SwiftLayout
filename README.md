@@ -1,6 +1,9 @@
 # SwiftLayout
 view hierarchy and autolayout DSL library
 
+## 문서
+- 테스트 케이스와 샘플만으로도 사용법을 배울 수 있도록 개선하고 있습니다.
+
 ## 원칙
 
 1. 사용자가 새로 배워야 하는 API는 최소한으로
