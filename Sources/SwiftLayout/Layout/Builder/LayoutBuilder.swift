@@ -8,17 +8,17 @@
 import Foundation
 
 @resultBuilder
-struct LayoutBuilder {
-    static func buildBlock(_ components: Layout...) -> [Layout] {
+public struct LayoutBuilder {
+    public static func buildBlock(_ components: Layout...) -> [Layout] {
         components
     }
-    static func buildEither(first component: [Layout]) -> [Layout] {
+    public static func buildEither(first component: [Layout]) -> [Layout] {
         component
     }
-    static func buildEither(second component: [Layout]) -> [Layout] {
+    public static func buildEither(second component: [Layout]) -> [Layout] {
         component
     }
-    static func buildOptional(_ component: [Layout]?) -> [Layout] {
+    public static func buildOptional(_ component: [Layout]?) -> [Layout] {
         component ?? []
     }
 }
