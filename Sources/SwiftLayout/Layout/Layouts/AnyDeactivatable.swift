@@ -94,5 +94,14 @@ public final class AnyDeactivatable {
         self.box = nil
     }
     
+    func isNew(_ layout: Layout) -> Bool {
+        guard let layouts = self.box?.layouts else { return true }
+        if layouts.count == 1 {
+            return layouts[0].hashable != layout.hashable
+        } else {
+            return !layouts.map(\.hashable).contains(layout.hashable)
+        }
+    }
+    
 }
 
