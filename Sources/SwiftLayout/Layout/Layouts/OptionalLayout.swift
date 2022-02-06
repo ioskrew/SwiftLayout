@@ -23,3 +23,18 @@ struct OptionalLayout<L>: Layout where L: Layout {
         AnyHashable(layout?.hashable)
     }
 }
+
+extension Optional: Layout where Wrapped: Layout {
+    
+    public func attachSuperview(_ superview: UIView?) {
+        self?.attachSuperview(superview)
+    }
+    
+    public func detachFromSuperview(_ superview: UIView?) {
+        self?.detachFromSuperview(superview)
+    }
+    
+    public var hashable: AnyHashable {
+        AnyHashable(self?.hashable)
+    }
+}
