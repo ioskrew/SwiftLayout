@@ -68,7 +68,7 @@ class ConstraintTests: XCTestCase {
                 context("first item은 child가 된다") {
                     XCTAssertEqual(child.superview, root)
                     XCTAssertEqual(root.constraints.count, 1)
-//                    XCTAssertNotNil(root.constraints.first(LayoutConstraint(f: child, fa: .top, s: root, sa: .top, relation: .equal)))
+                    XCTAssertNotNil(root.constraints.filter(child, firstAttribute: .top, toItem: root))
                 }
                 deactivatable = AnyDeactivatable()
                 XCTAssertNil(child.superview)
@@ -83,7 +83,7 @@ class ConstraintTests: XCTestCase {
                 context("second item은 root가 된다") {
                     XCTAssertEqual(child.superview, root)
                     XCTAssertEqual(root.constraints.count, 1)
-//                    XCTAssertNotNil(root.constraints.first(LayoutConstraint(f: child, fa: .top, s: root, sa: .top, relation: .equal)))
+                    XCTAssertNotNil(root.constraints.filter(child, firstAttribute: .top, toItem: root))
                 }
                 deactivatable = AnyDeactivatable()
             }
@@ -96,7 +96,7 @@ class ConstraintTests: XCTestCase {
                 context("first item은 child, second item은 root가 된다") {
                     XCTAssertEqual(child.superview, root)
                     XCTAssertEqual(root.constraints.count, 1)
-//                    XCTAssertNotNil(root.constraints.first(LayoutConstraint(f: child, fa: .top, s: root, sa: .top, relation: .equal)))
+                    XCTAssertNotNil(root.constraints.filter(child, firstAttribute: .top, toItem: root))
                 }
                 deactivatable = AnyDeactivatable()
             }
@@ -122,7 +122,7 @@ class ConstraintTests: XCTestCase {
         for attr in [NSLayoutConstraint.Attribute.top, .leading, .bottom] {
             XCTAssertNotNil(root.constraints.filter(child, firstAttribute: attr, toItem: root).first)
         }
-        XCTAssertNotNil(root.constraints.filter(child, firstAttribute: .trailing, toItem: red).first)
+        XCTAssertNotNil(root.constraints.filter(child, firstAttribute: .trailing, toItem: red, toAttribute: .leading).first, root.constraints.description)
         for attr in [NSLayoutConstraint.Attribute.top, .trailing, .bottom] {
             XCTAssertNotNil(root.constraints.filter(red, firstAttribute: attr, toItem: root).first)
         }
@@ -130,8 +130,8 @@ class ConstraintTests: XCTestCase {
     
     func testConstraintDSL() {
         deactivatable = root {
-            child.constraint(.top, .leading, .bottom)
-            red.constraint(.leading, toItem: child).constraint(.top, .trailing, .bottom, toItem: root)
+            child.constraint(.top, .leading, .bottom).constraint(.trailing, to: (red, .leading))
+            red.constraint(.top, .trailing, .bottom)
         }.active()
         
         // root가 constraint를 다 가져감
@@ -139,7 +139,7 @@ class ConstraintTests: XCTestCase {
         for attr in [NSLayoutConstraint.Attribute.top, .leading, .bottom] {
             XCTAssertNotNil(root.constraints.filter(child, firstAttribute: attr, toItem: root).first)
         }
-        XCTAssertNotNil(root.constraints.filter(red, firstAttribute: .trailing, toItem: child).first)
+        XCTAssertNotNil(root.constraints.filter(red, firstAttribute: .leading, toItem: child, toAttribute: .leading).first)
         for attr in [NSLayoutConstraint.Attribute.top, .trailing, .bottom] {
             XCTAssertNotNil(root.constraints.filter(red, firstAttribute: attr, toItem: root).first)
         }
@@ -148,13 +148,17 @@ class ConstraintTests: XCTestCase {
 }
 
 extension Collection where Element: NSLayoutConstraint {
-    func filter(_ item: NSObject, firstAttribute: NSLayoutConstraint.Attribute, relation: NSLayoutConstraint.Relation = .equal,
-                toItem: NSObject?) -> [Element] {
+    func filter(_ item: NSObject, firstAttribute: NSLayoutConstraint.Attribute,
+                relation: NSLayoutConstraint.Relation = .equal,
+                toItem: NSObject?, toAttribute: NSLayoutConstraint.Attribute? = nil) -> [Element] {
         filter { constraint in
             guard constraint.relation == relation else { return false }
             if let toItem = toItem {
+                guard constraint.firstAttribute == firstAttribute else { return false }
+                guard constraint.secondAttribute == toAttribute ?? firstAttribute else { return false }
                 return item.isEqual(constraint.firstItem) && toItem.isEqual(constraint.secondItem)
             } else {
+                guard constraint.firstAttribute == firstAttribute else { return false }
                 return item.isEqual(constraint.firstItem)
             }
             
