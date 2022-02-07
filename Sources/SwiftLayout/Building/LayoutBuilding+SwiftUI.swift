@@ -2,7 +2,7 @@
 //  LayoutBuilding+SwiftUI.swift
 //  
 //
-//  Created by maylee on 2022/02/06.
+//  Created by oozoofrog on 2022/02/06.
 //
 
 import Foundation

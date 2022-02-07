@@ -34,7 +34,7 @@ public extension LayoutContainable {
         }
     }
     
-    public var hashable: AnyHashable {
+    var hashable: AnyHashable {
         AnyHashable(layouts.map(\.hashable))
     }
 }
