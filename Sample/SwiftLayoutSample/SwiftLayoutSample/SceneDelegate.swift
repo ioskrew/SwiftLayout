@@ -2,7 +2,7 @@
 //  SceneDelegate.swift
 //  SwiftLayoutSample
 //
-//  Created by maylee on 2022/02/07.
+//  Created by oozoofrog on 2022/02/07.
 //
 
 import UIKit
