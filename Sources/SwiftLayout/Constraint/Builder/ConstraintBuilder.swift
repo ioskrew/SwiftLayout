@@ -11,17 +11,16 @@ import UIKit
 @resultBuilder
 public struct ConstraintBuilder {
     
-    public static func buildBlock(_ components: Binding...) -> [Binding] {
+    public static func buildBlock(_ components: Anchor...) -> [Anchor] {
         components
     }
    
-    public typealias Binding = ConstraintBinding
 }
 
-extension Array: Constraint where Element == ConstraintBuilder.Binding {
+extension Array: Constraint where Element == Anchor {
     public func constraints(item: AnyObject, toItem: AnyObject?) -> [NSLayoutConstraint] {
-        map { binding in
-            binding.constraint(item: item, toItem: toItem)
+        flatMap { anchor in
+            anchor.constraints(item: item, toItem: toItem)
         }
     }
 }
