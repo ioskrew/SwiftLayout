@@ -1,5 +1,5 @@
 //
-//  LayoutContainable.swift
+//  ContainableLayout.swift
 //  
 //
 //  Created by oozoofrog on 2022/02/06.
@@ -8,11 +8,11 @@
 import Foundation
 import UIKit
 
-public protocol LayoutContainable: Layout {
+public protocol ContainableLayout: Layout {
     var layouts: [Layout] { get }
 }
 
-public extension LayoutContainable {
+public extension ContainableLayout {
     func attachSuperview(_ superview: UIView?) {
         for layout in layouts {
             layout.attachSuperview(superview)
@@ -39,10 +39,10 @@ public extension LayoutContainable {
     }
 }
 
-extension Layout where Self: LayoutContainable, Self: Collection, Element == Layout {
+extension Layout where Self: ContainableLayout, Self: Collection, Element == Layout {
     public var layouts: [Layout] {
         map({ $0 as Layout })
     }
 }
 
-extension Array: LayoutContainable where Self.Element == Layout {}
+extension Array: ContainableLayout where Self.Element == Layout {}

@@ -1,5 +1,5 @@
 //
-//  LayoutViewContainable.swift
+//  ViewContainableLayout.swift
 //  
 //
 //  Created by oozoofrog on 2022/02/06.
@@ -8,11 +8,11 @@
 import Foundation
 import UIKit
 
-public protocol LayoutViewContainable: LayoutContainable {
+public protocol ViewContainableLayout: ContainableLayout {
     var view: UIView { get }
 }
 
-public extension LayoutViewContainable {
+public extension ViewContainableLayout {
     func attachSuperview(_ superview: UIView?) {
         superview?.addSubview(self.view)
         for layout in layouts {

@@ -13,13 +13,13 @@ extension CustomDebugStringConvertible where Self: Layout {
     }
 }
 
-extension CustomDebugStringConvertible where Self: LayoutContainable {
+extension CustomDebugStringConvertible where Self: ContainableLayout {
     public var debugDescription: String {
         "LayoutContains: [\(layouts.map(\.debugDescription).joined(separator: ", "))]"
     }
 }
 
-extension CustomDebugStringConvertible where Self: LayoutViewContainable {
+extension CustomDebugStringConvertible where Self: ViewContainableLayout {
     public var debugDescription: String {
         if layouts.isEmpty {
             return view.tagDescription
