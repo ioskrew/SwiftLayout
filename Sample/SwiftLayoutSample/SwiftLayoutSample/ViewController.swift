@@ -51,6 +51,9 @@ extension ViewController: LayoutViewControllerRepresentable {}
 
 struct ViewController_Previews: PreviewProvider {
     
-    static var previews: some View { ViewController(nibName: nil, bundle: nil) }
+    static var previews: some View {
+        ViewController(nibName: nil, bundle: nil)
+            .previewDevice(PreviewDevice(rawValue: "iPhone 13 mini"))
+    }
     
 }
