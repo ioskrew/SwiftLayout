@@ -25,10 +25,31 @@ final class ViewController: UIViewController, LayoutBuilding {
         return view
     }()
     
+    var redUp = true {
+        didSet { updateLayout() }
+    }
     var layout: some Layout {
         view {
-            red.constraint(.top, .leading, .trailing).constraint(.bottom, to: (blue, .top))
-            blue.constraint(.leading, .trailing, .bottom).constraint(.height, toItem: red)
+            if redUp {
+                // TODO: should be more simple
+                red.constraint(.top, .leading, .trailing)
+                    .constraint(.bottom, to: (blue, .top))
+                blue.constraint(.leading, .trailing, .bottom)
+                    .constraint(.height, toItem: red).layout {
+                        UIButton(primaryAction: UIAction(title: "blue up", handler: { [weak self] _ in
+                            self?.redUp = false
+                        })).constraint(.centerY, .centerX)
+                    }
+            } else {
+                blue.constraint(.top, .leading, .trailing)
+                    .constraint(.bottom, to: (red, .top))
+                red.constraint(.leading, .trailing, .bottom)
+                    .constraint(.height, toItem: blue).layout {
+                        UIButton(primaryAction: UIAction(title: "red up", handler: { [weak self] _ in
+                            self?.redUp = true
+                        })).constraint(.centerY, .centerX)
+                    }
+            }
         }
     }
     
