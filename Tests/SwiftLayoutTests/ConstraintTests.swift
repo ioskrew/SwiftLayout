@@ -145,6 +145,24 @@ class ConstraintTests: XCTestCase {
         }
     }
     
+    func testLayoutInConstraint() {
+        deactivatable = root {
+            child.constraint(.top, .bottom, .leading, .trailing).layout {
+                red.constraint(.centerX, .centerY)
+            }
+        }.active()
+        
+        XCTAssertEqual(red.superview, child)
+        XCTAssertEqual(child.superview, root)
+        
+        for attr in [NSLayoutConstraint.Attribute.top, .leading, .trailing, .bottom] {
+            XCTAssertNotNil(root.constraints.filter(child, firstAttribute: attr, toItem: root).first)
+        }
+        print(root.constraints)
+        XCTAssertNotNil(child.constraints.filter(red, firstAttribute: .centerX, toItem: child).first)
+        XCTAssertNotNil(child.constraints.filter(red, firstAttribute: .centerY, toItem: child).first)
+    }
+    
 }
 
 extension Collection where Element: NSLayoutConstraint {

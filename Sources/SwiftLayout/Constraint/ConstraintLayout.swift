@@ -32,16 +32,21 @@ public final class ConstraintLayout: LayoutViewContainable {
     
     public func activeConstraints() {
         NSLayoutConstraint.activate(self.constraints)
+        for layout in layouts {
+            layout.activeConstraints()
+        }
     }
     
     public func deactiveConstraints() {
+        for layout in layouts {
+            layout.deactiveConstraints()
+        }
         NSLayoutConstraint.deactivate(self.constraints)
     }
     
-    public func layout<L>(@LayoutBuilder _ build: () -> L) -> ViewLayout<L> where L: Layout {
-        let layout: ViewLayout<L> = ViewLayout(view: self.view, layoutable: build())
-        layouts.append(layout)
-        return layout
+    public func layout<L>(@LayoutBuilder _ build: () -> L) -> Self where L: Layout {
+        layouts.append(build())
+        return self
     }
     
 }
