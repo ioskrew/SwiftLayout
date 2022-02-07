@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-public final class ConstraintLayout: LayoutViewContainable {
+public final class ConstraintLayout: ViewContainableLayout {
    
     internal init(view: UIView, constraint: [ConstraintBinding]) {
         self.view = view

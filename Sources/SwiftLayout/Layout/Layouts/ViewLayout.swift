@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-public struct ViewLayout<L>: LayoutViewContainable where L: LayoutContainable {
+public struct ViewLayout<L>: ViewContainableLayout where L: ContainableLayout {
     internal(set) public var view: UIView
     var layoutable: L
     
