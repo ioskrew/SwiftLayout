@@ -9,7 +9,7 @@ import UIKit
 import SwiftLayout
 import SwiftUI
 
-final class ViewController: UIViewController, LayoutBuilding, LayoutViewControllerPreview, UIViewControllerRepresentable, PreviewProvider {
+final class ViewController: UIViewController, LayoutBuilding {
 
     let red: UIView = {
         let view = UIView()
@@ -45,5 +45,15 @@ final class ViewController: UIViewController, LayoutBuilding, LayoutViewControll
         updateLayout()
     }
 
+}
 
+extension ViewController: LayoutViewControllerRepresentable {}
+
+struct ViewController_Previews: PreviewProvider {
+    
+    static var previews: some View {
+        ViewController(nibName: nil, bundle: nil)
+            .previewDevice(PreviewDevice(rawValue: "iPhone 13 mini"))
+    }
+    
 }

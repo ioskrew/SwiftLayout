@@ -35,29 +35,24 @@ extension SwiftUI.UIViewControllerRepresentable where Self: UIViewController, Se
     
 }
 
-public protocol LayoutViewPreview where Self: UIView, Self: UIViewRepresentable, Self: SwiftUI.PreviewProvider {
+public protocol LayoutViewRepresentable: SwiftUI.UIViewRepresentable where Self: UIView, Self: LayoutBuilding {
     static var layoutBuildingPreviews: Self { get }
 }
 
-extension LayoutBuilding where Self: LayoutViewPreview {
-    public static var previews: Self {
-        self.layoutBuildingPreviews
+extension LayoutViewRepresentable {
+    public static var layoutBuildingPreviews: Self {
+        Self.init(frame: .zero)
     }
 }
 
-public protocol LayoutViewControllerPreview where Self: UIViewController, Self: UIViewControllerRepresentable, Self: SwiftUI.PreviewProvider {
+public protocol LayoutViewControllerRepresentable: SwiftUI.UIViewControllerRepresentable where Self: UIViewController, Self: LayoutBuilding {
     static var layoutBuildingPreviews: Self { get }
 }
 
-extension LayoutBuilding where Self: LayoutViewControllerPreview {
-    public static var previews: Self {
-        self.layoutBuildingPreviews
+extension LayoutViewControllerRepresentable {
+    public static var layoutBuildingPreviews: Self {
+        Self.init(nibName: nil, bundle: nil)
     }
-}
-
-
-public class LayoutBuildingContext {
-    var deactivatable: AnyDeactivatable?
 }
 
 #endif
