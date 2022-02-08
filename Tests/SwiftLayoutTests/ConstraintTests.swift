@@ -47,7 +47,7 @@ class ConstraintTests: XCTestCase {
         root.removeConstraints(constraints)
         
         let constraints1 = Anchor(.top, .leading).constraints(item: child, toItem: root)
-        let constraints2 = Anchor(.width, .height).equalTo(root).constant(-102).constraints(item: child, toItem: root)
+        let constraints2 = Anchor(.width, .height).equalTo(constant: 98).constraints(item: child, toItem: root)
         
         NSLayoutConstraint.activate(constraints1)
         NSLayoutConstraint.activate(constraints2)

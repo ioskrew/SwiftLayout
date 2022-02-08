@@ -34,21 +34,14 @@ public struct Anchor: Constraint {
     
     var items: [Item] = []
     
-    public func constant(_ constant: CGFloat) -> Self {
-        var a = self
-        a.items = a.items.map {
-            var updateItem = $0
-            updateItem.constant = constant
-            return updateItem
+    private struct To {
+        let item: AnyObject?
+        let attribute: NSLayoutConstraint.Attribute?
+        let constant: CGFloat
+        
+        var toNeeds: Bool {
+            item != nil || attribute != nil
         }
-        return a
-    }
-    
-    private enum To {
-        case item(AnyObject)
-        case constant(CGFloat)
-        case itemConstant(AnyObject, CGFloat)
-        case itemAttribute(AnyObject, NSLayoutConstraint.Attribute)
     }
     
     private func to(_ relation: NSLayoutConstraint.Relation, to: To) -> Self {
@@ -57,19 +50,10 @@ public struct Anchor: Constraint {
         func update(_ updateItem: Item) -> Item {
             var updateItem = updateItem
             updateItem.relation = relation
-            switch to {
-            case let .item(item):
-                updateItem.toItem = item
-            case let .itemConstant(item, constant):
-                updateItem.toItem = item
-                updateItem.constant = constant
-            case let .itemAttribute(item, attribute):
-                updateItem.toItem = item
-                updateItem.toAttribute = attribute
-            case let .constant(constant):
-                updateItem.constant = constant
-                updateItem.toNeeds = false
-            }
+            updateItem.toItem = to.item
+            updateItem.toAttribute = to.attribute
+            updateItem.constant = to.constant
+            updateItem.toNeeds = to.toNeeds
             return updateItem
         }
         
@@ -77,34 +61,16 @@ public struct Anchor: Constraint {
         return a
     }
     
-    public func equalTo(_ toItem: AnyObject) -> Self {
-        to(.equal, to: .item(toItem))
+    public func equalTo(_ toItem: AnyObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil, constant: CGFloat = 0) -> Self {
+        to(.equal, to: .init(item: toItem, attribute: attribute, constant: constant))
     }
     
-    public func equalTo(_ toItem: AnyObject, attribute: NSLayoutConstraint.Attribute) -> Self {
-        to(.equal, to: .itemAttribute(toItem, attribute))
+    public func greaterThanOrEqualTo(_ toItem: AnyObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil, constant: CGFloat = 0) -> Self {
+        to(.greaterThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: constant))
     }
     
-    public func greaterThanOrEqualTo(_ toItem: AnyObject) -> Self {
-        to(.greaterThanOrEqual, to: .item(toItem))
-    }
-    
-    public func lessThanOrEqualTo(_ toItem: AnyObject) -> Self {
-        to(.lessThanOrEqual, to: .item(toItem))
-    }
-    
-    public func equalToConstant(_ constant: CGFloat) -> Self {
-        to(.equal, to: .constant(constant))
-    }
-    
-    public var toNone: Self {
-        var a = self
-        if var last = a.items.last {
-            last.toNeeds = false
-            a.items.removeLast()
-            a.items.append(last)
-        }
-        return a
+    public func lessThanOrEqualTo(_ toItem: AnyObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil, constant: CGFloat = 0) -> Self {
+        to(.lessThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: constant))
     }
     
     public func constraints(item fromItem: AnyObject, toItem: AnyObject?) -> [NSLayoutConstraint] {
