@@ -74,75 +74,67 @@ class AnchorsTests: XCTestCase {
         // root가 constraint를 다 가져감
         XCTAssertEqual(root.constraints.count, 7)
         for attr in [NSLayoutConstraint.Attribute.top, .leading, .bottom] {
-            XCTAssertNotNil(root.constraints.filter(child, firstAttribute: attr, toItem: root).first)
+            XCTAssertNotNil(root.findConstraints(items: (child, root), attributes: (attr, attr)).first)
         }
-        XCTAssertNotNil(root.constraints.filter(child, firstAttribute: .trailing, toItem: red, toAttribute: .leading).first, root.constraints.description)
+        XCTAssertNotNil(root.findConstraints(items: (child, red), attributes: (.trailing, .leading)).first)
         for attr in [NSLayoutConstraint.Attribute.top, .trailing, .bottom] {
-            XCTAssertNotNil(root.constraints.filter(red, firstAttribute: attr, toItem: root).first)
+            XCTAssertNotNil(root.findConstraints(items: (red, root), attributes: (attr, attr)).first)
         }
     }
     
-    func testConstraintDSL() {
-        deactivatable = root {
-            child.anchors {
-                Anchors(.top, .leading, .bottom)
-                Anchors(.trailing).equalTo(red, attribute: .leading)
-            }
-            red.anchors {
-                Anchors(.top, .trailing, .bottom)
-            }
-        }.active()
+    func testAnyAnchor() {
+        root.addSubview(child)
+        child.translatesAutoresizingMaskIntoConstraints = false
         
-        // root가 constraint를 다 가져감
-        XCTAssertEqual(root.constraints.count, 7)
-        for attr in [NSLayoutConstraint.Attribute.top, .leading, .bottom] {
-            XCTAssertNotNil(root.constraints.filter(child, firstAttribute: attr, toItem: root).first)
-        }
-        XCTAssertNotNil(root.constraints.filter(child, firstAttribute: .trailing, toItem: red, toAttribute: .leading).first)
-        for attr in [NSLayoutConstraint.Attribute.top, .trailing, .bottom] {
-            XCTAssertNotNil(root.constraints.filter(red, firstAttribute: attr, toItem: root).first)
-        }
+        XCTAssertEqual(child.topAnchor.anchorType.attribute, .top)
+        XCTAssertEqual(child.leadingAnchor.anchorType.attribute, .leading)
+        XCTAssertEqual(child.trailingAnchor.anchorType.attribute, .trailing)
+        XCTAssertEqual(child.leftAnchor.anchorType.attribute, .left)
+        XCTAssertEqual(child.rightAnchor.anchorType.attribute, .right)
+        XCTAssertEqual(child.bottomAnchor.anchorType.attribute, .bottom)
+        XCTAssertEqual(child.centerXAnchor.anchorType.attribute, .centerX)
+        XCTAssertEqual(child.centerYAnchor.anchorType.attribute, .centerY)
+        XCTAssertEqual(child.widthAnchor.anchorType.attribute, .width)
+        XCTAssertEqual(child.heightAnchor.anchorType.attribute, .height)
+        XCTAssertEqual(child.firstBaselineAnchor.anchorType.attribute, .firstBaseline)
+        XCTAssertEqual(child.lastBaselineAnchor.anchorType.attribute, .lastBaseline)
+        
+        XCTAssertEqual(child.safeAreaLayoutGuide.topAnchor.anchorType.attribute, .top)
+        XCTAssertEqual(child.safeAreaLayoutGuide.leadingAnchor.anchorType.attribute, .leading)
+        XCTAssertEqual(child.safeAreaLayoutGuide.trailingAnchor.anchorType.attribute, .trailing)
+        XCTAssertEqual(child.safeAreaLayoutGuide.leftAnchor.anchorType.attribute, .left)
+        XCTAssertEqual(child.safeAreaLayoutGuide.rightAnchor.anchorType.attribute, .right)
+        XCTAssertEqual(child.safeAreaLayoutGuide.bottomAnchor.anchorType.attribute, .bottom)
+        XCTAssertEqual(child.safeAreaLayoutGuide.centerXAnchor.anchorType.attribute, .centerX)
+        XCTAssertEqual(child.safeAreaLayoutGuide.centerYAnchor.anchorType.attribute, .centerY)
+        XCTAssertEqual(child.safeAreaLayoutGuide.widthAnchor.anchorType.attribute, .width)
+        XCTAssertEqual(child.safeAreaLayoutGuide.heightAnchor.anchorType.attribute, .height)
     }
     
-    func testLayoutInConstraint() {
-        deactivatable = root {
-            child.anchors {
-                Anchors(.top, .bottom, .leading, .trailing)
-            }.subviews {
-                red.anchors {
-                    Anchors(.centerX, .centerY)
-                }
-            }
-        }.active()
+    func testAnyAnchorConstraint() {
         
-        XCTAssertEqual(red.superview, child)
-        XCTAssertEqual(child.superview, root)
+        root.addSubview(child)
+        child.translatesAutoresizingMaskIntoConstraints = false
         
-        for attr in [NSLayoutConstraint.Attribute.top, .leading, .trailing, .bottom] {
-            XCTAssertNotNil(root.constraints.filter(child, firstAttribute: attr, toItem: root).first)
+        NSLayoutConstraint.activate([
+            child.topAnchor.anchorType.constraint(to: root)!,
+            child.leadingAnchor.anchorType.constraint(to: root)!,
+            child.trailingAnchor.anchorType.constraint(to: root)!,
+            child.bottomAnchor.anchorType.constraint(to: root)!,
+            child.leftAnchor.anchorType.constraint(to: root)!,
+            child.rightAnchor.anchorType.constraint(to: root)!,
+            child.centerXAnchor.anchorType.constraint(to: root)!,
+            child.centerYAnchor.anchorType.constraint(to: root)!,
+            child.widthAnchor.anchorType.constraint(to: root)!,
+            child.heightAnchor.anchorType.constraint(to: root)!,
+            child.firstBaselineAnchor.anchorType.constraint(to: root)!,
+            child.lastBaselineAnchor.anchorType.constraint(to: root)!
+        ])
+     
+        for attribute in [NSLayoutConstraint.Attribute.top, .leading, .trailing, .bottom, .left, .right, .centerX, .centerY, .width, .height, .firstBaseline, .lastBaseline] {
+            XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (attribute, attribute)).count, 1, attribute.debugDescription)
         }
-        print(root.constraints)
-        XCTAssertNotNil(child.constraints.filter(red, firstAttribute: .centerX, toItem: child).first)
-        XCTAssertNotNil(child.constraints.filter(red, firstAttribute: .centerY, toItem: child).first)
+        
     }
     
-}
-
-extension Collection where Element: NSLayoutConstraint {
-    func filter(_ item: NSObject, firstAttribute: NSLayoutConstraint.Attribute,
-                relation: NSLayoutConstraint.Relation = .equal,
-                toItem: NSObject?, toAttribute: NSLayoutConstraint.Attribute? = nil) -> [Element] {
-        filter { constraint in
-            guard constraint.relation == relation else { return false }
-            if let toItem = toItem {
-                guard constraint.firstAttribute == firstAttribute else { return false }
-                guard constraint.secondAttribute == toAttribute ?? firstAttribute else { return false }
-                return item.isEqual(constraint.firstItem) && toItem.isEqual(constraint.secondItem)
-            } else {
-                guard constraint.firstAttribute == firstAttribute else { return false }
-                return item.isEqual(constraint.firstItem)
-            }
-            
-        }
-    }
 }
