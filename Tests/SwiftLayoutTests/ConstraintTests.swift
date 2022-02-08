@@ -37,7 +37,7 @@ class ConstraintTests: XCTestCase {
         root.addSubview(child)
         child.translatesAutoresizingMaskIntoConstraints = false
         
-        var constraints = Anchor(child).top.leading.trailing.bottom.constraints(item: child, toItem: root)
+        let constraints = Anchor(.top, .leading, .trailing, .bottom).constraints(item: child, toItem: root)
         
         NSLayoutConstraint.activate(constraints)
         
@@ -46,11 +46,15 @@ class ConstraintTests: XCTestCase {
         XCTAssertEqual(child.frame.size, .init(width: 200, height: 200))
         root.removeConstraints(constraints)
         
-        constraints = Anchor.top.leading.bottom.width.constant(98).toNone.constraints(item: child, toItem: root)
-        NSLayoutConstraint.activate(constraints)
+        let constraints1 = Anchor(.top, .leading).constraints(item: child, toItem: root)
+        let constraints2 = Anchor(.width, .height).equalTo(root).constant(-102).constraints(item: child, toItem: root)
+        
+        NSLayoutConstraint.activate(constraints1)
+        NSLayoutConstraint.activate(constraints2)
+        
         root.setNeedsLayout()
         root.layoutIfNeeded()
-        XCTAssertEqual(child.frame.size, .init(width: 98, height: 200))
+        XCTAssertEqual(child.frame.size, .init(width: 98, height: 98))
     }
     
     func testConstraintWithAnchors() {
@@ -81,10 +85,11 @@ class ConstraintTests: XCTestCase {
     func testConstraintDSL() {
         deactivatable = root {
             child.anchors {
-                Anchor.top.leading.bottom.trailing.equalTo(red, attribute: .leading)
+                Anchor(.top, .leading, .bottom)
+                Anchor.trailing.equalTo(red, attribute: .leading)
             }
             red.anchors {
-                Anchor(red).top.trailing.bottom
+                Anchor(.top, .trailing, .bottom)
             }
         }.active()
         
@@ -102,10 +107,10 @@ class ConstraintTests: XCTestCase {
     func testLayoutInConstraint() {
         deactivatable = root {
             child.anchors {
-                Anchor.top.bottom.leading.trailing
+                Anchor(.top, .bottom, .leading, .trailing)
             }.subviews {
                 red.anchors {
-                    Anchor.centerX.centerY
+                    Anchor(.centerX, .centerY)
                 }
             }
         }.active()

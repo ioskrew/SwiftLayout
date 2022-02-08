@@ -10,14 +10,10 @@ import UIKit
 
 public struct Anchor: Constraint {
     
-    internal init(_ item: AnyObject? = nil, items: [Anchor.Item] = []) {
-        self.item = item
-        self.items = items
+    public init(_ attributes: NSLayoutConstraint.Attribute...) {
+        let items = attributes.map { Anchor.Item(attribute: $0) }
+        self.init(items: items)
     }
-    
-    let item: AnyObject?
-    
-    var items: [Item] = []
     
     @Attribute(.top)            public static var top: Anchor
     @Attribute(.bottom)         public static var bottom: Anchor
@@ -32,43 +28,30 @@ public struct Anchor: Constraint {
     @Attribute(.firstBaseline)  public static var firstBaseline: Anchor
     @Attribute(.lastBaseline)   public static var lastBaseline: Anchor
     
-    public var top: Anchor              { self.appendAttribute(item, .top) }
-    public var bottom: Anchor           { self.appendAttribute(item, .bottom) }
-    public var leading: Anchor          { self.appendAttribute(item, .leading) }
-    public var trailing: Anchor         { self.appendAttribute(item, .trailing) }
-    public var left: Anchor             { self.appendAttribute(item, .left) }
-    public var right: Anchor            { self.appendAttribute(item, .right) }
-    public var width: Anchor            { self.appendAttribute(item, .width) }
-    public var height: Anchor           { self.appendAttribute(item, .height) }
-    public var centerX: Anchor          { self.appendAttribute(item, .centerX) }
-    public var centerY: Anchor          { self.appendAttribute(item, .centerY) }
-    public var firstBaseline: Anchor    { self.appendAttribute(item, .firstBaseline) }
-    public var lastBaseline: Anchor     { self.appendAttribute(item, .lastBaseline) }
-    
-    public func appendAttribute(_ item: AnyObject? = nil, _ attribute: NSLayoutConstraint.Attribute) -> Self {
-        var a = self
-        a.items.append(.init(item: item, attribute: attribute))
-        return a
+    internal init(items: [Anchor.Item] = []) {
+        self.items = items
     }
+    
+    var items: [Item] = []
     
     public func constant(_ constant: CGFloat) -> Self {
         var a = self
-        if var last = a.items.last {
-            last.constant = constant
-            a.items.removeLast()
-            a.items.append(last)
+        a.items = a.items.map {
+            var updateItem = $0
+            updateItem.constant = constant
+            return updateItem
         }
         return a
     }
     
-    public enum To {
+    private enum To {
         case item(AnyObject)
         case constant(CGFloat)
         case itemConstant(AnyObject, CGFloat)
         case itemAttribute(AnyObject, NSLayoutConstraint.Attribute)
     }
     
-    public func to(_ relation: NSLayoutConstraint.Relation, to: To, all: Bool = false) -> Self {
+    private func to(_ relation: NSLayoutConstraint.Relation, to: To) -> Self {
         var a = self
         
         func update(_ updateItem: Item) -> Item {
@@ -90,15 +73,7 @@ public struct Anchor: Constraint {
             return updateItem
         }
         
-        if all {
-            a.items = a.items.map(update)
-        } else {
-            if let last = a.items.last {
-                let updated = update(last)
-                a.items.removeLast()
-                a.items.append(updated)
-            }
-        }
+        a.items = a.items.map(update)
         return a
     }
     
@@ -122,10 +97,6 @@ public struct Anchor: Constraint {
         to(.equal, to: .constant(constant))
     }
     
-    public func equalToAll(_ toItem: AnyObject) -> Self {
-        to(.equal, to: .item(toItem), all: true)
-    }
-    
     public var toNone: Self {
         var a = self
         if var last = a.items.last {
@@ -139,7 +110,7 @@ public struct Anchor: Constraint {
     public func constraints(item fromItem: AnyObject, toItem: AnyObject?) -> [NSLayoutConstraint] {
         var constraints: [NSLayoutConstraint] = []
         for item in items {
-            constraints.append(NSLayoutConstraint(item: item.item ?? fromItem,
+            constraints.append(NSLayoutConstraint(item: fromItem,
                                                   attribute: item.attribute,
                                                   relatedBy: item.relation,
                                                   toItem: item.toItem(toItem),
@@ -160,7 +131,6 @@ public struct Anchor: Constraint {
     }
     
     struct Item {
-        var item: AnyObject?
         var attribute: NSLayoutConstraint.Attribute
         var relation: NSLayoutConstraint.Relation = .equal
         var toNeeds: Bool = true
