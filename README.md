@@ -1,5 +1,5 @@
 # SwiftLayout
-view hierarchy and autolayout DSL library
+DSL library that implements hierarhcy of views and constraints declaratively
 
 ## 문서
 - 테스트 케이스와 샘플만으로도 사용법을 배울 수 있도록 개선하고 있습니다.
