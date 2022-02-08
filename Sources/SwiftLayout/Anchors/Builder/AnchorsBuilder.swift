@@ -9,15 +9,15 @@ import Foundation
 import UIKit
 
 @resultBuilder
-public struct ConstraintBuilder {
+public struct AnchorsBuilder {
     
-    public static func buildBlock(_ components: Anchor...) -> [Anchor] {
+    public static func buildBlock(_ components: Anchors...) -> [Anchors] {
         components
     }
    
 }
 
-extension Array: Constraint where Element == Anchor {
+extension Array: Constraint where Element == Anchors {
     public func constraints(item: AnyObject, toItem: AnyObject?) -> [NSLayoutConstraint] {
         flatMap { anchor in
             anchor.constraints(item: item, toItem: toItem)

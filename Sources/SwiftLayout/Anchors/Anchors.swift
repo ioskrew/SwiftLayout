@@ -8,27 +8,27 @@
 import Foundation
 import UIKit
 
-public struct Anchor: Constraint {
+public struct Anchors: Constraint {
     
     public init(_ attributes: NSLayoutConstraint.Attribute...) {
-        let items = attributes.map { Anchor.Item(attribute: $0) }
+        let items = attributes.map { Anchors.Item(attribute: $0) }
         self.init(items: items)
     }
     
-    @Attribute(.top)            public static var top: Anchor
-    @Attribute(.bottom)         public static var bottom: Anchor
-    @Attribute(.leading)        public static var leading: Anchor
-    @Attribute(.trailing)       public static var trailing: Anchor
-    @Attribute(.left)           public static var left: Anchor
-    @Attribute(.right)          public static var right: Anchor
-    @Attribute(.width)          public static var width: Anchor
-    @Attribute(.height)         public static var height: Anchor
-    @Attribute(.centerX)        public static var centerX: Anchor
-    @Attribute(.centerY)        public static var centerY: Anchor
-    @Attribute(.firstBaseline)  public static var firstBaseline: Anchor
-    @Attribute(.lastBaseline)   public static var lastBaseline: Anchor
+    @Attribute(.top)            public static var top: Anchors
+    @Attribute(.bottom)         public static var bottom: Anchors
+    @Attribute(.leading)        public static var leading: Anchors
+    @Attribute(.trailing)       public static var trailing: Anchors
+    @Attribute(.left)           public static var left: Anchors
+    @Attribute(.right)          public static var right: Anchors
+    @Attribute(.width)          public static var width: Anchors
+    @Attribute(.height)         public static var height: Anchors
+    @Attribute(.centerX)        public static var centerX: Anchors
+    @Attribute(.centerY)        public static var centerY: Anchors
+    @Attribute(.firstBaseline)  public static var firstBaseline: Anchors
+    @Attribute(.lastBaseline)   public static var lastBaseline: Anchors
     
-    internal init(items: [Anchor.Item] = []) {
+    internal init(items: [Anchors.Item] = []) {
         self.items = items
     }
     
@@ -89,10 +89,10 @@ public struct Anchor: Constraint {
     
     @propertyWrapper
     public struct Attribute {
-        public var wrappedValue: Anchor
+        public var wrappedValue: Anchors
         
         public init(_ attribute: NSLayoutConstraint.Attribute) {
-            wrappedValue = Anchor(items: [.init(attribute: attribute)])
+            wrappedValue = Anchors(items: [.init(attribute: attribute)])
         }
     }
     

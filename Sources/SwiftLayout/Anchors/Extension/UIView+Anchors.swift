@@ -10,7 +10,7 @@ import UIKit
 
 extension Layout where Self: UIView {
     
-    public func anchors(@ConstraintBuilder _ content: () -> [Anchor]) -> ConstraintLayout {
+    public func anchors(@AnchorsBuilder _ content: () -> [Anchors]) -> AnchorsLayout {
         .init(view: self, constraint: content())
     }
     

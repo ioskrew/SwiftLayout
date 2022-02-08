@@ -83,15 +83,15 @@ final class ViewController: UIViewController, LayoutBuilding {
     var layout: some Layout {
         self.view {
             root.anchors {
-                Anchor(.top, .leading, .trailing, .bottom)
+                Anchors(.top, .leading, .trailing, .bottom)
             }.subviews {
                 if self.flag {
                     flagged.anchors {
-                        Anchor(.top, .leading, .trailing, .bottom)
+                        Anchors(.top, .leading, .trailing, .bottom)
                     }
                 } else {
                     noflagged.anchors({
-                        Anchor(.top, .leading, .trailing, .bottom)
+                        Anchors(.top, .leading, .trailing, .bottom)
                     })
                 }
             }
