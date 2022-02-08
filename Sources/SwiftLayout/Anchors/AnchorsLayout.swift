@@ -8,15 +8,15 @@
 import Foundation
 import UIKit
 
-public final class AnchorsLayout: ViewContainableLayout {
+public final class AnchorsLayout<C>: ViewContainableLayout where C: Constraint {
    
-    internal init(view: UIView, constraint: [Anchors]) {
+    internal init(view: UIView, constraint: C) {
         self.view = view
         self.constraint = constraint
     }
     
     public let view: UIView
-    var constraint: [Anchors]
+    var constraint: C
     
     public var layouts: [Layout] = []
     var constraints: [NSLayoutConstraint] = []

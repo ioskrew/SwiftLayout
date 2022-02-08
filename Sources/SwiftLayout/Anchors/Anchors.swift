@@ -53,15 +53,26 @@ public struct Anchors: Constraint {
         return a
     }
     
-    public func equalTo(_ toItem: AnyObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil, constant: CGFloat = 0) -> Self {
+    public func equalTo(_ toItem: AnyObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil) -> Self {
+        to(.equal, to: .init(item: toItem, attribute: attribute, constant: .zero))
+    }
+    
+    public func greaterThanOrEqualTo(_ toItem: AnyObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil) -> Self {
+        to(.greaterThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: .zero))
+    }
+    
+    public func lessThanOrEqualTo(_ toItem: AnyObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil) -> Self {
+        to(.lessThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: .zero))
+    }
+    public func equalTo(_ toItem: AnyObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil, constant: CGFloat) -> Self {
         to(.equal, to: .init(item: toItem, attribute: attribute, constant: constant))
     }
     
-    public func greaterThanOrEqualTo(_ toItem: AnyObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil, constant: CGFloat = 0) -> Self {
+    public func greaterThanOrEqualTo(_ toItem: AnyObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil, constant: CGFloat) -> Self {
         to(.greaterThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: constant))
     }
     
-    public func lessThanOrEqualTo(_ toItem: AnyObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil, constant: CGFloat = 0) -> Self {
+    public func lessThanOrEqualTo(_ toItem: AnyObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil, constant: CGFloat) -> Self {
         to(.lessThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: constant))
     }
     

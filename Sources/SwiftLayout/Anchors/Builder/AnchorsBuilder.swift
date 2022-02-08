@@ -11,32 +11,23 @@ import UIKit
 @resultBuilder
 public struct AnchorsBuilder {
     
-    public static func buildBlock(_ components: Anchors...) -> [Anchors] {
+    public static func buildBlock(_ components: Constraint...) -> [Constraint] {
         components
     }
     
-    public static func buildArray(_ components: [[Anchors]]) -> [Anchors] {
-        components.flatMap({ $0 })
-    }
-    
-    public static func buildOptional(_ component: [Anchors]?) -> [Anchors] {
-        component ?? []
-    }
-    
-    public static func buildEither(first component: [Anchors]) -> [Anchors] {
+    public static func buildEither(first component: [Constraint]) -> [Constraint] {
         component
     }
     
-    public static func buildEither(second component: [Anchors]) -> [Anchors] {
+    public static func buildEither(second component: [Constraint]) -> [Constraint] {
         component
     }
    
-}
-
-extension Array: Constraint where Element == Anchors {
-    public func constraints(item: AnyObject, toItem: AnyObject?) -> [NSLayoutConstraint] {
-        flatMap { anchor in
-            anchor.constraints(item: item, toItem: toItem)
-        }
+    public static func buildArray(_ components: [[Constraint]]) -> [Constraint] {
+        components.flatMap({ $0 })
+    }
+    
+    public static func buildOptional(_ component: [Constraint]?) -> [Constraint] {
+        component ?? []
     }
 }

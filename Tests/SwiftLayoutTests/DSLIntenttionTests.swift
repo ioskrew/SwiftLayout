@@ -18,15 +18,15 @@ final class DSLIntentionsTests: XCTestCase {
     var deactivatable: AnyDeactivatable!
     
     var root: UIView!
-    var child: UIView!
-    var grandchild: UIView!
+    var red: UIView!
+    var blue: UIView!
     
     override func setUpWithError() throws {
         continueAfterFailure = false
         
         root = UIView().viewTag.root
-        child = UIView().viewTag.child
-        grandchild = UIView().viewTag.grandchild
+        red = UIView().viewTag.red
+        blue = UIView().viewTag.blue
     }
     
     override func tearDownWithError() throws {
@@ -35,47 +35,115 @@ final class DSLIntentionsTests: XCTestCase {
     
     func testAnchors() {
         deactivatable = root {
-            child.anchors {
+            red.anchors {
                 Anchors.boundary
             }
         }.active()
         
-        XCTAssertEqual(child.superview, root)
+        XCTAssertEqual(red.superview, root)
         for attribute in [NSLayoutConstraint.Attribute.top, .leading, .trailing, .bottom] {
-            let constraints = root.findConstraints(items: (child, root),
-                                                   attributes: (attribute, attribute))
-            XCTAssertEqual(constraints.count, 1, constraints.debugDescription)
+            let reds = root.findConstraints(items: (red, root),
+                                            attributes: (attribute, attribute))
+            XCTAssertEqual(reds.count, 1, reds.debugDescription)
         }
     }
     
     func testLayoutAfterAnchors() {
         deactivatable = root {
-            child.anchors {
+            red.anchors {
                 Anchors.boundary
             }.subviews {
-                grandchild.anchors {
+                blue.anchors {
                     Anchors.boundary
                 }
             }
         }.active()
         
-        XCTAssertEqual(child.superview, root)
-        XCTAssertEqual(grandchild.superview, child)
+        XCTAssertEqual(red.superview, root)
+        XCTAssertEqual(blue.superview, red)
         for attribute in [NSLayoutConstraint.Attribute.top, .leading, .trailing, .bottom] {
-            let childConstraints = root.findConstraints(items: (child, root),
-                                                   attributes: (attribute, attribute))
-            XCTAssertEqual(childConstraints.count, 1, childConstraints.debugDescription)
+            let reds = root.findConstraints(items: (red, root),
+                                            attributes: (attribute, attribute))
+            XCTAssertEqual(reds.count, 1, reds.debugDescription)
             
-            let grandchildConstraints = root.findConstraints(items: (grandchild, child),
-                                                   attributes: (attribute, attribute))
-            XCTAssertEqual(grandchildConstraints.count, 1, grandchildConstraints.debugDescription)
+            let blues = root.findConstraints(items: (blue, red),
+                                             attributes: (attribute, attribute))
+            XCTAssertEqual(blues.count, 1, blues.debugDescription)
         }
+    }
+    
+    func testAnchorsEitherTrue() {
+        
+        let toggle = true
+        deactivatable = root {
+            red.anchors {
+                if toggle {
+                    Anchors.cap
+                    Anchors(.bottom).equalTo(blue, attribute: .top)
+                } else {
+                    Anchors.shoe
+                    Anchors(.top).equalTo(blue, attribute: .bottom)
+                }
+            }
+            blue.anchors {
+                if toggle {
+                    Anchors.shoe
+                } else {
+                    Anchors.cap
+                }
+            }
+        }.active()
+
+        XCTAssertEqual(root.constraints.count, 7)
+
+        XCTAssertEqual(root.findConstraints(items: (red, root), attributes: (.top, .top)).count, 1)
+        XCTAssertEqual(root.findConstraints(items: (red, root), attributes: (.leading, .leading)).count, 1)
+        XCTAssertEqual(root.findConstraints(items: (red, root), attributes: (.trailing, .trailing)).count, 1)
+
+        XCTAssertEqual(root.findConstraints(items: (blue, root), attributes: (.bottom, .bottom)).count, 1)
+        XCTAssertEqual(root.findConstraints(items: (blue, root), attributes: (.leading, .leading)).count, 1)
+        XCTAssertEqual(root.findConstraints(items: (blue, root), attributes: (.trailing, .trailing)).count, 1)
+    }
+    
+    func testAnchorsEitherFalse() {
+        
+        let toggle = false
+        deactivatable = root {
+            red.anchors {
+                if toggle {
+                    Anchors.cap
+                    Anchors(.bottom).equalTo(blue, attribute: .top)
+                } else {
+                    Anchors.shoe
+                    Anchors(.top).equalTo(blue, attribute: .bottom)
+                }
+            }
+            blue.anchors {
+                if toggle {
+                    Anchors.shoe
+                } else {
+                    Anchors.cap
+                }
+            }
+        }.active()
+
+        XCTAssertEqual(root.constraints.count, 7)
+
+        XCTAssertEqual(root.findConstraints(items: (blue, root), attributes: (.top, .top)).count, 1)
+        XCTAssertEqual(root.findConstraints(items: (blue, root), attributes: (.leading, .leading)).count, 1)
+        XCTAssertEqual(root.findConstraints(items: (blue, root), attributes: (.trailing, .trailing)).count, 1)
+
+        XCTAssertEqual(root.findConstraints(items: (red, root), attributes: (.bottom, .bottom)).count, 1)
+        XCTAssertEqual(root.findConstraints(items: (red, root), attributes: (.leading, .leading)).count, 1)
+        XCTAssertEqual(root.findConstraints(items: (red, root), attributes: (.trailing, .trailing)).count, 1)
     }
     
 }
 
 extension Anchors {
     static var boundary: Anchors { .init(.top, .leading, .trailing, .bottom) }
+    static var cap: Anchors { .init(.top, .leading, .trailing) }
+    static var shoe: Anchors { .init(.leading, .trailing, .bottom) }
 }
 
 extension UIView {
