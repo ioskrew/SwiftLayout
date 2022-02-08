@@ -8,14 +8,14 @@
 import Foundation
 import UIKit
 
-public struct Anchors: Constraint {
+public final class Anchors: Constraint {
     
-    public init(_ attributes: NSLayoutConstraint.Attribute...) {
+    public convenience init(_ attributes: NSLayoutConstraint.Attribute...) {
         let items = attributes.map { Anchors.Item(attribute: $0) }
         self.init(items: items)
     }
     
-    public init(_ attributes: [NSLayoutConstraint.Attribute]) {
+    public convenience init(_ attributes: [NSLayoutConstraint.Attribute]) {
         let items = attributes.map { Anchors.Item(attribute: $0) }
         self.init(items: items)
     }
@@ -30,9 +30,14 @@ public struct Anchors: Constraint {
         AnyHashable(items)
     }
     
+    public func setConstant(_ constant: CGFloat) -> Self {
+        for i in 0..<items.count {
+            items[i].constant = constant
+        }
+        return self
+    }
+    
     private func to(_ relation: NSLayoutConstraint.Relation, to: To) -> Self {
-        var a = self
-        
         func update(_ updateItem: Item) -> Item {
             var updateItem = updateItem
             updateItem.relation = relation
@@ -43,8 +48,8 @@ public struct Anchors: Constraint {
             return updateItem
         }
         
-        a.items = a.items.map(update)
-        return a
+        items = items.map(update)
+        return self
     }
     
     public func equalTo(_ toItem: NSObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil) -> Self {
