@@ -12,25 +12,31 @@ view hierarchy and autolayout DSL library
    - view의 hugging, compression등
 3. 코드는 최대한 단순하게
 
-## 규칙
-
-### View Hierarhcy DSL
-
-- view의 부모와 자식의 관계는 아래와 같이 더해진다.
+## View, Constraint Hierarhcy DSL
 ```swift
-parent {
-    child1
-    child2 {
-        grandchild1
-        ...
+view {
+    red.anchors {
+        if redUp {
+            Anchors.cap
+            Anchors(.bottom).equalTo(blue, attribute: .top)
+        } else {
+            Anchors.shoe
+            Anchors(.top).equalTo(blue, attribute: .bottom)
+        }
+        Anchors(.height).equalTo(blue, attribute: .height)
+    }.subviews {
+        button.anchors {
+            Anchors.center
+        }
     }
-    ...
+    blue.anchors {
+        if redUp {
+            Anchors.shoe
+        } else {
+            Anchors.cap
+        }
+    }
 }
-```
-```swift
-let layoutable = parent {
-    child
-}.active()
 ```
 - 관계 DSL은 `Layoutable`의 구현타입을 반환하며, 해당 layoutable을 레퍼런스로 들고 있지 않으면 부모 자식 관계는 사라진다.
 
@@ -114,3 +120,6 @@ let tree = root {
 
 - SwiftUI 피처 추가
 - constraint 활성화 개선
+
+### 0.7
+- Anchors(Constraint) update
