@@ -14,26 +14,29 @@ view hierarchy and autolayout DSL library
 
 ## View, Constraint Hierarhcy DSL
 ```swift
-view {
+let root: UIView
+let red: UIView
+let blue: UIView
+root {
     red.anchors {
         if redUp {
-            Anchors.cap
-            Anchors(.bottom).equalTo(blue, attribute: .top)
+            Anchors(.top, .leading. trailing) // equal to root
+            Anchors(.bottom).equalTo(blue, attribute: .top) // equal to top of blue
         } else {
-            Anchors.shoe
-            Anchors(.top).equalTo(blue, attribute: .bottom)
+            Anchors(.leading, .trailing, .bottom) // equal to root
+            Anchors(.top).equalTo(blue, attribute: .bottom) // equal to bottom of blue
         }
         Anchors(.height).equalTo(blue, attribute: .height)
     }.subviews {
         button.anchors {
-            Anchors.center
+            Anchors(.centerX, .centerY)
         }
     }
     blue.anchors {
         if redUp {
-            Anchors.shoe
+            Anchors(.leading, .trailing, .bottom)
         } else {
-            Anchors.cap
+            Anchors(.top, .leading, .trailing)
         }
     }
 }
