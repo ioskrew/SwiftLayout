@@ -28,27 +28,38 @@ final class ViewController: UIViewController, LayoutBuilding {
     var redUp = true {
         didSet { updateLayout() }
     }
+    
+    lazy var button: UIButton = {
+        let button = UIButton(primaryAction: .init(title: "RED!!!!", handler: { [weak self] _ in
+            self?.redUp.toggle()
+        }))
+        button.setTitleColor(.green, for: .normal)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 90)
+        return button
+    }()
+    
     var layout: some Layout {
         view {
-            if redUp {
-                // TODO: should be more simple
-                red.constraint(.top, .leading, .trailing)
-                    .constraint(.bottom, to: (blue, .top))
-                blue.constraint(.leading, .trailing, .bottom)
-                    .constraint(.height, toItem: red).layout {
-                        UIButton(primaryAction: UIAction(title: "blue up", handler: { [weak self] _ in
-                            self?.redUp = false
-                        })).constraint(.centerY, .centerX)
-                    }
-            } else {
-                blue.constraint(.top, .leading, .trailing)
-                    .constraint(.bottom, to: (red, .top))
-                red.constraint(.leading, .trailing, .bottom)
-                    .constraint(.height, toItem: blue).layout {
-                        UIButton(primaryAction: UIAction(title: "red up", handler: { [weak self] _ in
-                            self?.redUp = true
-                        })).constraint(.centerY, .centerX)
-                    }
+            red.anchors {
+                if redUp {
+                    Anchors.cap
+                    Anchors(.bottom).equalTo(blue, attribute: .top)
+                } else {
+                    Anchors.shoe
+                    Anchors(.top).equalTo(blue, attribute: .bottom)
+                }
+                Anchors(.height).equalTo(blue, attribute: .height)
+            }.subviews {
+                button.anchors {
+                    Anchors.center
+                }
+            }
+            blue.anchors {
+                if redUp {
+                    Anchors.shoe
+                } else {
+                    Anchors.cap
+                }
             }
         }
     }
@@ -66,6 +77,12 @@ final class ViewController: UIViewController, LayoutBuilding {
         updateLayout()
     }
 
+}
+
+extension Anchors {
+    static var cap: Anchors { .init(.top, .leading, .trailing) }
+    static var shoe: Anchors { .init(.bottom, .leading, .trailing) }
+    static var center: Anchors { .init(.centerX, .centerY) }
 }
 
 extension ViewController: LayoutViewControllerRepresentable {}
