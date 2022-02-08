@@ -236,13 +236,24 @@ final class DSLTests: XCTestCase {
                 red.topAnchor
                 red.leadingAnchor
                 red.trailingAnchor
+                red.bottomAnchor.constraint(equalTo: blue.topAnchor)
             }
             blue.anchors {
-                red.leadingAnchor
+                blue.leadingAnchor
                 blue.trailingAnchor
                 blue.bottomAnchor
             }
         }.active()
+        
+        // root가 constraint를 다 가져감
+        XCTAssertEqual(root.constraints.count, 7)
+        for attr in [NSLayoutConstraint.Attribute.top, .leading, .trailing] {
+            XCTAssertNotNil(root.findConstraints(items: (red, root), attributes: (attr, attr)).first)
+        }
+        XCTAssertNotNil(root.findConstraints(items: (red, blue), attributes: (.bottom, .top)).first)
+        for attr in [NSLayoutConstraint.Attribute.leading, .trailing, .bottom] {
+            XCTAssertNotNil(root.findConstraints(items: (blue, root), attributes: (attr, attr)).first)
+        }
     }
 }
 
