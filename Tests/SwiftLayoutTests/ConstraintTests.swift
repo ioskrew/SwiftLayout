@@ -31,76 +31,30 @@ class ConstraintTests: XCTestCase {
         deactivatable.deactive()
     }
     
-    func testConstraintToLayout() {
+    func testAnchorConstraint() {
+        let root = UIView()
+        let child = UIView()
+        root.addSubview(child)
+        child.translatesAutoresizingMaskIntoConstraints = false
         
-        let layout: some Layout = root {
-            child.constraint {
-                ConstraintBuilder.Binding(firstAttribute: .top, firstItem: child, secondAttribute: .top, secondItem: root, relation: .equal)
-                ConstraintBuilder.Binding(firstAttribute: .leading, firstItem: child, secondAttribute: .leading, secondItem: root, relation: .equal)
-                ConstraintBuilder.Binding(firstAttribute: .trailing, firstItem: child, secondAttribute: .trailing, secondItem: root, relation: .equal)
-                ConstraintBuilder.Binding(firstAttribute: .bottom, firstItem: child, secondAttribute: .bottom, secondItem: root, relation: .equal)
-                
-                ConstraintBuilder.Binding(firstAttribute: .centerY, firstItem: child, secondAttribute: .centerY, secondItem: root, relation: .equal)
-                ConstraintBuilder.Binding(firstAttribute: .centerX, firstItem: child, secondAttribute: .centerX, secondItem: root, relation: .equal)
-            }
-        }
+        let constraints = Anchor(.top, .leading, .trailing, .bottom).constraints(item: child, toItem: root)
         
-        deactivatable = layout.active()
-        XCTAssertEqual(child.superview, root)
-        XCTAssertEqual(root.constraints.count, 6)
-        for attrib in [NSLayoutConstraint.Attribute.top, .leading, .trailing, .bottom, .centerX, .centerY] {
-            XCTAssertNotNil(root.constraints.filter(child, firstAttribute: attrib, relation: .equal, toItem: root))
-        }
+        NSLayoutConstraint.activate(constraints)
         
-        deactivatable.deactive()
-        XCTAssertNil(child.superview)
-        XCTAssertEqual(root.constraints.count, 0)
-    }
-    
-    func testSyntaticSugarOfBindingForConstraint() {
-        context("child의 ConstraintBuilder.Binding의") {
-            context("first item이 없는 경우") {
-                deactivatable = root {
-                    child.constraint {
-                        ConstraintBuilder.Binding(firstAttribute: .top, secondAttribute: .top, secondItem: root)
-                    }
-                }.active()
-                context("first item은 child가 된다") {
-                    XCTAssertEqual(child.superview, root)
-                    XCTAssertEqual(root.constraints.count, 1)
-                    XCTAssertNotNil(root.constraints.filter(child, firstAttribute: .top, toItem: root))
-                }
-                deactivatable = AnyDeactivatable()
-                XCTAssertNil(child.superview)
-                XCTAssertEqual(child.constraints.count, 0)
-            }
-            context("first item이 있고, second item이 없는 경우") {
-                deactivatable = root {
-                    child.constraint {
-                        ConstraintBuilder.Binding(firstAttribute: .top, firstItem: child, secondAttribute: .top)
-                    }
-                }.active()
-                context("second item은 root가 된다") {
-                    XCTAssertEqual(child.superview, root)
-                    XCTAssertEqual(root.constraints.count, 1)
-                    XCTAssertNotNil(root.constraints.filter(child, firstAttribute: .top, toItem: root))
-                }
-                deactivatable = AnyDeactivatable()
-            }
-            context("first item과 second item이 없는 경우") {
-                deactivatable = root {
-                    child.constraint {
-                        ConstraintBuilder.Binding(firstAttribute: .top, secondAttribute: .top)
-                    }
-                }.active()
-                context("first item은 child, second item은 root가 된다") {
-                    XCTAssertEqual(child.superview, root)
-                    XCTAssertEqual(root.constraints.count, 1)
-                    XCTAssertNotNil(root.constraints.filter(child, firstAttribute: .top, toItem: root))
-                }
-                deactivatable = AnyDeactivatable()
-            }
-        }
+        root.frame = CGRect(origin: .zero, size: .init(width: 200, height: 200))
+        root.layoutIfNeeded()
+        XCTAssertEqual(child.frame.size, .init(width: 200, height: 200))
+        root.removeConstraints(constraints)
+        
+        let constraints1 = Anchor(.top, .leading).constraints(item: child, toItem: root)
+        let constraints2 = Anchor(.width, .height).equalTo(constant: 98).constraints(item: child, toItem: root)
+        
+        NSLayoutConstraint.activate(constraints1)
+        NSLayoutConstraint.activate(constraints2)
+        
+        root.setNeedsLayout()
+        root.layoutIfNeeded()
+        XCTAssertEqual(child.frame.size, .init(width: 98, height: 98))
     }
     
     func testConstraintWithAnchors() {
@@ -130,8 +84,13 @@ class ConstraintTests: XCTestCase {
     
     func testConstraintDSL() {
         deactivatable = root {
-            child.constraint(.top, .leading, .bottom).constraint(.trailing, to: (red, .leading))
-            red.constraint(.top, .trailing, .bottom)
+            child.anchors {
+                Anchor(.top, .leading, .bottom)
+                Anchor.trailing.equalTo(red, attribute: .leading)
+            }
+            red.anchors {
+                Anchor(.top, .trailing, .bottom)
+            }
         }.active()
         
         // root가 constraint를 다 가져감
@@ -147,8 +106,12 @@ class ConstraintTests: XCTestCase {
     
     func testLayoutInConstraint() {
         deactivatable = root {
-            child.constraint(.top, .bottom, .leading, .trailing).layout {
-                red.constraint(.centerX, .centerY)
+            child.anchors {
+                Anchor(.top, .bottom, .leading, .trailing)
+            }.subviews {
+                red.anchors {
+                    Anchor(.centerX, .centerY)
+                }
             }
         }.active()
         

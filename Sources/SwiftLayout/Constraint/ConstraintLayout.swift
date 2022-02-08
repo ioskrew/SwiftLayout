@@ -10,13 +10,13 @@ import UIKit
 
 public final class ConstraintLayout: ViewContainableLayout {
    
-    internal init(view: UIView, constraint: [ConstraintBinding]) {
+    internal init(view: UIView, constraint: [Anchor]) {
         self.view = view
         self.constraint = constraint
     }
     
     public let view: UIView
-    var constraint: [ConstraintBinding]
+    var constraint: [Anchor]
     
     public var layouts: [Layout] = []
     var constraints: [NSLayoutConstraint] = []
@@ -44,11 +44,9 @@ public final class ConstraintLayout: ViewContainableLayout {
         NSLayoutConstraint.deactivate(self.constraints)
     }
     
-    public func layout<L>(@LayoutBuilder _ build: () -> L) -> Self where L: Layout {
+    public func subviews<L>(@LayoutBuilder _ build: () -> L) -> Self where L: Layout {
         layouts.append(build())
         return self
     }
     
 }
-
-extension ConstraintLayout: ConstraintCreating {}

@@ -82,11 +82,17 @@ final class ViewController: UIViewController, LayoutBuilding {
     
     var layout: some Layout {
         self.view {
-            root.constraint(.top, .leading, .trailing, .bottom).layout {
+            root.anchors {
+                Anchor(.top, .leading, .trailing, .bottom)
+            }.subviews {
                 if self.flag {
-                    flagged.constraint(.top, .leading, .trailing, .bottom)
+                    flagged.anchors {
+                        Anchor(.top, .leading, .trailing, .bottom)
+                    }
                 } else {
-                    noflagged.constraint(.top, .leading, .trailing, .bottom)
+                    noflagged.anchors({
+                        Anchor(.top, .leading, .trailing, .bottom)
+                    })
                 }
             }
         }
