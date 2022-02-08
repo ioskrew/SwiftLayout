@@ -19,12 +19,14 @@ final class DSLIntentionsTests: XCTestCase {
     
     var root: UIView!
     var child: UIView!
+    var grandchild: UIView!
     
     override func setUpWithError() throws {
         continueAfterFailure = false
         
         root = UIView().viewTag.root
         child = UIView().viewTag.child
+        grandchild = UIView().viewTag.grandchild
     }
     
     override func tearDownWithError() throws {
@@ -38,10 +40,35 @@ final class DSLIntentionsTests: XCTestCase {
             }
         }.active()
         
+        XCTAssertEqual(child.superview, root)
         for attribute in [NSLayoutConstraint.Attribute.top, .leading, .trailing, .bottom] {
             let constraints = root.findConstraints(items: (child, root),
                                                    attributes: (attribute, attribute))
             XCTAssertEqual(constraints.count, 1, constraints.debugDescription)
+        }
+    }
+    
+    func testLayoutAfterAnchors() {
+        deactivatable = root {
+            child.anchors {
+                Anchors.boundary
+            }.subviews {
+                grandchild.anchors {
+                    Anchors.boundary
+                }
+            }
+        }.active()
+        
+        XCTAssertEqual(child.superview, root)
+        XCTAssertEqual(grandchild.superview, child)
+        for attribute in [NSLayoutConstraint.Attribute.top, .leading, .trailing, .bottom] {
+            let childConstraints = root.findConstraints(items: (child, root),
+                                                   attributes: (attribute, attribute))
+            XCTAssertEqual(childConstraints.count, 1, childConstraints.debugDescription)
+            
+            let grandchildConstraints = root.findConstraints(items: (grandchild, child),
+                                                   attributes: (attribute, attribute))
+            XCTAssertEqual(grandchildConstraints.count, 1, grandchildConstraints.debugDescription)
         }
     }
     
