@@ -21,6 +21,10 @@ public final class AnchorsLayout<C>: ViewContainableLayout where C: Constraint {
     public var layouts: [Layout] = []
     var constraints: [NSLayoutConstraint] = []
     
+    public var hashable: AnyHashable {
+        AnyHashable([view.hashable, constraint.hashable, layouts.hashable])
+    }
+    
     public func attachSuperview(_ superview: UIView?) {
         superview?.addSubview(self.view)
         self.view.translatesAutoresizingMaskIntoConstraints = false

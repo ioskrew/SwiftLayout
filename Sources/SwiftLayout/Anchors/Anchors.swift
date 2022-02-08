@@ -26,14 +26,8 @@ public struct Anchors: Constraint {
     
     var items: [Item] = []
     
-    private struct To {
-        let item: AnyObject?
-        let attribute: NSLayoutConstraint.Attribute?
-        let constant: CGFloat
-        
-        var toNeeds: Bool {
-            item != nil || attribute != nil
-        }
+    public var hashable: AnyHashable {
+        AnyHashable(items)
     }
     
     private func to(_ relation: NSLayoutConstraint.Relation, to: To) -> Self {
@@ -53,30 +47,30 @@ public struct Anchors: Constraint {
         return a
     }
     
-    public func equalTo(_ toItem: AnyObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil) -> Self {
+    public func equalTo(_ toItem: NSObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil) -> Self {
         to(.equal, to: .init(item: toItem, attribute: attribute, constant: .zero))
     }
     
-    public func greaterThanOrEqualTo(_ toItem: AnyObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil) -> Self {
+    public func greaterThanOrEqualTo(_ toItem: NSObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil) -> Self {
         to(.greaterThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: .zero))
     }
     
-    public func lessThanOrEqualTo(_ toItem: AnyObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil) -> Self {
+    public func lessThanOrEqualTo(_ toItem: NSObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil) -> Self {
         to(.lessThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: .zero))
     }
-    public func equalTo(_ toItem: AnyObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil, constant: CGFloat) -> Self {
+    public func equalTo(_ toItem: NSObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil, constant: CGFloat) -> Self {
         to(.equal, to: .init(item: toItem, attribute: attribute, constant: constant))
     }
     
-    public func greaterThanOrEqualTo(_ toItem: AnyObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil, constant: CGFloat) -> Self {
+    public func greaterThanOrEqualTo(_ toItem: NSObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil, constant: CGFloat) -> Self {
         to(.greaterThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: constant))
     }
     
-    public func lessThanOrEqualTo(_ toItem: AnyObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil, constant: CGFloat) -> Self {
+    public func lessThanOrEqualTo(_ toItem: NSObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil, constant: CGFloat) -> Self {
         to(.lessThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: constant))
     }
     
-    public func constraints(item fromItem: AnyObject, toItem: AnyObject?) -> [NSLayoutConstraint] {
+    public func constraints(item fromItem: NSObject, toItem: NSObject?) -> [NSLayoutConstraint] {
         var constraints: [NSLayoutConstraint] = []
         for item in items {
             constraints.append(NSLayoutConstraint(item: fromItem,
@@ -89,18 +83,28 @@ public struct Anchors: Constraint {
         }
         return constraints
     }
-   
-    struct Item {
+    
+    private struct To {
+        let item: NSObject?
+        let attribute: NSLayoutConstraint.Attribute?
+        let constant: CGFloat
+        
+        var toNeeds: Bool {
+            item != nil || attribute != nil
+        }
+    }
+    
+    struct Item: Hashable {
         var attribute: NSLayoutConstraint.Attribute
         var relation: NSLayoutConstraint.Relation = .equal
         var toNeeds: Bool = true
-        var toItem: AnyObject?
+        var toItem: NSObject?
         var toAttribute: NSLayoutConstraint.Attribute?
         
         var constant: CGFloat = 0.0
         var multiplier: CGFloat = 1.0
         
-        func toItem(_ toItem: AnyObject?) -> AnyObject? {
+        func toItem(_ toItem: NSObject?) -> NSObject? {
             guard toNeeds else { return nil }
             return self.toItem ?? toItem
         }
