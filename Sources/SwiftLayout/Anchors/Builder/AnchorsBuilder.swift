@@ -14,6 +14,22 @@ public struct AnchorsBuilder {
     public static func buildBlock(_ components: Anchors...) -> [Anchors] {
         components
     }
+    
+    public static func buildArray(_ components: [[Anchors]]) -> [Anchors] {
+        components.flatMap({ $0 })
+    }
+    
+    public static func buildOptional(_ component: [Anchors]?) -> [Anchors] {
+        component ?? []
+    }
+    
+    public static func buildEither(first component: [Anchors]) -> [Anchors] {
+        component
+    }
+    
+    public static func buildEither(second component: [Anchors]) -> [Anchors] {
+        component
+    }
    
 }
 
