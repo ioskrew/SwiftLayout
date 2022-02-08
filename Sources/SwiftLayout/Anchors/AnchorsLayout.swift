@@ -1,5 +1,5 @@
 //
-//  ConstraintLayout.swift
+//  AnchorsLayout.swift
 //  
 //
 //  Created by oozoofrog on 2022/02/04.
@@ -8,15 +8,15 @@
 import Foundation
 import UIKit
 
-public final class ConstraintLayout: ViewContainableLayout {
+public final class AnchorsLayout: ViewContainableLayout {
    
-    internal init(view: UIView, constraint: [Anchor]) {
+    internal init(view: UIView, constraint: [Anchors]) {
         self.view = view
         self.constraint = constraint
     }
     
     public let view: UIView
-    var constraint: [Anchor]
+    var constraint: [Anchors]
     
     public var layouts: [Layout] = []
     var constraints: [NSLayoutConstraint] = []

@@ -1,5 +1,5 @@
 //
-//  ConstraintTests.swift
+//  AnchorsTests.swift
 //  
 //
 //  Created by oozoofrog on 2022/02/04.
@@ -8,7 +8,7 @@
 import XCTest
 @testable import SwiftLayout
 
-class ConstraintTests: XCTestCase {
+class AnchorsTests: XCTestCase {
     
     var deactivatable: AnyDeactivatable = .init()
     
@@ -37,7 +37,7 @@ class ConstraintTests: XCTestCase {
         root.addSubview(child)
         child.translatesAutoresizingMaskIntoConstraints = false
         
-        let constraints = Anchor(.top, .leading, .trailing, .bottom).constraints(item: child, toItem: root)
+        let constraints = Anchors(.top, .leading, .trailing, .bottom).constraints(item: child, toItem: root)
         
         NSLayoutConstraint.activate(constraints)
         
@@ -46,8 +46,8 @@ class ConstraintTests: XCTestCase {
         XCTAssertEqual(child.frame.size, .init(width: 200, height: 200))
         root.removeConstraints(constraints)
         
-        let constraints1 = Anchor(.top, .leading).constraints(item: child, toItem: root)
-        let constraints2 = Anchor(.width, .height).equalTo(constant: 98).constraints(item: child, toItem: root)
+        let constraints1 = Anchors(.top, .leading).constraints(item: child, toItem: root)
+        let constraints2 = Anchors(.width, .height).equalTo(constant: 98).constraints(item: child, toItem: root)
         
         NSLayoutConstraint.activate(constraints1)
         NSLayoutConstraint.activate(constraints2)
@@ -85,11 +85,11 @@ class ConstraintTests: XCTestCase {
     func testConstraintDSL() {
         deactivatable = root {
             child.anchors {
-                Anchor(.top, .leading, .bottom)
-                Anchor.trailing.equalTo(red, attribute: .leading)
+                Anchors(.top, .leading, .bottom)
+                Anchors.trailing.equalTo(red, attribute: .leading)
             }
             red.anchors {
-                Anchor(.top, .trailing, .bottom)
+                Anchors(.top, .trailing, .bottom)
             }
         }.active()
         
@@ -107,10 +107,10 @@ class ConstraintTests: XCTestCase {
     func testLayoutInConstraint() {
         deactivatable = root {
             child.anchors {
-                Anchor(.top, .bottom, .leading, .trailing)
+                Anchors(.top, .bottom, .leading, .trailing)
             }.subviews {
                 red.anchors {
-                    Anchor(.centerX, .centerY)
+                    Anchors(.centerX, .centerY)
                 }
             }
         }.active()
