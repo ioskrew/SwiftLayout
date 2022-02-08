@@ -15,18 +15,10 @@ public struct Anchors: Constraint {
         self.init(items: items)
     }
     
-    @Attribute(.top)            public static var top: Anchors
-    @Attribute(.bottom)         public static var bottom: Anchors
-    @Attribute(.leading)        public static var leading: Anchors
-    @Attribute(.trailing)       public static var trailing: Anchors
-    @Attribute(.left)           public static var left: Anchors
-    @Attribute(.right)          public static var right: Anchors
-    @Attribute(.width)          public static var width: Anchors
-    @Attribute(.height)         public static var height: Anchors
-    @Attribute(.centerX)        public static var centerX: Anchors
-    @Attribute(.centerY)        public static var centerY: Anchors
-    @Attribute(.firstBaseline)  public static var firstBaseline: Anchors
-    @Attribute(.lastBaseline)   public static var lastBaseline: Anchors
+    public init(_ attributes: [NSLayoutConstraint.Attribute]) {
+        let items = attributes.map { Anchors.Item(attribute: $0) }
+        self.init(items: items)
+    }
     
     internal init(items: [Anchors.Item] = []) {
         self.items = items
@@ -86,16 +78,7 @@ public struct Anchors: Constraint {
         }
         return constraints
     }
-    
-    @propertyWrapper
-    public struct Attribute {
-        public var wrappedValue: Anchors
-        
-        public init(_ attribute: NSLayoutConstraint.Attribute) {
-            wrappedValue = Anchors(items: [.init(attribute: attribute)])
-        }
-    }
-    
+   
     struct Item {
         var attribute: NSLayoutConstraint.Attribute
         var relation: NSLayoutConstraint.Relation = .equal
