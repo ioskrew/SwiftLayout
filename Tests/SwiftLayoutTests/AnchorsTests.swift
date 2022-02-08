@@ -86,7 +86,7 @@ class AnchorsTests: XCTestCase {
         deactivatable = root {
             child.anchors {
                 Anchors(.top, .leading, .bottom)
-                Anchors.trailing.equalTo(red, attribute: .leading)
+                Anchors(.trailing).equalTo(red, attribute: .leading)
             }
             red.anchors {
                 Anchors(.top, .trailing, .bottom)
