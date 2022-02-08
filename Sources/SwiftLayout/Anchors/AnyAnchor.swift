@@ -8,19 +8,17 @@
 import Foundation
 import UIKit
 
-protocol AnchorTypeInterface {
+public protocol AnchorTypeInterface {
     var anchorType: AnyAnchor { get }
 }
 
 extension AnchorTypeInterface where Self: NSObject {
-    var anchorType: AnyAnchor {
+    public var anchorType: AnyAnchor {
         AnyAnchor(self)
     }
 }
 
-extension NSLayoutAnchor: AnchorTypeInterface {}
-
-enum AnyAnchor: AnchorTypeInterface {
+public enum AnyAnchor: AnchorTypeInterface, Hashable {
     case x(NSLayoutXAxisAnchor)
     case y(NSLayoutYAxisAnchor)
     case size(NSLayoutDimension)
@@ -92,7 +90,7 @@ enum AnyAnchor: AnchorTypeInterface {
         }
     }
     
-    var anchorType: AnyAnchor { self }
+    public var anchorType: AnyAnchor { self }
     
     func relation<Anchor, AnchorType>(first: Anchor, relation: NSLayoutConstraint.Relation, second: Anchor, constant: CGFloat) -> NSLayoutConstraint where Anchor: NSLayoutAnchor<AnchorType> {
         switch relation {
@@ -136,8 +134,8 @@ enum AnyAnchor: AnchorTypeInterface {
         }
     }
     
-    func constraint<A: AnchorTypeInterface>(to second: A?, relation: NSLayoutConstraint.Relation = .equal, constant: CGFloat = .zero) -> NSLayoutConstraint? {
-        switch (self, second?.anchorType) {
+    func constraint(to item: AnchorItem, relation: NSLayoutConstraint.Relation = .equal, constant: CGFloat = .zero) -> NSLayoutConstraint? {
+        switch (self, item.anchor(for: attribute)) {
         case let (.x(first), .x(second)):
             return self.relation(first: first, relation: relation, second: second, constant: constant)
         case let (.y(first), .y(second)):
@@ -147,10 +145,6 @@ enum AnyAnchor: AnchorTypeInterface {
         default:
             return nil
         }
-    }
-    
-    func constraint(to item: AnchorItem, relation: NSLayoutConstraint.Relation = .equal, constant: CGFloat = .zero) -> NSLayoutConstraint? {
-        self.constraint(to: item.anchor(for: attribute), relation: relation, constant: constant)
     }
     
     func constraint(to item: NSObject, relation: NSLayoutConstraint.Relation = .equal, constant: CGFloat = .zero) -> NSLayoutConstraint? {

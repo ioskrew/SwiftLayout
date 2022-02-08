@@ -230,6 +230,20 @@ final class DSLTests: XCTestCase {
         XCTAssertNotNil(root.findConstraints(items: (blue, red), attributes: (.centerY, .centerY)).first)
     }
     
+    func testAnchorsFromNSLayoutAnchor() {
+        deactivatable = root {
+            red.anchors {
+                red.topAnchor
+                red.leadingAnchor
+                red.trailingAnchor
+            }
+            blue.anchors {
+                red.leadingAnchor
+                blue.trailingAnchor
+                blue.bottomAnchor
+            }
+        }.active()
+    }
 }
 
 extension Anchors {
