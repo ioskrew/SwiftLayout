@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 extension UIView {
-    func anchor(for attribute: NSLayoutConstraint.Attribute) -> AnchorType {
+    func anchor(for attribute: NSLayoutConstraint.Attribute) -> AnyAnchor {
         switch attribute {
         case .top:
             return topAnchor.anchorType
@@ -40,6 +40,36 @@ extension UIView {
         }
     }
 }
+
+extension UILayoutGuide {
+    func anchor(for attribute: NSLayoutConstraint.Attribute) -> AnyAnchor {
+        switch attribute {
+        case .top:
+            return topAnchor.anchorType
+        case .bottom:
+            return bottomAnchor.anchorType
+        case .leading:
+            return leadingAnchor.anchorType
+        case .trailing:
+            return trailingAnchor.anchorType
+        case .left:
+            return leftAnchor.anchorType
+        case .right:
+            return rightAnchor.anchorType
+        case .width:
+            return widthAnchor.anchorType
+        case .height:
+            return heightAnchor.anchorType
+        case .centerX:
+            return centerXAnchor.anchorType
+        case .centerY:
+            return centerYAnchor.anchorType
+        default:
+            return .idontknow
+        }
+    }
+}
+
 
 extension UIView {
     func attribute<Anchor>(_ anchor: Anchor) -> NSLayoutConstraint.Attribute where Anchor: NSObject {

@@ -13,7 +13,7 @@ import UIKit
 ///
 /// 이 테스트 케이스에서는 구현이 아닌 인터페이스 혹은
 /// 구현을 테스트 합니다.
-final class DSLIntentionsTests: XCTestCase {
+final class DSLTests: XCTestCase {
     
     var deactivatable: AnyDeactivatable!
     
@@ -186,6 +186,50 @@ final class DSLIntentionsTests: XCTestCase {
         XCTAssertNotEqual(Anchors.cap.hashable, Anchors.shoe.hashable)
         XCTAssertNotEqual(a3.hashable, a4.hashable)
     }
+    
+    func testConstraintDSL() {
+        deactivatable = root {
+            red.anchors {
+                Anchors(.top, .leading, .bottom)
+                Anchors(.trailing).equalTo(blue, attribute: .leading)
+            }
+            blue.anchors {
+                Anchors(.top, .trailing, .bottom)
+            }
+        }.active()
+        
+        // root가 constraint를 다 가져감
+        XCTAssertEqual(root.constraints.count, 7)
+        for attr in [NSLayoutConstraint.Attribute.top, .leading, .bottom] {
+            XCTAssertNotNil(root.findConstraints(items: (red, root), attributes: (attr, attr)).first)
+        }
+        XCTAssertNotNil(root.findConstraints(items: (red, blue), attributes: (.trailing, .leading)).first)
+        for attr in [NSLayoutConstraint.Attribute.top, .trailing, .bottom] {
+            XCTAssertNotNil(root.findConstraints(items: (blue, root), attributes: (attr, attr)).first)
+        }
+    }
+    
+    func testLayoutInConstraint() {
+        deactivatable = root {
+            red.anchors {
+                Anchors(.top, .bottom, .leading, .trailing)
+            }.subviews {
+                blue.anchors {
+                    Anchors(.centerX, .centerY)
+                }
+            }
+        }.active()
+        
+        XCTAssertEqual(blue.superview, red)
+        XCTAssertEqual(red.superview, root)
+        
+        for attr in [NSLayoutConstraint.Attribute.top, .leading, .trailing, .bottom] {
+            XCTAssertNotNil(root.findConstraints(items: (red, root), attributes: (attr, attr)).first)
+        }
+        XCTAssertNotNil(root.findConstraints(items: (blue, red), attributes: (.centerX, .centerX)).first)
+        XCTAssertNotNil(root.findConstraints(items: (blue, red), attributes: (.centerY, .centerY)).first)
+    }
+    
 }
 
 extension Anchors {
