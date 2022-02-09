@@ -41,7 +41,7 @@ root {
     }
 }
 ```
-- 관계 DSL은 `Layoutable`의 구현타입을 반환하며, 해당 layoutable을 레퍼런스로 들고 있지 않으면 부모 자식 관계는 사라진다.
+- 각 DSL의 closure는 `Layout`의 구현타입을 반환하며, 해당 layoutable을 레퍼런스로 들고 있지 않으면 부모 자식 관계는 사라진다.
 
 ## Preview
 
