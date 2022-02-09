@@ -233,15 +233,11 @@ final class DSLTests: XCTestCase {
     func testAnchorsFromNSLayoutAnchor() {
         deactivatable = root {
             red.anchors {
-                red.topAnchor
-                red.leadingAnchor
-                red.trailingAnchor
+                Anchors.cap
                 red.bottomAnchor.constraint(equalTo: blue.topAnchor)
             }
             blue.anchors {
-                blue.leadingAnchor
-                blue.trailingAnchor
-                blue.bottomAnchor
+                Anchors.shoe
             }
         }.active()
         
