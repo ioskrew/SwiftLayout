@@ -22,7 +22,7 @@ public protocol Layout: CustomDebugStringConvertible {
 
 extension Layout {
     
-    public func active() -> Activation {
+    func active() -> Activation {
         attachSuperview()
         return Activation(self)
     }

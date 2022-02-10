@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		74DB0FE827B56E1400E83BEE /* LayoutHostingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74DB0FE727B56E1400E83BEE /* LayoutHostingViewController.swift */; };
 		A1475FF527B02102008DED5A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1475FF427B02102008DED5A /* AppDelegate.swift */; };
 		A1475FF727B02102008DED5A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1475FF627B02102008DED5A /* SceneDelegate.swift */; };
 		A1475FF927B02102008DED5A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1475FF827B02102008DED5A /* ViewController.swift */; };
@@ -17,6 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		74DB0FE727B56E1400E83BEE /* LayoutHostingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LayoutHostingViewController.swift; sourceTree = "<group>"; };
 		A1475FF127B02102008DED5A /* SwiftLayoutSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftLayoutSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1475FF427B02102008DED5A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A1475FF627B02102008DED5A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -64,6 +66,7 @@
 				A1475FF427B02102008DED5A /* AppDelegate.swift */,
 				A1475FF627B02102008DED5A /* SceneDelegate.swift */,
 				A1475FF827B02102008DED5A /* ViewController.swift */,
+				74DB0FE727B56E1400E83BEE /* LayoutHostingViewController.swift */,
 				A1475FFA27B02102008DED5A /* Main.storyboard */,
 				A1475FFD27B02103008DED5A /* Assets.xcassets */,
 				A1475FFF27B02103008DED5A /* LaunchScreen.storyboard */,
@@ -164,6 +167,7 @@
 				A1475FF927B02102008DED5A /* ViewController.swift in Sources */,
 				A1475FF527B02102008DED5A /* AppDelegate.swift in Sources */,
 				A1475FF727B02102008DED5A /* SceneDelegate.swift in Sources */,
+				74DB0FE827B56E1400E83BEE /* LayoutHostingViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

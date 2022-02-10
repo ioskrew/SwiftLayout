@@ -61,7 +61,7 @@ final class _ActivationBox<Layoutable: Layout>: ActivationBox {
     }
 }
 
-public final class Activation {
+final class Activation {
     
     private(set) var box: ActivationBox?
     
