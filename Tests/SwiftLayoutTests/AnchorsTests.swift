@@ -10,7 +10,7 @@ import XCTest
 
 class AnchorsTests: XCTestCase {
     
-    var deactivatable: AnyDeactivatable = .init()
+    var deactivatable: Activation = .init()
     
     var root = UIView().viewTag.root
     var child = UIView().viewTag.child

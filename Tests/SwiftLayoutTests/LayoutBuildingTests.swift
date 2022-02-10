@@ -73,7 +73,7 @@ final class ViewController: UIViewController, LayoutBuilding {
     }
     
     var deactivatableSetterCount = 0
-    var deactivatable: AnyDeactivatable? {
+    var deactivatable: Activation? {
         didSet {
             guard deactivatable != nil else { return }
             deactivatableSetterCount += 1

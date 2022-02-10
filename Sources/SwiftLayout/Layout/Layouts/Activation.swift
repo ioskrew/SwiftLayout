@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol _AnyDeactiveLayout {
+protocol ActivationBox {
     
     var layouts: [Layout] { get }
     
@@ -19,7 +19,7 @@ protocol _AnyDeactiveLayout {
     func bind<Layoutable>(_ layout: Layoutable) where Layoutable: Layout
 }
 
-final class AnyDeactiveBox<Layoutable: Layout>: _AnyDeactiveLayout {
+final class _ActivationBox<Layoutable: Layout>: ActivationBox {
     
     internal init(_ layout: Layoutable) {
         self.layouts = [layout]
@@ -61,19 +61,19 @@ final class AnyDeactiveBox<Layoutable: Layout>: _AnyDeactiveLayout {
     }
 }
 
-public final class AnyDeactivatable {
+public final class Activation {
     
-    private(set) var box: _AnyDeactiveLayout?
+    private(set) var box: ActivationBox?
     
     init() {
         box = nil
     }
     
     convenience init<Layoutable: Layout>(_ layout: Layoutable) {
-        self.init(AnyDeactiveBox(layout))
+        self.init(_ActivationBox(layout))
     }
     
-    init<Box: _AnyDeactiveLayout>(_ box: Box?) {
+    init<Box: ActivationBox>(_ box: Box?) {
         self.box = box
     }
     

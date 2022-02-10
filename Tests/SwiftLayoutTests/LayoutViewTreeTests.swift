@@ -10,7 +10,7 @@ final class LayoutViewTreeTests: XCTestCase {
     var redView: UIView = UIView().viewTag.redView
     var image: UIImageView = UIImageView().viewTag.image
     
-    var deactivable: AnyDeactivatable?
+    var deactivable: Activation?
     
     override func setUp() {
         root = UIView().viewTag.root

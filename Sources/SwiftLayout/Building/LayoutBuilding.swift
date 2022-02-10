@@ -11,7 +11,7 @@ public protocol LayoutBuilding: AnyObject {
  
     associatedtype LayoutContent: Layout
     
-    var deactivatable: AnyDeactivatable? { get set }
+    var deactivatable: Activation? { get set }
     var layout: LayoutContent { get }
     
     func updateLayout()
@@ -27,7 +27,7 @@ public extension LayoutBuilding {
             self.deactivatable?.deactive()
             self.deactivatable = nil
         }
-        self.deactivatable = AnyDeactivatable(layout)
+        self.deactivatable = Activation(layout)
         self.deactivatable?.active()
     }
     

@@ -15,7 +15,7 @@ import UIKit
 /// 구현을 테스트 합니다.
 final class DSLTests: XCTestCase {
     
-    var deactivatable: AnyDeactivatable!
+    var deactivatable: Activation!
     
     var root: UIView!
     var red: UIView!
