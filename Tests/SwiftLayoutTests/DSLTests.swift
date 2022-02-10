@@ -15,8 +15,7 @@ import UIKit
 /// 구현을 테스트 합니다.
 final class DSLTests: XCTestCase {
     
-    var activation: Activation!
-    
+    var view: UIView?
     var root: UIView!
     var red: UIView!
     var blue: UIView!
@@ -30,15 +29,15 @@ final class DSLTests: XCTestCase {
     }
     
     override func tearDownWithError() throws {
-        activation?.deactive()
     }
     
     func testAnchors() {
-        activation = root {
+     
+        view = LayoutHostingView(root {
             red.anchors {
                 Anchors.boundary
             }
-        }.active()
+        })
         
         XCTAssertEqual(red.superview, root)
         for attribute in [NSLayoutConstraint.Attribute.top, .leading, .trailing, .bottom] {
@@ -49,7 +48,7 @@ final class DSLTests: XCTestCase {
     }
     
     func testLayoutAfterAnchors() {
-        activation = root {
+        view = LayoutHostingView(root {
             red.anchors {
                 Anchors.boundary
             }.subviews {
@@ -57,7 +56,7 @@ final class DSLTests: XCTestCase {
                     Anchors.boundary
                 }
             }
-        }.active()
+        })
         
         XCTAssertEqual(red.superview, root)
         XCTAssertEqual(blue.superview, red)
@@ -75,7 +74,7 @@ final class DSLTests: XCTestCase {
     func testAnchorsEitherTrue() {
         
         let toggle = true
-        activation = root {
+        view = LayoutHostingView(root {
             red.anchors {
                 if toggle {
                     Anchors.cap
@@ -92,7 +91,7 @@ final class DSLTests: XCTestCase {
                     Anchors.cap
                 }
             }
-        }.active()
+        })
 
         XCTAssertEqual(root.constraints.count, 7)
 
@@ -108,7 +107,7 @@ final class DSLTests: XCTestCase {
     func testAnchorsEitherFalse() {
         
         let toggle = false
-        activation = root {
+        view = LayoutHostingView(root {
             red.anchors {
                 if toggle {
                     Anchors.cap
@@ -125,7 +124,7 @@ final class DSLTests: XCTestCase {
                     Anchors.cap
                 }
             }
-        }.active()
+        })
 
         XCTAssertEqual(root.constraints.count, 7)
 
@@ -188,7 +187,7 @@ final class DSLTests: XCTestCase {
     }
     
     func testConstraintDSL() {
-        activation = root {
+        view = LayoutHostingView(root {
             red.anchors {
                 Anchors(.top, .leading, .bottom)
                 Anchors(.trailing).equalTo(blue, attribute: .leading)
@@ -196,7 +195,7 @@ final class DSLTests: XCTestCase {
             blue.anchors {
                 Anchors(.top, .trailing, .bottom)
             }
-        }.active()
+        })
         
         // root가 constraint를 다 가져감
         XCTAssertEqual(root.constraints.count, 7)
@@ -210,7 +209,7 @@ final class DSLTests: XCTestCase {
     }
     
     func testLayoutInConstraint() {
-        activation = root {
+        view = LayoutHostingView(root {
             red.anchors {
                 Anchors(.top, .bottom, .leading, .trailing)
             }.subviews {
@@ -218,7 +217,7 @@ final class DSLTests: XCTestCase {
                     Anchors(.centerX, .centerY)
                 }
             }
-        }.active()
+        })
         
         XCTAssertEqual(blue.superview, red)
         XCTAssertEqual(red.superview, root)
@@ -231,7 +230,7 @@ final class DSLTests: XCTestCase {
     }
     
     func testAnchorsFromNSLayoutAnchor() {
-        activation = root {
+        view = LayoutHostingView(root {
             red.anchors {
                 Anchors.cap
                 red.bottomAnchor.constraint(equalTo: blue.topAnchor)
@@ -239,7 +238,7 @@ final class DSLTests: XCTestCase {
             blue.anchors {
                 Anchors.shoe
             }
-        }.active()
+        })
         
         // root가 constraint를 다 가져감
         XCTAssertEqual(root.constraints.count, 7)
@@ -271,12 +270,12 @@ final class DSLTests: XCTestCase {
         
         red.removeFromSuperview()
         
-        activation = root {
+        view = LayoutHostingView(root {
             red.anchors {
                 Anchors(.top, .leading).setConstant(10)
                 Anchors(.trailing, .bottom).setConstant(-10)
             }
-        }.active()
+        })
         
         root.frame = .init(x: 0, y: 0, width: 30, height: 30)
         root.setNeedsLayout()
@@ -312,4 +311,24 @@ extension NSLayoutConstraint {
         && (firstAttribute, secondAttribute) == attributes
         && self.relation == relation && self.constant == constant && self.multiplier == multiplier
     }
+}
+
+class LayoutHostingView<Content>: UIView, LayoutBuilding where Content: Layout {
+    
+    let content: Content
+    
+    var layout: some Layout {
+        content
+    }
+    
+    init(_ _content: Content) {
+        content = _content
+        super.init(frame: .zero)
+        updateLayout()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
 }

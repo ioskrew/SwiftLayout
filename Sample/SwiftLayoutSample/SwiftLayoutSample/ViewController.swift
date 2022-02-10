@@ -60,6 +60,21 @@ final class ViewController: UIViewController, LayoutBuilding {
                 } else {
                     Anchors.cap
                 }
+            }.subviews {
+                UIButton(primaryAction: UIAction(title: "NEXT", handler: { [weak self] _ in
+                    guard let self = self else { return }
+                    let label = UILabel()
+                    label.text = "HELLO"
+                    self.navigationController?.pushViewController(LayoutHostingViewController({ view in
+                        view {
+                            label.anchors {
+                                Anchors.center
+                            }
+                        }
+                    }), animated: true)
+                })).anchors {
+                    Anchors.center
+                }
             }
         }
     }
@@ -67,8 +82,6 @@ final class ViewController: UIViewController, LayoutBuilding {
     static var layoutBuildingPreviews: ViewController {
         ViewController(nibName: nil, bundle: nil)
     }
-    
-    var activation: Activation?
     
     override func viewDidLoad() {
         super.viewDidLoad()

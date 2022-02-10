@@ -11,14 +11,26 @@ public protocol LayoutBuilding: AnyObject {
  
     associatedtype LayoutContent: Layout
     
-    var activation: Activation? { get set }
     var layout: LayoutContent { get }
     
     func updateLayout()
     
 }
 
-public extension LayoutBuilding {
+final class LayoutBuildActivationKey {
+    static var key = LayoutBuildActivationKey()
+}
+
+public extension LayoutBuilding where Self: NSObject {
+    
+    internal var activation: Activation? {
+        get {
+            objc_getAssociatedObject(self, &LayoutBuildActivationKey.key) as? Activation
+        }
+        set {
+            objc_setAssociatedObject(self, &LayoutBuildActivationKey.key, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
     
     func updateLayout() {
         let layout: some Layout = self.layout
