@@ -27,31 +27,31 @@ class LayoutBuildingTests: XCTestCase {
     func testViewControllerWithLayoutBuilding() throws {
         
         vc.flag = true
-        XCTAssertEqual(vc.deactivatableSetterCount, 1)
+        XCTAssertEqual(vc.activationSetterCount, 1)
         XCTAssertEqual(vc.root.superview, vc.view)
         XCTAssertEqual(vc.flagged.superview, vc.root)
         XCTAssertNil(vc.noflagged.superview)
         
         vc.flag = true
-        XCTAssertEqual(vc.deactivatableSetterCount, 1)
+        XCTAssertEqual(vc.activationSetterCount, 1)
         XCTAssertEqual(vc.root.superview, vc.view)
         XCTAssertEqual(vc.flagged.superview, vc.root)
         XCTAssertNil(vc.noflagged.superview)
         
         vc.flag = false
-        XCTAssertEqual(vc.deactivatableSetterCount, 2)
+        XCTAssertEqual(vc.activationSetterCount, 2)
         XCTAssertEqual(vc.root.superview, vc.view)
         XCTAssertEqual(vc.noflagged.superview, vc.root)
         XCTAssertNil(vc.flagged.superview)
         
         vc.flag = true
-        XCTAssertEqual(vc.deactivatableSetterCount, 3)
+        XCTAssertEqual(vc.activationSetterCount, 3)
         let flaggedHashable = vc.layout.hashable
         let flaggedHashable2 = vc.layout.hashable
         XCTAssertEqual(flaggedHashable, flaggedHashable2)
         
         vc.flag = false
-        XCTAssertEqual(vc.deactivatableSetterCount, 4)
+        XCTAssertEqual(vc.activationSetterCount, 4)
         let noFlaggedHashable = vc.layout.hashable
         XCTAssertNotEqual(flaggedHashable, noFlaggedHashable)
     }
@@ -72,11 +72,11 @@ final class ViewController: UIViewController, LayoutBuilding {
         didSet { updateLayout() }
     }
     
-    var deactivatableSetterCount = 0
-    var deactivatable: Activation? {
+    var activationSetterCount = 0
+    var activation: Activation? {
         didSet {
-            guard deactivatable != nil else { return }
-            deactivatableSetterCount += 1
+            guard activation != nil else { return }
+            activationSetterCount += 1
         }
     }
     

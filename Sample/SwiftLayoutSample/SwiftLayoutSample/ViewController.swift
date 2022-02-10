@@ -68,7 +68,7 @@ final class ViewController: UIViewController, LayoutBuilding {
         ViewController(nibName: nil, bundle: nil)
     }
     
-    var deactivatable: AnyDeactivatable?
+    var activation: Activation?
     
     override func viewDidLoad() {
         super.viewDidLoad()

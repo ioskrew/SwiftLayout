@@ -15,7 +15,7 @@ import UIKit
 /// 구현을 테스트 합니다.
 final class DSLTests: XCTestCase {
     
-    var deactivatable: Activation!
+    var activation: Activation!
     
     var root: UIView!
     var red: UIView!
@@ -30,11 +30,11 @@ final class DSLTests: XCTestCase {
     }
     
     override func tearDownWithError() throws {
-        deactivatable?.deactive()
+        activation?.deactive()
     }
     
     func testAnchors() {
-        deactivatable = root {
+        activation = root {
             red.anchors {
                 Anchors.boundary
             }
@@ -49,7 +49,7 @@ final class DSLTests: XCTestCase {
     }
     
     func testLayoutAfterAnchors() {
-        deactivatable = root {
+        activation = root {
             red.anchors {
                 Anchors.boundary
             }.subviews {
@@ -75,7 +75,7 @@ final class DSLTests: XCTestCase {
     func testAnchorsEitherTrue() {
         
         let toggle = true
-        deactivatable = root {
+        activation = root {
             red.anchors {
                 if toggle {
                     Anchors.cap
@@ -108,7 +108,7 @@ final class DSLTests: XCTestCase {
     func testAnchorsEitherFalse() {
         
         let toggle = false
-        deactivatable = root {
+        activation = root {
             red.anchors {
                 if toggle {
                     Anchors.cap
@@ -188,7 +188,7 @@ final class DSLTests: XCTestCase {
     }
     
     func testConstraintDSL() {
-        deactivatable = root {
+        activation = root {
             red.anchors {
                 Anchors(.top, .leading, .bottom)
                 Anchors(.trailing).equalTo(blue, attribute: .leading)
@@ -210,7 +210,7 @@ final class DSLTests: XCTestCase {
     }
     
     func testLayoutInConstraint() {
-        deactivatable = root {
+        activation = root {
             red.anchors {
                 Anchors(.top, .bottom, .leading, .trailing)
             }.subviews {
@@ -231,7 +231,7 @@ final class DSLTests: XCTestCase {
     }
     
     func testAnchorsFromNSLayoutAnchor() {
-        deactivatable = root {
+        activation = root {
             red.anchors {
                 Anchors.cap
                 red.bottomAnchor.constraint(equalTo: blue.topAnchor)
@@ -271,7 +271,7 @@ final class DSLTests: XCTestCase {
         
         red.removeFromSuperview()
         
-        deactivatable = root {
+        activation = root {
             red.anchors {
                 Anchors(.top, .leading).setConstant(10)
                 Anchors(.trailing, .bottom).setConstant(-10)

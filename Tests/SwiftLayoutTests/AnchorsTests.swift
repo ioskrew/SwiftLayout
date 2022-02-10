@@ -10,7 +10,7 @@ import XCTest
 
 class AnchorsTests: XCTestCase {
     
-    var deactivatable: Activation = .init()
+    var activation: Activation = .init()
     
     var root = UIView().viewTag.root
     var child = UIView().viewTag.child
@@ -28,7 +28,7 @@ class AnchorsTests: XCTestCase {
     }
     
     override func tearDownWithError() throws {
-        deactivatable.deactive()
+        activation.deactive()
     }
     
     func testAnchorConstraint() {
