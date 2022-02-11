@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class Deactivatable: Deactivable {
+final class Deactivation: Deactivable {
     var layout: Layout
     init(_ layout: Layout) {
         self.layout = layout
@@ -19,5 +19,9 @@ final class Deactivatable: Deactivable {
     
     func deactive() {
         layout.detachFromSuperview()
+    }
+    
+    func isNew(_ layout: Layout) -> Bool {
+        return self.layout.hashable != layout.hashable
     }
 }
