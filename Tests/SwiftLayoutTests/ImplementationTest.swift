@@ -64,5 +64,52 @@ final class ImplementationTest: XCTestCase {
         
         XCTAssertNotNil(flattening)
     }
+    
+    func testLayoutCompare() {
+        let root = UIView()
+        let child = UIView()
+        let friend = UIView()
+        
+        let f1 = root {
+            child
+        }.flattening()
+        
+        let f2 = root {
+           child
+        }.flattening()
+        
+        let f3 = root {
+            child.anchors { Anchors.boundary }
+        }.flattening()
+        
+        let f4 = root {
+            child.anchors { Anchors.boundary }
+        }.flattening()
+        
+        let f5 = root {
+            child.anchors { Anchors.cap }
+        }.flattening()
+        
+        let f6 = root {
+            friend.anchors { Anchors.boundary }
+        }.flattening()
+        
+        XCTAssertEqual(f1?.viewReferences, f2?.viewReferences)
+        XCTAssertEqual(f1?.constraintReferences, f2?.constraintReferences)
+        
+        XCTAssertEqual(f3?.viewReferences, f4?.viewReferences)
+        XCTAssertEqual(f3?.constraintReferences, f4?.constraintReferences)
+        
+        XCTAssertEqual(f4?.viewReferences, f5?.viewReferences)
+        XCTAssertNotEqual(f4?.constraintReferences, f5?.constraintReferences)
+        
+        XCTAssertNotEqual(f5?.viewReferences, f6?.viewReferences)
+        XCTAssertNotEqual(f5?.constraintReferences, f6?.constraintReferences)
+        
+    }
+    
+    func testUpdateLayout() {
+        
+    }
 }
     

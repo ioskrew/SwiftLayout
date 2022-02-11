@@ -8,35 +8,41 @@
 import Foundation
 import UIKit
 
-final class WeakReference<O> where O: AnyObject {
+protocol CustomHashable: AnyObject {
+    func customHash(_ hasher: inout Hasher)
+}
+
+final class WeakReference<O>: Hashable where O: CustomHashable {
+    static func == (lhs: WeakReference<O>, rhs: WeakReference<O>) -> Bool {
+        lhs.hashValue == rhs.hashValue
+    }
+    
     internal init(o: O? = nil) {
         self.o = o
     }
     
     weak var o: O?
-}
-
-extension WeakReference: Equatable where O: Equatable {
-    static func == (lhs: WeakReference<O>, rhs: WeakReference<O>) -> Bool {
-        lhs.o == rhs.o
+    
+    func hash(into hasher: inout Hasher) {
+        o?.customHash(&hasher)
     }
 }
 
-extension WeakReference: Hashable where O: Hashable {
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(o)
+extension UIView: CustomHashable {
+    func customHash(_ hasher: inout Hasher) {
+        self.hash(into: &hasher)
     }
 }
 
-extension WeakReference where O == NSLayoutConstraint {
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(o?.firstItem as? NSObject)
-        hasher.combine(o?.firstAttribute)
-        hasher.combine(o?.secondItem as? NSObject)
-        hasher.combine(o?.secondAttribute)
-        hasher.combine(o?.relation)
-        hasher.combine(o?.constant)
-        hasher.combine(o?.multiplier)
-        hasher.combine(o?.priority)
+extension NSLayoutConstraint: CustomHashable {
+    func customHash(_ hasher: inout Hasher) {
+        hasher.combine(firstItem as? NSObject)
+        hasher.combine(firstAttribute)
+        hasher.combine(secondItem as? NSObject)
+        hasher.combine(secondAttribute)
+        hasher.combine(relation)
+        hasher.combine(constant)
+        hasher.combine(multiplier)
+        hasher.combine(priority)
     }
 }

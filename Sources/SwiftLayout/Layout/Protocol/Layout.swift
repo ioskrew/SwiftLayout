@@ -22,6 +22,16 @@ extension Layout {
         return Deactivation(self)
     }
     
+    func prepare() {
+        prepareSuperview(nil)
+        prepareConstraints()
+    }
+    
+    func flattening() -> LayoutFlattening? {
+        prepare()
+        return self as? LayoutFlattening
+    }
+    
 }
 
 extension Array: Layout where Self.Element == Layout {}
