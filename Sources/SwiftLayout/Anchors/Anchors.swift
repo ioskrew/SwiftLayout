@@ -26,10 +26,6 @@ public final class Anchors: Constraint {
     
     var items: [Item] = []
     
-    public var hashable: AnyHashable {
-        AnyHashable(items)
-    }
-    
     public func setConstant(_ constant: CGFloat) -> Self {
         for i in 0..<items.count {
             items[i].constant = constant

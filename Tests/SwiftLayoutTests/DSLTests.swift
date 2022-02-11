@@ -203,28 +203,10 @@ final class DSLTests: XCTestCase {
     }
     
     func testViewLayout() {
-        
-        root.addSubview(red)
-        red.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            red.topAnchor.constraint(equalTo: root.topAnchor, constant: 10),
-            red.leadingAnchor.constraint(equalTo: root.leadingAnchor, constant: 10),
-            red.trailingAnchor.constraint(equalTo: root.trailingAnchor, constant: -10),
-            red.bottomAnchor.constraint(equalTo: root.bottomAnchor, constant: -10)
-        ])
-        
-        root.frame = .init(x: 0, y: 0, width: 30, height: 30)
-        root.setNeedsLayout()
-        root.layoutIfNeeded()
-        XCTAssertEqual(red.frame, .init(x: 10, y: 10, width: 10, height: 10))
-        
-        red.removeFromSuperview()
-        
         view = LayoutHostingView(root {
             red.anchors {
                 Anchors(.top, .leading).setConstant(10)
-                Anchors(.trailing, .bottom).setConstant(-10)
+                Anchors(.trailing, .bottom).setConstant(10)
             }
         })
         
