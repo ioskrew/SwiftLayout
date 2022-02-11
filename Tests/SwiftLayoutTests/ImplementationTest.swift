@@ -21,5 +21,28 @@ final class ImplementationTest: XCTestCase {
         // then
         XCTAssertTrue(anyDeactivatable === reerased)
     }
+    
+    func testViewStrongReferenceCycle() {
+        // given
+        class SelfReferenceView: UIView, LayoutBuilding {
+            var layout: some Layout {
+                self {
+                    UIView()
+                }
+            }
+            
+            var deactivatable: AnyDeactivatable?
+        }
+        
+        var view: SelfReferenceView? = SelfReferenceView()
+        weak var weakView: UIView? = view
+        
+        // when
+        view?.updateLayout()
+        view = nil
+        
+        // then
+        XCTAssertNil(weakView)
+    }
 }
     
