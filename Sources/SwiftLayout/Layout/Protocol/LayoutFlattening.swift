@@ -36,3 +36,13 @@ extension LayoutFlattening where Self: ViewContainableLayout {
         return views
     }
 }
+
+
+extension LayoutFlattening {
+    var viewReferences: Set<WeakReference<UIView>> {
+        Set(layoutViews.map(WeakReference.init))
+    }
+    var constraintReferences: Set<WeakReference<NSLayoutConstraint>> {
+        Set(layoutConstraints.map(WeakReference.init))
+    }
+}
