@@ -11,6 +11,8 @@ import SwiftUI
 
 final class ViewController: UIViewController, LayoutBuilding {
 
+    var deactivatable: AnyDeactivatable?
+    
     let red: UIView = {
         let view = UIView()
         view.backgroundColor = .red

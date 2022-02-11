@@ -321,6 +321,8 @@ class LayoutHostingView<Content>: UIView, LayoutBuilding where Content: Layout {
         content
     }
     
+    var deactivatable: AnyDeactivatable?
+    
     init(_ _content: Content) {
         content = _content
         super.init(frame: .zero)

@@ -10,7 +10,7 @@ final class LayoutViewTreeTests: XCTestCase {
     var redView: UIView = UIView().viewTag.redView
     var image: UIImageView = UIImageView().viewTag.image
     
-    var deactivable: Activation?
+    var deactivable: AnyDeactivatable?
     
     override func setUp() {
         root = UIView().viewTag.root
@@ -65,33 +65,6 @@ final class LayoutViewTreeTests: XCTestCase {
         deactivable?.deactive()
         
         // then
-        XCTAssertEqual(image.superview, nil)
-        XCTAssertEqual(grand.superview, nil)
-        XCTAssertEqual(label.superview, nil)
-        XCTAssertEqual(button.superview, nil)
-        XCTAssertEqual(redView.superview, nil)
-    }
-    
-    func testReactive() {
-        // given
-        let grand = UIView().viewTag.grand
-         
-        // when
-        deactivable = root {
-            redView {
-                button
-                label
-                grand {
-                    image
-                }
-            }
-        }.active()
-        
-        deactivable?.deactive()
-
-        deactivable?.active()
-        
-        // then - reactivation is not possible
         XCTAssertEqual(image.superview, nil)
         XCTAssertEqual(grand.superview, nil)
         XCTAssertEqual(label.superview, nil)
