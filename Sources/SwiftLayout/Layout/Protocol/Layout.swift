@@ -11,11 +11,9 @@ import UIKit
 public protocol Layout: CustomDebugStringConvertible {
     func prepareSuperview(_ superview: UIView?)
     func attachSuperview()
-    func detachFromSuperview()
    
     func prepareConstraints()
     func activeConstraints()
-    func deactiveConstraints()
 }
 
 extension Layout {

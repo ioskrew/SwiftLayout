@@ -54,18 +54,12 @@ public final class AnchorsLayout<C>: ViewContainableLayout where C: Constraint {
             layout.prepareConstraints()
         }
     }
+    
     public func activeConstraints() {
         NSLayoutConstraint.activate(self.constraints)
         for layout in layouts {
             layout.activeConstraints()
         }
-    }
-    
-    public func deactiveConstraints() {
-        for layout in layouts {
-            layout.deactiveConstraints()
-        }
-        NSLayoutConstraint.deactivate(self.constraints)
     }
     
     public func subviews<L>(@LayoutBuilder _ build: () -> L) -> Self where L: Layout {

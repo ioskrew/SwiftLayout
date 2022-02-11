@@ -15,6 +15,11 @@ protocol LayoutFlattening {
     
 }
 
+extension UIView: LayoutFlattening {    
+    var layoutViews: [UIView] { [self] }
+    var layoutConstraints: [NSLayoutConstraint] { [] }
+}
+
 extension LayoutFlattening where Self: ContainableLayout {
     var layoutViews: [UIView] {
         (layouts as? [LayoutFlattening] ?? []).flatMap(\.layoutViews)
