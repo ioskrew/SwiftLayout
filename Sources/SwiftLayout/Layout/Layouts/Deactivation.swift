@@ -33,10 +33,11 @@ final class Deactivation: Deactivable {
     
     func updateLayout(_ layout: Layout) {
         guard let flattening = layout.flattening() else { return }
-        layout.attachSuperview()
-        layout.activeConstraints()
+        guard self.views != flattening.viewReferences || self.constraints != flattening.constraintReferences else { return }
         self.views = flattening.viewReferences
+        layout.attachSuperview()
         self.constraints = flattening.constraintReferences
+        layout.activeConstraints()
     }
     
 }
