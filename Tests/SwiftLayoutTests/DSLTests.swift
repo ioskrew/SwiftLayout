@@ -203,18 +203,20 @@ final class DSLTests: XCTestCase {
     }
     
     func testViewLayout() {
-        view = LayoutHostingView(root {
+        view = LayoutHostingView(root.anchors({
+            Anchors(.width, .height).equalTo(constant: 30)
+        }).subviews {
             red.anchors {
-                Anchors(.top, .leading).setConstant(10)
-                Anchors(.trailing, .bottom).setConstant(10)
+                Anchors.boundary
             }
         })
         
-        root.frame = .init(x: 0, y: 0, width: 30, height: 30)
+        root.frame = .init(origin: .zero, size: .init(width: 30, height: 30))
         root.setNeedsLayout()
         root.layoutIfNeeded()
-        
-        XCTAssertEqual(red.frame, .init(x: 10, y: 10, width: 10, height: 10))
+
+        XCTAssertEqual(root.frame, .init(x: 0, y: 0, width: 30, height: 30))
+        XCTAssertEqual(red.frame, .init(x: 0, y: 0, width: 30, height: 30))
     }
     
     func testInitViewInLayout() {
