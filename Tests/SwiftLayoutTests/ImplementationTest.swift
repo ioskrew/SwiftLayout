@@ -45,5 +45,24 @@ final class ImplementationTest: XCTestCase {
         XCTAssertNil(weakView)
         XCTAssertEqual(deinitCount, 2)
     }
+    
+    func testLayoutFlattening() {
+        let root = UIView()
+        let child = UIView()
+        let friend = UIView()
+        let layout: some Layout = root {
+            child.anchors {
+                Anchors.boundary
+            }.subviews {
+                friend.anchors {
+                    Anchors.boundary
+                }
+            }
+        }
+        
+        let flattening = layout as? LayoutFlattening
+        
+        XCTAssertNotNil(flattening)
+    }
 }
     
