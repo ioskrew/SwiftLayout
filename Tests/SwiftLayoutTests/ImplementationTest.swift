@@ -108,8 +108,37 @@ final class ImplementationTest: XCTestCase {
         
     }
     
+    class MockView: UIView {
+        var addSubviewCount = 0
+        override func addSubview(_ view: UIView) {
+            addSubviewCount += 1
+            super.addSubview(view)
+        }
+    }
+    
     func testUpdateLayout() {
+        let root = MockView()
+        let child = UIView()
+        let friend = UIView()
         
+        var flag = true
+        let view = LayoutHostingView(root {
+            if flag {
+                child.anchors {
+                    Anchors.boundary
+                }
+            } else {
+                friend.anchors {
+                    Anchors.boundary
+                }
+            }
+        })
+        
+        XCTAssertEqual(root.addSubviewCount, 1)
+        
+        view.updateLayout()
+        
+        XCTAssertEqual(root.addSubviewCount, 1)
     }
 }
     
