@@ -11,45 +11,49 @@ import UIKit
 public final class AnchorsLayout<C>: ViewContainableLayout where C: Constraint {
    
     internal init(view: UIView, constraint: C) {
-        self.strongView = view
+        self.view = view
         self.constraint = constraint
     }
     
-    public var view: UIView? {
-        if let view = strongView {
-            return view
-        } else if let view = weakView {
-            return view
-        } else {
-            return nil
-        }
-    }
-    private weak var weakView: UIView?
-    private var strongView: UIView?
+    private weak var superview: UIView?
+    public let view: UIView
     
     var constraint: C
     
     public var layouts: [Layout] = []
     var constraints: [NSLayoutConstraint] = []
     
-    public var hashable: AnyHashable {
-        AnyHashable([view.hashable, constraint.hashable, layouts.hashable])
-    }
-    
-    public func attachSuperview(_ superview: UIView?) {
-        guard let view = self.view else { return }
-        superview?.addSubview(view)
-        if let strongView = strongView {
-            weakView = strongView
-            self.strongView = nil
-        }
-        view.translatesAutoresizingMaskIntoConstraints = false
+    public func prepareSuperview(_ superview: UIView?) {
+        self.superview = superview
         for layout in layouts {
-            layout.attachSuperview(view)
+            layout.prepareSuperview(view)
         }
-        self.constraints = constraint.constraints(item: view, toItem: superview)
     }
     
+    public func attachSuperview() {
+        view.translatesAutoresizingMaskIntoConstraints = false
+        superview?.addSubview(view)
+        for layout in layouts {
+            if let view = layout as? UIView {
+                view.translatesAutoresizingMaskIntoConstraints = false
+                self.view.addSubview(view)
+            } else if let views = layout as? [UIView] {
+                for view in views {
+                    view.translatesAutoresizingMaskIntoConstraints = false
+                    self.view.addSubview(view)
+                }
+            } else {
+                layout.attachSuperview()
+            }
+        }
+    }
+    
+    public func prepareConstraints() {
+        self.constraints = constraint.constraints(item: view, toItem: superview)
+        for layout in layouts {
+            layout.prepareConstraints()
+        }
+    }
     public func activeConstraints() {
         NSLayoutConstraint.activate(self.constraints)
         for layout in layouts {
@@ -69,4 +73,10 @@ public final class AnchorsLayout<C>: ViewContainableLayout where C: Constraint {
         return self
     }
     
+}
+
+extension AnchorsLayout: LayoutFlattening {
+    var layoutConstraints: [NSLayoutConstraint] {
+        constraints
+    }
 }

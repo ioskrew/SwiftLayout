@@ -22,12 +22,11 @@ public extension LayoutBuilding where Self: NSObject {
         let layout: some Layout = self.layout
         
         if let deactivatable = self.deactivatable as? Deactivation {
-            guard deactivatable.isNew(layout) else { return }
-            self.deactivatable?.deactive()
-            self.deactivatable = nil
+            deactivatable.updateLayout(layout)
+        } else {
+            self.deactivatable = Deactivation(layout)
         }
         
-        self.deactivatable = layout.active()
     }
     
 }

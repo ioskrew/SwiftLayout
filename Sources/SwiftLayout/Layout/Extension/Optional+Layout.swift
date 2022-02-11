@@ -10,12 +10,20 @@ import UIKit
 
 extension Optional: Layout where Wrapped: Layout {
     
-    public func attachSuperview(_ superview: UIView?) {
-        self?.attachSuperview(superview)
+    public func prepareSuperview(_ superview: UIView?) {
+        self?.prepareSuperview(superview)
     }
     
-    public func detachFromSuperview(_ superview: UIView?) {
-        self?.detachFromSuperview(superview)
+    public func attachSuperview() {
+        self?.attachSuperview()
+    }
+    
+    public func detachFromSuperview() {
+        self?.detachFromSuperview()
+    }
+    
+    public func prepareConstraints() {
+        self?.prepareConstraints()
     }
     
     public func activeConstraints() {
@@ -26,7 +34,4 @@ extension Optional: Layout where Wrapped: Layout {
         self?.deactiveConstraints()
     }
     
-    public var hashable: AnyHashable {
-        AnyHashable(self?.hashable)
-    }
 }
