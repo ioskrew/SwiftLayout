@@ -24,7 +24,7 @@ extension Layout {
     
     public func active() -> Deactivable {
         attachSuperview()
-        return Deactivatable(self)
+        return Deactivation(self)
     }
     
     public func attachSuperview() {

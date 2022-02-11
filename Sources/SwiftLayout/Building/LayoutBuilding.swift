@@ -21,7 +21,7 @@ public extension LayoutBuilding where Self: NSObject {
     func updateLayout() {
         let layout: some Layout = self.layout
         
-        if let deactivatable = self.deactivatable {
+        if let deactivatable = self.deactivatable as? Deactivation {
             guard deactivatable.isNew(layout) else { return }
             self.deactivatable?.deactive()
             self.deactivatable = nil
