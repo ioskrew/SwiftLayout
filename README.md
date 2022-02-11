@@ -126,3 +126,6 @@ let tree = root {
 
 ### 0.7
 - Anchors(Constraint) update
+
+### 0.9
+- hiding activation from out of library
