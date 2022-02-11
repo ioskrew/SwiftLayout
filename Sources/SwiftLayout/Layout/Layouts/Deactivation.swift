@@ -6,8 +6,12 @@
 //
 
 import Foundation
+import UIKit
 
 final class Deactivation: Deactivable {
+    
+    private var views: [WeakReference<UIView>] = []
+    private var constraints: [WeakReference<NSLayoutConstraint>] = []
     
     init(_ layout: Layout) {
         updateLayout(layout)
@@ -18,6 +22,13 @@ final class Deactivation: Deactivable {
     }
     
     func deactive() {
+        let constraints = constraints.compactMap(\.o)
+        NSLayoutConstraint.deactivate(constraints)
+        let views = views.compactMap(\.o)
+        for view in views {
+            view.removeConstraints(constraints)
+            view.removeFromSuperview()
+        }
     }
     
     func updateLayout(_ layout: Layout) {
@@ -27,4 +38,13 @@ final class Deactivation: Deactivable {
         layout.activeConstraints()
     }
     
+}
+
+extension LayoutFlattening {
+    var viewReferences: Set<WeakReference<UIView>> {
+        Set(layoutViews.map(WeakReference.init))
+    }
+    var constraintReferences: Set<WeakReference<NSLayoutConstraint>> {
+        Set(layoutConstraints.map(WeakReference.init))
+    }
 }
