@@ -32,8 +32,10 @@ public final class ViewLayout<L>: ViewContainableLayout where L: ContainableLayo
     }
     
     public func attachSuperview() {
-        view.translatesAutoresizingMaskIntoConstraints = false
-        superview?.addSubview(view)
+        if let superview = superview {
+            superview.addSubview(view)
+            view.translatesAutoresizingMaskIntoConstraints = false
+        }
         for layout in layouts {
             if let view = layout as? UIView {
                 view.translatesAutoresizingMaskIntoConstraints = false
