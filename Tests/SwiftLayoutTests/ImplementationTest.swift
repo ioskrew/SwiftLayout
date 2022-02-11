@@ -9,19 +9,7 @@ import XCTest
 @testable import SwiftLayout
 
 final class ImplementationTest: XCTestCase {
- 
-    func testReeraseToAnyDeactivatable() {
-        // given
-        let view = UIView()
-        let anyDeactivatable: AnyDeactivatable = view.active()
-        
-        // when
-        let reerased: AnyDeactivatable = anyDeactivatable.eraseToAnyDeactivatable()
-        
-        // then
-        XCTAssertTrue(anyDeactivatable === reerased)
-    }
-    
+   
     func testViewStrongReferenceCycle() {
         // given
         class SelfReferenceView: UIView, LayoutBuilding {
@@ -31,7 +19,7 @@ final class ImplementationTest: XCTestCase {
                 }
             }
             
-            var deactivatable: AnyDeactivatable?
+            var deactivatable: Deactivable?
         }
         
         var view: SelfReferenceView? = SelfReferenceView()

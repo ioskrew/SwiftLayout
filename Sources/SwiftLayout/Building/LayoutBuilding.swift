@@ -12,7 +12,7 @@ public protocol LayoutBuilding: AnyObject {
     associatedtype LayoutContent: Layout
     
     var layout: LayoutContent { get }
-    var deactivatable: AnyDeactivatable? { get set }
+    var deactivatable: Deactivable? { get set }
     
 }
 
@@ -21,8 +21,8 @@ public extension LayoutBuilding where Self: NSObject {
     func updateLayout() {
         let layout: some Layout = self.layout
         
-        if let deactivatable = self.deactivatable, let activation = deactivatable.origin as? Activation {
-            guard activation.isNew(layout) else { return }
+        if let deactivatable = self.deactivatable {
+            guard deactivatable.isNew(layout) else { return }
             self.deactivatable?.deactive()
             self.deactivatable = nil
         }
