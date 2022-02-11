@@ -16,13 +16,9 @@ extension Layout where Self: UIView {
     
     public func prepareSuperview(_ superview: UIView?) {}
     public func attachSuperview() {}
-    public func detachFromSuperview() {
-        removeFromSuperview()
-    }
     
     public func prepareConstraints() {}
     public func activeConstraints() {}
-    public func deactiveConstraints() {}
     
 }
 

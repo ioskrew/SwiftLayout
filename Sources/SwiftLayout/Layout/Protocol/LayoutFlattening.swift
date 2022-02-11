@@ -20,23 +20,31 @@ extension UIView: LayoutFlattening {
     var layoutConstraints: [NSLayoutConstraint] { [] }
 }
 
-extension LayoutFlattening where Self: ContainableLayout {
+extension Array: LayoutFlattening where Element == Layout {
     var layoutViews: [UIView] {
-        (layouts as? [LayoutFlattening] ?? []).flatMap(\.layoutViews)
+        compactMap({ $0 as? LayoutFlattening }).flatMap(\.layoutViews)
     }
     var layoutConstraints: [NSLayoutConstraint] {
-        (layouts as? [LayoutFlattening] ?? []).flatMap(\.layoutConstraints)
+        compactMap({ $0 as? LayoutFlattening }).flatMap(\.layoutConstraints)
+    }
+}
+
+extension LayoutFlattening where Self: ContainableLayout {
+    var layoutViews: [UIView] {
+        layouts.layoutViews
+    }
+    var layoutConstraints: [NSLayoutConstraint] {
+        layouts.layoutConstraints
     }
 }
 
 extension LayoutFlattening where Self: ViewContainableLayout {
     var layoutViews: [UIView] {
         var views: [UIView] = [view]
-        views.append(contentsOf: (layouts as? [LayoutFlattening] ?? []).flatMap(\.layoutViews))
+        views.append(contentsOf: layouts.layoutViews)
         return views
     }
 }
-
 
 extension LayoutFlattening {
     var viewReferences: Set<WeakReference<UIView>> {
