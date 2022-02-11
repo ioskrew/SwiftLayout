@@ -9,19 +9,21 @@ import Foundation
 import UIKit
 
 public protocol ViewContainableLayout: ContainableLayout {
-    var view: UIView { get }
+    var view: UIView? { get }
 }
 
 public extension ViewContainableLayout {
     func attachSuperview(_ superview: UIView?) {
-        superview?.addSubview(self.view)
+        if let superview = superview, let view = view {
+            superview.addSubview(view)
+        }
         for layout in layouts {
             layout.attachSuperview(self.view)
         }
     }
     func detachFromSuperview(_ superview: UIView?) {
-        if let superview = superview, self.view.superview == superview {
-            self.view.removeFromSuperview()
+        if let superview = superview, self.view?.superview == superview {
+            self.view?.removeFromSuperview()
         }
         for layout in layouts {
             layout.detachFromSuperview(self.view)
