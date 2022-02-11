@@ -10,8 +10,8 @@ import UIKit
 
 final class Deactivation: Deactivable {
     
-    private var views: [WeakReference<UIView>] = []
-    private var constraints: [WeakReference<NSLayoutConstraint>] = []
+    private var views: Set<WeakReference<UIView>> = []
+    private var constraints: Set<WeakReference<NSLayoutConstraint>> = []
     
     init(_ layout: Layout) {
         updateLayout(layout)
@@ -32,9 +32,12 @@ final class Deactivation: Deactivable {
     }
     
     func updateLayout(_ layout: Layout) {
+        guard let flattening = layout as? LayoutFlattening else { return }
         layout.prepareSuperview(nil)
-        layout.attachSuperview()
         layout.prepareConstraints()
+        self.views = flattening.viewReferences
+        self.constraints = flattening.constraintReferences
+        layout.attachSuperview()
         layout.activeConstraints()
     }
     

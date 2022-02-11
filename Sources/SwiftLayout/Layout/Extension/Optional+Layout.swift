@@ -18,20 +18,12 @@ extension Optional: Layout where Wrapped: Layout {
         self?.attachSuperview()
     }
     
-    public func detachFromSuperview() {
-        self?.detachFromSuperview()
-    }
-    
     public func prepareConstraints() {
         self?.prepareConstraints()
     }
     
     public func activeConstraints() {
         self?.activeConstraints()
-    }
-    
-    public func deactiveConstraints() {
-        self?.deactiveConstraints()
     }
     
 }

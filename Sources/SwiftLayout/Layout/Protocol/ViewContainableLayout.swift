@@ -11,12 +11,3 @@ import UIKit
 public protocol ViewContainableLayout: ContainableLayout {
     var view: UIView { get }
 }
-
-extension ViewContainableLayout {
-    public func detachFromSuperview() {
-        view.removeFromSuperview()
-        for layout in layouts {
-            layout.detachFromSuperview()
-        }
-    }
-}

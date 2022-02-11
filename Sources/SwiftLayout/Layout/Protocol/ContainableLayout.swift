@@ -26,12 +26,6 @@ public extension ContainableLayout {
         }
     }
     
-    func detachFromSuperview() {
-        for layout in layouts {
-            layout.detachFromSuperview()
-        }
-    }
-    
     func prepareConstraints() {
         for layout in layouts {
             layout.prepareConstraints()
@@ -41,12 +35,6 @@ public extension ContainableLayout {
     func activeConstraints() {
         for layout in layouts {
             layout.activeConstraints()
-        }
-    }
-    
-    func deactiveConstraints() {
-        for layout in layouts {
-            layout.deactiveConstraints()
         }
     }
 }
