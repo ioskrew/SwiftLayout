@@ -11,7 +11,7 @@ import SwiftUI
 
 final class ViewController: UIViewController, LayoutBuilding {
 
-    var deactivatable: AnyDeactivatable?
+    var deactivatable: Deactivable?
     
     let red: UIView = {
         let view = UIView()

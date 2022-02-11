@@ -11,7 +11,7 @@ import SwiftLayout
 
 class LayoutHostingViewController<Content>: UIViewController, LayoutBuilding where Content: Layout {
     
-    var deactivatable: AnyDeactivatable?
+    var deactivatable: Deactivable?
     
     var content: ((UIView) -> Content)?
     
