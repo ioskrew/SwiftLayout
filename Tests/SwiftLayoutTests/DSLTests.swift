@@ -31,16 +31,21 @@ final class DSLTests: XCTestCase {
     override func tearDownWithError() throws {
     }
     
-    func testAutoresizingFlagOfRootView() {
+    func testDontTouchRootViewByDeactivation() {
+        let old = UIView().viewTag.old
+        old.addSubview(root)
         root.translatesAutoresizingMaskIntoConstraints = true
         
-        view = LayoutHostingView(root {
+        let view = LayoutHostingView(root {
             red.anchors {
                 Anchors.boundary
             }
         })
         
         XCTAssertTrue(root.translatesAutoresizingMaskIntoConstraints)
+        view.deactivatable?.deactive()
+        
+        XCTAssertEqual(root.superview, old)
     }
     
     func testAnchors() {
@@ -247,7 +252,7 @@ extension Anchors {
 }
 
 extension UIView {
-    func findConstraints(items: (NSObject?, NSObject?), attributes: (NSLayoutConstraint.Attribute, NSLayoutConstraint.Attribute), relation: NSLayoutConstraint.Relation = .equal, constant: CGFloat = .zero, multiplier: CGFloat = 1.0) -> [NSLayoutConstraint] {
+    func findConstraints(items: (NSObject?, NSObject?), attributes: (NSLayoutConstraint.Attribute, NSLayoutConstraint.Attribute)? = nil, relation: NSLayoutConstraint.Relation = .equal, constant: CGFloat = .zero, multiplier: CGFloat = 1.0) -> [NSLayoutConstraint] {
         var constraints = self.constraints.filter { constraint in
             constraint.isFit(items: items, attributes: attributes, relation: relation, constant: constant, multiplier: multiplier)
         }
@@ -259,11 +264,11 @@ extension UIView {
 }
 
 extension NSLayoutConstraint {
-    func isFit(items: (NSObject?, NSObject?), attributes: (NSLayoutConstraint.Attribute, NSLayoutConstraint.Attribute), relation: NSLayoutConstraint.Relation = .equal, constant: CGFloat = .zero, multiplier: CGFloat = 1.0) -> Bool {
+    func isFit(items: (NSObject?, NSObject?), attributes: (NSLayoutConstraint.Attribute, NSLayoutConstraint.Attribute)? = nil, relation: NSLayoutConstraint.Relation = .equal, constant: CGFloat = .zero, multiplier: CGFloat = 1.0) -> Bool {
         let item = firstItem as? NSObject
         let toItem = secondItem as? NSObject
         return (item, toItem) == items
-        && (firstAttribute, secondAttribute) == attributes
+        && attributes.flatMap({ $0 == (firstAttribute, secondAttribute) }) ?? true
         && self.relation == relation && self.constant == constant && self.multiplier == multiplier
     }
 }

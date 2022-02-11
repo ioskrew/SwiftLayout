@@ -63,6 +63,7 @@ final class ImplementationTest: XCTestCase {
         let flattening = layout as? LayoutFlattening
         
         XCTAssertNotNil(flattening)
+        XCTAssertEqual(flattening?.layoutViews, [root, child, friend])
     }
     
     func testLayoutCompare() {
@@ -121,8 +122,8 @@ final class ImplementationTest: XCTestCase {
         var flag = true
         
         let root = MockView()
-        let child = UIView()
-        let friend = UIView()
+        let child = UIView().viewTag.child
+        let friend = UIView().viewTag.friend
         
         var deactivatable: Deactivable?
         
@@ -152,7 +153,7 @@ final class ImplementationTest: XCTestCase {
         view.updateLayout()
         
         XCTAssertEqual(root.addSubviewCount, 1)
-        XCTAssertEqual(root.constraints.count, 4)
+        XCTAssertEqual(root.findConstraints(items: (view.child, root)).count, 4)
         XCTAssertEqual(view.child.superview, root)
         XCTAssertNil(view.friend.superview)
         
@@ -160,7 +161,7 @@ final class ImplementationTest: XCTestCase {
         view.updateLayout()
         
         XCTAssertEqual(root.addSubviewCount, 2)
-        XCTAssertEqual(root.constraints.count, 4)
+        XCTAssertEqual(root.findConstraints(items: (view.friend, root)).count, 4)
         XCTAssertEqual(view.friend.superview, root)
         XCTAssertNil(view.child.superview)
     }
