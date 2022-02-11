@@ -13,29 +13,41 @@ public protocol ContainableLayout: Layout {
 }
 
 public extension ContainableLayout {
-    func attachSuperview(_ superview: UIView?) {
+    
+    func prepareSuperview(_ superview: UIView?) {
         for layout in layouts {
-            layout.attachSuperview(superview)
+            layout.prepareSuperview(superview)
         }
     }
-    func detachFromSuperview(_ superview: UIView?) {
+    
+    func attachSuperview() {
         for layout in layouts {
-            layout.detachFromSuperview(superview)
+            layout.attachSuperview()
         }
     }
+    
+    func detachFromSuperview() {
+        for layout in layouts {
+            layout.detachFromSuperview()
+        }
+    }
+    
+    func prepareConstraints() {
+        for layout in layouts {
+            layout.prepareConstraints()
+        }
+    }
+    
     func activeConstraints() {
         for layout in layouts {
             layout.activeConstraints()
         }
     }
+    
     func deactiveConstraints() {
         for layout in layouts {
             layout.deactiveConstraints()
         }
-    }
-    
-    var hashable: AnyHashable {
-        AnyHashable(layouts.map(\.hashable))
     }
 }
 

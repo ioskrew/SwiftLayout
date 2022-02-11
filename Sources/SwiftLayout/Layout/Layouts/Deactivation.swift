@@ -8,9 +8,9 @@
 import Foundation
 
 final class Deactivation: Deactivable {
-    var layout: Layout
+    
     init(_ layout: Layout) {
-        self.layout = layout
+        updateLayout(layout)
     }
     
     deinit {
@@ -18,10 +18,13 @@ final class Deactivation: Deactivable {
     }
     
     func deactive() {
-        layout.detachFromSuperview()
     }
     
-    func isNew(_ layout: Layout) -> Bool {
-        return self.layout.hashable != layout.hashable
+    func updateLayout(_ layout: Layout) {
+        layout.prepareSuperview(nil)
+        layout.attachSuperview()
+        layout.prepareConstraints()
+        layout.activeConstraints()
     }
+    
 }

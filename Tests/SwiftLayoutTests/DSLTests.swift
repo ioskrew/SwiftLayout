@@ -137,55 +137,6 @@ final class DSLTests: XCTestCase {
         XCTAssertEqual(root.findConstraints(items: (red, root), attributes: (.trailing, .trailing)).count, 1)
     }
     
-    func testCompareToLayoutWithAnchors() {
-        let withRed = root {
-            red
-        }
-        let withBlue = root {
-            blue
-        }
-        
-        XCTAssertNotEqual(withRed.hashable, withBlue.hashable)
-        
-        let red1 = root {
-            red
-        }
-        let red2 = root {
-            red
-        }
-        
-        XCTAssertEqual(red1.hashable, red2.hashable)
-        
-        let a1 = root {
-            red.anchors {
-                Anchors.cap
-            }
-        }
-        
-        let a2 = root {
-            red.anchors {
-                Anchors.cap
-            }
-        }
-        
-        XCTAssertEqual(a1.hashable, a2.hashable)
-        
-        let a3 = root {
-            red.anchors {
-                Anchors.cap
-            }
-        }
-        
-        let a4 = root {
-            red.anchors {
-                Anchors.shoe
-            }
-        }
-        
-        XCTAssertNotEqual(Anchors.cap.hashable, Anchors.shoe.hashable)
-        XCTAssertNotEqual(a3.hashable, a4.hashable)
-    }
-    
     func testConstraintDSL() {
         view = LayoutHostingView(root {
             red.anchors {

@@ -14,21 +14,16 @@ extension Layout where Self: UIView {
         ViewLayout(view: self, layoutable: build())
     }
     
-    public func attachSuperview(_ superview: UIView?) {
-        superview?.addSubview(self)
-    }
-    
-    public func detachFromSuperview(_ superview: UIView?) {
-        guard self.superview == superview else { return }
+    public func prepareSuperview(_ superview: UIView?) {}
+    public func attachSuperview() {}
+    public func detachFromSuperview() {
         removeFromSuperview()
     }
     
+    public func prepareConstraints() {}
     public func activeConstraints() {}
     public func deactiveConstraints() {}
     
-    public var hashable: AnyHashable {
-        AnyHashable(self)
-    }
 }
 
 extension UIView: Layout {}

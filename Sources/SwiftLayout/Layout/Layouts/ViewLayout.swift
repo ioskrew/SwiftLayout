@@ -11,22 +11,12 @@ import UIKit
 public final class ViewLayout<L>: ViewContainableLayout where L: ContainableLayout {
     
     internal init(view: UIView, layoutable: L) {
-        self.strongView = view
+        self.view = view
         self.layoutable = layoutable
     }
     
-    public var view: UIView? {
-        if let view = self.strongView {
-            return view
-        } else if let view = self.weakView {
-            return view
-        } else {
-            return nil
-        }
-    }
-    
-    private weak var weakView: UIView?
-    private var strongView: UIView?
+    private weak var superview: UIView?
+    public let view: UIView
     
     var layoutable: L
     
@@ -34,15 +24,30 @@ public final class ViewLayout<L>: ViewContainableLayout where L: ContainableLayo
         layoutable.layouts
     }
     
-    public func attachSuperview(_ superview: UIView?) {
-        guard let view = self.view else { return }
-        superview?.addSubview(view)
-        if let strongView = strongView {
-            weakView = strongView
-            self.strongView = nil
-        }
+    public func prepareSuperview(_ superview: UIView?) {
+        self.superview = superview
         for layout in layouts {
-            layout.attachSuperview(view)
+            layout.prepareSuperview(view)
+        }
+    }
+    
+    public func attachSuperview() {
+        view.translatesAutoresizingMaskIntoConstraints = false
+        superview?.addSubview(view)
+        for layout in layouts {
+            if let view = layout as? UIView {
+                view.translatesAutoresizingMaskIntoConstraints = false
+                self.view.addSubview(view)
+            } else if let views = layout as? [UIView] {
+                for view in views {
+                    view.translatesAutoresizingMaskIntoConstraints = false
+                    self.view.addSubview(view)
+                }
+            } else {
+                layout.attachSuperview()
+            }
         }
     }
 }
+
+extension ViewLayout: LayoutFlattening {}
