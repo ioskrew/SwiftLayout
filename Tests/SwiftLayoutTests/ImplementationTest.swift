@@ -116,29 +116,53 @@ final class ImplementationTest: XCTestCase {
         }
     }
     
-    func testUpdateLayout() {
+    class LayoutView: UIView, LayoutBuilding {
+        
+        var flag = true
+        
         let root = MockView()
         let child = UIView()
         let friend = UIView()
         
-        var flag = true
-        let view = LayoutHostingView(root {
-            if flag {
-                child.anchors {
-                    Anchors.boundary
-                }
-            } else {
-                friend.anchors {
-                    Anchors.boundary
+        var deactivatable: Deactivable?
+        
+        var layout: some Layout {
+            root {
+                if flag {
+                    child.anchors {
+                        Anchors.boundary
+                    }
+                } else {
+                    friend.anchors {
+                        Anchors.boundary
+                    }
                 }
             }
-        })
+        }
+    }
+    
+    func testUpdateLayout() {
+
+        let view = LayoutView()
+        let root = view.root
+        view.updateLayout()
         
         XCTAssertEqual(root.addSubviewCount, 1)
         
         view.updateLayout()
         
         XCTAssertEqual(root.addSubviewCount, 1)
+        XCTAssertEqual(root.constraints.count, 4)
+        XCTAssertEqual(view.child.superview, root)
+        XCTAssertNil(view.friend.superview)
+        
+        view.flag.toggle()
+        view.updateLayout()
+        
+        XCTAssertEqual(root.addSubviewCount, 2)
+        XCTAssertEqual(root.constraints.count, 4)
+        XCTAssertEqual(view.friend.superview, root)
+        XCTAssertNil(view.child.superview)
     }
 }
     
