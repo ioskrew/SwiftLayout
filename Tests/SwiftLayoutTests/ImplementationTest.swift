@@ -8,14 +8,26 @@
 import XCTest
 @testable import SwiftLayout
 
+var deinitCount: Int = 0
 final class ImplementationTest: XCTestCase {
    
     func testViewStrongReferenceCycle() {
+                
+        class DeinitView: UIView {
+            deinit {
+                deinitCount += 1
+            }
+        }
+        
         // given
         class SelfReferenceView: UIView, LayoutBuilding {
             var layout: some Layout {
                 self {
-                    UIView()
+                    DeinitView().anchors {
+                        Anchors.boundary
+                    }.subviews {
+                        DeinitView()
+                    }
                 }
             }
             
@@ -31,6 +43,7 @@ final class ImplementationTest: XCTestCase {
         
         // then
         XCTAssertNil(weakView)
+        XCTAssertEqual(deinitCount, 2)
     }
 }
     
