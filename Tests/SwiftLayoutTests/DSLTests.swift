@@ -31,6 +31,18 @@ final class DSLTests: XCTestCase {
     override func tearDownWithError() throws {
     }
     
+    func testAutoresizingFlagOfRootView() {
+        root.translatesAutoresizingMaskIntoConstraints = true
+        
+        view = LayoutHostingView(root {
+            red.anchors {
+                Anchors.boundary
+            }
+        })
+        
+        XCTAssertTrue(root.translatesAutoresizingMaskIntoConstraints)
+    }
+    
     func testAnchors() {
      
         view = LayoutHostingView(root {
@@ -203,9 +215,7 @@ final class DSLTests: XCTestCase {
     }
     
     func testViewLayout() {
-        view = LayoutHostingView(root.anchors({
-            Anchors(.width, .height).equalTo(constant: 30)
-        }).subviews {
+        view = LayoutHostingView(root {
             red.anchors {
                 Anchors.boundary
             }
