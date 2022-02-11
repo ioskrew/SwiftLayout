@@ -10,7 +10,6 @@ import UIKit
 
 public protocol Constraint {
     func constraints(item: NSObject, toItem: NSObject?) -> [NSLayoutConstraint]
-    var hashable: AnyHashable { get }
 }
 
 extension Array: Constraint where Element == Constraint {
@@ -18,8 +17,5 @@ extension Array: Constraint where Element == Constraint {
         flatMap { constraint in
             constraint.constraints(item: item, toItem: toItem)
         }
-    }
-    public var hashable: AnyHashable {
-        AnyHashable(map(\.hashable))
     }
 }

@@ -12,8 +12,4 @@ extension NSLayoutConstraint: Constraint {
     public func constraints(item: NSObject, toItem: NSObject?) -> [NSLayoutConstraint] {
         [self]
     }
-    
-    public var hashable: AnyHashable {
-        AnyHashable(self)
-    }
 }
