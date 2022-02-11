@@ -9,9 +9,6 @@ import XCTest
 @testable import SwiftLayout
 
 class AnchorsTests: XCTestCase {
-    
-    var activation: Activation = .init()
-    
     var root = UIView().viewTag.root
     var child = UIView().viewTag.child
     var red = UIView().viewTag.red
@@ -25,10 +22,6 @@ class AnchorsTests: XCTestCase {
         red = UIView().viewTag.red
         blue = UIView().viewTag.blue
         green = UIView().viewTag.green
-    }
-    
-    override func tearDownWithError() throws {
-        activation.deactive()
     }
     
     func testAnchorConstraint() {
