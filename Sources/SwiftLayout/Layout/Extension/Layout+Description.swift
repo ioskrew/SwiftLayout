@@ -21,6 +21,7 @@ extension CustomDebugStringConvertible where Self: ContainableLayout {
 
 extension CustomDebugStringConvertible where Self: ViewContainableLayout {
     public var debugDescription: String {
+        guard let view = self.view else { return "" }
         if layouts.isEmpty {
             return view.tagDescription
         } else {
