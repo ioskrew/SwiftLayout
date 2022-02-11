@@ -243,6 +243,23 @@ final class DSLTests: XCTestCase {
         
         XCTAssertEqual(root.constraints.count, 2)
     }
+    
+    func testForIn() {
+        let views: [UILabel] = (0..<10).map(\.description).map({
+            let label = UILabel()
+            label.text = $0.description
+            return label
+        })
+        
+        let root = UIView().viewTag.root
+        let d = root {
+            for view in views {
+                view
+            }
+        }.active()
+        
+        XCTAssertEqual(root.subviews, views)
+    }
 }
 
 extension Anchors {

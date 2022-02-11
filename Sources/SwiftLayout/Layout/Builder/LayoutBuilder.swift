@@ -12,6 +12,9 @@ public struct LayoutBuilder {
     public static func buildBlock(_ components: Layout...) -> [Layout] {
         components
     }
+    public static func buildArray(_ components: [[Layout]]) -> [Layout] {
+        components.flatMap({ $0 })
+    }
     public static func buildEither(first component: [Layout]) -> [Layout] {
         component
     }
