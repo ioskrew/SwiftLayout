@@ -11,11 +11,22 @@ import UIKit
 public final class AnchorsLayout<C>: ViewContainableLayout where C: Constraint {
    
     internal init(view: UIView, constraint: C) {
-        self.view = view
+        self.strongView = view
         self.constraint = constraint
     }
     
-    public let view: UIView?
+    public var view: UIView? {
+        if let view = strongView {
+            return view
+        } else if let view = weakView {
+            return view
+        } else {
+            return nil
+        }
+    }
+    private weak var weakView: UIView?
+    private var strongView: UIView?
+    
     var constraint: C
     
     public var layouts: [Layout] = []
@@ -26,10 +37,12 @@ public final class AnchorsLayout<C>: ViewContainableLayout where C: Constraint {
     }
     
     public func attachSuperview(_ superview: UIView?) {
-        guard let view = view else {
-            return
-        }
+        guard let view = self.view else { return }
         superview?.addSubview(view)
+        if let strongView = strongView {
+            weakView = strongView
+            self.strongView = nil
+        }
         view.translatesAutoresizingMaskIntoConstraints = false
         for layout in layouts {
             layout.attachSuperview(view)

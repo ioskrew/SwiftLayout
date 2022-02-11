@@ -283,6 +283,16 @@ final class DSLTests: XCTestCase {
         
         XCTAssertEqual(red.frame, .init(x: 10, y: 10, width: 10, height: 10))
     }
+    
+    func testInitViewInLayout() {
+        view = LayoutHostingView(root {
+            UILabel().anchors {
+                Anchors(.centerX, .centerY)
+            }
+        })
+        
+        XCTAssertEqual(root.constraints.count, 2)
+    }
 }
 
 extension Anchors {
