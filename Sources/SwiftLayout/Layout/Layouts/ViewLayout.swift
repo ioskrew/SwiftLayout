@@ -37,8 +37,10 @@ public final class ViewLayout<L>: ViewContainableLayout where L: ContainableLayo
     public func attachSuperview(_ superview: UIView?) {
         guard let view = self.view else { return }
         superview?.addSubview(view)
-        weakView = strongView
-        strongView = nil
+        if let strongView = strongView {
+            weakView = strongView
+            self.strongView = nil
+        }
         for layout in layouts {
             layout.attachSuperview(view)
         }
