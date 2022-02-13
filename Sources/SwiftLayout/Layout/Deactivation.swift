@@ -34,13 +34,22 @@ final class Deactivation: Deactivable {
     }
     
     func updateLayout(_ layout: Layout) {
-        guard let flattening = layout.flattening() else { return }
-        guard self.views != flattening.viewReferences || self.constraints != flattening.constraintReferences else { return }
+        let layout = layout.prepare()
+        guard self.views != layout.viewReferences || self.constraints != layout.constraintReferences else { return }
         deactive()
-        self.views = flattening.viewReferences
+        self.views = layout.viewReferences
         layout.attachSuperview(nil)
-        self.constraints = flattening.constraintReferences
+        self.constraints = layout.constraintReferences
         layout.activeConstraints()
     }
     
+}
+
+extension Layout {
+    var viewReferences: Set<WeakReference<UIView>> {
+        Set(layoutViews.map(WeakReference.init))
+    }
+    var constraintReferences: Set<WeakReference<NSLayoutConstraint>> {
+        Set(layoutConstraints.map(WeakReference.init))
+    }
 }

@@ -25,5 +25,3 @@ public final class ViewLayout {
 }
 
 extension ViewLayout: Layout, ViewContainable {}
-
-extension ViewLayout: LayoutFlattening {}

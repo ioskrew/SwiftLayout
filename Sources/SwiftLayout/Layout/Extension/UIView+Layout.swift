@@ -26,6 +26,14 @@ extension Layout where Self: UIView {
 }
 
 extension UIView: Layout {
+    public var layoutViews: [UIView] {
+        [self]
+    }
+    
+    public var layoutConstraints: [NSLayoutConstraint] {
+        []
+    }
+    
     public var sublayouts: [Layout] { [self] }
 }
 
