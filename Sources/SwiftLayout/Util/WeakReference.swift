@@ -28,12 +28,6 @@ final class WeakReference<O>: Hashable where O: CustomHashable {
     }
 }
 
-extension UIView: CustomHashable {
-    func customHash(_ hasher: inout Hasher) {
-        self.hash(into: &hasher)
-    }
-}
-
 extension NSLayoutConstraint: CustomHashable {
     func customHash(_ hasher: inout Hasher) {
         hasher.combine(firstItem as? NSObject)
