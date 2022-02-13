@@ -27,6 +27,15 @@ public final class AnchorsLayout<C> where C: Constraint {
         sublayouts.append(contentsOf: build())
         return self
     }
+   
+    public func updateSuperview(_ superview: UIView?) {
+        self.superview = superview
+    }
+}
+
+extension AnchorsLayout: Layout, ViewContainable {
+    
+    public var layoutConstraints: [NSLayoutConstraint] { constraints }
     
     public func prepareConstraints() {
         self.constraints = constraint.constraints(item: view, toItem: superview)
@@ -42,15 +51,4 @@ public final class AnchorsLayout<C> where C: Constraint {
         }
     }
     
-    public func updateSuperview(_ superview: UIView?) {
-        self.superview = superview
-    }
-}
-
-extension AnchorsLayout: Layout, ViewContainable {}
-
-extension AnchorsLayout: LayoutFlattening {
-    var layoutConstraints: [NSLayoutConstraint] {
-        constraints
-    }
 }

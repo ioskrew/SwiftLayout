@@ -60,10 +60,8 @@ final class ImplementationTest: XCTestCase {
             }
         }
         
-        let flattening = layout as? LayoutFlattening
-        
-        XCTAssertNotNil(flattening)
-        XCTAssertEqual(flattening?.layoutViews, [root, child, friend])
+        XCTAssertNotNil(layout)
+        XCTAssertEqual(layout.layoutViews, [root, child, friend])
     }
     
     func testLayoutCompare() {
@@ -73,39 +71,39 @@ final class ImplementationTest: XCTestCase {
         
         let f1 = root {
             child
-        }.flattening()
+        }.prepare()
         
         let f2 = root {
            child
-        }.flattening()
+        }.prepare()
         
         let f3 = root {
             child.anchors { Anchors.boundary }
-        }.flattening()
+        }.prepare()
         
         let f4 = root {
             child.anchors { Anchors.boundary }
-        }.flattening()
+        }.prepare()
         
         let f5 = root {
             child.anchors { Anchors.cap }
-        }.flattening()
+        }.prepare()
         
         let f6 = root {
             friend.anchors { Anchors.boundary }
-        }.flattening()
+        }.prepare()
         
-        XCTAssertEqual(f1?.viewReferences, f2?.viewReferences)
-        XCTAssertEqual(f1?.constraintReferences, f2?.constraintReferences)
+        XCTAssertEqual(f1.viewReferences, f2.viewReferences)
+        XCTAssertEqual(f1.constraintReferences, f2.constraintReferences)
         
-        XCTAssertEqual(f3?.viewReferences, f4?.viewReferences)
-        XCTAssertEqual(f3?.constraintReferences, f4?.constraintReferences)
+        XCTAssertEqual(f3.viewReferences, f4.viewReferences)
+        XCTAssertEqual(f3.constraintReferences, f4.constraintReferences)
         
-        XCTAssertEqual(f4?.viewReferences, f5?.viewReferences)
-        XCTAssertNotEqual(f4?.constraintReferences, f5?.constraintReferences)
+        XCTAssertEqual(f4.viewReferences, f5.viewReferences)
+        XCTAssertNotEqual(f4.constraintReferences, f5.constraintReferences)
         
-        XCTAssertNotEqual(f5?.viewReferences, f6?.viewReferences)
-        XCTAssertNotEqual(f5?.constraintReferences, f6?.constraintReferences)
+        XCTAssertNotEqual(f5.viewReferences, f6.viewReferences)
+        XCTAssertNotEqual(f5.constraintReferences, f6.constraintReferences)
         
     }
     

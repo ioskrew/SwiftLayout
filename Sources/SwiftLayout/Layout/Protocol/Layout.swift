@@ -12,50 +12,40 @@ public protocol Layout: CustomDebugStringConvertible {
     
     var sublayouts: [Layout] { get }
     
+    var layoutViews: [UIView] { get }
+    var layoutConstraints: [NSLayoutConstraint] { get }
+    
     func prepareSuperview(_ superview: UIView?)
     func attachSuperview(_ superview: UIView?)
    
     func prepareConstraints()
     func activeConstraints()
+    
 }
 
-public extension Layout {
+extension Layout {
     
     func active() -> Deactivable {
         return Deactivation(self)
     }
     
-    func prepare() {
+    func prepare() -> Self {
         prepareSuperview(nil)
         prepareConstraints()
+        return self
     }
-    
-    func prepareSuperview(_ superview: UIView?) {
-        for layout in sublayouts {
-            layout.prepareSuperview(superview)
-        }
-    }
-    
-    func prepareConstraints() {
+   
+    public func prepareConstraints() {
         for layout in sublayouts {
             layout.prepareConstraints()
         }
     }
     
-    func activeConstraints() {
+    public func activeConstraints() {
         for layout in sublayouts {
             layout.activeConstraints()
         }
     }
-}
-
-extension Layout {
-    
-    func flattening() -> LayoutFlattening? {
-        prepare()
-        return self as? LayoutFlattening
-    }
-    
 }
 
 extension Layout where Self: Collection, Element == Layout {
@@ -68,4 +58,32 @@ extension Layout where Self: Collection, Element == Layout {
     }
 }
 
-extension Array: Layout where Self.Element == Layout {}
+extension Array: Layout where Self.Element == Layout {
+    
+    public var layoutViews: [UIView] {
+        flatMap(\.layoutViews)
+    }
+    
+    public var layoutConstraints: [NSLayoutConstraint] {
+        flatMap(\.layoutConstraints)
+    }
+    
+    public func prepareSuperview(_ superview: UIView?) {
+        for layout in sublayouts {
+            layout.prepareSuperview(superview)
+        }
+    }
+    
+    public func prepareConstraints() {
+        for layout in sublayouts {
+            layout.prepareConstraints()
+        }
+    }
+    
+    public func activeConstraints() {
+        for layout in sublayouts {
+            layout.activeConstraints()
+        }
+    }
+    
+}

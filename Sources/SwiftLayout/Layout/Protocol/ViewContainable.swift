@@ -15,7 +15,15 @@ public protocol ViewContainable {
     func updateSuperview(_ superview: UIView?)
 }
 
-extension ViewContainable where Self: Layout {
+extension Layout where Self: ViewContainable {
+    
+    public var layoutViews: [UIView] {
+        [view] + sublayouts.flatMap(\.layoutViews)
+    }
+    
+    public var layoutConstraints: [NSLayoutConstraint] {
+        sublayouts.flatMap(\.layoutConstraints)
+    }
     
     public func prepareSuperview(_ superview: UIView?) {
         updateSuperview(superview)

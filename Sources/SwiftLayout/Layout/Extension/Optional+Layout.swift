@@ -12,6 +12,10 @@ extension Optional: Layout where Wrapped: Layout {
     
     public var sublayouts: [Layout] { self?.sublayouts ?? [] }
     
+    public var layoutViews: [UIView] { self?.layoutViews ?? [] }
+    
+    public var layoutConstraints: [NSLayoutConstraint] { self?.layoutConstraints ?? [] }
+    
     public func prepareSuperview(_ superview: UIView?) {
         self?.prepareSuperview(superview)
     }
