@@ -13,9 +13,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Generate xcodeproj
-      run: swift package generate-xcodeproj
     - name: Build
-      run: xcodebuild build -sdk iphoneos -scheme 'SwiftLayout-Package'
+      run: xcodebuild build -sdk iphoneos
     - name: Run tests
-      run: xcodebuild test -destination 'name=iPhone 13 Pro' -scheme 'SwiftLayout-Package'
+      run: xcodebuild test -destination 'name=iPhone 13 Pro'
