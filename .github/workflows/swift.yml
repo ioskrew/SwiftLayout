@@ -14,6 +14,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build
-      run: xcodebuild build -sdk iphoneos -scheme SwiftLayout
+      run: xcodebuild build -scheme SwiftLayout -destination 'platform=iOS Simulator,OS=13.0,name=iPhone 13 Pro' 
     - name: Run tests
-      run: xcodebuild test -destination 'name=iPhone 13 Pro' -scheme SwiftLayout
+      run: xcodebuild test -scheme SwiftLayout -destination 'platform=iOS Simulator,OS=13.0,name=iPhone 13 Pro'
