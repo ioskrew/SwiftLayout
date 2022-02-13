@@ -22,11 +22,19 @@ final class Deactivation: Deactivable {
     }
     
     func deactive() {
-        let constraints = constraints.compactMap(\.o)
+        deactiveViews()
+        deactiveConstraints()
+    }
+    
+    func deactiveConstraints() {
+        let constraints = constraints.compactMap(\.o).filter(\.isActive)
         NSLayoutConstraint.deactivate(constraints)
+        self.constraints = []
+    }
+    
+    func deactiveViews() {
         let views = views.compactMap(\.o)
         for view in views {
-            view.removeConstraints(constraints)
             if views.contains(where: { $0 == view.superview }) {
                 view.removeFromSuperview()
             }
@@ -35,12 +43,23 @@ final class Deactivation: Deactivable {
     
     func updateLayout(_ layout: Layout) {
         let layout = layout.prepare()
-        guard self.views != layout.viewReferences || self.constraints != layout.constraintReferences else { return }
-        deactive()
-        self.views = layout.viewReferences
-        layout.attachSuperview(nil)
-        self.constraints = layout.constraintReferences
-        layout.activeConstraints()
+        let sameView = ReferenceCompare(left: views, right: layout.viewReferences).isSame
+        let sameConstraint = ReferenceCompare(left: constraints, right: layout.constraintReferences).isSame
+        switch (sameView, sameConstraint) {
+        case (false, _):
+            deactiveViews()
+            deactiveConstraints()
+            layout.attachSuperview(nil)
+            layout.activeConstraints()
+            views = layout.viewReferences
+            constraints = layout.constraintReferences
+        case (true, false):
+            deactiveConstraints()
+            layout.activeConstraints()
+            constraints = layout.constraintReferences
+        case (true, true):
+            break
+        }
     }
     
 }
@@ -51,5 +70,14 @@ extension Layout {
     }
     var constraintReferences: Set<WeakReference<NSLayoutConstraint>> {
         Set(layoutConstraints.map(WeakReference.init))
+    }
+}
+
+struct ReferenceCompare<R, C> where R: Hashable, C: Collection, C.Element == WeakReference<R>, C: Equatable {
+    let left: C
+    let right: C
+    
+    var isSame: Bool {
+        left == right
     }
 }
