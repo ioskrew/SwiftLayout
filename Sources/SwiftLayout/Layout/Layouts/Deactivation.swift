@@ -38,7 +38,7 @@ final class Deactivation: Deactivable {
         guard self.views != flattening.viewReferences || self.constraints != flattening.constraintReferences else { return }
         deactive()
         self.views = flattening.viewReferences
-        layout.attachSuperview()
+        layout.attachSuperview(nil)
         self.constraints = flattening.constraintReferences
         layout.activeConstraints()
     }

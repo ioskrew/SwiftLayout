@@ -13,15 +13,13 @@ public protocol Layout: CustomDebugStringConvertible {
     var sublayouts: [Layout] { get }
     
     func prepareSuperview(_ superview: UIView?)
-    func attachSuperview()
+    func attachSuperview(_ superview: UIView?)
    
     func prepareConstraints()
     func activeConstraints()
 }
 
 public extension Layout {
-    
-    var sublayouts: [Layout] { [] }
     
     func active() -> Deactivable {
         return Deactivation(self)
@@ -35,12 +33,6 @@ public extension Layout {
     func prepareSuperview(_ superview: UIView?) {
         for layout in sublayouts {
             layout.prepareSuperview(superview)
-        }
-    }
-    
-    func attachSuperview() {
-        for layout in sublayouts {
-            layout.attachSuperview()
         }
     }
     
@@ -67,8 +59,13 @@ extension Layout {
 }
 
 extension Layout where Self: Collection, Element == Layout {
-    public var sublayouts: [Layout] { self.map({ $0 }) }
+    public var sublayouts: [Layout] { map({ layout in layout }) }
+    
+    public func attachSuperview(_ superview: UIView?) {
+        for sublayout in sublayouts {
+            sublayout.attachSuperview(superview)
+        }
+    }
 }
 
 extension Array: Layout where Self.Element == Layout {}
-extension Set: Layout where Self.Element: Layout {}

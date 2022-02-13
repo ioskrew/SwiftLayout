@@ -8,21 +8,16 @@
 import Foundation
 import UIKit
 
-public final class ViewLayout<L>: ViewContainableLayout where L: Layout {
+public final class ViewLayout: ViewContainableLayout {
     
-    internal init(view: UIView, layoutable: L) {
+    internal init(view: UIView, sublayouts: [Layout]) {
         self.view = view
-        self.layoutable = layoutable
+        self.sublayouts = sublayouts
     }
     
-    private weak var superview: UIView?
+    public weak var superview: UIView?
     public let view: UIView
-    
-    var layoutable: L
-    
-    public var sublayouts: [Layout] {
-        layoutable.sublayouts
-    }
+    public let sublayouts: [Layout]
     
     public func prepareSuperview(_ superview: UIView?) {
         self.superview = superview
@@ -30,26 +25,7 @@ public final class ViewLayout<L>: ViewContainableLayout where L: Layout {
             layout.prepareSuperview(view)
         }
     }
-    
-    public func attachSuperview() {
-        if let superview = superview {
-            superview.addSubview(view)
-            view.translatesAutoresizingMaskIntoConstraints = false
-        }
-        for layout in sublayouts {
-            if let view = layout as? UIView {
-                view.translatesAutoresizingMaskIntoConstraints = false
-                self.view.addSubview(view)
-            } else if let views = layout as? [UIView] {
-                for view in views {
-                    view.translatesAutoresizingMaskIntoConstraints = false
-                    self.view.addSubview(view)
-                }
-            } else {
-                layout.attachSuperview()
-            }
-        }
-    }
+  
 }
 
 extension ViewLayout: LayoutFlattening {}
