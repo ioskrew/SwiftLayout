@@ -30,10 +30,6 @@ extension UIView: Layout {
     
     public var sublayouts: [Layout] { [self] }
     
-    public func animation() {
-        UIView.animate(withDuration: 0.25) { [weak self] in
-            self?.setNeedsLayout()
-        }
-    }
+    public func animation() {}
 }
 
