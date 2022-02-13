@@ -11,6 +11,7 @@ import UIKit
 public protocol ViewContainable {
     var superview: UIView? { get set }
     var view: UIView { get }
+    var isAnimationEnabled: Bool { get }
     
     func updateSuperview(_ superview: UIView?)
 }
@@ -37,8 +38,10 @@ extension Layout where Self: ViewContainable {
     }
     
     public func animation() {
-        UIView.animate(withDuration: 0.25) {
-            view.setNeedsLayout()
+        if isAnimationEnabled {
+            UIView.animate(withDuration: 0.25) {
+                view.layoutIfNeeded()
+            }
         }
         sublayouts.animation()
     }
