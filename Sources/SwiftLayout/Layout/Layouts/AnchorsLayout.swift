@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-public final class AnchorsLayout<C>: ViewContainableLayout where C: Constraint {
+public final class AnchorsLayout<C>: ViewContainable, Layout where C: Constraint {
    
     internal init(view: UIView, constraint: C) {
         self.view = view

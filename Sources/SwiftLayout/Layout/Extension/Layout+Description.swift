@@ -13,7 +13,7 @@ extension CustomDebugStringConvertible where Self: Layout {
     }
 }
 
-extension CustomDebugStringConvertible where Self: ViewContainableLayout {
+extension CustomDebugStringConvertible where Self: ViewContainable, Self: Layout {
     public var debugDescription: String {
         if sublayouts.isEmpty {
             return view.tagDescription
