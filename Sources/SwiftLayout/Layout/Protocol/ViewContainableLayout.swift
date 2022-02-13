@@ -8,6 +8,6 @@
 import Foundation
 import UIKit
 
-public protocol ViewContainableLayout: ContainableLayout {
+public protocol ViewContainableLayout: Layout {
     var view: UIView { get }
 }

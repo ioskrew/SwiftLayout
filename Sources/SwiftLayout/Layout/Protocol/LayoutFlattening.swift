@@ -29,7 +29,7 @@ extension Array: LayoutFlattening where Element == Layout {
     }
 }
 
-extension LayoutFlattening where Self: ContainableLayout {
+extension LayoutFlattening where Self: Layout {
     var layoutViews: [UIView] {
         layouts.layoutViews
     }
