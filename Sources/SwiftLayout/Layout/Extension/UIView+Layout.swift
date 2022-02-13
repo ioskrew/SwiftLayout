@@ -14,13 +14,17 @@ extension Layout where Self: UIView {
         ViewLayout(view: self, layoutable: build())
     }
     
-    public func prepareSuperview(_ superview: UIView?) {}
-    public func attachSuperview() {}
+}
+
+extension _Layout where Self: UIView {
     
-    public func prepareConstraints() {}
-    public func activeConstraints() {}
+    func prepareSuperview(_ superview: UIView?) {}
+    func attachSuperview() {}
     
+    func prepareConstraints() {}
+    func activeConstraints() {}
+
 }
 
 extension UIView: Layout {}
-
+extension UIView: _Layout {}

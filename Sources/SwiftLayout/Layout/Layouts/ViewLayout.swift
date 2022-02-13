@@ -23,10 +23,14 @@ public final class ViewLayout<L>: ViewContainableLayout where L: ContainableLayo
     public var layouts: [Layout] {
         layoutable.layouts
     }
+   
+}
+
+extension ViewLayout: _Layout {
     
     public func prepareSuperview(_ superview: UIView?) {
         self.superview = superview
-        for layout in layouts {
+        for layout in _layouts {
             layout.prepareSuperview(view)
         }
     }
@@ -36,7 +40,7 @@ public final class ViewLayout<L>: ViewContainableLayout where L: ContainableLayo
             superview.addSubview(view)
             view.translatesAutoresizingMaskIntoConstraints = false
         }
-        for layout in layouts {
+        for layout in _layouts {
             if let view = layout as? UIView {
                 view.translatesAutoresizingMaskIntoConstraints = false
                 self.view.addSubview(view)
@@ -50,6 +54,7 @@ public final class ViewLayout<L>: ViewContainableLayout where L: ContainableLayo
             }
         }
     }
+    
 }
 
 extension ViewLayout: LayoutFlattening {}

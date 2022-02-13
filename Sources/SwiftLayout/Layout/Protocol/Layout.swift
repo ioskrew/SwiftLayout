@@ -8,7 +8,9 @@
 import Foundation
 import UIKit
 
-public protocol Layout: CustomDebugStringConvertible {
+public protocol Layout: CustomDebugStringConvertible {}
+
+protocol _Layout: Layout {
     func prepareSuperview(_ superview: UIView?)
     func attachSuperview()
    
@@ -21,6 +23,10 @@ extension Layout {
     public func active() -> Deactivable {
         return Deactivation(self)
     }
+    
+}
+
+extension Layout where Self: _Layout {
     
     func prepare() {
         prepareSuperview(nil)
@@ -35,3 +41,4 @@ extension Layout {
 }
 
 extension Array: Layout where Self.Element == Layout {}
+extension Array: _Layout where Self.Element == Layout {}

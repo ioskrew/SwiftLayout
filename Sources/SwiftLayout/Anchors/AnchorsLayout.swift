@@ -22,10 +22,19 @@ public final class AnchorsLayout<C>: ViewContainableLayout where C: Constraint {
     
     public var layouts: [Layout] = []
     var constraints: [NSLayoutConstraint] = []
+   
+    public func subviews<L>(@LayoutBuilder _ build: () -> L) -> Self where L: Layout {
+        layouts.append(build())
+        return self
+    }
+    
+}
+
+extension AnchorsLayout: _Layout {
     
     public func prepareSuperview(_ superview: UIView?) {
         self.superview = superview
-        for layout in layouts {
+        for layout in _layouts {
             layout.prepareSuperview(view)
         }
     }
@@ -33,7 +42,7 @@ public final class AnchorsLayout<C>: ViewContainableLayout where C: Constraint {
     public func attachSuperview() {
         view.translatesAutoresizingMaskIntoConstraints = false
         superview?.addSubview(view)
-        for layout in layouts {
+        for layout in _layouts {
             if let view = layout as? UIView {
                 view.translatesAutoresizingMaskIntoConstraints = false
                 self.view.addSubview(view)
@@ -50,22 +59,18 @@ public final class AnchorsLayout<C>: ViewContainableLayout where C: Constraint {
     
     public func prepareConstraints() {
         self.constraints = constraint.constraints(item: view, toItem: superview)
-        for layout in layouts {
+        for layout in _layouts {
             layout.prepareConstraints()
         }
     }
     
     public func activeConstraints() {
         NSLayoutConstraint.activate(self.constraints)
-        for layout in layouts {
+        for layout in _layouts {
             layout.activeConstraints()
         }
     }
     
-    public func subviews<L>(@LayoutBuilder _ build: () -> L) -> Self where L: Layout {
-        layouts.append(build())
-        return self
-    }
     
 }
 
