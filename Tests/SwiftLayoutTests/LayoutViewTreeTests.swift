@@ -111,6 +111,7 @@ final class LayoutViewTreeTests: XCTestCase {
             
             if flag {
                 label
+                UILabel()
             } else {
                 image
             }

@@ -10,12 +10,14 @@ import UIKit
 
 extension Optional: Layout where Wrapped: Layout {
     
+    public var sublayouts: [Layout] { self?.sublayouts ?? [] }
+    
     public func prepareSuperview(_ superview: UIView?) {
         self?.prepareSuperview(superview)
     }
     
-    public func attachSuperview() {
-        self?.attachSuperview()
+    public func attachSuperview(_ superview: UIView?) {
+        self?.attachSuperview(superview)
     }
     
     public func prepareConstraints() {

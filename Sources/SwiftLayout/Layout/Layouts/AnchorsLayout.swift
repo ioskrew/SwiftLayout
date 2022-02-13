@@ -15,7 +15,7 @@ public final class AnchorsLayout<C>: ViewContainableLayout where C: Constraint {
         self.constraint = constraint
     }
     
-    private weak var superview: UIView?
+    public weak var superview: UIView?
     public let view: UIView
     
     var constraint: C
@@ -27,24 +27,6 @@ public final class AnchorsLayout<C>: ViewContainableLayout where C: Constraint {
         self.superview = superview
         for layout in sublayouts {
             layout.prepareSuperview(view)
-        }
-    }
-    
-    public func attachSuperview() {
-        view.translatesAutoresizingMaskIntoConstraints = false
-        superview?.addSubview(view)
-        for layout in sublayouts {
-            if let view = layout as? UIView {
-                view.translatesAutoresizingMaskIntoConstraints = false
-                self.view.addSubview(view)
-            } else if let views = layout as? [UIView] {
-                for view in views {
-                    view.translatesAutoresizingMaskIntoConstraints = false
-                    self.view.addSubview(view)
-                }
-            } else {
-                layout.attachSuperview()
-            }
         }
     }
     
@@ -62,8 +44,8 @@ public final class AnchorsLayout<C>: ViewContainableLayout where C: Constraint {
         }
     }
     
-    public func subviews<L>(@LayoutBuilder _ build: () -> L) -> Self where L: Layout {
-        sublayouts.append(build())
+    public func subviews(@LayoutBuilder _ build: () -> [Layout]) -> Self {
+        sublayouts.append(contentsOf: build())
         return self
     }
     
