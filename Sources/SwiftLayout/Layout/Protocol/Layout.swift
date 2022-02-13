@@ -12,15 +12,13 @@ public protocol Layout: CustomDebugStringConvertible {
     
     var sublayouts: [Layout] { get }
     
-    var layoutViews: [UIView] { get }
+    var layoutViews: [ViewPair] { get }
     var layoutConstraints: [NSLayoutConstraint] { get }
     
     func prepareSuperview(_ superview: UIView?)
-    func attachSuperview(_ superview: UIView?)
-   
     func prepareConstraints()
-    func activeConstraints()
     
+    func animation()
 }
 
 extension Layout {
@@ -36,36 +34,26 @@ extension Layout {
     }
    
     public func prepareConstraints() {
-        for layout in sublayouts {
-            layout.prepareConstraints()
-        }
+        sublayouts.prepareConstraints()
     }
     
-    public func activeConstraints() {
-        for layout in sublayouts {
-            layout.activeConstraints()
-        }
+    public func animation() {
+        sublayouts.animation()
     }
 }
 
 extension Layout where Self: Collection, Element == Layout {
     public var sublayouts: [Layout] { map({ layout in layout }) }
-    
-    public func attachSuperview(_ superview: UIView?) {
-        for sublayout in sublayouts {
-            sublayout.attachSuperview(superview)
-        }
-    }
 }
 
 extension Array: Layout where Self.Element == Layout {
     
-    public var layoutViews: [UIView] {
-        flatMap(\.layoutViews)
+    public var layoutViews: [ViewPair] {
+        sublayouts.flatMap(\.layoutViews)
     }
     
     public var layoutConstraints: [NSLayoutConstraint] {
-        flatMap(\.layoutConstraints)
+        sublayouts.flatMap(\.layoutConstraints)
     }
     
     public func prepareSuperview(_ superview: UIView?) {
@@ -80,9 +68,9 @@ extension Array: Layout where Self.Element == Layout {
         }
     }
     
-    public func activeConstraints() {
+    public func animation() {
         for layout in sublayouts {
-            layout.activeConstraints()
+            layout.animation()
         }
     }
     

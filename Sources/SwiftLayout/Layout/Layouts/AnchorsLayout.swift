@@ -35,20 +35,13 @@ public final class AnchorsLayout<C> where C: Constraint {
 
 extension AnchorsLayout: Layout, ViewContainable {
     
-    public var layoutConstraints: [NSLayoutConstraint] { constraints }
+    public var layoutConstraints: [NSLayoutConstraint] {
+        constraints + sublayouts.layoutConstraints
+    }
     
     public func prepareConstraints() {
         self.constraints = constraint.constraints(item: view, toItem: superview)
-        for layout in sublayouts {
-            layout.prepareConstraints()
-        }
-    }
-    
-    public func activeConstraints() {
-        NSLayoutConstraint.activate(self.constraints)
-        for layout in sublayouts {
-            layout.activeConstraints()
-        }
+        sublayouts.prepareConstraints()
     }
     
 }

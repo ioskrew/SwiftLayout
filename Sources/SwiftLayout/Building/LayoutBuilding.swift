@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 public protocol LayoutBuilding: AnyObject {
  
@@ -16,17 +17,16 @@ public protocol LayoutBuilding: AnyObject {
     
 }
 
-public extension LayoutBuilding where Self: NSObject {
+public extension LayoutBuilding {
     
-    func updateLayout() {
+    func updateLayout(animated: Bool = false) {
         let layout: some Layout = self.layout
         
         if let deactivatable = self.deactivatable as? Deactivation {
-            deactivatable.updateLayout(layout)
+            deactivatable.updateLayout(layout, animated: animated)
         } else {
             self.deactivatable = Deactivation(layout)
         }
-        
     }
     
 }

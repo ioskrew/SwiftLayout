@@ -61,7 +61,7 @@ final class ImplementationTest: XCTestCase {
         }
         
         XCTAssertNotNil(layout)
-        XCTAssertEqual(layout.layoutViews, [root, child, friend])
+        XCTAssertEqual(layout.layoutViews.map(\.view), [root, child, friend])
     }
     
     func testLayoutCompare() {
@@ -93,16 +93,16 @@ final class ImplementationTest: XCTestCase {
             friend.anchors { Anchors.boundary }
         }.prepare()
         
-        XCTAssertEqual(f1.viewReferences, f2.viewReferences)
+        XCTAssertEqual(f1.layoutViews, f2.layoutViews)
         XCTAssertEqual(f1.constraintReferences, f2.constraintReferences)
         
-        XCTAssertEqual(f3.viewReferences, f4.viewReferences)
+        XCTAssertEqual(f3.layoutViews, f4.layoutViews)
         XCTAssertEqual(f3.constraintReferences, f4.constraintReferences)
         
-        XCTAssertEqual(f4.viewReferences, f5.viewReferences)
+        XCTAssertEqual(f4.layoutViews, f5.layoutViews)
         XCTAssertNotEqual(f4.constraintReferences, f5.constraintReferences)
         
-        XCTAssertNotEqual(f5.viewReferences, f6.viewReferences)
+        XCTAssertNotEqual(f5.layoutViews, f6.layoutViews)
         XCTAssertNotEqual(f5.constraintReferences, f6.constraintReferences)
         
     }

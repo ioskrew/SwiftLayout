@@ -10,7 +10,7 @@ import UIKit
 
 final class Deactivation: Deactivable {
     
-    private var views: Set<WeakReference<UIView>> = []
+    private var viewPairs: Set<ViewPair> = []
     private var constraints: Set<WeakReference<NSLayoutConstraint>> = []
     
     init(_ layout: Layout) {
@@ -33,7 +33,7 @@ final class Deactivation: Deactivable {
     }
     
     func deactiveViews() {
-        let views = views.compactMap(\.o)
+        let views = viewPairs.compactMap(\.view)
         for view in views {
             if views.contains(where: { $0 == view.superview }) {
                 view.removeFromSuperview()
@@ -41,43 +41,32 @@ final class Deactivation: Deactivable {
         }
     }
     
-    func updateLayout(_ layout: Layout) {
+    func updateLayout(_ layout: Layout, animated: Bool = false) {
         let layout = layout.prepare()
-        let sameView = ReferenceCompare(left: views, right: layout.viewReferences).isSame
-        let sameConstraint = ReferenceCompare(left: constraints, right: layout.constraintReferences).isSame
-        switch (sameView, sameConstraint) {
-        case (false, _):
-            deactiveViews()
-            deactiveConstraints()
-            layout.attachSuperview(nil)
-            layout.activeConstraints()
-            views = layout.viewReferences
-            constraints = layout.constraintReferences
-        case (true, false):
-            deactiveConstraints()
-            layout.activeConstraints()
-            constraints = layout.constraintReferences
-        case (true, true):
-            break
+        deactiveConstraints()
+        let layoutViews = layout.layoutViews
+        let newViewPairs = Set(layoutViews)
+        for viewPair in viewPairs where !newViewPairs.contains(viewPair) {
+            viewPair.removeFromSuperview()
+        }
+        for viewPair in layoutViews {
+            viewPair.addSuperview()
+        }
+        let layoutConstraints = layout.layoutConstraints
+        let newConstraints = layout.constraintReferences
+        viewPairs = newViewPairs
+        NSLayoutConstraint.activate(layoutConstraints)
+        constraints = newConstraints
+        
+        if animated {
+            layout.animation()
         }
     }
     
 }
 
 extension Layout {
-    var viewReferences: Set<WeakReference<UIView>> {
-        Set(layoutViews.map(WeakReference.init))
-    }
     var constraintReferences: Set<WeakReference<NSLayoutConstraint>> {
         Set(layoutConstraints.map(WeakReference.init))
-    }
-}
-
-struct ReferenceCompare<R, C> where R: Hashable, C: Collection, C.Element == WeakReference<R>, C: Equatable {
-    let left: C
-    let right: C
-    
-    var isSame: Bool {
-        left == right
     }
 }
