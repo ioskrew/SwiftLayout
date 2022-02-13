@@ -14,6 +14,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build
-      run: xcodebuild build -scheme SwiftLayout -destination 'platform="iOS Simulator",id=dvtdevice-DVTiOSDeviceSimulatorPlaceholder-iphonesimulator:placeholder,name="iPhone 13 Pro"' 
+      run: xcodebuild build -scheme SwiftLayout -destination 'platform="iOS Simulator",id=D5E41C89-081C-4F0B-B66D-D3C771B864C9,name="iPhone 13 Pro"' 
     - name: Run tests
-      run: xcodebuild test -scheme SwiftLayout -destination 'platform="iOS Simulator",id=dvtdevice-DVTiOSDeviceSimulatorPlaceholder-iphonesimulator:placeholder,name="iPhone 13 Pro"'
+      run: xcodebuild test -scheme SwiftLayout -destination 'platform="iOS Simulator",id=D5E41C89-081C-4F0B-B66D-D3C771B864C9,name="iPhone 13 Pro"'
