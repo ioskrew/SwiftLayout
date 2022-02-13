@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-public final class ViewLayout: ViewContainable, Layout {
+public final class ViewLayout {
     
     internal init(view: UIView, sublayouts: [Layout]) {
         self.view = view
@@ -18,14 +18,12 @@ public final class ViewLayout: ViewContainable, Layout {
     public weak var superview: UIView?
     public let view: UIView
     public let sublayouts: [Layout]
-    
-    public func prepareSuperview(_ superview: UIView?) {
+
+    public func updateSuperview(_ superview: UIView?) {
         self.superview = superview
-        for layout in sublayouts {
-            layout.prepareSuperview(view)
-        }
     }
-  
 }
+
+extension ViewLayout: Layout, ViewContainable {}
 
 extension ViewLayout: LayoutFlattening {}

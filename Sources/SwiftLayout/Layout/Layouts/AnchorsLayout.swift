@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-public final class AnchorsLayout<C>: ViewContainable, Layout where C: Constraint {
+public final class AnchorsLayout<C> where C: Constraint {
    
     internal init(view: UIView, constraint: C) {
         self.view = view
@@ -23,11 +23,9 @@ public final class AnchorsLayout<C>: ViewContainable, Layout where C: Constraint
     public var sublayouts: [Layout] = []
     var constraints: [NSLayoutConstraint] = []
     
-    public func prepareSuperview(_ superview: UIView?) {
-        self.superview = superview
-        for layout in sublayouts {
-            layout.prepareSuperview(view)
-        }
+    public func subviews(@LayoutBuilder _ build: () -> [Layout]) -> Self {
+        sublayouts.append(contentsOf: build())
+        return self
     }
     
     public func prepareConstraints() {
@@ -44,12 +42,12 @@ public final class AnchorsLayout<C>: ViewContainable, Layout where C: Constraint
         }
     }
     
-    public func subviews(@LayoutBuilder _ build: () -> [Layout]) -> Self {
-        sublayouts.append(contentsOf: build())
-        return self
+    public func updateSuperview(_ superview: UIView?) {
+        self.superview = superview
     }
-    
 }
+
+extension AnchorsLayout: Layout, ViewContainable {}
 
 extension AnchorsLayout: LayoutFlattening {
     var layoutConstraints: [NSLayoutConstraint] {
