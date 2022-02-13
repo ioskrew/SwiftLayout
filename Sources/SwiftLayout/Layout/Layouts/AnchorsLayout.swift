@@ -18,6 +18,8 @@ public final class AnchorsLayout<C> where C: Constraint {
     public weak var superview: UIView?
     public let view: UIView
     
+    private(set) public var isAnimationEnabled: Bool = false
+    
     var constraint: C
     
     public var sublayouts: [Layout] = []
@@ -30,6 +32,9 @@ public final class AnchorsLayout<C> where C: Constraint {
    
     public func updateSuperview(_ superview: UIView?) {
         self.superview = superview
+        isAnimationEnabled = view.superview != nil
+        print(self)
+        print(isAnimationEnabled)
     }
 }
 
