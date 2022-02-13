@@ -34,7 +34,6 @@ final class Deactivation: Deactivable {
     }
     
     func updateLayout(_ layout: Layout) {
-        guard let layout = layout as? _Layout else { return }
         guard let flattening = layout.flattening() else { return }
         guard self.views != flattening.viewReferences || self.constraints != flattening.constraintReferences else { return }
         deactive()

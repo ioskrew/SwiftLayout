@@ -12,30 +12,28 @@ public protocol ContainableLayout: Layout {
     var layouts: [Layout] { get }
 }
 
-extension ContainableLayout where Self: _Layout {
-    
-    var _layouts: [_Layout] { layouts as? [_Layout] ?? [] }
+public extension ContainableLayout {
     
     func prepareSuperview(_ superview: UIView?) {
-        for layout in _layouts {
+        for layout in layouts {
             layout.prepareSuperview(superview)
         }
     }
     
     func attachSuperview() {
-        for layout in _layouts {
+        for layout in layouts {
             layout.attachSuperview()
         }
     }
     
     func prepareConstraints() {
-        for layout in _layouts {
+        for layout in layouts {
             layout.prepareConstraints()
         }
     }
     
     func activeConstraints() {
-        for layout in _layouts {
+        for layout in layouts {
             layout.activeConstraints()
         }
     }
