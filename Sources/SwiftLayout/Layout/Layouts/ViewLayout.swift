@@ -20,13 +20,13 @@ public final class ViewLayout<L>: ViewContainableLayout where L: Layout {
     
     var layoutable: L
     
-    public var layouts: [Layout] {
-        layoutable.layouts
+    public var sublayouts: [Layout] {
+        layoutable.sublayouts
     }
     
     public func prepareSuperview(_ superview: UIView?) {
         self.superview = superview
-        for layout in layouts {
+        for layout in sublayouts {
             layout.prepareSuperview(view)
         }
     }
@@ -36,7 +36,7 @@ public final class ViewLayout<L>: ViewContainableLayout where L: Layout {
             superview.addSubview(view)
             view.translatesAutoresizingMaskIntoConstraints = false
         }
-        for layout in layouts {
+        for layout in sublayouts {
             if let view = layout as? UIView {
                 view.translatesAutoresizingMaskIntoConstraints = false
                 self.view.addSubview(view)
