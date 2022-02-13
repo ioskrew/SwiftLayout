@@ -10,7 +10,7 @@ import UIKit
 
 public protocol Layout: CustomDebugStringConvertible {
     
-    var layouts: [Layout] { get }
+    var sublayouts: [Layout] { get }
     
     func prepareSuperview(_ superview: UIView?)
     func attachSuperview()
@@ -21,7 +21,7 @@ public protocol Layout: CustomDebugStringConvertible {
 
 public extension Layout {
     
-    var layouts: [Layout] { [] }
+    var sublayouts: [Layout] { [] }
     
     func active() -> Deactivable {
         return Deactivation(self)
@@ -33,25 +33,25 @@ public extension Layout {
     }
     
     func prepareSuperview(_ superview: UIView?) {
-        for layout in layouts {
+        for layout in sublayouts {
             layout.prepareSuperview(superview)
         }
     }
     
     func attachSuperview() {
-        for layout in layouts {
+        for layout in sublayouts {
             layout.attachSuperview()
         }
     }
     
     func prepareConstraints() {
-        for layout in layouts {
+        for layout in sublayouts {
             layout.prepareConstraints()
         }
     }
     
     func activeConstraints() {
-        for layout in layouts {
+        for layout in sublayouts {
             layout.activeConstraints()
         }
     }
@@ -67,7 +67,7 @@ extension Layout {
 }
 
 extension Layout where Self: Collection, Element == Layout {
-    public var layouts: [Layout] { self.map({ $0 }) }
+    public var sublayouts: [Layout] { self.map({ $0 }) }
 }
 
 extension Array: Layout where Self.Element == Layout {}

@@ -9,16 +9,16 @@ import Foundation
 
 extension CustomDebugStringConvertible where Self: Layout {
     public var debugDescription: String {
-        "Layout: [\(layouts.map(\.debugDescription).joined(separator: ", "))]"
+        "Layout: [\(sublayouts.map(\.debugDescription).joined(separator: ", "))]"
     }
 }
 
 extension CustomDebugStringConvertible where Self: ViewContainableLayout {
     public var debugDescription: String {
-        if layouts.isEmpty {
+        if sublayouts.isEmpty {
             return view.tagDescription
         } else {
-            return view.tagDescription + ": [\(layouts.map(\.debugDescription).joined(separator: ", "))]"
+            return view.tagDescription + ": [\(sublayouts.map(\.debugDescription).joined(separator: ", "))]"
         }
     }
 }

@@ -31,17 +31,17 @@ extension Array: LayoutFlattening where Element == Layout {
 
 extension LayoutFlattening where Self: Layout {
     var layoutViews: [UIView] {
-        layouts.layoutViews
+        sublayouts.layoutViews
     }
     var layoutConstraints: [NSLayoutConstraint] {
-        layouts.layoutConstraints
+        sublayouts.layoutConstraints
     }
 }
 
 extension LayoutFlattening where Self: ViewContainableLayout {
     var layoutViews: [UIView] {
         var views: [UIView] = [view]
-        views.append(contentsOf: layouts.layoutViews)
+        views.append(contentsOf: sublayouts.layoutViews)
         return views
     }
 }
