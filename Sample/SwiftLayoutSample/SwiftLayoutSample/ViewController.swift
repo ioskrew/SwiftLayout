@@ -82,6 +82,7 @@ final class ViewController: UIViewController, LayoutBuilding {
                 nextButton.anchors {
                     Anchors.center
                 }
+                .animationDisable()
             }
         }
     }
