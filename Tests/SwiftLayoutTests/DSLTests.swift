@@ -252,11 +252,11 @@ final class DSLTests: XCTestCase {
         })
         
         let root = UIView().viewTag.root
-        let d = root {
+        view = LayoutHostingView(root {
             for view in views {
                 view
             }
-        }.active()
+        })
         
         XCTAssertEqual(root.subviews, views)
     }
