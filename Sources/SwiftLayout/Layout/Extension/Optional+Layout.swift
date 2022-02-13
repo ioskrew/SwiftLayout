@@ -9,20 +9,23 @@ import Foundation
 import UIKit
 
 extension Optional: Layout where Wrapped: Layout {
+}
+
+extension Optional: _Layout where Wrapped: _Layout {
     
-    public func prepareSuperview(_ superview: UIView?) {
+    func prepareSuperview(_ superview: UIView?) {
         self?.prepareSuperview(superview)
     }
     
-    public func attachSuperview() {
+    func attachSuperview() {
         self?.attachSuperview()
     }
     
-    public func prepareConstraints() {
+    func prepareConstraints() {
         self?.prepareConstraints()
     }
     
-    public func activeConstraints() {
+    func activeConstraints() {
         self?.activeConstraints()
     }
     
