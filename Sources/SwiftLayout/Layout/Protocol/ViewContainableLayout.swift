@@ -8,12 +8,12 @@
 import Foundation
 import UIKit
 
-public protocol ViewContainableLayout: Layout {
+public protocol ViewContainable {
     var superview: UIView? { get }
     var view: UIView { get }
 }
 
-extension ViewContainableLayout {
+extension ViewContainable where Self: Layout {
     
     public func attachSuperview(_ superview: UIView?) {
         if let superview = superview {

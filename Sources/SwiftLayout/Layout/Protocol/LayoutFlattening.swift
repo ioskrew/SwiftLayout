@@ -38,7 +38,7 @@ extension LayoutFlattening where Self: Layout {
     }
 }
 
-extension LayoutFlattening where Self: ViewContainableLayout {
+extension LayoutFlattening where Self: ViewContainable, Self: Layout {
     var layoutViews: [UIView] {
         var views: [UIView] = [view]
         views.append(contentsOf: sublayouts.layoutViews)
