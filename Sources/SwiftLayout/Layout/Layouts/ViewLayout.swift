@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-public final class ViewLayout<L>: ViewContainableLayout where L: ContainableLayout {
+public final class ViewLayout<L>: ViewContainableLayout where L: Layout {
     
     internal init(view: UIView, layoutable: L) {
         self.view = view

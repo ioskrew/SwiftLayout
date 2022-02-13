@@ -9,13 +9,7 @@ import Foundation
 
 extension CustomDebugStringConvertible where Self: Layout {
     public var debugDescription: String {
-        "Layout"
-    }
-}
-
-extension CustomDebugStringConvertible where Self: ContainableLayout {
-    public var debugDescription: String {
-        "LayoutContains: [\(layouts.map(\.debugDescription).joined(separator: ", "))]"
+        "Layout: [\(layouts.map(\.debugDescription).joined(separator: ", "))]"
     }
 }
 

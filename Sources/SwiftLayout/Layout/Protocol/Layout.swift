@@ -9,6 +9,9 @@ import Foundation
 import UIKit
 
 public protocol Layout: CustomDebugStringConvertible {
+    
+    var layouts: [Layout] { get }
+    
     func prepareSuperview(_ superview: UIView?)
     func attachSuperview()
    
@@ -16,9 +19,11 @@ public protocol Layout: CustomDebugStringConvertible {
     func activeConstraints()
 }
 
-extension Layout {
+public extension Layout {
     
-    public func active() -> Deactivable {
+    var layouts: [Layout] { [] }
+    
+    func active() -> Deactivable {
         return Deactivation(self)
     }
     
@@ -27,6 +32,33 @@ extension Layout {
         prepareConstraints()
     }
     
+    func prepareSuperview(_ superview: UIView?) {
+        for layout in layouts {
+            layout.prepareSuperview(superview)
+        }
+    }
+    
+    func attachSuperview() {
+        for layout in layouts {
+            layout.attachSuperview()
+        }
+    }
+    
+    func prepareConstraints() {
+        for layout in layouts {
+            layout.prepareConstraints()
+        }
+    }
+    
+    func activeConstraints() {
+        for layout in layouts {
+            layout.activeConstraints()
+        }
+    }
+}
+
+extension Layout {
+    
     func flattening() -> LayoutFlattening? {
         prepare()
         return self as? LayoutFlattening
@@ -34,4 +66,9 @@ extension Layout {
     
 }
 
+extension Layout where Self: Collection, Element == Layout {
+    public var layouts: [Layout] { self.map({ $0 }) }
+}
+
 extension Array: Layout where Self.Element == Layout {}
+extension Set: Layout where Self.Element: Layout {}
