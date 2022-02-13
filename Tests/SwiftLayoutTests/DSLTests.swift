@@ -258,6 +258,7 @@ final class DSLTests: XCTestCase {
             }
         })
         
+        XCTAssertEqual(root.subviews.count, views.count)
         XCTAssertEqual(root.subviews, views)
     }
 }

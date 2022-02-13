@@ -10,7 +10,7 @@ import SwiftLayout
 import SwiftUI
 
 final class ViewController: UIViewController, LayoutBuilding {
-
+    
     var deactivatable: Deactivable?
     
     let red: UIView = {
@@ -28,17 +28,33 @@ final class ViewController: UIViewController, LayoutBuilding {
     }()
     
     var redUp = true {
-        didSet { updateLayout() }
+        didSet { updateLayout(animated: true) }
     }
     
-    lazy var button: UIButton = {
-        let button = UIButton(primaryAction: .init(title: "RED!!!!", handler: { [weak self] _ in
+    var button: UIButton {
+        let button = UIButton(primaryAction: .init(title: redUp ? "down" : "up", handler: { [weak self] _ in
             self?.redUp.toggle()
         }))
-        button.setTitleColor(.green, for: .normal)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 90)
+        button.setTitleColor(.white, for: .normal)
         return button
-    }()
+    }
+    
+    var nextButton: UIButton {
+        let button = UIButton(primaryAction: UIAction(title: "NEXT", handler: { [weak self] _ in
+            guard let self = self else { return }
+            let label = UILabel()
+            label.text = "HELLO"
+            self.navigationController?.pushViewController(LayoutHostingViewController({ view in
+                view {
+                    label.anchors {
+                        Anchors.center
+                    }
+                }
+            }), animated: true)
+        }))
+        button.setTitleColor(.white, for: .normal)
+        return button
+    }
     
     var layout: some Layout {
         view {
@@ -63,18 +79,7 @@ final class ViewController: UIViewController, LayoutBuilding {
                     Anchors.cap
                 }
             }.subviews {
-                UIButton(primaryAction: UIAction(title: "NEXT", handler: { [weak self] _ in
-                    guard let self = self else { return }
-                    let label = UILabel()
-                    label.text = "HELLO"
-                    self.navigationController?.pushViewController(LayoutHostingViewController({ view in
-                        view {
-                            label.anchors {
-                                Anchors.center
-                            }
-                        }
-                    }), animated: true)
-                })).anchors {
+                nextButton.anchors {
                     Anchors.center
                 }
             }
@@ -91,7 +96,7 @@ final class ViewController: UIViewController, LayoutBuilding {
         view.accessibilityIdentifier = "viewController"
         updateLayout()
     }
-
+    
 }
 
 extension Anchors {

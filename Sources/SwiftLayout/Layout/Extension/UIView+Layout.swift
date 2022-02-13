@@ -15,19 +15,13 @@ extension Layout where Self: UIView {
     }
     
     public func prepareSuperview(_ superview: UIView?) {}
-    public func attachSuperview(_ superview: UIView?) {
-        translatesAutoresizingMaskIntoConstraints = false
-        superview?.addSubview(self)
-    }
-    
     public func prepareConstraints() {}
-    public func activeConstraints() {}
     
 }
 
 extension UIView: Layout {
-    public var layoutViews: [UIView] {
-        [self]
+    public var layoutViews: [ViewPair] {
+        [.init(superview: nil, view: self)]
     }
     
     public var layoutConstraints: [NSLayoutConstraint] {
@@ -35,5 +29,11 @@ extension UIView: Layout {
     }
     
     public var sublayouts: [Layout] { [self] }
+    
+    public func animation() {
+        UIView.animate(withDuration: 0.25) { [weak self] in
+            self?.setNeedsLayout()
+        }
+    }
 }
 

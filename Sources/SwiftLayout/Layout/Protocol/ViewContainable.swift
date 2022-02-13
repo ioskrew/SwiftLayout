@@ -17,29 +17,30 @@ public protocol ViewContainable {
 
 extension Layout where Self: ViewContainable {
     
-    public var layoutViews: [UIView] {
-        [view] + sublayouts.flatMap(\.layoutViews)
+    public var layoutViews: [ViewPair] {
+        [.init(superview: superview, view: view)] + sublayouts.layoutViews.map({ pair in
+            if pair.superview == nil {
+                return pair.updatingSuperview(view)
+            } else {
+                return pair
+            }
+        })
     }
     
     public var layoutConstraints: [NSLayoutConstraint] {
-        sublayouts.flatMap(\.layoutConstraints)
+        sublayouts.layoutConstraints
     }
     
     public func prepareSuperview(_ superview: UIView?) {
         updateSuperview(superview)
-        for layout in sublayouts {
-            layout.prepareSuperview(view)
-        }
+        sublayouts.prepareSuperview(view)
     }
-  
-    public func attachSuperview(_ superview: UIView?) {
-        if let superview = superview {
-            view.translatesAutoresizingMaskIntoConstraints = false
-            superview.addSubview(view)
+    
+    public func animation() {
+        UIView.animate(withDuration: 0.25) {
+            view.setNeedsLayout()
         }
-        for layout in sublayouts {
-            layout.attachSuperview(view)
-        }
+        sublayouts.animation()
     }
     
 }
