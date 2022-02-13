@@ -19,6 +19,8 @@ public protocol Layout: CustomDebugStringConvertible {
     func prepareConstraints()
     
     func animation()
+    @discardableResult
+    func animationDisable() -> Self
 }
 
 extension Layout {
@@ -37,9 +39,16 @@ extension Layout {
         sublayouts.prepareConstraints()
     }
     
+    @discardableResult
+    public func animationDisable() -> Self {
+        sublayouts.animationDisable()
+        return self
+    }
+    
     public func animation() {
         sublayouts.animation()
     }
+    
 }
 
 extension Layout where Self: Collection, Element == Layout {
@@ -66,6 +75,14 @@ extension Array: Layout where Self.Element == Layout {
         for layout in sublayouts {
             layout.prepareConstraints()
         }
+    }
+    
+    @discardableResult
+    public func animationDisable() -> Array<Layout> {
+        for layout in sublayouts {
+            layout.animationDisable()
+        }
+        return self
     }
     
     public func animation() {

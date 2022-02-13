@@ -19,11 +19,14 @@ public final class ViewLayout {
     public let view: UIView
     public let sublayouts: [Layout]
     
-    private(set) public var isAnimationEnabled: Bool = false
-
     public func updateSuperview(_ superview: UIView?) {
         self.superview = superview
-        isAnimationEnabled = view.superview != nil
+    }
+    
+    private(set) public var animationDisabled: Bool = false
+    public func animationDisable() -> ViewLayout {
+        animationDisabled = true
+        return self
     }
 }
 

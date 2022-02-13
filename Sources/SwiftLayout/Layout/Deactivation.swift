@@ -58,8 +58,11 @@ final class Deactivation: Deactivable {
         NSLayoutConstraint.activate(layoutConstraints)
         constraints = newConstraints
         
-        if animated {
-            layout.animation()
+        if animated, let root = viewPairs.first(where: { $0.superview == nil })?.view {
+            UIView.animate(withDuration: 0.25) {
+                root.layoutIfNeeded()
+                layout.animation()
+            }
         }
     }
     
