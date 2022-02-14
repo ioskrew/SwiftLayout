@@ -12,7 +12,7 @@ extension Optional: Layout where Wrapped: Layout {
     
     public var sublayouts: [Layout] { self?.sublayouts ?? [] }
     
-    public var layoutViews: [ViewPair] { self?.layoutViews ?? [] }
+    public var layoutViews: [ViewInformation] { self?.layoutViews ?? [] }
     
     public var layoutConstraints: [NSLayoutConstraint] { self?.layoutConstraints ?? [] }
     

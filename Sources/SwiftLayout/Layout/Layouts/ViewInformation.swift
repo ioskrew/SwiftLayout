@@ -8,23 +8,26 @@
 import Foundation
 import UIKit
 
-public final class ViewPair: Hashable {
+public final class ViewInformation: Hashable {
     
-    public static func == (lhs: ViewPair, rhs: ViewPair) -> Bool {
+    public static func == (lhs: ViewInformation, rhs: ViewInformation) -> Bool {
         lhs.hashValue == rhs.hashValue
     }
     
-    public init(superview: UIView?, view: UIView?) {
+    public init(superview: UIView?, view: UIView?, identifier: String?) {
         self.superview = superview
         self.view = view
+        self.identifier = identifier
     }
     
     private(set) weak var superview: UIView?
     private(set) weak var view: UIView?
+    let identifier: String?
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(superview)
         hasher.combine(view)
+        hasher.combine(identifier)
     }
     
     func addSuperview() {
@@ -43,6 +46,6 @@ public final class ViewPair: Hashable {
     }
     
     func updatingSuperview(_ superview: UIView?) -> Self {
-        .init(superview: superview, view: view)
+        .init(superview: superview, view: view, identifier: identifier)
     }
 }
