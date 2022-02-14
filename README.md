@@ -1,131 +1,280 @@
 # SwiftLayout
 DSL library that implements hierarhcy of views and constraints declaratively
 
-## 문서
-- 테스트 케이스와 샘플만으로도 사용법을 배울 수 있도록 개선하고 있습니다.
+## requirements
 
-## 원칙
+---
 
-1. 사용자가 새로 배워야 하는 API는 최소한으로
-2. 가능한 기존 API와 인수등을 그대로 혹시 비슷하게 사용할 수 있도록
-   - constraint의 relation, multiplier, constant
-   - view의 hugging, compression등
-3. 코드는 최대한 단순하게
+- iOS 13+
+- Swift 5.4+
 
-## View, Constraint Hierarhcy DSL
+## installation
+
+---
+
+**SwiftLayout** supply **SPM** only
+
+```swift
+dependencies: [
+  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "1.0.0"),
+],
+```
+
+## usage
+
+---
+
+### superview and subviews
+
+DSL by @resultBuilder make easy allow relation of superview and subviews and autolayout constraints declaratively.
+
+```swift
+let root: UIView
+let red: UIView
+let blue: UIView
+
+// root.addSubview(red)
+root {
+  red
+}
+
+// root.addSubview(red)
+// root.addSubview(blue)
+root {
+  red
+  blue
+}
+
+// root.addSubview(red)
+// red.addSubview(blue)
+root {
+  red {
+    blue
+  }
+}
+```
+
+### constraints
+
+**Anchors** is declarative model of relation of constraints.
+
+- hiding attributes, is treated as having same attribute between two views. 
+- if only use **Anchors(...)**, that will make constraints with superview to second items.
+
+```swift
+let root: UIView
+let red: UIView
+
+root {
+  red.anchors {
+    // top, leading, trailing, bottom of red constraint attributes is equal to superview(root)
+    // 4 constraints of red firstItem and root secondItem are made by below codes.
+    Anchors(.top, .leading, .trailing, .bottom)
+    // or more specifically
+    Anchors(.top, .leading, .trailing, .bottom).equalTo(root)
+    // or individually
+    Anchors(.top) // Anchors(.top).equalTo(root) or Anchors(.top).equalTo(root, attribute: .top)
+    Anchors(.leading) // Anchors(.top).equalTo(root)
+    Anchors(.traliling) // Anchors(.top).equalTo(root)
+    Anchors(.equal) // Anchors(.top).equalTo(root)
+  }
+}
+```
+
+also you can make custom **Anchors** property
+
+```swift
+let root: UIView
+let red: UIView
+
+extension Anchors {
+  static var boundary: Anchors { .init(.top, .leading, .trailing, .bottom) }
+}
+
+root {
+  red.anchors {
+    Anchors.boundary // top and leading and trailing and bottom constraints of red has equal relation to same attributes of root view.
+  }
+}
+
+// or be able root view to red view relations like below
+
+root.anchors {
+  Anchors.boundary.equalTo(red)
+}.subviews { // subviews should be in LayoutBuilder in subviews function after anchors.
+  red
+}
+
+// two DSL declaration bring same result.
+```
+
+do you want red is up blue is down and same height? 
+
+good you can write like this.
+
 ```swift
 let root: UIView
 let red: UIView
 let blue: UIView
 root {
-    red.anchors {
-        if redUp {
-            Anchors(.top, .leading. trailing) // equal to root
-            Anchors(.bottom).equalTo(blue, attribute: .top) // equal to top of blue
-        } else {
-            Anchors(.leading, .trailing, .bottom) // equal to root
-            Anchors(.top).equalTo(blue, attribute: .bottom) // equal to bottom of blue
-        }
-        Anchors(.height).equalTo(blue, attribute: .height)
-    }.subviews {
-        button.anchors {
-            Anchors(.centerX, .centerY)
-        }
-    }
-    blue.anchors {
-        if redUp {
-            Anchors(.leading, .trailing, .bottom)
-        } else {
-            Anchors(.top, .leading, .trailing)
-        }
-    }
-}
-```
-- 각 DSL의 closure는 `Layout`의 구현타입을 반환하며, 해당 layoutable을 레퍼런스로 들고 있지 않으면 부모 자식 관계는 사라진다.
-
-## Preview
-
-LayoutBuilding을 구현하는 UIView 혹은 UIViewController 구현체는 SwiftUI의 preview를
-
-아래와 같이 간단하게 구현할 수 있습니다.
-
-```swift
-final class SomeView: UIView, LayoutBuilding { ... }
-/// for preview or using in SwiftUI
-extension SomeView: LayoutViewRepresentable {}
-
-struct SomeView_Previews: PreviewProvider {
-  SomeView(frame: .zero)
-  	.previewDevice(...)...
-}
-
-/// for UIViewController
-final class SomeViewController: UIViewController, LayoutBuilding { ... }
-/// for preview or using in SwiftUI
-extension SomeViewController: LayoutViewControllerRepresentable {}
-
-struct SomeViewController_Previews: PreviewProvider {
-  SomeViewController(nibName: nil, bundle: nil)
-  	.previewDevice(...)...
+  red.anchors {
+    Anchors(.top, .leading, .trailing)
+  }
+  blue.anchors {
+    Anchors(.leading, .trailing, .bottom)
+    Anchors(.top).equalTo(red, attribute: .bottom)
+    Anchors(.height).equalTo(red) // or Anchors(.height).equalTo(red, attribute: .height)
+  }
 }
 ```
 
+### view identifier
 
+Sometimes for a few reasons, you want the object may want to create a view directly, without containing the property of the view. 
 
-
-
-## Version
-
-### 0.1
-
-- View Add Subview의 DSL 추가
+in this case, **Anchors** cannot have constraint with variable name. so you cat allow string label to view.
 
 ```swift
-let parent: UIView
-let child: UIView
-// child.superview == parent
-parent {
-  child
+root {
+  RedLabel().identifiying("red").anchors {
+    Anchors.cap
+  }
+  blue.anchors {
+    Anchors.shoe
+    Anchors(.top).equalTo(red, attribute: .bottom)
+    Anchors(.height).equalTo("red")
+  }
 }
 ```
 
-### 0.2
-
-- layoutable의 계층은 LayoutTree로 표현하며, Layoutable의 active함수를 호출하면서 만들어진다
-
-- LayoutTree 인스턴스가 메모리에서 사라지면, 해당 계층구조가 들고 있는 모든 view가 superview로부터 제거된다. [^주1]
-
+you can also get view from **Deactivable**.
 
 ```swift
-let tree = root {
-	child
+let deactivable = root {
+  UILabel().identifying("red")
 }.active()
 
-// deinit tree or tree.deactive()
-// child.superview == nil
+let label = deactivable.viewForIdentifier("red") as? UILabel
 ```
 
-### 0.3
+### updating
 
-- LayoutTree구조를 명시적으로 만들지 않고, 각 구현 타입의 추상화된 관계를 통해 암묵적으로 구현한다.
+layouts can use conditional blocks.
 
-[^주1]: DSL 계층의 최상단의 뷰는 자기 자신을 superview로 부터 제거하지 않는다.
+```swift
+let showRed = true
+root {
+  if showRed {
+    red
+  } else {
+    blue
+  }
+}
+```
 
- ### 0.4
+### finally
 
- - UIView의 constraint 조합을 DSL로 구현한다. (어떻게 하징...?)
+```swift
+root {
+  red.anchors {
+    Anchors.boundary
+  }
+}
+```
 
-### 0.5
+in this time, DSL declaration is just structure of views and constraints. none of this added to superview or active of constraints.
 
-- Constraint 고도화
+you must call **active()** function for complete all this. and result of Deactivable should has retained.
 
-### 0.6
+```swift
+final class ViewController: UIViewController {
+  
+  let red = UIView()
+  
+  var deactivable: Deactivable?
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    deactivable = view { // view is that of ViewController
+ 			red.anchors {
+        Anchors.boundary // boundary is custom property in samples.
+      }     
+    }.active()
+  }
+}
+```
 
-- SwiftUI 피처 추가
-- constraint 활성화 개선
+release deactivable or call of deactivate?.deactive() make release all subviews and constraints.
 
-### 0.7
-- Anchors(Constraint) update
+protocol **LayoutBuilding** make easy to updating.
 
-### 0.9
-- hiding activation from out of library
+```swift
+final class ViewController: UIViewController, LayoutBuilding {
+
+  var showRed: Bool = true
+  let red: UIView
+  let blue: UIView
+  
+  
+  var deactivable: Deactivable?
+  
+  var layout: some Layout {
+    view {
+      if showRed {
+        red
+      } else {
+        blue
+      }
+    }
+  }
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    updateLayout() // updateLayout is procedure for active and call some apis
+    // or you can animation by below
+    updateLayout(animated: true)
+  }
+}
+```
+
+- call animationDisable() make that blocks to escape from animations.
+
+  ```swift
+  root {
+    red.anchors {
+      Anchors.boundary
+    }.animationDisable()
+  }
+  ```
+
+## preview
+
+**SwiftLayout** also providing an simple solution for preview of **SwiftUI**.
+
+If your view or view controller implement protocol of **LayoutBuilding**. you write like below.
+
+```swift
+class ViewController: UIViewController, LayoutBuilding {...}
+
+extension View[Controller]: LayoutView[Controller]Representable {} // more than this is not required.
+
+struct ViewController_Previews: PreviewProvider {
+  static var previews: some View {
+    ViewController() // and enable preview features like previewDevice
+  }
+}
+```
+
+### more features
+
+- greater than or equal, less than or equal
+- UILayoutGuide also possible assign to item
+
+```swift
+root {
+  red.anchors {
+    Anchors.boundary.eqaulTo(root.safeAreaLayoutGuide)
+  }
+}
+```
+
