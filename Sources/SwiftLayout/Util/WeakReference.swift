@@ -40,3 +40,15 @@ extension NSLayoutConstraint: CustomHashable {
         hasher.combine(priority)
     }
 }
+
+extension WeakReference: CustomDebugStringConvertible where O: NSLayoutConstraint {
+    var debugDescription: String {
+        guard let o = o else { return "WK constraint: unknown: \(UUID().uuidString)" }
+        guard let first = o.firstItem as? UIView else { return "WK constraint: unknown: \(UUID().uuidString)" }
+        if let second = o.secondItem as? UIView {
+            return "WK constraint: \(first.tagDescription) \(o.relation)[\(o.constant)x\(o.multiplier)] \(second.tagDescription)"
+        } else {
+            return "WK constraint: \(first.tagDescription) \(o.relation)[\(o.constant)x\(o.multiplier)]"
+        }
+    }
+}

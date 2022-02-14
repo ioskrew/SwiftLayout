@@ -12,7 +12,7 @@ public protocol Layout: CustomDebugStringConvertible {
     
     var sublayouts: [Layout] { get }
     
-    var layoutViews: [ViewPair] { get }
+    var layoutViews: [ViewInformation] { get }
     var layoutConstraints: [NSLayoutConstraint] { get }
     
     func prepareSuperview(_ superview: UIView?)
@@ -57,7 +57,7 @@ extension Layout where Self: Collection, Element == Layout {
 
 extension Array: Layout where Self.Element == Layout {
     
-    public var layoutViews: [ViewPair] {
+    public var layoutViews: [ViewInformation] {
         sublayouts.flatMap(\.layoutViews)
     }
     

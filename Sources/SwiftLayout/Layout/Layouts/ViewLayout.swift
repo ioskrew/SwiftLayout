@@ -20,7 +20,7 @@ public final class ViewLayout {
     public let view: UIView
     public let sublayouts: [Layout]
     
-    let identifier: String?
+    public let identifier: String?
     
     public func updateSuperview(_ superview: UIView?) {
         self.superview = superview

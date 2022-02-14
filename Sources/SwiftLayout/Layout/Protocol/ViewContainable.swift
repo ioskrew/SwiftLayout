@@ -12,14 +12,15 @@ public protocol ViewContainable {
     var superview: UIView? { get set }
     var view: UIView { get }
     var animationDisabled: Bool { get }
+    var identifier: String? { get }
     
     func updateSuperview(_ superview: UIView?)
 }
 
 extension Layout where Self: ViewContainable {
     
-    public var layoutViews: [ViewPair] {
-        [.init(superview: superview, view: view)] + sublayouts.layoutViews.map({ pair in
+    public var layoutViews: [ViewInformation] {
+        [.init(superview: superview, view: view, identifier: identifier)] + sublayouts.layoutViews.map({ pair in
             if pair.superview == nil {
                 return pair.updatingSuperview(view)
             } else {
