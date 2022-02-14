@@ -97,7 +97,7 @@ public final class Anchors: Constraint {
         var constraints: [NSLayoutConstraint] = []
         for item in items {
             let from = fromItem
-            let to = item.toItem(toItem)
+            let to = item.toItem(toItem, identifiers: identifiers)
             assert(to is UIView || to is UILayoutGuide || to == nil, "to: \(to.debugDescription) is not item")
             constraints.append(NSLayoutConstraint(item: from,
                                                   attribute: item.attribute,
@@ -142,12 +142,15 @@ public final class Anchors: Constraint {
         var constant: CGFloat = 0.0
         var multiplier: CGFloat = 1.0
         
-        func toItem(_ toItem: NSObject?) -> NSObject? {
+        func toItem(_ toItem: NSObject?, identifiers: ViewIdentifiers? = nil) -> NSObject? {
             guard toNeeds else { return .none }
-            if self.toItem == .none {
+            switch self.toItem {
+            case let .object(object):
+                return object
+            case let .identifier(identifier):
+                return identifiers?[identifier] ?? toItem
+            case .none:
                 return toItem
-            } else {
-                return self.toItem.object
             }
         }
         
@@ -163,10 +166,10 @@ public final class Anchors: Constraint {
         case none
         
         init(_ item: Any?) {
-            if let object = item as? NSObject {
-                self = .object(object)
-            } else if let string = item as? String {
+            if let string = item as? String {
                 self = .identifier(string)
+            } else if let object = item as? NSObject {
+                self = .object(object)
             } else {
                 self = .none
             }
