@@ -22,6 +22,9 @@ extension Layout where Self: UIView {
         return self
     }
     
+    public func identifying(_ identifier: String) -> ViewLayout {
+       ViewLayout(view: self, sublayouts: [], identifier: identifier)
+    }
 }
 
 extension UIView: Layout {

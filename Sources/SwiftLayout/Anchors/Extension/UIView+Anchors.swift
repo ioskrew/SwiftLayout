@@ -16,3 +16,13 @@ extension Layout where Self: UIView {
     
 }
 
+extension ViewLayout {
+    public func anchors<C>(@AnchorsBuilder _ anchors: () -> C) -> AnchorsLayout<C> where C: Constraint {
+        .init(superview: superview,
+              view: view,
+              constraint: anchors(),
+              sublayouts: sublayouts,
+              identifier: identifier,
+              animationDisabled: animationDisabled)
+    }
+}

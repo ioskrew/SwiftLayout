@@ -163,5 +163,16 @@ final class ImplementationTest: XCTestCase {
         XCTAssertEqual(view.friend.superview, root)
         XCTAssertNil(view.child.superview)
     }
+    
+    func testIdentifier() {
+        let root = UIView().viewTag.root
+        let deactivation = root {
+            UILabel().identifying("label").anchors {
+                Anchors.boundary
+            }
+        }.active() as? Deactivation
+        
+        XCTAssertNotNil(deactivation?.viewForIdentifier("label"))
+    }
 }
     

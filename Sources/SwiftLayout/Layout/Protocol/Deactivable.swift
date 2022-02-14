@@ -6,7 +6,9 @@
 //
 
 import Foundation
+import UIKit
 
 public protocol Deactivable {
     func deactive()
+    func viewForIdentifier(_ identifier: String) -> UIView?
 }
