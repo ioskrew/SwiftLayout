@@ -25,7 +25,7 @@ public protocol Layout: CustomDebugStringConvertible {
 
 extension Layout {
     
-    func active() -> Deactivable {
+    public func active() -> Deactivable {
         return Deactivation(self)
     }
     

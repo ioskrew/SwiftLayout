@@ -218,5 +218,21 @@ final class ImplementationTest: XCTestCase {
         XCTAssertEqual(Set(root.constraints.weakens), layout.constraintReferences)
     }
     
+    func testLayoutGuide() {
+        let root = UIView().viewTag.root
+        let child = UIView().viewTag.child
+        
+        let layout = root.anchors({
+            Anchors.boundary.equalTo(child.safeAreaLayoutGuide)
+        }).subviews {
+            child
+        }
+        
+        let deactivable = layout.active()
+        
+        print(root.constraints.weakens)
+        print(Anchors.boundary.constraints(item: root, toItem: child.safeAreaLayoutGuide).weakens)
+        XCTAssertEqual(root.constraints.weakens, Anchors.boundary.constraints(item: root, toItem: child.safeAreaLayoutGuide).weakens)
+    }
 }
     

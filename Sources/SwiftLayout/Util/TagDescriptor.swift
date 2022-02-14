@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-struct TagDescriptor<Value>: CustomDebugStringConvertible where Value: UIAccessibilityIdentification {
+struct TagDescriptor<Value>: CustomDebugStringConvertible where Value: TagDescriptable, Value: AnyObject {
     internal init(_ value: Value) {
         self.value = value
     }
@@ -29,14 +29,23 @@ struct TagDescriptor<Value>: CustomDebugStringConvertible where Value: UIAccessi
     
 }
 
-public protocol TagDescriptable: UIAccessibilityIdentification {}
+protocol TagDescriptable {
+    var accessibilityIdentifier: String? { get }
+}
 
-public extension TagDescriptable where Self: UIView {
-    
+extension TagDescriptable where Self: UIView {
+    var tagDescription: String {
+        TagDescriptor(self).debugDescription
+    }
+}
+
+extension TagDescriptable where Self: UILayoutGuide {
     var tagDescription: String {
         TagDescriptor(self).debugDescription
     }
     
+    var accessibilityIdentifier: String? { owningView?.accessibilityIdentifier }
 }
 
 extension UIView: TagDescriptable {}
+extension UILayoutGuide: TagDescriptable {}
