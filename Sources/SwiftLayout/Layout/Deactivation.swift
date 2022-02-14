@@ -10,8 +10,8 @@ import UIKit
 
 final class Deactivation: Deactivable {
     
-    private var viewPairs: Set<ViewPair> = []
-    private var constraints: Set<WeakReference<NSLayoutConstraint>> = []
+    var views: Set<ViewInformation> = []
+    var constraints: Set<WeakReference<NSLayoutConstraint>> = []
     
     init(_ layout: Layout) {
         updateLayout(layout)
@@ -33,7 +33,7 @@ final class Deactivation: Deactivable {
     }
     
     func deactiveViews() {
-        let views = viewPairs.compactMap(\.view)
+        let views = views.compactMap(\.view)
         for view in views {
             if views.contains(where: { $0 == view.superview }) {
                 view.removeFromSuperview()
@@ -45,20 +45,20 @@ final class Deactivation: Deactivable {
         let layout = layout.prepare()
         deactiveConstraints()
         let layoutViews = layout.layoutViews
-        let newViewPairs = Set(layoutViews)
-        for viewPair in viewPairs where !newViewPairs.contains(viewPair) {
-            viewPair.removeFromSuperview()
+        let newViews = Set(layoutViews)
+        for view in views where !newViews.contains(view) {
+            view.removeFromSuperview()
         }
-        for viewPair in layoutViews {
-            viewPair.addSuperview()
+        for view in layoutViews {
+            view.addSuperview()
         }
         let layoutConstraints = layout.layoutConstraints
         let newConstraints = layout.constraintReferences
-        viewPairs = newViewPairs
+        views = newViews
         NSLayoutConstraint.activate(layoutConstraints)
         constraints = newConstraints
         
-        if animated, let root = viewPairs.first(where: { $0.superview == nil })?.view {
+        if animated, let root = views.first(where: { $0.superview == nil })?.view {
             UIView.animate(withDuration: 0.25) {
                 root.layoutIfNeeded()
                 layout.animation()
@@ -67,7 +67,7 @@ final class Deactivation: Deactivable {
     }
     
     func viewForIdentifier(_ identifier: String) -> UIView? {
-        nil
+        views.first(where: { $0.identifier == identifier })?.view
     }
 }
 

@@ -11,6 +11,14 @@ import XCTest
 var deinitCount: Int = 0
 final class ImplementationTest: XCTestCase {
    
+    override func setUpWithError() throws {
+        continueAfterFailure = false
+    }
+    
+    override func tearDownWithError() throws {
+        
+    }
+    
     func testViewStrongReferenceCycle() {
                 
         class DeinitView: UIView {
@@ -165,14 +173,29 @@ final class ImplementationTest: XCTestCase {
     }
     
     func testIdentifier() {
+        let label = UILabel()
+        func create() -> UILabel {
+            label
+        }
         let root = UIView().viewTag.root
         let deactivation = root {
-            UILabel().identifying("label").anchors {
-                Anchors.boundary
+            create().identifying("label").anchors {
+                Anchors.cap
+            }
+            UIView().identifying("secondView").anchors {
+                Anchors.shoe
             }
         }.active() as? Deactivation
         
-        XCTAssertNotNil(deactivation?.viewForIdentifier("label"))
+        let labelByIdentifier = deactivation?.viewForIdentifier("label")
+        let secondViewByIdentifier = deactivation?.viewForIdentifier("secondView")
+        XCTAssertEqual(labelByIdentifier?.accessibilityIdentifier, "label")
+        XCTAssertEqual(secondViewByIdentifier?.accessibilityIdentifier, "secondView")
+        let currents = deactivation?.constraints ?? []
+        let labelConstraints = Set(Anchors.cap.constraints(item: labelByIdentifier!, toItem: root).map(WeakReference.init))
+        XCTAssertEqual(currents.intersection(labelConstraints), labelConstraints)
+        let secondViewConstraints = Set(Anchors.cap.constraints(item: labelByIdentifier!, toItem: root).map(WeakReference.init))
+        XCTAssertEqual(currents.intersection(secondViewConstraints), secondViewConstraints)
     }
 }
     

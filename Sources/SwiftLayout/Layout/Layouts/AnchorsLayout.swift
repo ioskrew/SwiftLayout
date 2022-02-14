@@ -28,7 +28,7 @@ public final class AnchorsLayout<C> where C: Constraint {
     public var sublayouts: [Layout] = []
     var constraints: [NSLayoutConstraint] = []
     
-    var identifier: String? = nil
+    public var identifier: String? = nil
     
     public func subviews(@LayoutBuilder _ build: () -> [Layout]) -> Self {
         sublayouts.append(contentsOf: build())

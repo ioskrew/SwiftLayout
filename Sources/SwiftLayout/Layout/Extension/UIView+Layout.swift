@@ -23,13 +23,14 @@ extension Layout where Self: UIView {
     }
     
     public func identifying(_ identifier: String) -> ViewLayout {
-       ViewLayout(view: self, sublayouts: [], identifier: identifier)
+        self.accessibilityIdentifier = identifier
+       return ViewLayout(view: self, sublayouts: [], identifier: identifier)
     }
 }
 
 extension UIView: Layout {
-    public var layoutViews: [ViewPair] {
-        [.init(superview: nil, view: self)]
+    public var layoutViews: [ViewInformation] {
+        [.init(superview: nil, view: self, identifier: accessibilityIdentifier)]
     }
     
     public var layoutConstraints: [NSLayoutConstraint] {
