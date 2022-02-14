@@ -78,11 +78,9 @@ final class ViewController: UIViewController, LayoutBuilding {
                 } else {
                     Anchors.cap
                 }
+                Anchors.center.equalTo("next")
             }.subviews {
-                nextButton.anchors {
-                    Anchors.center
-                }
-                .animationDisable()
+                nextButton.identifying("next").animationDisable()
             }
         }
     }
