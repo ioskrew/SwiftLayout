@@ -16,7 +16,7 @@ public protocol Layout: CustomDebugStringConvertible {
     var layoutConstraints: [NSLayoutConstraint] { get }
     
     func prepareSuperview(_ superview: UIView?)
-    func prepareConstraints()
+    func prepareConstraints(_ identifiers: ViewIdentifiers)
     
     func animation()
     @discardableResult
@@ -31,12 +31,12 @@ extension Layout {
     
     func prepare() -> Self {
         prepareSuperview(nil)
-        prepareConstraints()
+        prepareConstraints(ViewIdentifiers(views: Set(layoutViews)))
         return self
     }
    
-    public func prepareConstraints() {
-        sublayouts.prepareConstraints()
+    public func prepareConstraints(_ identifiers: ViewIdentifiers) {
+        sublayouts.prepareConstraints(identifiers)
     }
     
     @discardableResult
@@ -71,9 +71,9 @@ extension Array: Layout where Self.Element == Layout {
         }
     }
     
-    public func prepareConstraints() {
+    public func prepareConstraints(_ identifiers: ViewIdentifiers) {
         for layout in sublayouts {
-            layout.prepareConstraints()
+            layout.prepareConstraints(identifiers)
         }
     }
     

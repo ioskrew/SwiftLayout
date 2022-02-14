@@ -52,9 +52,9 @@ extension AnchorsLayout: Layout, ViewContainable {
         constraints + sublayouts.layoutConstraints
     }
     
-    public func prepareConstraints() {
-        self.constraints = constraint.constraints(item: view, toItem: superview)
-        sublayouts.prepareConstraints()
+    public func prepareConstraints(_ identifiers: ViewIdentifiers) {
+        self.constraints = constraint.constraints(item: view, toItem: superview, identifiers: identifiers)
+        sublayouts.prepareConstraints(identifiers)
     }
     
 }

@@ -183,6 +183,7 @@ final class ImplementationTest: XCTestCase {
                 Anchors.cap
             }
             UIView().identifying("secondView").anchors {
+                Anchors(.top).equalTo("label", attribute: .bottom)
                 Anchors.shoe
             }
         }.active() as? Deactivation
@@ -192,10 +193,13 @@ final class ImplementationTest: XCTestCase {
         XCTAssertEqual(labelByIdentifier?.accessibilityIdentifier, "label")
         XCTAssertEqual(secondViewByIdentifier?.accessibilityIdentifier, "secondView")
         let currents = deactivation?.constraints ?? []
-        let labelConstraints = Set(Anchors.cap.constraints(item: labelByIdentifier!, toItem: root).map(WeakReference.init))
+        let labelConstraints = Set(Anchors.cap.constraints(item: labelByIdentifier!, toItem: root).weakens)
         XCTAssertEqual(currents.intersection(labelConstraints), labelConstraints)
-        let secondViewConstraints = Set(Anchors.cap.constraints(item: labelByIdentifier!, toItem: root).map(WeakReference.init))
+        let secondViewConstraints = Set(Anchors.cap.constraints(item: labelByIdentifier!, toItem: root).weakens)
         XCTAssertEqual(currents.intersection(secondViewConstraints), secondViewConstraints)
+        
+        let constraintsBetweebViews = Set(Anchors(.top).equalTo(labelByIdentifier!, attribute: .bottom).constraints(item: secondViewByIdentifier!, toItem: labelByIdentifier).weakens)
+        XCTAssertEqual(currents.intersection(constraintsBetweebViews), constraintsBetweebViews)
     }
 }
     
