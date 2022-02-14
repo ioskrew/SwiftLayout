@@ -11,20 +11,20 @@ import UIKit
 public final class Anchors: Constraint {
     
     public convenience init(_ attributes: NSLayoutConstraint.Attribute...) {
-        let items = attributes.map { Anchors.Item(attribute: $0) }
+        let items = attributes.map { Anchors.Constraint(attribute: $0) }
         self.init(items: items)
     }
     
     public convenience init(_ attributes: [NSLayoutConstraint.Attribute]) {
-        let items = attributes.map { Anchors.Item(attribute: $0) }
+        let items = attributes.map { Anchors.Constraint(attribute: $0) }
         self.init(items: items)
     }
     
-    internal init(items: [Anchors.Item] = []) {
+    internal init(items: [Anchors.Constraint] = []) {
         self.items = items
     }
     
-    var items: [Item] = []
+    var items: [Constraint] = []
     
     public func setConstant(_ constant: CGFloat) -> Self {
         for i in 0..<items.count {
@@ -33,8 +33,8 @@ public final class Anchors: Constraint {
         return self
     }
     
-    private func to(_ relation: NSLayoutConstraint.Relation, to: To) -> Self {
-        func update(_ updateItem: Item) -> Item {
+    public func to(_ relation: NSLayoutConstraint.Relation, to: To) -> Self {
+        func update(_ updateItem: Constraint) -> Constraint {
             var updateItem = updateItem
             updateItem.relation = relation
             updateItem.toItem = to.item
@@ -48,27 +48,31 @@ public final class Anchors: Constraint {
         return self
     }
     
-    public func equalTo(_ toItem: NSObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil) -> Self {
+    public func equalTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute? = nil) -> Self where I: ConstraintItem {
         to(.equal, to: .init(item: toItem, attribute: attribute, constant: .zero))
     }
     
-    public func greaterThanOrEqualTo(_ toItem: NSObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil) -> Self {
+    public func greaterThanOrEqualTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute? = nil) -> Self where I: ConstraintItem {
         to(.greaterThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: .zero))
     }
     
-    public func lessThanOrEqualTo(_ toItem: NSObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil) -> Self {
+    public func lessThanOrEqualTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute? = nil) -> Self where I: ConstraintItem {
         to(.lessThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: .zero))
     }
     
-    public func equalTo(_ toItem: NSObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil, constant: CGFloat) -> Self {
+    public func equalTo<I>(_ toItem: I?, attribute: NSLayoutConstraint.Attribute? = nil, constant: CGFloat) -> Self where I: ConstraintItem {
         to(.equal, to: .init(item: toItem, attribute: attribute, constant: constant))
     }
     
-    public func greaterThanOrEqualTo(_ toItem: NSObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil, constant: CGFloat) -> Self {
+    public func equalTo(constant: CGFloat) -> Self {
+        to(.equal, to: .init(attribute: nil, constant: constant))
+    }
+    
+    public func greaterThanOrEqualTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute? = nil, constant: CGFloat) -> Self where I: ConstraintItem {
         to(.greaterThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: constant))
     }
     
-    public func lessThanOrEqualTo(_ toItem: NSObject? = nil, attribute: NSLayoutConstraint.Attribute? = nil, constant: CGFloat) -> Self {
+    public func lessThanOrEqualTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute? = nil, constant: CGFloat) -> Self where I: ConstraintItem {
         to(.lessThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: constant))
     }
     
@@ -86,29 +90,45 @@ public final class Anchors: Constraint {
         return constraints
     }
     
-    private struct To {
-        let item: NSObject?
+    public struct To {
+        public init<I>(item: I, attribute: NSLayoutConstraint.Attribute?, constant: CGFloat) where I: ConstraintItem {
+            self.item = item.item
+            self.attribute = attribute
+            self.constant = constant
+        }
+        
+        public init(attribute: NSLayoutConstraint.Attribute?, constant: CGFloat) {
+            self.item = .none
+            self.attribute = attribute
+            self.constant = constant
+        }
+        
+        let item: Item
         let attribute: NSLayoutConstraint.Attribute?
         let constant: CGFloat
         
         var toNeeds: Bool {
-            item != nil || attribute != nil
+            item != .none || attribute != nil
         }
     }
     
-    struct Item: Hashable {
+    struct Constraint: Hashable {
         var attribute: NSLayoutConstraint.Attribute
         var relation: NSLayoutConstraint.Relation = .equal
         var toNeeds: Bool = true
-        var toItem: NSObject?
+        var toItem: Item = .none
         var toAttribute: NSLayoutConstraint.Attribute?
         
         var constant: CGFloat = 0.0
         var multiplier: CGFloat = 1.0
         
         func toItem(_ toItem: NSObject?) -> NSObject? {
-            guard toNeeds else { return nil }
-            return self.toItem ?? toItem
+            guard toNeeds else { return .none }
+            if self.toItem == .none {
+                return toItem
+            } else {
+                return self.toItem.object
+            }
         }
         
         func toAttribute(_ attribute: NSLayoutConstraint.Attribute) -> NSLayoutConstraint.Attribute {
@@ -117,4 +137,63 @@ public final class Anchors: Constraint {
         }
     }
     
+    public enum Item: Hashable {
+        case object(NSObject)
+        case identifier(String)
+        case none
+        
+        init(_ item: Any?) {
+            if let object = item as? NSObject {
+                self = .object(object)
+            } else if let string = item as? String {
+                self = .identifier(string)
+            } else {
+                self = .none
+            }
+        }
+        
+        var object: NSObject? {
+            switch self {
+            case let .object(object):
+                return object
+            default:
+                return nil
+            }
+        }
+    }
+}
+
+public protocol ConstraintItem {
+    
+    var item: Anchors.Item { get }
+    
+}
+
+extension UIView: ConstraintItem {
+    public var item: Anchors.Item {
+        .init(self)
+    }
+}
+
+extension UILayoutGuide: ConstraintItem {
+    public var item: Anchors.Item {
+        .init(self)
+    }
+}
+
+extension String: ConstraintItem {
+    public var item: Anchors.Item {
+        .init(self)
+    }
+}
+
+extension Optional: ConstraintItem where Wrapped: ConstraintItem {
+    public var item: Anchors.Item {
+        switch self {
+        case let .some(item):
+            return .init(item)
+        case .none:
+            return .none
+        }
+    }
 }
