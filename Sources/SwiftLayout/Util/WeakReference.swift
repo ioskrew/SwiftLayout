@@ -47,6 +47,8 @@ extension WeakReference: CustomDebugStringConvertible where O: NSLayoutConstrain
         guard let first = o.firstItem as? UIView else { return "WK constraint: unknown: \(UUID().uuidString)" }
         if let second = o.secondItem as? UIView {
             return "WK constraint: \(first.tagDescription) \(o.relation)[\(o.constant)x\(o.multiplier)] \(second.tagDescription)"
+        } else if let second = o.secondItem as? UILayoutGuide {
+            return "WK constraint: \(first.tagDescription) \(o.relation)[\(o.constant)x\(o.multiplier)] \(second.tagDescription)"
         } else {
             return "WK constraint: \(first.tagDescription) \(o.relation)[\(o.constant)x\(o.multiplier)]"
         }
