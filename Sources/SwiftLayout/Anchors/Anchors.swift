@@ -79,10 +79,30 @@ public final class Anchors: Constraint {
     public func constraints(item fromItem: NSObject, toItem: NSObject?) -> [NSLayoutConstraint] {
         var constraints: [NSLayoutConstraint] = []
         for item in items {
-            constraints.append(NSLayoutConstraint(item: fromItem,
+            let from = fromItem
+            let to = item.toItem(toItem)
+            assert(to is UIView || to is UILayoutGuide || to == nil, "to: \(to.debugDescription) is not item")
+            constraints.append(NSLayoutConstraint(item: from,
                                                   attribute: item.attribute,
                                                   relatedBy: item.relation,
-                                                  toItem: item.toItem(toItem),
+                                                  toItem: to,
+                                                  attribute: item.toAttribute(item.attribute),
+                                                  multiplier: item.multiplier,
+                                                  constant: item.constant))
+        }
+        return constraints
+    }
+    
+    public func constraints(item fromItem: NSObject, toItem: NSObject?, identifiers: ViewIdentifiers) -> [NSLayoutConstraint] {
+        var constraints: [NSLayoutConstraint] = []
+        for item in items {
+            let from = fromItem
+            let to = item.toItem(toItem)
+            assert(to is UIView || to is UILayoutGuide || to == nil, "to: \(to.debugDescription) is not item")
+            constraints.append(NSLayoutConstraint(item: from,
+                                                  attribute: item.attribute,
+                                                  relatedBy: item.relation,
+                                                  toItem: to,
                                                   attribute: item.toAttribute(item.attribute),
                                                   multiplier: item.multiplier,
                                                   constant: item.constant))

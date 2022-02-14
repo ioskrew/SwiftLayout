@@ -15,7 +15,7 @@ extension Layout where Self: UIView {
     }
     
     public func prepareSuperview(_ superview: UIView?) {}
-    public func prepareConstraints() {}
+    public func prepareConstraints(_ identifiers: ViewIdentifiers) {}
     
     public func animationDisable() -> Self {
         layer.removeAllAnimations()

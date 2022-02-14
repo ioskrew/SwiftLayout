@@ -20,8 +20,8 @@ extension Optional: Layout where Wrapped: Layout {
         self?.prepareSuperview(superview)
     }
     
-    public func prepareConstraints() {
-        self?.prepareConstraints()
+    public func prepareConstraints(_ identifiers: ViewIdentifiers) {
+        self?.prepareConstraints(identifiers)
     }
     
 }

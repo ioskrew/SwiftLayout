@@ -10,6 +10,8 @@ import UIKit
 
 final class Deactivation: Deactivable {
     
+    let uuid = UUID()
+    
     var views: Set<ViewInformation> = []
     var constraints: Set<WeakReference<NSLayoutConstraint>> = []
     
@@ -73,6 +75,16 @@ final class Deactivation: Deactivable {
 
 extension Layout {
     var constraintReferences: Set<WeakReference<NSLayoutConstraint>> {
-        Set(layoutConstraints.map(WeakReference.init))
+        Set(layoutConstraints.weakens)
     }
+}
+
+public struct ViewIdentifiers {
+    
+    let views: Set<ViewInformation>
+    
+    subscript(_ identifier: String) -> UIView? {
+        views.first(where: { $0.identifier == identifier })?.view
+    }
+    
 }
