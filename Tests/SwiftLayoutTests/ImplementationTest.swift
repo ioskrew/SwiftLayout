@@ -201,5 +201,22 @@ final class ImplementationTest: XCTestCase {
         let constraintsBetweebViews = Set(Anchors(.top).equalTo(labelByIdentifier!, attribute: .bottom).constraints(item: secondViewByIdentifier!, toItem: labelByIdentifier).weakens)
         XCTAssertEqual(currents.intersection(constraintsBetweebViews), constraintsBetweebViews)
     }
+    
+    func testIdentifierAnchor() {
+        let root = UIView().viewTag.root
+        let layout = root.anchors({
+            Anchors.boundary.equalTo("label")
+        }).subviews {
+            UILabel().identifying("label")
+        }
+        let deactivation = layout.active()
+        
+        let label = deactivation.viewForIdentifier("label")
+        
+        XCTAssertNotNil(label)
+        
+        XCTAssertEqual(Set(root.constraints.weakens), layout.constraintReferences)
+    }
+    
 }
     
