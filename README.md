@@ -1,4 +1,4 @@
-<ima src="https://user-images.githubusercontent.com/3011832/153901771-76232ed4-da49-4d6a-b9d8-321b09534eb8.png" alt="SwiftLayout Logo" height="70" >
+<ima src="https://user-images.githubusercontent.com/3011832/153902462-d955fd40-3e02-4781-b000-3e1d489efc14.svg" alt="SwiftLayout Logo" height="70" >
 
 # SwiftLayout
 DSL library that implements hierarhcy of views and constraints declaratively
