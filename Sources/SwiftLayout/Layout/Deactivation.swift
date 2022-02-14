@@ -66,6 +66,9 @@ final class Deactivation: Deactivable {
         }
     }
     
+    func viewForIdentifier(_ identifier: String) -> UIView? {
+        nil
+    }
 }
 
 extension Layout {
