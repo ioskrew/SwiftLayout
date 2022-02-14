@@ -52,3 +52,9 @@ extension WeakReference: CustomDebugStringConvertible where O: NSLayoutConstrain
         }
     }
 }
+
+extension Collection where Element: CustomHashable {
+    var weakens: [WeakReference<Element>] {
+        map(WeakReference.init)
+    }
+}
