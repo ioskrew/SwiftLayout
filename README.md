@@ -132,7 +132,7 @@ root {
 
 Sometimes for a few reasons, you want the object may want to create a view directly, without containing the property of the view. 
 
-in this case, **Anchors** cannot have constraint with variable name. so you cat allow string label to view.
+in this case, **Anchors** cannot have constraint with variable name. so you can allow string label to view.
 
 ```swift
 root {
