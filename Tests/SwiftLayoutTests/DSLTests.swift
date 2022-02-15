@@ -333,6 +333,58 @@ final class DSLTests: XCTestCase {
         
         XCTAssertEqual(child.bounds.size, .init(width: 80, height: 80))
     }
+    
+    func testAnchorsOfDimensionToItem3() {
+        let root = UIView().viewTag.root
+        let child1 = UIView().viewTag.child2
+        let child2 = UIView().viewTag.child2
+        
+        let deactivable = root {
+            child1.anchors {
+                Anchors(.top, .trailing, .bottom)
+                Anchors(.width, .height).equalTo(constant: 80)
+            }
+            child2.anchors {
+                Anchors(.trailing).equalTo(child1, attribute: .leading)
+                Anchors(.top, .bottom)
+                Anchors(.width, .height).equalTo(constant: 80)
+            }
+        }.active()
+        
+        XCTAssertEqual(root.constraints.count, 6)
+        XCTAssertEqual(child1.constraints.count, 2)
+        XCTAssertEqual(child2.constraints.count, 2)
+        
+        root.frame = .init(origin: .zero, size: .init(width: 200, height: 80))
+        root.setNeedsLayout()
+        root.layoutIfNeeded()
+        
+        XCTAssertEqual(child1.frame.origin, .init(x: 120, y: 0))
+        XCTAssertEqual(child1.bounds.size, .init(width: 80, height: 80))
+        
+        XCTAssertEqual(child2.frame.origin, .init(x: 40, y: 0))
+        XCTAssertEqual(child1.bounds.size, .init(width: 80, height: 80))
+    }
+    
+    func testAnchorsOfDimensionToItem4() {
+        let root = UIView().viewTag.root
+        let child = UIView().viewTag.child
+        
+        let deactivable = root {
+            child.anchors {
+                Anchors(.top, .leading).equalTo(constant: 20)
+                Anchors(.trailing, .bottom).equalTo(constant: -20)
+            }
+        }.active()
+        
+        XCTAssertEqual(root.constraints.count, 4)
+        
+        root.frame = .init(origin: .zero, size: .init(width: 100, height: 100))
+        root.setNeedsLayout()
+        root.layoutIfNeeded()
+        print(root.constraints)
+        XCTAssertEqual(child.frame.size, .init(width: 60, height: 60))
+    }
 }
 
 extension Anchors {
