@@ -148,7 +148,7 @@ root {
   }
   blue.anchors {
     Anchors.shoe
-    Anchors(.top).equalTo(red, attribute: .bottom)
+    Anchors(.top).equalTo("red", attribute: .bottom)
     Anchors(.height).equalTo("red")
   }
 }
