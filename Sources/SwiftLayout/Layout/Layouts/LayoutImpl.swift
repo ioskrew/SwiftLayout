@@ -28,7 +28,7 @@ public final class LayoutImpl: Layout {
     
     let view: UIView
     
-    private(set) var superlayout: LayoutImpl?
+    private(set) weak var superlayout: LayoutImpl?
     private(set) var sublayouts: [LayoutImpl] = []
     private(set) var constraints: [Constraint] = []
     
