@@ -43,18 +43,18 @@ final class DSLTests: XCTestCase {
         })
         
         XCTAssertTrue(root.translatesAutoresizingMaskIntoConstraints)
-        view.deactivatable?.deactive()
+        view.deactivable?.deactive()
         
         XCTAssertEqual(root.superview, old)
     }
     
     func testAnchors() {
      
-        view = LayoutHostingView(root {
+        let deact = root {
             red.anchors {
                 Anchors.boundary
             }
-        })
+        }.active()
         
         XCTAssertEqual(red.superview, root)
         for attribute in [NSLayoutConstraint.Attribute.top, .leading, .trailing, .bottom] {
@@ -262,6 +262,37 @@ final class DSLTests: XCTestCase {
         XCTAssertEqual(root.subviews, views)
     }
     
+    func testEither() {
+        let root = UIView().viewTag.root
+        let friendA = UIView().viewTag.friendA
+        let friendB = UIView().viewTag.friendB
+        
+        var chooseA = true
+        var deactivable = root {
+            if chooseA {
+                friendA
+            } else {
+                friendB
+            }
+        }.active()
+        
+        XCTAssertEqual(friendA.superview, root)
+        XCTAssertNotEqual(friendB.superview, root)
+        
+        chooseA = false
+        
+        deactivable = root {
+            if chooseA {
+                friendA
+            } else {
+                friendB
+            }
+        }.active()
+        
+        XCTAssertNotEqual(friendA.superview, root)
+        XCTAssertEqual(friendB.superview, root)
+    }
+    
 }
 
 extension Anchors {
@@ -300,7 +331,7 @@ class LayoutHostingView<Content>: UIView, LayoutBuilding where Content: Layout {
         content
     }
     
-    var deactivatable: Deactivable?
+    var deactivable: Deactivable?
     
     init(_ _content: Content) {
         content = _content

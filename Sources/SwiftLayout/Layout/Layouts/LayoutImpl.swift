@@ -18,14 +18,19 @@ public final class LayoutImpl: Layout {
         self.view = view
         self.superlayout = superlayout
         self.sublayouts = sublayouts
+        self.constraints = constraints
         self.identifier = identifier
+        
+        sublayouts.forEach { impl in
+            impl.superlayout = self
+        }
     }
     
     let view: UIView
     
-    var superlayout: LayoutImpl?
-    var sublayouts: [LayoutImpl] = []
-    var constraints: [Constraint] = []
+    private(set) var superlayout: LayoutImpl?
+    private(set) var sublayouts: [LayoutImpl] = []
+    private(set) var constraints: [Constraint] = []
     
     var identifier: String?
     
@@ -39,14 +44,23 @@ public final class LayoutImpl: Layout {
         }
     }
     
-    var viewInformations: [ViewInformation] {
-        return [ViewInformation(superview: superlayout?.view, view: view, identifier: identifier, animationDisabled: animationDisabled)]
-        + sublayouts.map { sublayout in
-            return ViewInformation(superview: view, view: sublayout.view, identifier: sublayout.identifier, animationDisabled: sublayout.animationDisabled)
+    func appendSublayouts(_ sublayouts: [LayoutImpl]) {
+        sublayouts.forEach { impl in
+            impl.superlayout = self
         }
+        self.sublayouts.append(contentsOf: sublayouts)
     }
     
-    func viewConstraints(_ identifiers: ViewIdentifiers) -> [NSLayoutConstraint] {
+    func appendConstraints(_ constraints: [Constraint]) {
+        self.constraints.append(contentsOf: constraints)
+    }
+    
+    var viewInformations: [ViewInformation] {
+        return [ViewInformation(superview: superlayout?.view, view: view, identifier: identifier, animationDisabled: animationDisabled)]
+        + sublayouts.flatMap(\.viewInformations)
+    }
+    
+    func viewConstraints(_ identifiers: ViewIdentifiers? = nil) -> [NSLayoutConstraint] {
         return self.constraints.flatMap({ constraint in
             constraint.constraints(item: view, toItem: superlayout?.view, identifiers: identifiers)
         }) + sublayouts.flatMap({ impl in

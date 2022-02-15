@@ -10,7 +10,15 @@ import Foundation
 @resultBuilder
 public struct LayoutBuilder {
     public static func buildBlock(_ components: Layout...) -> [Layout] {
-        components
+        var layouts: [Layout] = []
+        for layout in components {
+            if let layoutArray = layout as? [Layout] {
+                layouts.append(contentsOf: layoutArray)
+            } else {
+                layouts.append(layout)
+            }
+        }
+        return layouts
     }
     public static func buildArray(_ components: [[Layout]]) -> [Layout] {
         components.flatMap({ $0 })
