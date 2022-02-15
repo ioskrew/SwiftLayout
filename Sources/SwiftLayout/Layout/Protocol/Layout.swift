@@ -95,3 +95,5 @@ extension Layout where Self: LayoutImpl {
 extension UIView: Layout {}
 
 extension Array: Layout where Element == Layout {}
+
+extension Optional: Layout where Wrapped: Layout {}
