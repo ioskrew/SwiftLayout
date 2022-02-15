@@ -75,4 +75,50 @@ class AnchorsTests: XCTestCase {
         }
     }
     
+    func testSelfContraint() {
+        let superview = UIView().viewTag.superview
+        let subview = UIView().viewTag.subview
+        
+        let constraint = subview.widthAnchor.constraint(equalToConstant: 24)
+        
+        XCTAssertEqual(constraint.firstItem as? NSObject, subview)
+        XCTAssertNil(constraint.secondItem)
+        XCTAssertEqual(constraint.firstAttribute, .width)
+        XCTAssertEqual(constraint.secondAttribute, .notAnAttribute)
+        XCTAssertEqual(constraint.constant, 24)
+        
+        let anchor = Anchors(.width).equalTo(constant: 24).constraints(item: subview, toItem: superview).first!
+        
+        XCTAssertEqual(anchor.firstItem as? NSObject, subview)
+        XCTAssertNil(anchor.secondItem)
+        XCTAssertEqual(anchor.firstAttribute, .width)
+        XCTAssertEqual(anchor.secondAttribute, .notAnAttribute)
+        XCTAssertEqual(anchor.constant, 24)
+        
+        anchor.isActive = true
+        
+        print(subview.systemLayoutSizeFitting(.init(width: 0, height: 0)))
+    }
+    
+    func testAnchorsBuilder() {
+        func build(@AnchorsBuilder _ build: () -> [Constraint]) -> [Constraint] {
+            build()
+        }
+        
+        let anchors: some Constraint = build {
+            Anchors(.top).equalTo(constant: 12.0)
+            Anchors(.leading).equalTo(constant: 13.0)
+            Anchors(.trailing).equalTo(constant: -13.0)
+            Anchors(.bottom)
+        }
+        
+        let root = UIView().viewTag.root
+        let child = UIView().viewTag.child
+        child.translatesAutoresizingMaskIntoConstraints = false
+        root.addSubview(child)
+        
+        let constraint = anchors.constraints(item: child, toItem: root)
+        XCTAssertEqual(constraint.count, 4)
+    }
+    
 }

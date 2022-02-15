@@ -40,7 +40,6 @@ public final class Anchors: Constraint {
             updateItem.toItem = to.item
             updateItem.toAttribute = to.attribute
             updateItem.constant = to.constant
-            updateItem.toNeeds = to.toNeeds
             return updateItem
         }
         
@@ -65,7 +64,7 @@ public final class Anchors: Constraint {
     }
     
     public func equalTo(constant: CGFloat) -> Self {
-        to(.equal, to: .init(attribute: nil, constant: constant))
+        to(.equal, to: .init(item: .deny, attribute: nil, constant: constant))
     }
     
     public func greaterThanOrEqualTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute? = nil, constant: CGFloat) -> Self where I: ConstraintableItem {
@@ -81,7 +80,6 @@ public final class Anchors: Constraint {
         for item in items {
             let from = fromItem
             let to = item.toItem(toItem)
-            guard validation(item.attribute, toItem: to) else { continue }
             assert(to is UIView || to is UILayoutGuide || to == nil, "to: \(to.debugDescription) is not item")
             constraints.append(NSLayoutConstraint(item: from,
                                                   attribute: item.attribute,
@@ -99,7 +97,6 @@ public final class Anchors: Constraint {
         for item in items {
             let from = fromItem
             let to = item.toItem(toItem, identifiers: identifiers)
-            guard validation(item.attribute, toItem: to) else { continue }
             assert(to is UIView || to is UILayoutGuide || to == nil, "to: \(to.debugDescription) is not item")
             constraints.append(NSLayoutConstraint(item: from,
                                                   attribute: item.attribute,
@@ -112,15 +109,6 @@ public final class Anchors: Constraint {
         return constraints
     }
     
-    private func validation(_ attribute: NSLayoutConstraint.Attribute, toItem: NSObject?) -> Bool {
-        switch attribute {
-        case .width, .height:
-            return true
-        default:
-            return toItem != nil
-        }
-    }
-    
     public struct To {
         public init<I>(item: I?, attribute: NSLayoutConstraint.Attribute?, constant: CGFloat) where I: ConstraintableItem {
             self.item = ItemFromView(item).item
@@ -128,8 +116,8 @@ public final class Anchors: Constraint {
             self.constant = constant
         }
         
-        public init(attribute: NSLayoutConstraint.Attribute?, constant: CGFloat) {
-            self.item = .none
+        public init(item: Item = .transparent, attribute: NSLayoutConstraint.Attribute?, constant: CGFloat) {
+            self.item = item
             self.attribute = attribute
             self.constant = constant
         }
@@ -137,36 +125,36 @@ public final class Anchors: Constraint {
         let item: Item
         let attribute: NSLayoutConstraint.Attribute?
         let constant: CGFloat
-        
-        var toNeeds: Bool {
-            item != .none || attribute != nil
-        }
     }
     
     struct Constraint: Hashable {
         var attribute: NSLayoutConstraint.Attribute
         var relation: NSLayoutConstraint.Relation = .equal
-        var toNeeds: Bool = true
-        var toItem: Item = .none
+        var toItem: Item = .transparent
         var toAttribute: NSLayoutConstraint.Attribute?
         
         var constant: CGFloat = 0.0
         var multiplier: CGFloat = 1.0
         
         func toItem(_ toItem: NSObject?, identifiers: ViewIdentifiers? = nil) -> NSObject? {
-            guard toNeeds else { return .none }
             switch self.toItem {
             case let .object(object):
                 return object
             case let .identifier(identifier):
                 return identifiers?[identifier] ?? toItem
-            case .none:
+            case .transparent:
                 return toItem
+            case .deny:
+                switch attribute {
+                case .width, .height:
+                    return nil
+                default:
+                    return toItem
+                }
             }
         }
         
         func toAttribute(_ attribute: NSLayoutConstraint.Attribute) -> NSLayoutConstraint.Attribute {
-            guard toNeeds else { return .notAnAttribute }
             return toAttribute ?? attribute
         }
     }
@@ -174,7 +162,8 @@ public final class Anchors: Constraint {
     public enum Item: Hashable {
         case object(NSObject)
         case identifier(String)
-        case none
+        case transparent
+        case deny
         
         init(_ item: Any?) {
             if let string = item as? String {
@@ -182,7 +171,7 @@ public final class Anchors: Constraint {
             } else if let object = item as? NSObject {
                 self = .object(object)
             } else {
-                self = .none
+                self = .transparent
             }
         }
         
