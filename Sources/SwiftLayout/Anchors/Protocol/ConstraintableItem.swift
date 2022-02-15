@@ -17,7 +17,7 @@ final class ItemFromView<View> where View: ConstraintableItem {
     
     var item: Anchors.Item {
         guard let view = view else {
-            return .none
+            return .transparent
         }
         return Anchors.Item(view)
     }
