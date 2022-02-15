@@ -23,7 +23,7 @@ DSL library that implements hierarchy of views and constraints declaratively
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "1.0.0"),
+  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "1.1.0"),
 ],
 ```
 
