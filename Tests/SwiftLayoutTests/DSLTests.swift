@@ -293,6 +293,46 @@ final class DSLTests: XCTestCase {
         XCTAssertEqual(friendB.superview, root)
     }
     
+    func testAnchorsOfDimensionToItem() {
+        let root = UIView().viewTag.root
+        let child = UIView().viewTag.child
+        
+        let deactivable = root {
+            child.anchors {
+                Anchors(.top, .leading)
+                Anchors(.width, .height)
+            }
+        }.active()
+        
+        XCTAssertEqual(root.constraints.count, 4)
+        
+        root.frame = .init(origin: .zero, size: .init(width: 100, height: 100))
+        root.setNeedsLayout()
+        root.layoutIfNeeded()
+        
+        XCTAssertEqual(child.bounds.size, .init(width: 100, height: 100))
+    }
+    
+    func testAnchorsOfDimensionToItem2() {
+        let root = UIView().viewTag.root
+        let child = UIView().viewTag.child
+        
+        let deactivable = root {
+            child.anchors {
+                Anchors(.top, .leading)
+                Anchors(.width, .height).equalTo(constant: 80)
+            }
+        }.active()
+        
+        XCTAssertEqual(root.constraints.count, 2)
+        XCTAssertEqual(child.constraints.count, 2)
+        
+        root.frame = .init(origin: .zero, size: .init(width: 100, height: 100))
+        root.setNeedsLayout()
+        root.layoutIfNeeded()
+        
+        XCTAssertEqual(child.bounds.size, .init(width: 80, height: 80))
+    }
 }
 
 extension Anchors {
