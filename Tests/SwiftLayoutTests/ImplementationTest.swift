@@ -191,6 +191,7 @@ final class ImplementationTest: XCTestCase {
         }.active() as? Deactivation
         
         let labelByIdentifier = deactivation?.viewForIdentifier("label")
+        XCTAssertEqual(labelByIdentifier?.accessibilityIdentifier, "label")
         let secondViewByIdentifier = deactivation?.viewForIdentifier("secondView")
         let currents = deactivation?.constraints ?? []
         let labelConstraints = Set(Anchors.cap.constraints(item: labelByIdentifier!, toItem: root).weakens)

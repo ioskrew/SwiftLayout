@@ -32,7 +32,10 @@ public final class LayoutImpl: Layout {
     private(set) var sublayouts: [LayoutImpl] = []
     private(set) var constraints: [Constraint] = []
     
-    var identifier: String?
+    var identifier: String? {
+        get { view.accessibilityIdentifier }
+        set { view.accessibilityIdentifier = newValue }
+    }
     
     var animationDisabled: Bool = false
     
