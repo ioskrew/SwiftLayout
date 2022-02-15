@@ -8,26 +8,28 @@
 import XCTest
 @testable import SwiftLayout
 
-var deinitCount: Int = 0
 final class ImplementationTest: XCTestCase {
+    
+    var deactivable: Deactivable?
    
     override func setUpWithError() throws {
         continueAfterFailure = false
     }
     
     override func tearDownWithError() throws {
-        
+        deactivable = nil
     }
     
     func testViewStrongReferenceCycle() {
-                
+        // given
         class DeinitView: UIView {
+            static var deinitCount: Int = 0
+            
             deinit {
-                deinitCount += 1
+                Self.deinitCount += 1
             }
         }
         
-        // given
         class SelfReferenceView: UIView, LayoutBuilding {
             var layout: some Layout {
                 self {
@@ -42,6 +44,7 @@ final class ImplementationTest: XCTestCase {
             var deactivatable: Deactivable?
         }
         
+        DeinitView.deinitCount = 0
         var view: SelfReferenceView? = SelfReferenceView()
         weak var weakView: UIView? = view
         
@@ -51,13 +54,14 @@ final class ImplementationTest: XCTestCase {
         
         // then
         XCTAssertNil(weakView)
-        XCTAssertEqual(deinitCount, 2)
+        XCTAssertEqual(DeinitView.deinitCount, 2)
     }
     
     func testLayoutFlattening() {
         let root = UIView()
         let child = UIView()
         let friend = UIView()
+        
         let layout: some Layout = root {
             child.anchors {
                 Anchors.boundary
@@ -115,40 +119,38 @@ final class ImplementationTest: XCTestCase {
         
     }
     
-    class MockView: UIView {
-        var addSubviewCount = 0
-        override func addSubview(_ view: UIView) {
-            addSubviewCount += 1
-            super.addSubview(view)
+    func testUpdateLayout() {
+        class MockView: UIView {
+            var addSubviewCount = 0
+            override func addSubview(_ view: UIView) {
+                addSubviewCount += 1
+                super.addSubview(view)
+            }
         }
-    }
-    
-    class LayoutView: UIView, LayoutBuilding {
         
-        var flag = true
-        
-        let root = MockView()
-        let child = UIView().viewTag.child
-        let friend = UIView().viewTag.friend
-        
-        var deactivatable: Deactivable?
-        
-        var layout: some Layout {
-            root {
-                if flag {
-                    child.anchors {
-                        Anchors.boundary
-                    }
-                } else {
-                    friend.anchors {
-                        Anchors.boundary
+        class LayoutView: UIView, LayoutBuilding {
+            var flag = true
+            
+            let root = MockView()
+            let child = UIView().viewTag.child
+            let friend = UIView().viewTag.friend
+            
+            var deactivatable: Deactivable?
+            
+            var layout: some Layout {
+                root {
+                    if flag {
+                        child.anchors {
+                            Anchors.boundary
+                        }
+                    } else {
+                        friend.anchors {
+                            Anchors.boundary
+                        }
                     }
                 }
             }
         }
-    }
-    
-    func testUpdateLayout() {
 
         let view = LayoutView()
         let root = view.root
@@ -209,9 +211,9 @@ final class ImplementationTest: XCTestCase {
         }).subviews {
             UILabel().identifying("label")
         }
-        let deactivation = layout.active()
+        deactivable = layout.active()
         
-        let label = deactivation.viewForIdentifier("label")
+        let label = deactivable?.viewForIdentifier("label")
         
         XCTAssertNotNil(label)
         
@@ -228,7 +230,7 @@ final class ImplementationTest: XCTestCase {
             child
         }
         
-        let deactivable = layout.active()
+        deactivable = layout.active()
         
         print(root.constraints.weakens)
         print(Anchors.boundary.constraints(item: root, toItem: child.safeAreaLayoutGuide).weakens)

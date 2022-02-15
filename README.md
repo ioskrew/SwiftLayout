@@ -1,7 +1,12 @@
 <img src="https://user-images.githubusercontent.com/3011832/153903060-9049ebc5-4a6f-4050-98f0-1ebdd3c97da8.svg" alt="SwiftLayout Logo" height="70" />
 
 # SwiftLayout
-DSL library that implements hierarhcy of views and constraints declaratively
+
+DSL library that implements hierarchy of views and constraints declaratively
+
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fioskrew%2FSwiftLayout%2Fbadge%3Ftype%3Dswift-versions)](https://github.com/ioskrew/SwiftLayout)
+
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fioskrew%2FSwiftLayout%2Fbadge%3Ftype%3Dplatforms)](https://github.com/ioskrew/SwiftLayout)
 
 ## requirements
 
@@ -143,7 +148,7 @@ root {
   }
   blue.anchors {
     Anchors.shoe
-    Anchors(.top).equalTo(red, attribute: .bottom)
+    Anchors(.top).equalTo("red", attribute: .bottom)
     Anchors(.height).equalTo("red")
   }
 }
@@ -190,15 +195,15 @@ you must call **active()** function for complete all this. and result of Deactiv
 
 ```swift
 final class ViewController: UIViewController {
-  
+
   let red = UIView()
-  
+
   var deactivable: Deactivable?
-  
+
   override func viewDidLoad() {
     super.viewDidLoad()
     deactivable = view { // view is that of ViewController
- 			red.anchors {
+      red.anchors {
         Anchors.boundary // boundary is custom property in samples.
       }     
     }.active()
@@ -216,10 +221,10 @@ final class ViewController: UIViewController, LayoutBuilding {
   var showRed: Bool = true
   let red: UIView
   let blue: UIView
-  
-  
+
+
   var deactivable: Deactivable?
-  
+
   var layout: some Layout {
     view {
       if showRed {
@@ -229,7 +234,7 @@ final class ViewController: UIViewController, LayoutBuilding {
       }
     }
   }
-  
+
   override func viewDidLoad() {
     super.viewDidLoad()
     updateLayout() // updateLayout is procedure for active and call some apis
@@ -240,7 +245,7 @@ final class ViewController: UIViewController, LayoutBuilding {
 ```
 
 - call animationDisable() make that blocks to escape from animations.
-
+  
   ```swift
   root {
     red.anchors {
@@ -279,4 +284,3 @@ root {
   }
 }
 ```
-
