@@ -106,16 +106,16 @@ final class ImplementationTest: XCTestCase {
         }
         
         XCTAssertEqual(f1.viewInformations, f2.viewInformations)
-        XCTAssertEqual(f1.viewConstraints(), f2.viewConstraints())
+        XCTAssertEqual(f1.viewConstraints().weakens, f2.viewConstraints().weakens)
         
         XCTAssertEqual(f3.viewInformations, f4.viewInformations)
-        XCTAssertEqual(f3.viewConstraints(), f4.viewConstraints())
+        XCTAssertEqual(f3.viewConstraints().weakens, f4.viewConstraints().weakens)
         
         XCTAssertEqual(f4.viewInformations, f5.viewInformations)
-        XCTAssertNotEqual(f4.viewConstraints(), f5.viewConstraints())
+        XCTAssertNotEqual(f4.viewConstraints().weakens, f5.viewConstraints().weakens)
         
         XCTAssertNotEqual(f5.viewInformations, f6.viewInformations)
-        XCTAssertNotEqual(f5.viewConstraints(), f6.viewConstraints())
+        XCTAssertNotEqual(f5.viewConstraints().weakens, f6.viewConstraints().weakens)
         
     }
     
@@ -192,8 +192,6 @@ final class ImplementationTest: XCTestCase {
         
         let labelByIdentifier = deactivation?.viewForIdentifier("label")
         let secondViewByIdentifier = deactivation?.viewForIdentifier("secondView")
-        XCTAssertEqual(labelByIdentifier?.accessibilityIdentifier, "label")
-        XCTAssertEqual(secondViewByIdentifier?.accessibilityIdentifier, "secondView")
         let currents = deactivation?.constraints ?? []
         let labelConstraints = Set(Anchors.cap.constraints(item: labelByIdentifier!, toItem: root).weakens)
         XCTAssertEqual(currents.intersection(labelConstraints), labelConstraints)
@@ -217,7 +215,7 @@ final class ImplementationTest: XCTestCase {
         
         XCTAssertNotNil(label)
         
-        XCTAssertEqual(Set(root.constraints.weakens), Set(layout.viewConstraints().weakens))
+        XCTAssertEqual(Set(root.constraints.weakens), Set(layout.viewConstraints(.init(views: Set(layout.viewInformations))).weakens))
     }
     
     func testLayoutGuide() {
