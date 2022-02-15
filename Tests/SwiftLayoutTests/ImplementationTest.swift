@@ -1,6 +1,6 @@
 //
 //  ImplementationTest.swift
-//  
+//
 //
 //  Created by aiden_h on 2022/02/11.
 //
@@ -41,7 +41,7 @@ final class ImplementationTest: XCTestCase {
                 }
             }
             
-            var deactivatable: Deactivable?
+            var deactivable: Deactivable?
         }
         
         DeinitView.deinitCount = 0
@@ -62,7 +62,7 @@ final class ImplementationTest: XCTestCase {
         let child = UIView()
         let friend = UIView()
         
-        let layout: some Layout = root {
+        let layout = root {
             child.anchors {
                 Anchors.boundary
             }.subviews {
@@ -73,7 +73,7 @@ final class ImplementationTest: XCTestCase {
         }
         
         XCTAssertNotNil(layout)
-        XCTAssertEqual(layout.layoutViews.map(\.view), [root, child, friend])
+        XCTAssertEqual(layout.viewInformations.map(\.view), [root, child, friend])
     }
     
     func testLayoutCompare() {
@@ -83,39 +83,39 @@ final class ImplementationTest: XCTestCase {
         
         let f1 = root {
             child
-        }.prepare()
+        }
         
         let f2 = root {
            child
-        }.prepare()
+        }
         
         let f3 = root {
             child.anchors { Anchors.boundary }
-        }.prepare()
+        }
         
         let f4 = root {
             child.anchors { Anchors.boundary }
-        }.prepare()
+        }
         
         let f5 = root {
             child.anchors { Anchors.cap }
-        }.prepare()
+        }
         
         let f6 = root {
             friend.anchors { Anchors.boundary }
-        }.prepare()
+        }
         
-        XCTAssertEqual(f1.layoutViews, f2.layoutViews)
-        XCTAssertEqual(f1.constraintReferences, f2.constraintReferences)
+        XCTAssertEqual(f1.viewInformations, f2.viewInformations)
+        XCTAssertEqual(f1.viewConstraints().weakens, f2.viewConstraints().weakens)
         
-        XCTAssertEqual(f3.layoutViews, f4.layoutViews)
-        XCTAssertEqual(f3.constraintReferences, f4.constraintReferences)
+        XCTAssertEqual(f3.viewInformations, f4.viewInformations)
+        XCTAssertEqual(f3.viewConstraints().weakens, f4.viewConstraints().weakens)
         
-        XCTAssertEqual(f4.layoutViews, f5.layoutViews)
-        XCTAssertNotEqual(f4.constraintReferences, f5.constraintReferences)
+        XCTAssertEqual(f4.viewInformations, f5.viewInformations)
+        XCTAssertNotEqual(f4.viewConstraints().weakens, f5.viewConstraints().weakens)
         
-        XCTAssertNotEqual(f5.layoutViews, f6.layoutViews)
-        XCTAssertNotEqual(f5.constraintReferences, f6.constraintReferences)
+        XCTAssertNotEqual(f5.viewInformations, f6.viewInformations)
+        XCTAssertNotEqual(f5.viewConstraints().weakens, f6.viewConstraints().weakens)
         
     }
     
@@ -135,7 +135,7 @@ final class ImplementationTest: XCTestCase {
             let child = UIView().viewTag.child
             let friend = UIView().viewTag.friend
             
-            var deactivatable: Deactivable?
+            var deactivable: Deactivable?
             
             var layout: some Layout {
                 root {
@@ -192,8 +192,6 @@ final class ImplementationTest: XCTestCase {
         
         let labelByIdentifier = deactivation?.viewForIdentifier("label")
         let secondViewByIdentifier = deactivation?.viewForIdentifier("secondView")
-        XCTAssertEqual(labelByIdentifier?.accessibilityIdentifier, "label")
-        XCTAssertEqual(secondViewByIdentifier?.accessibilityIdentifier, "secondView")
         let currents = deactivation?.constraints ?? []
         let labelConstraints = Set(Anchors.cap.constraints(item: labelByIdentifier!, toItem: root).weakens)
         XCTAssertEqual(currents.intersection(labelConstraints), labelConstraints)
@@ -217,7 +215,7 @@ final class ImplementationTest: XCTestCase {
         
         XCTAssertNotNil(label)
         
-        XCTAssertEqual(Set(root.constraints.weakens), layout.constraintReferences)
+        XCTAssertEqual(Set(root.constraints.weakens), Set(layout.viewConstraints(.init(views: Set(layout.viewInformations))).weakens))
     }
     
     func testLayoutGuide() {

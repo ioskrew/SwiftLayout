@@ -8,20 +8,7 @@
 import Foundation
 import UIKit
 
-public protocol Layout: CustomDebugStringConvertible {
-    
-    var sublayouts: [Layout] { get }
-    
-    var layoutViews: [ViewInformation] { get }
-    var layoutConstraints: [NSLayoutConstraint] { get }
-    
-    func prepareSuperview(_ superview: UIView?)
-    func prepareConstraints(_ identifiers: ViewIdentifiers)
-    
-    func animation()
-    @discardableResult
-    func animationDisable() -> Self
-}
+public protocol Layout: CustomDebugStringConvertible {}
 
 extension Layout {
     
@@ -29,66 +16,84 @@ extension Layout {
         return Deactivation(self)
     }
     
-    func prepare() -> Self {
-        prepareSuperview(nil)
-        prepareConstraints(ViewIdentifiers(views: Set(layoutViews)))
-        return self
-    }
-   
-    public func prepareConstraints(_ identifiers: ViewIdentifiers) {
-        sublayouts.prepareConstraints(identifiers)
+}
+
+extension Layout where Self: UIView {
+    
+    public func callAsFunction(@LayoutBuilder _ build: () -> [Layout]) -> LayoutImpl {
+        layoutImpl(build())
     }
     
-    @discardableResult
+    public func subviews(@LayoutBuilder _ build: () -> [Layout]) -> LayoutImpl {
+        layoutImpl(build())
+    }
+    
+    public func anchors(@AnchorsBuilder _ build: () -> [Constraint]) -> LayoutImpl {
+        LayoutImpl(view: self, constraints: build())
+    }
+    
+    public func identifying(_ identifier: String) -> LayoutImpl {
+        LayoutImpl(view: self, identifier: identifier)
+    }
+    
+    public func animationDisable() -> LayoutImpl {
+        let impl = LayoutImpl(view: self)
+        impl.animationDisabled = true
+        return impl
+    }
+    
+    private func layoutImpl(_ layouts: [Layout]) -> LayoutImpl {
+        let sublayouts: [LayoutImpl] = layouts.compactMap { layout in
+            if let view = layout as? UIView {
+                return LayoutImpl(view: view)
+            } else {
+                return layout as? LayoutImpl
+            }
+        }
+        return LayoutImpl(view: self, sublayouts: sublayouts)
+    }
+}
+
+extension Layout where Self: LayoutImpl {
+    
+    public func callAsFunction(@LayoutBuilder _ build: () -> [Layout]) -> Self {
+        layoutImpl(build())
+    }
+    
+    public func subviews(@LayoutBuilder _ build: () -> [Layout]) -> Self {
+        layoutImpl(build())
+    }
+    
+    public func anchors(@AnchorsBuilder _ build: () -> [Constraint]) -> Self {
+        appendConstraints(build())
+        return self
+    }
+    
+    public func identifying(_ identifier: String) -> Self {
+        self.identifier = identifier
+        return self
+    }
+    
     public func animationDisable() -> Self {
-        sublayouts.animationDisable()
+        self.animationDisabled = true
         return self
     }
     
-    public func animation() {
-        sublayouts.animation()
-    }
-    
-}
-
-extension Layout where Self: Collection, Element == Layout {
-    public var sublayouts: [Layout] { map({ layout in layout }) }
-}
-
-extension Array: Layout where Self.Element == Layout {
-    
-    public var layoutViews: [ViewInformation] {
-        sublayouts.flatMap(\.layoutViews)
-    }
-    
-    public var layoutConstraints: [NSLayoutConstraint] {
-        sublayouts.flatMap(\.layoutConstraints)
-    }
-    
-    public func prepareSuperview(_ superview: UIView?) {
-        for layout in sublayouts {
-            layout.prepareSuperview(superview)
+    private func layoutImpl(_ layouts: [Layout]) -> Self {
+        let sublayouts: [LayoutImpl] = layouts.compactMap { layout in
+            if let view = layout as? UIView {
+                return LayoutImpl(view: view)
+            } else {
+                return layout as? LayoutImpl
+            }
         }
-    }
-    
-    public func prepareConstraints(_ identifiers: ViewIdentifiers) {
-        for layout in sublayouts {
-            layout.prepareConstraints(identifiers)
-        }
-    }
-    
-    @discardableResult
-    public func animationDisable() -> Array<Layout> {
-        for layout in sublayouts {
-            layout.animationDisable()
-        }
+        self.appendSublayouts(sublayouts)
         return self
     }
-    
-    public func animation() {
-        for layout in sublayouts {
-            layout.animation()
-        }
-    }
-    
 }
+
+extension UIView: Layout {}
+
+extension Array: Layout where Element == Layout {}
+
+extension Optional: Layout where Wrapped: Layout {}

@@ -14,15 +14,17 @@ public final class ViewInformation: Hashable {
         lhs.hashValue == rhs.hashValue
     }
     
-    public init(superview: UIView?, view: UIView?, identifier: String?) {
+    public init(superview: UIView?, view: UIView?, identifier: String?, animationDisabled: Bool) {
         self.superview = superview
         self.view = view
         self.identifier = identifier
+        self.animationDisabled = animationDisabled
     }
     
     private(set) weak var superview: UIView?
     private(set) weak var view: UIView?
     let identifier: String?
+    let animationDisabled: Bool
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(superview)
@@ -46,6 +48,11 @@ public final class ViewInformation: Hashable {
     }
     
     func updatingSuperview(_ superview: UIView?) -> Self {
-        .init(superview: superview, view: view, identifier: identifier)
+        .init(superview: superview, view: view, identifier: identifier, animationDisabled: animationDisabled)
+    }
+    
+    func animation() {
+        guard animationDisabled else { return }
+        view?.layer.removeAllAnimations()
     }
 }
