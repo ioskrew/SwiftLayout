@@ -23,7 +23,8 @@ public extension LayoutBuilding {
         let layout: some Layout = self.layout
         
         if let deactivatable = self.deactivatable as? Deactivation {
-            deactivatable.updateLayout(layout, animated: animated)
+            guard let impl = layout as? LayoutImpl else { return }
+            deactivatable.updateLayout(impl, animated: animated)
         } else {
             self.deactivatable = Deactivation(layout)
         }

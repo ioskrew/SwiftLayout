@@ -16,7 +16,8 @@ final class Deactivation: Deactivable {
     var constraints: Set<WeakReference<NSLayoutConstraint>> = []
     
     init(_ layout: Layout) {
-        updateLayout(layout)
+        guard let impl = layout as? LayoutImpl else { return }
+        updateLayout(impl)
     }
     
     deinit {
@@ -43,10 +44,9 @@ final class Deactivation: Deactivable {
         }
     }
     
-    func updateLayout(_ layout: Layout, animated: Bool = false) {
-        let layout = layout.prepare()
+    func updateLayout(_ layout: LayoutImpl, animated: Bool = false) {
         deactiveConstraints()
-        let layoutViews = layout.layoutViews
+        let layoutViews = layout.viewInformations
         let newViews = Set(layoutViews)
         for view in views where !newViews.contains(view) {
             view.removeFromSuperview()
@@ -54,28 +54,24 @@ final class Deactivation: Deactivable {
         for view in layoutViews {
             view.addSuperview()
         }
-        let layoutConstraints = layout.layoutConstraints
-        let newConstraints = layout.constraintReferences
+        let layoutConstraints = layout.viewConstraints(ViewIdentifiers(views: newViews))
+        let newConstraints = layoutConstraints.weakens
         views = newViews
         NSLayoutConstraint.activate(layoutConstraints)
-        constraints = newConstraints
+        constraints = Set(newConstraints)
         
         if animated, let root = views.first(where: { $0.superview == nil })?.view {
             UIView.animate(withDuration: 0.25) {
                 root.layoutIfNeeded()
-                layout.animation()
+                layoutViews.forEach { information in
+                    information.animation()
+                }
             }
         }
     }
     
     func viewForIdentifier(_ identifier: String) -> UIView? {
         views.first(where: { $0.identifier == identifier })?.view
-    }
-}
-
-extension Layout {
-    var constraintReferences: Set<WeakReference<NSLayoutConstraint>> {
-        Set(layoutConstraints.weakens)
     }
 }
 
