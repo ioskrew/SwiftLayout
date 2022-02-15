@@ -14,7 +14,7 @@ public struct AnchorsBuilder {
     public static func buildBlock(_ components: Constraint...) -> [Constraint] {
         components
     }
-    
+   
     public static func buildEither(first component: [Constraint]) -> [Constraint] {
         component
     }
@@ -22,7 +22,7 @@ public struct AnchorsBuilder {
     public static func buildEither(second component: [Constraint]) -> [Constraint] {
         component
     }
-   
+    
     public static func buildArray(_ components: [[Constraint]]) -> [Constraint] {
         components.flatMap({ $0 })
     }

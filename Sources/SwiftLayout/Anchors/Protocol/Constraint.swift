@@ -15,12 +15,13 @@ public protocol Constraint {
 
 extension Array: Constraint where Element == Constraint {
     public func constraints(item: NSObject, toItem: NSObject?, identifiers: ViewIdentifiers) -> [NSLayoutConstraint] {
-        flatMap { constraint in
+        self.flatMap { constraint in
             constraint.constraints(item: item, toItem: toItem, identifiers: identifiers)
         }
     }
+    
     public func constraints(item: NSObject, toItem: NSObject?) -> [NSLayoutConstraint] {
-        flatMap { constraint in
+        self.flatMap { constraint in
             constraint.constraints(item: item, toItem: toItem)
         }
     }
