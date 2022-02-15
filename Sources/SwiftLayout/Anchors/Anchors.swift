@@ -81,6 +81,7 @@ public final class Anchors: Constraint {
         for item in items {
             let from = fromItem
             let to = item.toItem(toItem)
+            guard validation(item.attribute, toItem: to) else { continue }
             assert(to is UIView || to is UILayoutGuide || to == nil, "to: \(to.debugDescription) is not item")
             constraints.append(NSLayoutConstraint(item: from,
                                                   attribute: item.attribute,
@@ -93,11 +94,12 @@ public final class Anchors: Constraint {
         return constraints
     }
     
-    public func constraints(item fromItem: NSObject, toItem: NSObject?, identifiers: ViewIdentifiers) -> [NSLayoutConstraint] {
+    public func constraints(item fromItem: NSObject, toItem: NSObject?, identifiers: ViewIdentifiers?) -> [NSLayoutConstraint] {
         var constraints: [NSLayoutConstraint] = []
         for item in items {
             let from = fromItem
             let to = item.toItem(toItem, identifiers: identifiers)
+            guard validation(item.attribute, toItem: to) else { continue }
             assert(to is UIView || to is UILayoutGuide || to == nil, "to: \(to.debugDescription) is not item")
             constraints.append(NSLayoutConstraint(item: from,
                                                   attribute: item.attribute,
@@ -108,6 +110,15 @@ public final class Anchors: Constraint {
                                                   constant: item.constant))
         }
         return constraints
+    }
+    
+    private func validation(_ attribute: NSLayoutConstraint.Attribute, toItem: NSObject?) -> Bool {
+        switch attribute {
+        case .width, .height:
+            return true
+        default:
+            return toItem != nil
+        }
     }
     
     public struct To {

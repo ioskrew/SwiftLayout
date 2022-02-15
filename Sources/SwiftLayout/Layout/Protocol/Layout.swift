@@ -65,7 +65,7 @@ extension Layout where Self: LayoutImpl {
     }
     
     public func anchors(@AnchorsBuilder _ build: () -> [Constraint]) -> Self {
-        constraints.append(contentsOf: build())
+        appendConstraints(build())
         return self
     }
     
@@ -87,13 +87,11 @@ extension Layout where Self: LayoutImpl {
                 return layout as? LayoutImpl
             }
         }
-        self.sublayouts.append(contentsOf: sublayouts)
+        self.appendSublayouts(sublayouts)
         return self
     }
 }
 
 extension UIView: Layout {}
 
-extension Array: Layout where Element == Layout {
-    
-}
+extension Array: Layout where Element == Layout {}
