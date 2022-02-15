@@ -99,13 +99,6 @@ final class ViewController: UIViewController, LayoutBuilding {
     
 }
 
-extension Anchors {
-    static var cap: Anchors { .init(.top, .leading, .trailing) }
-    static var shoe: Anchors { .init(.bottom, .leading, .trailing) }
-    static var horizontal: Anchors { .init(.leading, .trailing) }
-    static var center: Anchors { .init(.centerX, .centerY) }
-}
-
 extension ViewController: LayoutViewControllerRepresentable {}
 
 struct ViewController_Previews: PreviewProvider {
