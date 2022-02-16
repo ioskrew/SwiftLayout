@@ -14,7 +14,7 @@ enum Activator {
     }
 
     @discardableResult
-    static func update(layout: LayoutImp, fromDeactivation deactivation: Deactivation = Deactivation()) -> Deactivation {
+    static func update(layout: LayoutImp, fromDeactivation deactivation: Deactivation = Deactivation(), animated: Bool = false) -> Deactivation {
         let viewInfos = layout.viewInformations
         let viewInfoSet = ViewInformationSet(infos: viewInfos)
         
@@ -26,6 +26,15 @@ enum Activator {
         
         deactivation.viewInfos = viewInfoSet
         deactivation.constraints = ConstraintsSet(constraints: constrains)
+        
+        if animated, let root = viewInfos.first(where: { $0.superview == nil })?.view {
+            UIView.animate(withDuration: 0.25) {
+                root.layoutIfNeeded()
+                viewInfos.forEach { information in
+                    information.animation()
+                }
+            }
+        }
         
         return deactivation
     }

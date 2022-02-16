@@ -21,7 +21,7 @@ public extension LayoutBuilding {
         }
         
         if let deactivation = self.deactivable as? Deactivation {
-            Activator.update(layout: layoutImp, fromDeactivation: deactivation)
+            Activator.update(layout: layoutImp, fromDeactivation: deactivation, animated: animated)
         } else {
             self.deactivable = Activator.active(layout: layoutImp)
         }
