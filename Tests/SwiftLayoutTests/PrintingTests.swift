@@ -200,6 +200,43 @@ class PrintingTests: XCTestCase {
         let result = SwiftLayoutPrinter(root).print()
         XCTAssertEqual(result, expect)
     }
+    
+    func testTwwDepthsWithSubviews() throws {
+        let root = UIView().viewTag.root
+        let child = UIView().viewTag.child
+        let grandchild = UIView().viewTag.grandchild
+        
+        deactivable = root {
+            child.anchors{
+                Anchors.boundary
+            }.subviews {
+                grandchild.anchors {
+                    Anchors.boundary
+                }
+            }
+        }.active()
+        
+        let expect = """
+        root {
+            child.anchors {
+                Anchors(.top).to(.equal, to: .init(item: root, attribute: .top, constant: 0.0))
+                Anchors(.leading).to(.equal, to: .init(item: root, attribute: .leading, constant: 0.0))
+                Anchors(.trailing).to(.equal, to: .init(item: root, attribute: .trailing, constant: 0.0))
+                Anchors(.bottom).to(.equal, to: .init(item: root, attribute: .bottom, constant: 0.0))
+            }.subviews {
+                grandchild.anchors {
+                    Anchors(.top).to(.equal, to: .init(item: child, attribute: .top, constant: 0.0))
+                    Anchors(.leading).to(.equal, to: .init(item: child, attribute: .leading, constant: 0.0))
+                    Anchors(.trailing).to(.equal, to: .init(item: child, attribute: .trailing, constant: 0.0))
+                    Anchors(.bottom).to(.equal, to: .init(item: child, attribute: .bottom, constant: 0.0))
+                }
+            }
+        }
+        """.tabbed
+        let result = SwiftLayoutPrinter(root).print()
+        print(result)
+        XCTAssertEqual(result, expect)
+    }
 }
 
 private extension String {
