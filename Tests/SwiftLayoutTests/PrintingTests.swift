@@ -82,5 +82,31 @@ class PrintingTests: XCTestCase {
         print(result)
         XCTAssertEqual(result, expect)
     }
+    
+    func testMultipleDepthOfViews() throws {
+        let root = UIView().viewTag.root
+        let child = UIView().viewTag.child
+        let friend = UIView().viewTag.friend
+        let grandchild = UIView().viewTag.grandchild
+        
+        deactivable = root {
+            child {
+                grandchild
+            }
+            friend
+        }.active()
+        
+        let expect = """
+        root:UIView {
+        \tchild:UIView {
+        \t\tgrandchild:UIView
+        \t}
+        \tfriend:UIView
+        }
+        """
+        let result = SwiftLayoutPrinter(view: root).print()
+        print(result)
+        XCTAssertEqual(result, expect)
+    }
 
 }
