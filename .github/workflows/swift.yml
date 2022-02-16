@@ -1,4 +1,4 @@
-name: Swift
+name: SwiftLayout
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  test:
 
     runs-on: macos-latest
 
