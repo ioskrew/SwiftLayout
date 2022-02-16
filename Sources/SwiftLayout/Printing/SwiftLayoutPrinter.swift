@@ -36,7 +36,7 @@ public struct SwiftLayoutPrinter {
             } else {
                 identifiers = [identifier + " {"]
                 identifiers.append(contentsOf: subtokens.map({ token in
-                    "\t" + token.description
+                    token.description.split(separator: "\n").map({ "\t" + $0 }).joined(separator: "\n")
                 }))
                 identifiers.append("}")
             }
