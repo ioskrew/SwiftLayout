@@ -45,7 +45,11 @@ public extension Layout {
     }
 }
 
-extension UIView: Layout {}
+extension UIView: Layout {
+    public func printingSwiftLayout(_ includes: [UIView] = []) -> String {
+        ""
+    }
+}
 
 extension Array: Layout where Element == Layout {}
 
