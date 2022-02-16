@@ -24,7 +24,7 @@ struct TagDescriptor<Value>: CustomDebugStringConvertible where Value: TagDescri
     }
     
     var debugDescription: String {
-        "\(type(of: self.value))(\(identifier))"
+        "\(identifier):\(type(of: self.value))"
     }
     
 }

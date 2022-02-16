@@ -18,7 +18,7 @@ class PrintingTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testSimple() throws {
+    func testViewsSimple() throws {
         let root = UIView().viewTag.root
         let child = UIView().viewTag.child
         
@@ -28,11 +28,13 @@ class PrintingTests: XCTestCase {
         
         XCTAssertEqual(child.superview, root)
         let expect = """
-        root {
-            child
+        root:UIView {
+        \tchild:UIView
         }
         """
-        XCTAssertEqual(SwiftLayoutPrinter(view: root).print(), expect)
+        let result = SwiftLayoutPrinter(view: root).print()
+        print(result)
+        XCTAssertEqual(result, expect)
     }
 
 }
