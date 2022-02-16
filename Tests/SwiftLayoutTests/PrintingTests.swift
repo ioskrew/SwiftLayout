@@ -291,6 +291,7 @@ class PrintingTests: XCTestCase {
         print(result)
         XCTAssertEqual(result, expect)
     }
+    
 }
 
 private extension String {
