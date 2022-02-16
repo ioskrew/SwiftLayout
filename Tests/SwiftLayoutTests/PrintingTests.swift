@@ -125,5 +125,58 @@ class PrintingTests: XCTestCase {
         print(result)
         XCTAssertEqual(result, expect)
     }
+    
+    func testPrintingAnchorsWithOneDepth() {
+        let root = UIView().viewTag.root
+        let child = UIView().viewTag.child
+        deactivable = root {
+            child.anchors {
+                Anchors(.top)
+                Anchors(.bottom).to(.equal, to: .init(item: root, attribute: .bottom, constant: -10.0))
+            }
+        }.active()
+        
+        let expect = """
+        root:UIView {
+        \tchild:UIView.anchors {
+        \t\tAnchors(.top).to(.equal, to: .init(item: root:UIView, attribute: .top, constant: 0.0))
+        \t\tAnchors(.bottom).to(.equal, to: .init(item: root:UIView, attribute: .bottom, constant: -10.0))
+        \t}
+        }
+        """
+        let result = SwiftLayoutPrinter(view: root).print()
+        print(result)
+        XCTAssertEqual(result, expect)
+    }
+    
+    func testPrintingAnchorsOfTwoViewWithOneDepth() {
+        let root = UIView().viewTag.root
+        let child = UIView().viewTag.child
+        let friend = UIView().viewTag.friend
+        deactivable = root {
+            child.anchors {
+                Anchors(.top)
+                Anchors(.bottom).to(.equal, to: .init(item: root, attribute: .bottom, constant: -10.0))
+            }
+            friend.anchors {
+                Anchors(.top).equalTo(child, attribute: .bottom)
+            }
+        }.active()
+        
+        let expect = """
+        root:UIView {
+        \tchild:UIView.anchors {
+        \t\tAnchors(.top).to(.equal, to: .init(item: root:UIView, attribute: .top, constant: 0.0))
+        \t\tAnchors(.bottom).to(.equal, to: .init(item: root:UIView, attribute: .bottom, constant: -10.0))
+        \t}
+        \tfriend:UIView.anchors {
+        \t\tAnchors(.top).to(.equal, to: .init(item: child:UIView, attribute: .bottom, constant: 0.0))
+        \t}
+        }
+        """
+        let result = SwiftLayoutPrinter(view: root).print()
+        print(result)
+        XCTAssertEqual(result, expect)
+    }
 
 }
