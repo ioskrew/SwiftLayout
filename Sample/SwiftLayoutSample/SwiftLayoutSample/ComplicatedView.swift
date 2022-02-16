@@ -25,7 +25,7 @@ final class ComplicatedView: UIView, LayoutBuilding {
         return label
     }
     
-    var layout: some Layout {
+    var layout: Layout {
         self {
             linkContainerView.anchors {
                 Anchors.boundary

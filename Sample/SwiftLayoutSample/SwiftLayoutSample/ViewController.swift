@@ -56,7 +56,7 @@ final class ViewController: UIViewController, LayoutBuilding {
         return button
     }
     
-    var layout: some Layout {
+    var layout: Layout {
         view {
             red.anchors {
                 if redUp {

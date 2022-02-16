@@ -9,19 +9,19 @@ import Foundation
 import UIKit
 import SwiftLayout
 
-class LayoutHostingViewController<Content>: UIViewController, LayoutBuilding where Content: Layout {
+class LayoutHostingViewController: UIViewController, LayoutBuilding {
     
     var deactivable: Deactivable?
     
-    var content: ((UIView) -> Content)?
+    var content: (UIView) -> Layout
     
-    var layout: some Layout {
-        content?(self.view)
+    var layout: Layout {
+        content(self.view)
     }
     
-    init(_ content: @escaping (UIView) -> Content) {
-        super.init(nibName: nil, bundle: nil)
+    init(_ content: @escaping (UIView) -> Layout) {
         self.content = content
+        super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {

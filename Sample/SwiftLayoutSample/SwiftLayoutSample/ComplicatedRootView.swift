@@ -22,7 +22,7 @@ final class ComplicatedRootView: UIView, LayoutBuilding {
     
     var deactivable: Deactivable?
     
-    var layout: some Layout {
+    var layout: Layout {
         self {
             contentView.anchors {
                 Anchors.cap
