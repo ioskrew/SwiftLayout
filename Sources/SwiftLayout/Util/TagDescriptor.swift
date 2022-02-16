@@ -15,16 +15,20 @@ struct TagDescriptor<Value>: CustomDebugStringConvertible where Value: TagDescri
     
     let value: Value
     
+    var valueHasIdentifier: Bool {
+        value.accessibilityIdentifier != nil
+    }
+    
     var identifier: String {
         if let identifier = value.accessibilityIdentifier {
             return identifier
         } else {
-            return Unmanaged<Value>.passUnretained(value).toOpaque().debugDescription
+            return Unmanaged<Value>.passUnretained(value).toOpaque().debugDescription + ":\(type(of: self.value))"
         }
     }
     
     var debugDescription: String {
-        "\(identifier):\(type(of: self.value))"
+        identifier
     }
     
 }

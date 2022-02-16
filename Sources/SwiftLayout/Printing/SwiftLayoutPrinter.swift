@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 public struct SwiftLayoutPrinter: CustomStringConvertible {
-    public init(view: UIView) {
+    public init(_ view: UIView) {
         self.view = view
     }
     
