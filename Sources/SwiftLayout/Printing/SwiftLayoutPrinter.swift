@@ -16,7 +16,8 @@ public struct SwiftLayoutPrinter {
     let view: UIView
     
     public func print() -> String {
-        view.token.identifier
+        let token = view.token
+        return token.description
     }
     
     final class ViewToken: CustomStringConvertible {
@@ -29,10 +30,16 @@ public struct SwiftLayoutPrinter {
         let subtokens: [ViewToken]
         
         var description: String {
-            var identifiers: [String] = [identifier]
-            identifiers.append(contentsOf: subtokens.map({ token in
-                "\t" + token.identifier
-            }))
+            var identifiers: [String]
+            if subtokens.isEmpty {
+                identifiers = [identifier]
+            } else {
+                identifiers = [identifier + " {"]
+                identifiers.append(contentsOf: subtokens.map({ token in
+                    "\t" + token.description
+                }))
+                identifiers.append("}")
+            }
             return identifiers.joined(separator: "\n")
         }
     }
