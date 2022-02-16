@@ -70,7 +70,17 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
                     identifiers = [identifier]
                 }
             } else {
-                identifiers = [identifier + " {"]
+                if selfConstraints == nil {
+                    identifiers = [identifier + " {"]
+                } else if let selfConstraints = selfConstraints {
+                    identifiers = [identifier + ".anchors {"]
+                    identifiers.append(contentsOf: selfConstraints.map({ token in
+                        "\t" + token.description
+                    }))
+                    identifiers.append("}.subviews {")
+                } else {
+                    identifiers = [identifier + " {"]
+                }
                 identifiers.append(contentsOf: subtokens.map({ token in
                     token.description.split(separator: "\n").map({ "\t" + $0 }).joined(separator: "\n")
                 }))
