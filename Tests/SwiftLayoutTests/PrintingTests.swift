@@ -31,9 +31,9 @@ class PrintingTests: XCTestCase {
         XCTAssertEqual(child.superview, root)
         let expect = """
         root {
-        \tchild
+            child
         }
-        """
+        """.tabbed
         let result = SwiftLayoutPrinter(root).print()
         print(result)
         XCTAssertEqual(result, expect)
@@ -51,10 +51,10 @@ class PrintingTests: XCTestCase {
         
         let expect = """
         root {
-        \ta
-        \tb
+            a
+            b
         }
-        """
+        """.tabbed
         let result = SwiftLayoutPrinter(root).print()
         print(result)
         XCTAssertEqual(result, expect)
@@ -73,11 +73,11 @@ class PrintingTests: XCTestCase {
         
         let expect = """
         root {
-        \tchild {
-        \t\tgrandchild
-        \t}
+            child {
+                grandchild
+            }
         }
-        """
+        """.tabbed
         let result = SwiftLayoutPrinter(root).print()
         print(result)
         XCTAssertEqual(result, expect)
@@ -98,12 +98,12 @@ class PrintingTests: XCTestCase {
         
         let expect = """
         root {
-        \tchild {
-        \t\tgrandchild
-        \t}
-        \tfriend
+            child {
+                grandchild
+            }
+            friend
         }
-        """
+        """.tabbed
         let result = SwiftLayoutPrinter(root).print()
         print(result)
         XCTAssertEqual(result, expect)
@@ -117,10 +117,10 @@ class PrintingTests: XCTestCase {
         
         let expect = """
         root.anchors {
-        \tAnchors(.width).to(.equal, to: .init(attribute: .notAnAttribute, constant: 0.0))
-        \tAnchors(.height).to(.equal, to: .init(attribute: .notAnAttribute, constant: 0.0))
+            Anchors(.width).to(.equal, to: .init(attribute: .notAnAttribute, constant: 0.0))
+            Anchors(.height).to(.equal, to: .init(attribute: .notAnAttribute, constant: 0.0))
         }
-        """
+        """.tabbed
         let result = SwiftLayoutPrinter(root).print()
         print(result)
         XCTAssertEqual(result, expect)
@@ -138,12 +138,12 @@ class PrintingTests: XCTestCase {
         
         let expect = """
         root {
-        \tchild.anchors {
-        \t\tAnchors(.top).to(.equal, to: .init(item: root, attribute: .top, constant: 0.0))
-        \t\tAnchors(.bottom).to(.equal, to: .init(item: root, attribute: .bottom, constant: -10.0))
-        \t}
+            child.anchors {
+                Anchors(.top).to(.equal, to: .init(item: root, attribute: .top, constant: 0.0))
+                Anchors(.bottom).to(.equal, to: .init(item: root, attribute: .bottom, constant: -10.0))
+            }
         }
-        """
+        """.tabbed
         let result = SwiftLayoutPrinter(root).print()
         print(result)
         XCTAssertEqual(result, expect)
@@ -165,18 +165,43 @@ class PrintingTests: XCTestCase {
         
         let expect = """
         root {
-        \tchild.anchors {
-        \t\tAnchors(.top).to(.equal, to: .init(item: root, attribute: .top, constant: 0.0))
-        \t\tAnchors(.bottom).to(.equal, to: .init(item: root, attribute: .bottom, constant: -10.0))
-        \t}
-        \tfriend.anchors {
-        \t\tAnchors(.top).to(.equal, to: .init(item: child, attribute: .bottom, constant: 0.0))
-        \t}
+            child.anchors {
+                Anchors(.top).to(.equal, to: .init(item: root, attribute: .top, constant: 0.0))
+                Anchors(.bottom).to(.equal, to: .init(item: root, attribute: .bottom, constant: -10.0))
+            }
+            friend.anchors {
+                Anchors(.top).to(.equal, to: .init(item: child, attribute: .bottom, constant: 0.0))
+            }
         }
-        """
+        """.tabbed
         let result = SwiftLayoutPrinter(root).print()
         print(result)
         XCTAssertEqual(result, expect)
     }
 
+    func testAnonymousTaggedView() {
+        let root = UIView().viewTag.root
+        deactivable = root {
+            UILabel().viewTag.label.anchors {
+                Anchors.boundary
+            }
+        }.active()
+        
+        let expect = """
+        root {
+            label.anchors {
+                Anchors(.top).to(.equal, to: .init(item: root, attribute: .top, constant: 0.0))
+                Anchors(.leading).to(.equal, to: .init(item: root, attribute: .leading, constant: 0.0))
+                Anchors(.trailing).to(.equal, to: .init(item: root, attribute: .trailing, constant: 0.0))
+                Anchors(.bottom).to(.equal, to: .init(item: root, attribute: .bottom, constant: 0.0))
+            }
+        }
+        """.tabbed
+        let result = SwiftLayoutPrinter(root).print()
+        XCTAssertEqual(result, expect)
+    }
+}
+
+private extension String {
+    var tabbed: String { replacingOccurrences(of: "    ", with: "\t") }
 }

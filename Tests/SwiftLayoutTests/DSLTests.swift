@@ -15,7 +15,9 @@ import UIKit
 /// 구현을 테스트 합니다.
 final class DSLTests: XCTestCase {
     
-    var view: UIView?
+    var deactivable: Deactivable?
+    
+    var view: LayoutHostingView!
     var root: UIView!
     var red: UIView!
     var blue: UIView!
@@ -36,7 +38,7 @@ final class DSLTests: XCTestCase {
         old.addSubview(root)
         root.translatesAutoresizingMaskIntoConstraints = true
         
-        let view = LayoutHostingView(root {
+        view = LayoutHostingView(root {
             red.anchors {
                 Anchors.boundary
             }
@@ -50,7 +52,7 @@ final class DSLTests: XCTestCase {
     
     func testAnchors() {
      
-        let deact = root {
+        deactivable = root {
             red.anchors {
                 Anchors.boundary
             }
@@ -268,7 +270,7 @@ final class DSLTests: XCTestCase {
         let friendB = UIView().viewTag.friendB
         
         var chooseA = true
-        var deactivable = root {
+        deactivable = root {
             if chooseA {
                 friendA
             } else {
@@ -297,7 +299,7 @@ final class DSLTests: XCTestCase {
         let root = UIView().viewTag.root
         let child = UIView().viewTag.child
         
-        let deactivable = root {
+        deactivable = root {
             child.anchors {
                 Anchors(.top, .leading)
                 Anchors(.width, .height)
@@ -317,7 +319,7 @@ final class DSLTests: XCTestCase {
         let root = UIView().viewTag.root
         let child = UIView().viewTag.child
         
-        let deactivable = root {
+        deactivable = root {
             child.anchors {
                 Anchors(.top, .leading)
                 Anchors(.width, .height).equalTo(constant: 80)
@@ -339,7 +341,7 @@ final class DSLTests: XCTestCase {
         let child1 = UIView().viewTag.child2
         let child2 = UIView().viewTag.child2
         
-        let deactivable = root {
+        deactivable = root {
             child1.anchors {
                 Anchors(.top, .trailing, .bottom)
                 Anchors(.width, .height).equalTo(constant: 80)
@@ -370,7 +372,7 @@ final class DSLTests: XCTestCase {
         let root = UIView().viewTag.root
         let child = UIView().viewTag.child
         
-        let deactivable = root {
+        deactivable = root {
             child.anchors {
                 Anchors(.top, .leading).equalTo(constant: 20)
                 Anchors(.trailing, .bottom).equalTo(constant: -20)
