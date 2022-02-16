@@ -269,32 +269,25 @@ class PrintingTests: XCTestCase {
     func testSafeAreaLayoutGuide() {
         let expect = """
         root {
-            child
+            child.anchors {
+                Anchors(.top).to(.equal, to: .init(item: root.safeAreaLayoutGuide, attribute: .top, constant: 0.0))
+                Anchors(.bottom).to(.equal, to: .init(item: root.safeAreaLayoutGuide, attribute: .bottom, constant: 0.0))
+                Anchors(.leading).to(.equal, to: .init(item: root, attribute: .leading, constant: 0.0))
+            }
         }
         """.tabbed
         
-        var root = UIView().viewTag.root
-        var child = UIView().viewTag.child
-        
-        root.translatesAutoresizingMaskIntoConstraints = false
-        root.addSubview(child)
-        child.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint(item: child, attribute: .top, relatedBy: .equal, toItem: root.safeAreaLayoutGuide, attribute: .top, multiplier: 1.0, constant: 0.0).isActive = true
-        
-        var result = SwiftLayoutPrinter(root).print()
-        print(result)
-        XCTAssertEqual(result, expect)
-        
-        root = UIView().viewTag.root
-        child = UIView().viewTag.child
+        let root = UIView().viewTag.root
+        let child = UIView().viewTag.child
         deactivable = root {
             child.anchors {
                 Anchors(.top).equalTo(root.safeAreaLayoutGuide, attribute: .top)
+                Anchors(.bottom).equalTo(root.safeAreaLayoutGuide, attribute: .bottom)
+                Anchors(.leading).equalTo(root, attribute: .leading)
             }
         }.active()
         
-        result = SwiftLayoutPrinter(root).print()
+        let result = SwiftLayoutPrinter(root).print()
         print(result)
         XCTAssertEqual(result, expect)
     }
