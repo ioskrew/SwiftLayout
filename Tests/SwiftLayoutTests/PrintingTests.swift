@@ -237,6 +237,34 @@ class PrintingTests: XCTestCase {
         print(result)
         XCTAssertEqual(result, expect)
     }
+    
+    func testInstantTags() {
+        let root = UIView().viewTag.root
+        let child = UILabel()
+        let grand = UILabel().viewTag.grand
+        
+        deactivable = root {
+            child {
+                grand.anchors {
+                    Anchors(.top)
+                }
+            }
+        }.active()
+        
+        let expect = """
+        root {
+            child {
+                grandchild.anchors {
+                    Anchors(.top).to(.equal, to: .init(item: child, attribute: .top, constant: 0.0))
+                }
+            }
+        }
+        """.tabbed
+        
+        let result = SwiftLayoutPrinter(root, tags: [child: "child", grand: "grandchild"]).print()
+        print(result)
+        XCTAssertEqual(result, expect)
+    }
 }
 
 private extension String {
