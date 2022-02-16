@@ -32,7 +32,7 @@ class PrintingTests: XCTestCase {
             child
         }
         """
-        XCTAssertEqual(root.printingSwiftLayout(), expect)
+        XCTAssertEqual(SwiftLayoutPrinter(view: root).print(), expect)
     }
 
 }
