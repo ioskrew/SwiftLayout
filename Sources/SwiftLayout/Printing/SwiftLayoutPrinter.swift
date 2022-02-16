@@ -102,7 +102,7 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
                 if let view = item as? UIView {
                     return tags[view.tagDescription] ?? view.tagDescription
                 } else if let view = (item as? UILayoutGuide)?.owningView {
-                    return tags[view.tagDescription].flatMap({ $0 + ".safeAreaLayoutGuide" }) ?? view.tagDescription
+                    return tags[view.tagDescription].flatMap({ $0 + ".safeAreaLayoutGuide" }) ?? view.tagDescription + ".safeAreaLayoutGuide"
                 } else {
                     return ""
                 }

@@ -13,7 +13,7 @@ class PrintingTests: XCTestCase {
     var deactivable: Deactivable?
     
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        continueAfterFailure = false
     }
 
     override func tearDownWithError() throws {
@@ -262,6 +262,39 @@ class PrintingTests: XCTestCase {
         """.tabbed
         
         let result = SwiftLayoutPrinter(root, tags: [child: "child", grand: "grandchild"]).print()
+        print(result)
+        XCTAssertEqual(result, expect)
+    }
+    
+    func testSafeAreaLayoutGuide() {
+        let expect = """
+        root {
+            child
+        }
+        """.tabbed
+        
+        var root = UIView().viewTag.root
+        var child = UIView().viewTag.child
+        
+        root.translatesAutoresizingMaskIntoConstraints = false
+        root.addSubview(child)
+        child.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint(item: child, attribute: .top, relatedBy: .equal, toItem: root.safeAreaLayoutGuide, attribute: .top, multiplier: 1.0, constant: 0.0).isActive = true
+        
+        var result = SwiftLayoutPrinter(root).print()
+        print(result)
+        XCTAssertEqual(result, expect)
+        
+        root = UIView().viewTag.root
+        child = UIView().viewTag.child
+        deactivable = root {
+            child.anchors {
+                Anchors(.top).equalTo(root.safeAreaLayoutGuide, attribute: .top)
+            }
+        }.active()
+        
+        result = SwiftLayoutPrinter(root).print()
         print(result)
         XCTAssertEqual(result, expect)
     }
