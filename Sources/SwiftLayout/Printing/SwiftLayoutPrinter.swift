@@ -28,7 +28,7 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
         }
         
         func constraints(_ view: UIView, tags: [String: String]) -> [ConstraintToken] {
-            view.constraints.map({ ConstraintToken(constraint: $0, tags: tags) }) + view.subviews.flatMap({ constraints($0, tags:tags) })
+            view.constraints.compactMap({ ConstraintToken(constraint: $0, tags: tags) }) + view.subviews.flatMap({ constraints($0, tags:tags) })
         }
         
         guard let view = view else {
@@ -36,7 +36,8 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
         }
 
         let token = tokens(view, tags: tags)
-        token.constraints = constraints(view, tags: tags)
+        let constraints = constraints(view, tags: tags)
+        token.constraints = constraints
         return token.description
     }
     
@@ -97,16 +98,22 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
     }
     
     final class ConstraintToken: CustomStringConvertible {
-        internal init(constraint: NSLayoutConstraint, tags: [String: String]) {
+        internal init?(constraint: NSLayoutConstraint, tags: [String: String]) {
             func tagFromItem(_ item: AnyObject?) -> String {
                 if let view = item as? UIView {
                     return tags[view.tagDescription] ?? view.tagDescription
                 } else if let view = (item as? UILayoutGuide)?.owningView {
-                    return tags[view.tagDescription].flatMap({ $0 + ".safeAreaLayoutGuide" }) ?? view.tagDescription + ".safeAreaLayoutGuide"
+                    return tags[view.tagDescription].flatMap({ $0 + ".safeAreaLayoutGuide" }) ?? (view.tagDescription + ".safeAreaLayoutGuide")
                 } else {
                     return ""
                 }
             }
+            func isSystemConstraint(_ constraint: NSLayoutConstraint) -> Bool {
+                let description = constraint.debugDescription
+                guard let range = description.range(of: "'UIViewSafeAreaLayoutGuide-[:alpha:]*'", options: [.regularExpression], range: description.startIndex..<description.endIndex) else { return false }
+                return !range.isEmpty
+            }
+            guard !isSystemConstraint(constraint) else { return nil }
             firstTag = tagFromItem(constraint.firstItem)
             firstAttribute = constraint.firstAttribute.description
             secondTag = tagFromItem(constraint.secondItem)
