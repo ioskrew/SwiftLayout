@@ -287,3 +287,41 @@ root {
   }
 }
 ```
+
+## migration
+
+The structure of the view is complicated, so it may not be easy to apply the library. In that case, **SwiftLayout** provides an utility type to easily replace the configuration of the view with SwiftLayout.
+
+that's name is **SwiftLayouPrinter**.
+
+- parsing and printing from the structures of view, subviews, and constraints to syntax codes of SwiftLayout.
+- printing pair of type and memory address of views or accessibilityIdentifier of views.
+- replacing pair of type and memory address to tags.
+
+```swift
+let view: UIView
+let child: UILabel
+let grandchild: UIView
+.......... // toooo complex
+```
+> print(SwiftLayoutPrinter(view,  tags: [view: "root", grandchildView: "grandchild").print())
+> or
+> (lldb) po SwiftLayoutPrinter(view, tags: [view: "root", grandchildView: "grandchild"]).print()
+as a result
+```swift
+view {
+	child.anchors {
+		Anchors(.top).to(.equal, to: .init(item: root, attribute: .top, constant: 0.0))
+		Anchors(.leading).to(.equal, to: .init(item: root, attribute: .leading, constant: 0.0))
+		Anchors(.trailing).to(.equal, to: .init(item: root, attribute: .trailing, constant: 0.0))
+		Anchors(.bottom).to(.equal, to: .init(item: root, attribute: .bottom, constant: 0.0))
+	}.subviews {
+		grandchild.anchors {
+			Anchors(.top).to(.equal, to: .init(item: 0x0abcd:UILabel, attribute: .top, constant: 0.0)) // 0x0abcd:UILabel is child
+			Anchors(.leading).to(.equal, to: .init(item: 0x0abcd:UILabel, attribute: .leading, constant: 0.0))
+			Anchors(.trailing).to(.equal, to: .init(item: 0x0abcd:UILabel, attribute: .trailing, constant: 0.0))
+			Anchors(.bottom).to(.equal, to: .init(item: 0x0abcd:UILabel, attribute: .bottom, constant: 0.0))
+		}
+	}
+}
+```
