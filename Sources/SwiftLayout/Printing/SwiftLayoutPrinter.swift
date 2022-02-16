@@ -26,6 +26,7 @@ public struct SwiftLayoutPrinter {
         }
         
         let token = tokens(view)
+        token.constraints = constraints(view)
         return token.description
     }
     
@@ -46,10 +47,24 @@ public struct SwiftLayoutPrinter {
             }
         }
         
+        var selfConstraints: [ConstraintToken]? {
+            let constraints = self.constraints.filter({ $0.firstTag == identifier })
+            if constraints.isEmpty { return nil }
+            return constraints
+        }
+        
         var description: String {
             var identifiers: [String]
             if subtokens.isEmpty {
-                identifiers = [identifier]
+                if let selfConstraints = selfConstraints {
+                    identifiers = [identifier + ".anchors {"]
+                    identifiers.append(contentsOf: selfConstraints.map({ token in
+                        "\t" + token.description
+                    }))
+                    identifiers.append("}")
+                } else {
+                    identifiers = [identifier]
+                }
             } else {
                 identifiers = [identifier + " {"]
                 identifiers.append(contentsOf: subtokens.map({ token in
@@ -61,12 +76,30 @@ public struct SwiftLayoutPrinter {
         }
     }
     
-    final class ConstraintToken {
+    final class ConstraintToken: CustomStringConvertible {
         internal init(constraint: NSLayoutConstraint) {
-            self.constraint = constraint
+            firstTag = (constraint.firstItem as? UIView)?.tagDescription ?? ""
+            firstAttribute = constraint.firstAttribute.description
+            secondTag = (constraint.secondItem as? UIView)?.tagDescription ?? ""
+            secondAttribute = constraint.secondAttribute.description
+            relation = constraint.relation.description
+            constant = constraint.constant.description
         }
         
-        let constraint: NSLayoutConstraint
+        let firstTag: String
+        let firstAttribute: String
+        let secondTag: String
+        let secondAttribute: String
+        let relation: String
+        let constant: String
+        
+        var description: String {
+            if secondTag.isEmpty {
+                return "Anchors(.\(firstAttribute)).to(.\(relation), to: .init(attribute: .\(secondAttribute), constant: \(constant)))"
+            } else {
+                return "Anchors(.\(firstAttribute)).to(.\(relation), to: .init(item: \(secondTag), attribute: .\(secondAttribute), constant: \(constant)))"
+            }
+        }
     }
 
 }

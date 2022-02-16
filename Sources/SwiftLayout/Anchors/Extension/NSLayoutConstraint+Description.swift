@@ -111,11 +111,11 @@ extension NSLayoutConstraint.Relation: CustomStringConvertible, CustomDebugStrin
     public var description: String {
         switch self {
         case .lessThanOrEqual:
-            return "<="
+            return "lessThanOrEqual"
         case .equal:
-            return "=="
+            return "equal"
         case .greaterThanOrEqual:
-            return ">="
+            return "greaterThanOrEqual"
         @unknown default:
             return "???"
         }
@@ -123,13 +123,13 @@ extension NSLayoutConstraint.Relation: CustomStringConvertible, CustomDebugStrin
     public var debugDescription: String {
         switch self {
         case .lessThanOrEqual:
-            return "NSLayoutConstraint.Attribute.lessThanOrEqual"
+            return "NSLayoutConstraint.Relation.lessThanOrEqual"
         case .equal:
-            return "NSLayoutConstraint.Attribute.equal"
+            return "NSLayoutConstraint.Relation.equal"
         case .greaterThanOrEqual:
-            return "NSLayoutConstraint.Attribute.greaterThanOrEqual"
+            return "NSLayoutConstraint.Relation.greaterThanOrEqual"
         @unknown default:
-            return "NSLayoutConstraint.Attribute.unknown"
+            return "NSLayoutConstraint.Relation.unknown"
         }
     }
 }

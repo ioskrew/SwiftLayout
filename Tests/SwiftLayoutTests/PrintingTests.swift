@@ -109,24 +109,16 @@ class PrintingTests: XCTestCase {
         XCTAssertEqual(result, expect)
     }
     
-    func testPrintingAnchorsInViews() {
+    func testPrintingSimpleAnchors() {
         let root = UIView().viewTag.root
-        let child = UIView().viewTag.child
-        deactivable = root {
-            child.anchors {
-                Anchors.boundary
-            }
+        deactivable = root.anchors {
+            Anchors(.width, .height)
         }.active()
         
-        XCTAssertEqual(child.superview, root)
         let expect = """
-        root:UIView {
-        \tchild:UIView.anchors {
-        \t\tAnchors(.bottom).to(.equal, to: .init(item: root, attribute: .bottom, constant: .zero))
-        \t\tAnchors(.leading).to(.equal, to: .init(item: root, attribute: .leading, constant: .zero))
-        \t\tAnchors(.top).to(.equal, to: .init(item: root, attribute: .top, constant: .zero))
-        \t\tAnchors(.trailing).to(.equal, to: .init(item: root, attribute: .trailing, constant: .zero))
-        }
+        root:UIView.anchors {
+        \tAnchors(.width).to(.equal, to: .init(attribute: .notAnAttribute, constant: 0.0))
+        \tAnchors(.height).to(.equal, to: .init(attribute: .notAnAttribute, constant: 0.0))
         }
         """
         let result = SwiftLayoutPrinter(view: root).print()
