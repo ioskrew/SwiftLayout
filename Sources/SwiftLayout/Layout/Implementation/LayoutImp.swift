@@ -36,7 +36,8 @@ struct LayoutImp: Layout {
             self.sublayouts = sublayoutImp ?? layoutImp.sublayouts
             self.anchors = anchors ?? layoutImp.anchors
         } else {
-            fatalError("The layout protocol does not allow external adoption")
+            assertionFailure("The layout protocol does not allow external adoption")
+            return nil
         }
     }
     
