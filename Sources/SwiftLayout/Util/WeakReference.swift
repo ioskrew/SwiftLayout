@@ -12,19 +12,19 @@ protocol CustomHashable: AnyObject {
     func customHash(_ hasher: inout Hasher)
 }
 
-final class WeakReference<O>: Hashable where O: CustomHashable {
-    static func == (lhs: WeakReference<O>, rhs: WeakReference<O>) -> Bool {
+final class WeakReference<Origin>: Hashable where Origin: CustomHashable {
+    static func == (lhs: WeakReference<Origin>, rhs: WeakReference<Origin>) -> Bool {
         lhs.hashValue == rhs.hashValue
     }
     
-    internal init(o: O? = nil) {
-        self.o = o
+    internal init(origin: Origin? = nil) {
+        self.origin = origin
     }
     
-    weak var o: O?
+    weak var origin: Origin?
     
     func hash(into hasher: inout Hasher) {
-        o?.customHash(&hasher)
+        origin?.customHash(&hasher)
     }
 }
 
@@ -41,16 +41,16 @@ extension NSLayoutConstraint: CustomHashable {
     }
 }
 
-extension WeakReference: CustomDebugStringConvertible where O: NSLayoutConstraint {
+extension WeakReference: CustomDebugStringConvertible where Origin: NSLayoutConstraint {
     var debugDescription: String {
-        guard let o = o else { return "WK constraint: unknown: \(UUID().uuidString)" }
-        guard let first = o.firstItem as? UIView else { return "WK constraint: unknown: \(UUID().uuidString)" }
-        if let second = o.secondItem as? UIView {
-            return "WK constraint: \(first.tagDescription) \(o.relation)[\(o.constant)x\(o.multiplier)] \(second.tagDescription)"
-        } else if let second = o.secondItem as? UILayoutGuide {
-            return "WK constraint: \(first.tagDescription) \(o.relation)[\(o.constant)x\(o.multiplier)] \(second.tagDescription)"
+        guard let origin = origin else { return "WK constraint: unknown: \(UUID().uuidString)" }
+        guard let first = origin.firstItem as? UIView else { return "WK constraint: unknown: \(UUID().uuidString)" }
+        if let second = origin.secondItem as? UIView {
+            return "WK constraint: \(first.tagDescription) \(origin.relation)[\(origin.constant)x\(origin.multiplier)] \(second.tagDescription)"
+        } else if let second = origin.secondItem as? UILayoutGuide {
+            return "WK constraint: \(first.tagDescription) \(origin.relation)[\(origin.constant)x\(origin.multiplier)] \(second.tagDescription)"
         } else {
-            return "WK constraint: \(first.tagDescription) \(o.relation)[\(o.constant)x\(o.multiplier)]"
+            return "WK constraint: \(first.tagDescription) \(origin.relation)[\(origin.constant)x\(origin.multiplier)]"
         }
     }
 }

@@ -415,17 +415,17 @@ extension NSLayoutConstraint {
     }
 }
 
-class LayoutHostingView<Content>: UIView, LayoutBuilding where Content: Layout {
+class LayoutHostingView: UIView, LayoutBuilding {
     
-    let content: Content
+    let content: Layout
     
-    var layout: some Layout {
+    var layout: Layout {
         content
     }
     
     var deactivable: Deactivable?
     
-    init(_ _content: Content) {
+    init(_ _content: Layout) {
         content = _content
         super.init(frame: .zero)
         updateLayout()

@@ -92,7 +92,7 @@ public final class Anchors: Constraint {
         return constraints
     }
     
-    public func constraints(item fromItem: NSObject, toItem: NSObject?, identifiers: ViewIdentifiers?) -> [NSLayoutConstraint] {
+    public func constraints(item fromItem: NSObject, toItem: NSObject?, identifiers: ViewInformationSet?) -> [NSLayoutConstraint] {
         var constraints: [NSLayoutConstraint] = []
         for item in items {
             let from = fromItem
@@ -136,7 +136,7 @@ public final class Anchors: Constraint {
         var constant: CGFloat = 0.0
         var multiplier: CGFloat = 1.0
         
-        func toItem(_ toItem: NSObject?, identifiers: ViewIdentifiers? = nil) -> NSObject? {
+        func toItem(_ toItem: NSObject?, identifiers: ViewInformationSet? = nil) -> NSObject? {
             switch self.toItem {
             case let .object(object):
                 return object
