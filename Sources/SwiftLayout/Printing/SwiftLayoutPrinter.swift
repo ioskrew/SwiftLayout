@@ -8,12 +8,16 @@
 import Foundation
 import UIKit
 
-public struct SwiftLayoutPrinter {
+public struct SwiftLayoutPrinter: CustomStringConvertible {
     public init(view: UIView) {
         self.view = view
     }
     
     let view: UIView
+    
+    public var description: String {
+        print()
+    }
     
     public func print() -> String {
         
