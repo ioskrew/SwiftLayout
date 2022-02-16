@@ -14,6 +14,7 @@ DSL library that implements hierarchy of views and constraints declaratively
 
 - no more needs using add subview
 - no more directly create NSLayoutConstraint or using NSLayoutAnchor
+  - *alright, sometimes may be you needs that. ok. you can use it in Layout*
 - relation between view become blackboxing, enable to structured by conditions, always views and constraints be coupled, not separated.
 
 ## requirements
