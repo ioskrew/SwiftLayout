@@ -8,13 +8,13 @@
 import Foundation
 import UIKit
 
-public final class ViewInformation: Hashable {
+final class ViewInformation: Hashable {
     
-    public static func == (lhs: ViewInformation, rhs: ViewInformation) -> Bool {
+    static func == (lhs: ViewInformation, rhs: ViewInformation) -> Bool {
         lhs.hashValue == rhs.hashValue
     }
     
-    public init(superview: UIView?, view: UIView?, identifier: String?, animationDisabled: Bool) {
+    init(superview: UIView?, view: UIView?, identifier: String?, animationDisabled: Bool) {
         self.superview = superview
         self.view = view
         self.identifier = identifier
@@ -26,7 +26,7 @@ public final class ViewInformation: Hashable {
     let identifier: String?
     let animationDisabled: Bool
     
-    public func hash(into hasher: inout Hasher) {
+    func hash(into hasher: inout Hasher) {
         hasher.combine(superview)
         hasher.combine(view)
         hasher.combine(identifier)
@@ -54,5 +54,18 @@ public final class ViewInformation: Hashable {
     func animation() {
         guard animationDisabled else { return }
         view?.layer.removeAllAnimations()
+    }
+}
+
+public struct ViewInformationSet {
+    
+    let infos: Set<ViewInformation>
+    
+    init(infos: [ViewInformation] = []) {
+        self.infos = Set(infos)
+    }
+    
+    subscript(_ identifier: String) -> UIView? {
+        infos.first(where: { $0.identifier == identifier })?.view
     }
 }

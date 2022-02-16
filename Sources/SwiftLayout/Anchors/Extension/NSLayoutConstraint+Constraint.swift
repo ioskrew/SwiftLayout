@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 extension NSLayoutConstraint: Constraint {
-    public func constraints(item: NSObject, toItem: NSObject?, identifiers: ViewIdentifiers?) -> [NSLayoutConstraint] {
+    public func constraints(item: NSObject, toItem: NSObject?, identifiers: ViewInformationSet?) -> [NSLayoutConstraint] {
         [self]
     }
     

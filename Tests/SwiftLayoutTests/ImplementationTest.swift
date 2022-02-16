@@ -20,6 +20,40 @@ final class ImplementationTest: XCTestCase {
         deactivable = nil
     }
     
+    func testTraversal() {
+        let root: UIView = UIView().viewTag.root
+        let button: UIButton = UIButton().viewTag.button
+        let label: UILabel = UILabel().viewTag.label
+        let redView: UIView = UIView().viewTag.redView
+        let image: UIImageView = UIImageView().viewTag.image
+        
+        let layout = root {
+            redView
+            label {
+                button
+                image
+            }
+        } as! LayoutImp
+        
+        var result: [String] = []
+        layout.traversal { superLayout, currentLayout in
+            let superDescription = superLayout?.view.accessibilityIdentifier ?? "nil"
+            let currentDescription = currentLayout.view.accessibilityIdentifier ?? "nil"
+            let description = "\(superDescription), \(currentDescription)"
+            result.append(description)
+        }
+        
+        let expectedResult = [
+            "nil, root",
+            "root, redView",
+            "root, label",
+            "label, button",
+            "label, image",
+        ]
+        
+        XCTAssertEqual(expectedResult, result)
+    }
+    
     func testViewStrongReferenceCycle() {
         // given
         class DeinitView: UIView {
@@ -31,7 +65,7 @@ final class ImplementationTest: XCTestCase {
         }
         
         class SelfReferenceView: UIView, LayoutBuilding {
-            var layout: some Layout {
+            var layout: Layout {
                 self {
                     DeinitView().anchors {
                         Anchors.boundary
@@ -70,10 +104,10 @@ final class ImplementationTest: XCTestCase {
                     Anchors.boundary
                 }
             }
-        }
+        } as? LayoutImp
         
         XCTAssertNotNil(layout)
-        XCTAssertEqual(layout.viewInformations.map(\.view), [root, child, friend])
+        XCTAssertEqual(layout?.viewInformations.map(\.view), [root, child, friend])
     }
     
     func testLayoutCompare() {
@@ -105,6 +139,18 @@ final class ImplementationTest: XCTestCase {
             friend.anchors { Anchors.boundary }
         }
         
+        guard
+            let f1 = f1 as? LayoutImp,
+            let f2 = f2 as? LayoutImp,
+            let f3 = f3 as? LayoutImp,
+            let f4 = f4 as? LayoutImp,
+            let f5 = f5 as? LayoutImp,
+            let f6 = f6 as? LayoutImp
+        else {
+            XCTFail()
+            return
+        }
+        
         XCTAssertEqual(f1.viewInformations, f2.viewInformations)
         XCTAssertEqual(f1.viewConstraints().weakens, f2.viewConstraints().weakens)
         
@@ -131,13 +177,13 @@ final class ImplementationTest: XCTestCase {
         class LayoutView: UIView, LayoutBuilding {
             var flag = true
             
-            let root = MockView()
+            let root = MockView().viewTag.root
             let child = UIView().viewTag.child
             let friend = UIView().viewTag.friend
             
             var deactivable: Deactivable?
             
-            var layout: some Layout {
+            var layout: Layout {
                 root {
                     if flag {
                         child.anchors {
@@ -193,7 +239,7 @@ final class ImplementationTest: XCTestCase {
         let labelByIdentifier = deactivation?.viewForIdentifier("label")
         XCTAssertEqual(labelByIdentifier?.accessibilityIdentifier, "label")
         let secondViewByIdentifier = deactivation?.viewForIdentifier("secondView")
-        let currents = deactivation?.constraints ?? []
+        let currents = deactivation?.constraints.constraints ?? []
         let labelConstraints = Set(Anchors.cap.constraints(item: labelByIdentifier!, toItem: root).weakens)
         XCTAssertEqual(currents.intersection(labelConstraints), labelConstraints)
         let secondViewConstraints = Set(Anchors.cap.constraints(item: labelByIdentifier!, toItem: root).weakens)
@@ -210,13 +256,23 @@ final class ImplementationTest: XCTestCase {
         }).subviews {
             UILabel().identifying("label")
         }
-        deactivable = layout.active()
+        
+        guard let layoutImp = layout as? LayoutImp else {
+            XCTFail()
+            return
+        }
+        
+        deactivable = layoutImp.active()
         
         let label = deactivable?.viewForIdentifier("label")
         
-        XCTAssertNotNil(label)
+
+        let viewInfos = layoutImp.viewInformations
+        let viewInfoSet = ViewInformationSet(infos: viewInfos)
+        let constrains = layoutImp.viewConstraints(viewInfoSet)
         
-        XCTAssertEqual(Set(root.constraints.weakens), Set(layout.viewConstraints(.init(views: Set(layout.viewInformations))).weakens))
+        XCTAssertNotNil(label)
+        XCTAssertEqual(Set(root.constraints.weakens), Set(constrains.weakens))
     }
     
     func testLayoutGuide() {

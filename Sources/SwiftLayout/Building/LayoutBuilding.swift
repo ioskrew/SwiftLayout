@@ -9,24 +9,21 @@ import Foundation
 import UIKit
 
 public protocol LayoutBuilding: AnyObject {
- 
-    associatedtype LayoutContent: Layout
-    
-    var layout: LayoutContent { get }
+    var layout: Layout { get }
     var deactivable: Deactivable? { get set }
-    
 }
 
 public extension LayoutBuilding {
     
-    func updateLayout(animated: Bool = false) {
-        let layout: some Layout = self.layout
+    func updateLayout(animated: Bool = false) {        
+        guard let layoutImp = self.layout as? LayoutImp else {
+            return
+        }
         
-        if let deactivable = self.deactivable as? Deactivation {
-            guard let impl = layout as? LayoutImpl else { return }
-            deactivable.updateLayout(impl, animated: animated)
+        if let deactivation = self.deactivable as? Deactivation {
+            Activator.update(layout: layoutImp, fromDeactivation: deactivation)
         } else {
-            self.deactivable = Deactivation(layout)
+            self.deactivable = Activator.active(layout: layoutImp)
         }
     }
     
