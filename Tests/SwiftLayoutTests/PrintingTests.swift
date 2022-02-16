@@ -30,11 +30,11 @@ class PrintingTests: XCTestCase {
         
         XCTAssertEqual(child.superview, root)
         let expect = """
-        root:UIView {
-        \tchild:UIView
+        root {
+        \tchild
         }
         """
-        let result = SwiftLayoutPrinter(view: root).print()
+        let result = SwiftLayoutPrinter(root).print()
         print(result)
         XCTAssertEqual(result, expect)
     }
@@ -50,12 +50,12 @@ class PrintingTests: XCTestCase {
         }.active()
         
         let expect = """
-        root:UIView {
-        \ta:UIView
-        \tb:UIView
+        root {
+        \ta
+        \tb
         }
         """
-        let result = SwiftLayoutPrinter(view: root).print()
+        let result = SwiftLayoutPrinter(root).print()
         print(result)
         XCTAssertEqual(result, expect)
     }
@@ -72,13 +72,13 @@ class PrintingTests: XCTestCase {
         }.active()
         
         let expect = """
-        root:UIView {
-        \tchild:UIView {
-        \t\tgrandchild:UIView
+        root {
+        \tchild {
+        \t\tgrandchild
         \t}
         }
         """
-        let result = SwiftLayoutPrinter(view: root).print()
+        let result = SwiftLayoutPrinter(root).print()
         print(result)
         XCTAssertEqual(result, expect)
     }
@@ -97,14 +97,14 @@ class PrintingTests: XCTestCase {
         }.active()
         
         let expect = """
-        root:UIView {
-        \tchild:UIView {
-        \t\tgrandchild:UIView
+        root {
+        \tchild {
+        \t\tgrandchild
         \t}
-        \tfriend:UIView
+        \tfriend
         }
         """
-        let result = SwiftLayoutPrinter(view: root).print()
+        let result = SwiftLayoutPrinter(root).print()
         print(result)
         XCTAssertEqual(result, expect)
     }
@@ -116,12 +116,12 @@ class PrintingTests: XCTestCase {
         }.active()
         
         let expect = """
-        root:UIView.anchors {
+        root.anchors {
         \tAnchors(.width).to(.equal, to: .init(attribute: .notAnAttribute, constant: 0.0))
         \tAnchors(.height).to(.equal, to: .init(attribute: .notAnAttribute, constant: 0.0))
         }
         """
-        let result = SwiftLayoutPrinter(view: root).print()
+        let result = SwiftLayoutPrinter(root).print()
         print(result)
         XCTAssertEqual(result, expect)
     }
@@ -137,14 +137,14 @@ class PrintingTests: XCTestCase {
         }.active()
         
         let expect = """
-        root:UIView {
-        \tchild:UIView.anchors {
-        \t\tAnchors(.top).to(.equal, to: .init(item: root:UIView, attribute: .top, constant: 0.0))
-        \t\tAnchors(.bottom).to(.equal, to: .init(item: root:UIView, attribute: .bottom, constant: -10.0))
+        root {
+        \tchild.anchors {
+        \t\tAnchors(.top).to(.equal, to: .init(item: root, attribute: .top, constant: 0.0))
+        \t\tAnchors(.bottom).to(.equal, to: .init(item: root, attribute: .bottom, constant: -10.0))
         \t}
         }
         """
-        let result = SwiftLayoutPrinter(view: root).print()
+        let result = SwiftLayoutPrinter(root).print()
         print(result)
         XCTAssertEqual(result, expect)
     }
@@ -164,17 +164,17 @@ class PrintingTests: XCTestCase {
         }.active()
         
         let expect = """
-        root:UIView {
-        \tchild:UIView.anchors {
-        \t\tAnchors(.top).to(.equal, to: .init(item: root:UIView, attribute: .top, constant: 0.0))
-        \t\tAnchors(.bottom).to(.equal, to: .init(item: root:UIView, attribute: .bottom, constant: -10.0))
+        root {
+        \tchild.anchors {
+        \t\tAnchors(.top).to(.equal, to: .init(item: root, attribute: .top, constant: 0.0))
+        \t\tAnchors(.bottom).to(.equal, to: .init(item: root, attribute: .bottom, constant: -10.0))
         \t}
-        \tfriend:UIView.anchors {
-        \t\tAnchors(.top).to(.equal, to: .init(item: child:UIView, attribute: .bottom, constant: 0.0))
+        \tfriend.anchors {
+        \t\tAnchors(.top).to(.equal, to: .init(item: child, attribute: .bottom, constant: 0.0))
         \t}
         }
         """
-        let result = SwiftLayoutPrinter(view: root).print()
+        let result = SwiftLayoutPrinter(root).print()
         print(result)
         XCTAssertEqual(result, expect)
     }
