@@ -9,11 +9,13 @@ import Foundation
 import UIKit
 
 public struct SwiftLayoutPrinter: CustomStringConvertible {
-    public init(_ view: UIView) {
+    public init(_ view: UIView, tags: [UIView: String] = [:]) {
         self.view = view
+        self.tags = Dictionary(uniqueKeysWithValues: tags.map({ ($0.key.tagDescription, $0.value) }))
     }
     
-    let view: UIView
+    weak var view: UIView?
+    let tags: [String: String]
     
     public var description: String {
         print()
@@ -21,16 +23,20 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
     
     public func print() -> String {
         
-        func tokens(_ view: UIView) -> ViewToken {
-            ViewToken(identifier: view.tagDescription, subtokens: view.subviews.map(tokens))
+        func tokens(_ view: UIView, tags: [String: String]) -> ViewToken {
+            ViewToken(identifier: tags[view.tagDescription] ?? view.tagDescription, subtokens: view.subviews.map({ tokens($0, tags: tags) }))
         }
         
-        func constraints(_ view: UIView) -> [ConstraintToken] {
-            view.constraints.map(ConstraintToken.init) + view.subviews.flatMap(constraints)
+        func constraints(_ view: UIView, tags: [String: String]) -> [ConstraintToken] {
+            view.constraints.map({ ConstraintToken(constraint: $0, tags: tags) }) + view.subviews.flatMap({ constraints($0, tags:tags) })
         }
         
-        let token = tokens(view)
-        token.constraints = constraints(view)
+        guard let view = view else {
+            return ""
+        }
+
+        let token = tokens(view, tags: tags)
+        token.constraints = constraints(view, tags: tags)
         return token.description
     }
     
@@ -91,10 +97,19 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
     }
     
     final class ConstraintToken: CustomStringConvertible {
-        internal init(constraint: NSLayoutConstraint) {
-            firstTag = (constraint.firstItem as? UIView)?.tagDescription ?? ""
+        internal init(constraint: NSLayoutConstraint, tags: [String: String]) {
+            func tagFromItem(_ item: AnyObject?) -> String {
+                if let view = item as? UIView {
+                    return tags[view.tagDescription] ?? view.tagDescription
+                } else if let view = (item as? UILayoutGuide)?.owningView {
+                    return tags[view.tagDescription].flatMap({ $0 + ".safeAreaLayoutGuide" }) ?? view.tagDescription
+                } else {
+                    return ""
+                }
+            }
+            firstTag = tagFromItem(constraint.firstItem)
             firstAttribute = constraint.firstAttribute.description
-            secondTag = (constraint.secondItem as? UIView)?.tagDescription ?? ""
+            secondTag = tagFromItem(constraint.secondItem)
             secondAttribute = constraint.secondAttribute.description
             relation = constraint.relation.description
             constant = constraint.constant.description
