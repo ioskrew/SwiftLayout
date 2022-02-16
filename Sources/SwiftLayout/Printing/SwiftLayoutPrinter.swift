@@ -16,7 +16,16 @@ public struct SwiftLayoutPrinter {
     let view: UIView
     
     public func print() -> String {
-        let token = view.token
+        
+        func tokens(_ view: UIView) -> ViewToken {
+            ViewToken(identifier: view.tagDescription, subtokens: view.subviews.map(tokens))
+        }
+        
+        func constraints(_ view: UIView) -> [ConstraintToken] {
+            view.constraints.map(ConstraintToken.init) + view.subviews.flatMap(constraints)
+        }
+        
+        let token = tokens(view)
         return token.description
     }
     
@@ -28,6 +37,14 @@ public struct SwiftLayoutPrinter {
         
         let identifier: String
         let subtokens: [ViewToken]
+        
+        var constraints: [ConstraintToken] = [] {
+            didSet {
+                subtokens.forEach { token in
+                    token.constraints = constraints
+                }
+            }
+        }
         
         var description: String {
             var identifiers: [String]
@@ -43,11 +60,13 @@ public struct SwiftLayoutPrinter {
             return identifiers.joined(separator: "\n")
         }
     }
-
-}
-
-fileprivate extension UIView {
-    var token: SwiftLayoutPrinter.ViewToken {
-        SwiftLayoutPrinter.ViewToken(identifier: tagDescription, subtokens: subviews.map(\.token))
+    
+    final class ConstraintToken {
+        internal init(constraint: NSLayoutConstraint) {
+            self.constraint = constraint
+        }
+        
+        let constraint: NSLayoutConstraint
     }
+
 }
