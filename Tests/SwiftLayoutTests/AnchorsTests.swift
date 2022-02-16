@@ -118,7 +118,7 @@ class AnchorsTests: XCTestCase {
         root.addSubview(child)
         
         let constraint = anchors.constraints(item: child, toItem: root)
-        XCTAssertEqual(constraint.count, 4)
+        XCTAssertEqual(constraint.count, 9)
     }
     
 }
