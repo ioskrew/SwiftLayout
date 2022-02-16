@@ -228,7 +228,7 @@ final class ViewController: UIViewController, LayoutBuilding {
 
   var deactivable: Deactivable?
 
-  var layout: some Layout {
+  var layout: Layout {
     view {
       if showRed {
         red
