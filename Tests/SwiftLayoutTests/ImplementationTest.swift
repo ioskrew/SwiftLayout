@@ -291,5 +291,16 @@ final class ImplementationTest: XCTestCase {
         print(Anchors.boundary.constraints(item: root, toItem: child.safeAreaLayoutGuide).weakens)
         XCTAssertEqual(root.constraints.weakens, Anchors.boundary.constraints(item: root, toItem: child.safeAreaLayoutGuide).weakens)
     }
+    
+    class Cell: UITableViewCell {
+        var profileView: UIImageView = .init(image: nil)
+        var nameLabel: UILabel = .init()
+    }
+    
+    func testCreateViewIdentifierFromTarget() {
+        let cell = Cell()
+        let printer = SwiftLayoutPrinter(cell)
+        XCTAssertEqual(printer.findViewIdentifiers(), ["profileView", "nameLabel"])
+    }
 }
     

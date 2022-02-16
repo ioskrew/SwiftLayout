@@ -21,6 +21,14 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
         print()
     }
     
+    func findViewIdentifiers() -> [String] {
+        guard let view = view else {
+            return []
+        }
+
+        return Mirror(reflecting: view).children.filter({ $0.value is UIView }).compactMap(\.label)
+    }
+    
     public func print() -> String {
         
         func tokens(_ view: UIView, tags: [String: String]) -> ViewToken {
