@@ -292,6 +292,43 @@ class PrintingTests: XCTestCase {
         XCTAssertEqual(result, expect)
     }
     
+    
+    class Cell: UIView, LayoutBuilding {
+        var profileView: UIImageView = .init(image: nil)
+        var nameLabel: UILabel = .init()
+        
+        var deactivable: Deactivable?
+        
+        var layout: Layout {
+            self {
+                profileView
+                nameLabel
+            }
+        }
+        
+        override init(frame: CGRect) {
+            super.init(frame: frame)
+            updateLayout()
+        }
+        
+        required init?(coder: NSCoder) {
+            super.init(coder: coder)
+            updateLayout()
+        }
+    }
+    
+    func testPrintWithFindingViewIdentifiers() {
+        let cell = Cell()
+        let expect = """
+        contentView {
+            profileView
+            nameLabel
+        }
+        """.tabbed
+        
+        let result = SwiftLayoutPrinter(cell, tags: [cell: "contentView"]).print()
+        XCTAssertEqual(result, expect)
+    }
 }
 
 private extension String {
