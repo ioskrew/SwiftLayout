@@ -292,18 +292,5 @@ final class ImplementationTest: XCTestCase {
         XCTAssertEqual(root.constraints.weakens, Anchors.boundary.constraints(item: root, toItem: child.safeAreaLayoutGuide).weakens)
     }
     
-    func testLayoutOptions() {
-        var options: LayoutOptions = []
-        XCTAssertFalse(options.contains(.accessibilityIdentifiers))
-        XCTAssertFalse(options.contains(.usingAnimation))
-        
-        let hello = "HELLO" as NSString
-        let newoptions = LayoutOptions.accessibilityIdentifiersInObject(hello)
-        options.insert(newoptions)
-        XCTAssertTrue(options.contains(.accessibilityIdentifiers))
-        XCTAssertEqual(options.objectForAccessibilityIdentifier as? NSObject, hello)
-        XCTAssertFalse(options.contains(.usingAnimation))
-    }
-    
 }
     

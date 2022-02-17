@@ -7,7 +7,9 @@
 
 import UIKit
 
-class Deactivation: Deactivable {
+final class Deactivation: Deactivable {
+    
+    weak var building: LayoutBuilding?
     
     convenience init() {
         self.init(viewInfos: .init(), constraints: .init())
