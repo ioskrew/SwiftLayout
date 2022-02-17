@@ -20,13 +20,13 @@ enum Activator {
         
         deactivate(deactivation: deactivation, withViewInformationSet: viewInfoSet)
         
-        let constrains = layout.viewConstraints(viewInfoSet)
-        
         if options.contains(.accessibilityIdentifiers) {
             if let rootobject: AnyObject = deactivation.building ?? viewInfoSet.rootview {
                 IdentifierUpdater(rootobject).update()
             }
         }
+        
+        let constrains = layout.viewConstraints(viewInfoSet)
         
         activate(viewInfos: viewInfos, constrains: constrains)
         
