@@ -16,10 +16,10 @@ public protocol LayoutBuilding: AnyObject {
 public extension LayoutBuilding {
     
     func updateLayout(animated: Bool) {
-        self.updateLayout(animated ? .init(options: .usingAnimation) : nil)
+        self.updateLayout(animated ? .usingAnimation : [])
     }
     
-    func updateLayout(_ options: LayoutOptions? = nil) {
+    func updateLayout(_ options: LayoutOptions = []) {
         guard let layoutImp = self.layout as? LayoutImp else {
             return
         }

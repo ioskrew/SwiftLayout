@@ -295,7 +295,7 @@ class PrintingTests: XCTestCase {
     
     class Cell: UIView, LayoutBuilding {
         
-        let options: LayoutOptions?
+        let options: LayoutOptions
         
         var profileView: UIImageView = .init(image: nil)
         var nameLabel: UILabel = .init()
@@ -309,14 +309,14 @@ class PrintingTests: XCTestCase {
             }
         }
         
-        init(_ _options: LayoutOptions? = nil) {
+        init(_ _options: LayoutOptions = []) {
             options = _options
             super.init(frame: .zero)
             updateLayout(options)
         }
         
         required init?(coder: NSCoder) {
-            options = nil
+            options = []
             super.init(coder: coder)
             updateLayout()
         }
@@ -331,12 +331,12 @@ class PrintingTests: XCTestCase {
         }
         """.tabbed
         
-        let result = SwiftLayoutPrinter(cell, tags: [cell: "contentView"]).print(.init(options: .accessibilityIdentifiers))
+        let result = SwiftLayoutPrinter(cell, tags: [cell: "contentView"]).print(.accessibilityIdentifiers)
         XCTAssertEqual(result, expect)
     }
     
     func testAccessibilityIdentifierSettings() {
-        let cell = Cell(.init(options: .accessibilityIdentifiers))
+        let cell = Cell(.accessibilityIdentifiers)
         
         XCTAssertEqual(cell.profileView.accessibilityIdentifier, "profileView")
         XCTAssertEqual(cell.nameLabel.accessibilityIdentifier, "nameLabel")

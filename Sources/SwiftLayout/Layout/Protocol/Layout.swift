@@ -36,7 +36,7 @@ public extension Layout {
 }
 
 public extension Layout {
-    func active(_ options: LayoutOptions? = nil) -> Deactivable {
+    func active(_ options: LayoutOptions = []) -> Deactivable {
         guard let layoutImp = LayoutImp(layout: self) else {
             return Deactivation()
         }
