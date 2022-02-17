@@ -8,17 +8,17 @@
 import Foundation
 import UIKit
 
-struct ObjectIdentifiers {
+public struct AccessibilityIdentifierUpdater {
     let object: AnyObject
     let identifieds: [Identified]
-    var identifiers: [String] { identifieds.map(\.identifier) }
+    public var identifiers: [String] { identifieds.map(\.identifier) }
     
     init(_ object: AnyObject) {
         self.object = object
         self.identifieds = Mirror(reflecting: object).children.compactMap(Identified.init)
     }
     
-    func prepare() {
+    public func update() {
         for identified in identifieds {
             identified.prepare()
         }
