@@ -387,6 +387,41 @@ final class DSLTests: XCTestCase {
         print(root.constraints)
         XCTAssertEqual(child.frame.size, .init(width: 60, height: 60))
     }
+    
+    final class IdentifiedView: UIView, LayoutBuilding {
+        
+        lazy var contentView: UIView = UIView()
+        lazy var nameLabel: UILabel = UILabel()
+        
+        var deactivable: Deactivable?
+        
+        var layout: Layout {
+            contentView {
+                nameLabel
+            }
+        }
+        
+        init(_ options: LayoutOptions = []) {
+            super.init(frame: .zero)
+            updateLayout(options)
+        }
+        
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+    }
+    
+    func testNoAccessibilityIdentifierOption() {
+        let view = IdentifiedView()
+        XCTAssertNil(view.contentView.accessibilityIdentifier)
+        XCTAssertNil(view.nameLabel.accessibilityIdentifier)
+    }
+    
+    func testAccessibilityIdentifierOption() {
+        let view = IdentifiedView(.accessibilityIdentifiers)
+        XCTAssertEqual(view.contentView.accessibilityIdentifier, "contentView")
+        XCTAssertEqual(view.nameLabel.accessibilityIdentifier, "nameLabel")
+    }
 }
 
 extension Anchors {

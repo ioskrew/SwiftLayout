@@ -9,17 +9,12 @@ import Foundation
 import UIKit
 
 enum Activator {
-    static func active(layout: LayoutImp, options: LayoutOptions = []) -> Deactivation {
-        return update(layout: layout, options: options)
+    static func active(layout: LayoutImp, options: LayoutOptions = [], building: LayoutBuilding? = nil) -> Deactivation {
+        return update(layout: layout, fromDeactivation: Deactivation(building: building), options: options)
     }
 
     @discardableResult
-    static func update(layout: LayoutImp, fromDeactivation deactivation: Deactivation = Deactivation(), animated: Bool = false) -> Deactivation {
-        update(layout: layout, fromDeactivation: deactivation, options: .usingAnimation)
-    }
-    
-    @discardableResult
-    static func update(layout: LayoutImp, fromDeactivation deactivation: Deactivation = Deactivation(), options: LayoutOptions) -> Deactivation {
+    static func update(layout: LayoutImp, fromDeactivation deactivation: Deactivation, options: LayoutOptions) -> Deactivation {
         let viewInfos = layout.viewInformations
         let viewInfoSet = ViewInformationSet(infos: viewInfos)
         
@@ -28,11 +23,10 @@ enum Activator {
         let constrains = layout.viewConstraints(viewInfoSet)
         
         if options.contains(.accessibilityIdentifiers) {
-            if let rootobject = viewInfoSet.rootview {
+            if let rootobject: AnyObject = deactivation.building ?? viewInfoSet.rootview {
                 IdentifierUpdater(rootobject).update()
             }
         }
-        
         
         activate(viewInfos: viewInfos, constrains: constrains)
         

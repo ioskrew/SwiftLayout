@@ -292,5 +292,17 @@ final class ImplementationTest: XCTestCase {
         XCTAssertEqual(root.constraints.weakens, Anchors.boundary.constraints(item: root, toItem: child.safeAreaLayoutGuide).weakens)
     }
     
+    final class TestView: UIView {
+        let contentView = UIView()
+        let nameLabel = UILabel()
+    }
+    
+    func testSetAccessibilityIdentifier() {
+        let view = TestView()
+        IdentifierUpdater(view).update()
+        
+        XCTAssertEqual(view.contentView.accessibilityIdentifier, "contentView")
+        XCTAssertEqual(view.nameLabel.accessibilityIdentifier, "nameLabel")
+    }
 }
     
