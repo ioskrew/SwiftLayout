@@ -21,7 +21,7 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
         print()
     }
     
-    public func print(_ options: LayoutOptions = []) -> String {
+    public func print(_ options: LayoutOptions? = nil) -> String {
         
         func tokens(_ view: UIView, tags: [String: String]) -> ViewToken {
             ViewToken(identifier: tags[view.tagDescription] ?? view.tagDescription, subtokens: view.subviews.map({ tokens($0, tags: tags) }))
@@ -35,11 +35,13 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
             return ""
         }
         
-        if options.contains(.accessibilityIdentifiers) {
-            if let rootobject = options.objectForAccessibilityIdentifier {
-                IdentifierUpdater(rootobject).update()
-            } else {
-                IdentifierUpdater(view).update()
+        if let options = options {
+            if options.contains(.accessibilityIdentifiers) {
+                if let rootobject = options.objectForAccessibilityIdentifier {
+                    IdentifierUpdater(rootobject).update()
+                } else {
+                    IdentifierUpdater(view).update()
+                }
             }
         }
 
