@@ -36,11 +36,7 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
         }
         
         if options.contains(.accessibilityIdentifiers) {
-            if let rootobject = options.objectForAccessibilityIdentifier {
-                IdentifierUpdater(rootobject).update()
-            } else {
-                IdentifierUpdater(view).update()
-            }
+            IdentifierUpdater(view).update()
         }
 
         let token = tokens(view, tags: tags)

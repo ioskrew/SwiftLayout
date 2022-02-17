@@ -28,7 +28,7 @@ enum Activator {
         let constrains = layout.viewConstraints(viewInfoSet)
         
         if options.contains(.accessibilityIdentifiers) {
-            if let rootobject = options.objectForAccessibilityIdentifier ?? viewInfoSet.rootview {
+            if let rootobject = viewInfoSet.rootview {
                 IdentifierUpdater(rootobject).update()
             }
         }
