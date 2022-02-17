@@ -60,6 +60,7 @@ final class ViewInformation: Hashable {
 public struct ViewInformationSet {
     
     let infos: Set<ViewInformation>
+    var rootview: UIView? { infos.first(where: { $0.superview == nil })?.view }
     
     init(infos: [ViewInformation] = []) {
         self.infos = Set(infos)
