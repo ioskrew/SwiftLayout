@@ -21,14 +21,6 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
         print()
     }
     
-    func findViewIdentifiers() -> [Identified] {
-        guard let view = view else {
-            return []
-        }
-
-        return Mirror(reflecting: view).children.compactMap(Identified.init)
-    }
-    
     public func print() -> String {
         
         func tokens(_ view: UIView, tags: [String: String]) -> ViewToken {
@@ -43,9 +35,8 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
             return ""
         }
         
-        for identified in findViewIdentifiers() {
-            identified.prepare()
-        }
+        let objectIdentifier = ObjectIdentifiers(view)
+        objectIdentifier.prepare()
 
         let token = tokens(view, tags: tags)
         let constraints = constraints(view, tags: tags)
@@ -150,19 +141,4 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
         }
     }
 
-    struct Identified: Hashable {
-        let identifier: String
-        let view: UIView
-        
-        init?(_ child: (String?, Any)) {
-            guard let identifier = child.0 else { return nil }
-            guard let view = child.1 as? UIView else { return nil }
-            self.identifier = identifier
-            self.view = view
-        }
-        
-        func prepare() {
-            view.accessibilityIdentifier = identifier
-        }
-    }
 }

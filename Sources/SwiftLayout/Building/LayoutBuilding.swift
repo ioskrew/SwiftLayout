@@ -15,15 +15,19 @@ public protocol LayoutBuilding: AnyObject {
 
 public extension LayoutBuilding {
     
-    func updateLayout(animated: Bool = false) {        
+    func updateLayout(animated: Bool) {
+        self.updateLayout(animated ? .usingAnimation : [])
+    }
+    
+    func updateLayout(_ options: LayoutOptions = []) {
         guard let layoutImp = self.layout as? LayoutImp else {
             return
         }
         
         if let deactivation = self.deactivable as? Deactivation {
-            Activator.update(layout: layoutImp, fromDeactivation: deactivation, animated: animated)
+            Activator.update(layout: layoutImp, fromDeactivation: deactivation, options: options)
         } else {
-            self.deactivable = Activator.active(layout: layoutImp)
+            self.deactivable = Activator.active(layout: layoutImp, options: options)
         }
     }
     

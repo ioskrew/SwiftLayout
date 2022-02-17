@@ -294,6 +294,9 @@ class PrintingTests: XCTestCase {
     
     
     class Cell: UIView, LayoutBuilding {
+        
+        let options: LayoutOptions
+        
         var profileView: UIImageView = .init(image: nil)
         var nameLabel: UILabel = .init()
         
@@ -306,12 +309,14 @@ class PrintingTests: XCTestCase {
             }
         }
         
-        override init(frame: CGRect) {
-            super.init(frame: frame)
-            updateLayout()
+        init(_ _options: LayoutOptions = []) {
+            options = _options
+            super.init(frame: .zero)
+            updateLayout(options)
         }
         
         required init?(coder: NSCoder) {
+            options = []
             super.init(coder: coder)
             updateLayout()
         }
@@ -328,6 +333,13 @@ class PrintingTests: XCTestCase {
         
         let result = SwiftLayoutPrinter(cell, tags: [cell: "contentView"]).print()
         XCTAssertEqual(result, expect)
+    }
+    
+    func testAccessibilityIdentifierSettings() {
+        let cell = Cell(.accessibilityIdentifiers)
+        
+        XCTAssertEqual(cell.profileView.accessibilityIdentifier, "profileView")
+        XCTAssertEqual(cell.nameLabel.accessibilityIdentifier, "nameLabel")
     }
 }
 
