@@ -9,15 +9,14 @@ import UIKit
 
 final class Deactivation: Deactivable {
     
-    weak var building: LayoutBuilding?
-    
-    convenience init() {
-        self.init(viewInfos: .init(), constraints: .init())
+    convenience init(building: LayoutBuilding? = nil) {
+        self.init(viewInfos: .init(), constraints: .init(), building: building)
     }
     
-    init(viewInfos: ViewInformationSet, constraints: ConstraintsSet) {
+    init(viewInfos: ViewInformationSet, constraints: ConstraintsSet, building: LayoutBuilding? = nil) {
         self.viewInfos = viewInfos
         self.constraints = constraints
+        self.building = building
     }
     
     deinit {
@@ -26,6 +25,9 @@ final class Deactivation: Deactivable {
     
     var viewInfos: ViewInformationSet
     var constraints: ConstraintsSet
+    
+    /// injected on activating
+    private(set) weak var building: LayoutBuilding?
     
     func deactive() {
         deactiveViews()

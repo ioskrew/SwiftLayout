@@ -39,7 +39,7 @@ public struct IdentifierUpdater {
         init?(_ child: (String?, Any)) {
             guard let identifier = child.0 else { return nil }
             guard let view = child.1 as? UIView else { return nil }
-            self.identifier = identifier
+            self.identifier = identifier.replacingOccurrences(of: "$__lazy_storage_$_", with: "")
             self.view = view
         }
         
