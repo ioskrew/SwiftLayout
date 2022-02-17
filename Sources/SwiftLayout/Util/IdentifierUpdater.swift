@@ -8,12 +8,20 @@
 import Foundation
 import UIKit
 
-public struct AccessibilityIdentifierUpdater {
+public struct IdentifierUpdater {
+    
     let object: AnyObject
     let identifieds: [Identified]
-    public var identifiers: [String] { identifieds.map(\.identifier) }
     
-    init(_ object: AnyObject) {
+    public var identifiersWithAddress: [String] {
+        identifieds.map({ $0.identifier + ":" + AddressDescriptor($0.view).description })
+    }
+    
+    public var identifiers: [String] {
+        identifieds.map(\.identifier)
+    }
+    
+    public init(_ object: AnyObject) {
         self.object = object
         self.identifieds = Mirror(reflecting: object).children.compactMap(Identified.init)
     }
@@ -39,4 +47,5 @@ public struct AccessibilityIdentifierUpdater {
             view.accessibilityIdentifier = identifier
         }
     }
+    
 }

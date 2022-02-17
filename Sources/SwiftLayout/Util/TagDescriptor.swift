@@ -23,7 +23,7 @@ struct TagDescriptor<Value>: CustomDebugStringConvertible where Value: TagDescri
         if let identifier = value.accessibilityIdentifier {
             return identifier
         } else {
-            return Unmanaged<Value>.passUnretained(value).toOpaque().debugDescription + ":\(type(of: self.value))"
+            return AddressDescriptor(value).description
         }
     }
     

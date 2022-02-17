@@ -29,7 +29,7 @@ enum Activator {
         
         if options.contains(.accessibilityIdentifiers) {
             if let rootobject = options.objectForAccessibilityIdentifier ?? viewInfoSet.rootview {
-                AccessibilityIdentifierUpdater(rootobject).update()
+                IdentifierUpdater(rootobject).update()
             }
         }
         
