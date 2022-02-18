@@ -9,19 +9,21 @@ import Foundation
 import UIKit
 
 public struct SwiftLayoutPrinter: CustomStringConvertible {
-    public init(_ view: UIView, tags: [UIView: String] = [:]) {
+    public init(_ view: UIView, tags: [UIView: String] = [:], options: LayoutOptions = []) {
         self.view = view
         self.tags = Dictionary(uniqueKeysWithValues: tags.map({ ($0.key.tagDescription, $0.value) }))
+        self.options = options
     }
     
     weak var view: UIView?
     let tags: [String: String]
+    let options: LayoutOptions
     
     public var description: String {
         print()
     }
     
-    public func print(_ options: LayoutOptions = []) -> String {
+    public func print() -> String {
         
         guard let view = view else {
             return ""
