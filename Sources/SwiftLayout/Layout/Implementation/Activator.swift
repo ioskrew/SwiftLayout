@@ -20,7 +20,7 @@ enum Activator {
         
         deactivate(deactivation: deactivation, withViewInformationSet: viewInfoSet)
         
-        if options.contains(.accessibilityIdentifiers) {
+        if options.contains(.automaticIdentifierAssignment) {
             updateIdentifiers(fromBuilding: deactivation.building, viewInfoSet: viewInfoSet)
         }
         

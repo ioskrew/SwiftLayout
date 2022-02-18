@@ -18,7 +18,7 @@ public struct LayoutOptions: OptionSet {
     ///
     /// may root view has properties of its subviews.
     /// This option assigns the property name of each view to the accessibility identifier of the view.
-    public static var accessibilityIdentifiers = LayoutOptions(rawValue: 1)
+    public static var automaticIdentifierAssignment = LayoutOptions(rawValue: 1)
     public static var usingAnimation = LayoutOptions(rawValue: 1 << 1)
     
 }

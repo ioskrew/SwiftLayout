@@ -418,7 +418,7 @@ final class DSLTests: XCTestCase {
     }
     
     func testAccessibilityIdentifierOption() {
-        let view = IdentifiedView(.accessibilityIdentifiers)
+        let view = IdentifiedView(.automaticIdentifierAssignment)
         XCTAssertEqual(view.contentView.accessibilityIdentifier, "contentView")
         XCTAssertEqual(view.nameLabel.accessibilityIdentifier, "nameLabel")
     }
