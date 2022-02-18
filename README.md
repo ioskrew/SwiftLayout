@@ -63,7 +63,7 @@ NSLayoutConstraint.active([
 
 or
 
-> (lldb) po SwiftLayoutPrinter(view, tags: [view: "root", grandchildView: "grandchild"]).print() or print(.accessibilityIdentifiers)
+> (lldb) po SwiftLayoutPrinter(view, tags: [view: "root", grandchildView: "grandchild"]).print()
 
 as a result
 
@@ -76,6 +76,13 @@ view {
 ```
 
 **That easy**
+
+- you can using option for automatically set identifiers. so more easily to debugging etc.
+
+```swift
+SwiftLayoutPrinter(view, tags: _, options: .automaticIdentifierAssignment)
+```
+
 
 ## usage
 
