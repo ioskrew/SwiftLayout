@@ -120,51 +120,16 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
         lhs.hashValue == rhs.hashValue
     }
     
-    struct Parser {
-        static func from(_ view: UIView, tags: [String: String]) -> [ConstraintToken] {
-            view.constraints.compactMap({ ConstraintToken(constraint: $0, tags: tags) }) + view.subviews.flatMap({ from($0, tags:tags) })
-        }
-    }
-    
-    private init?(constraint: NSLayoutConstraint, tags: [String: String]) {
-        func tagFromItem(_ item: AnyObject?) -> String {
-            if let view = item as? UIView {
-                return tags[view.tagDescription] ?? view.tagDescription
-            } else if let view = (item as? UILayoutGuide)?.owningView {
-                return tags[view.tagDescription].flatMap({ $0 + ".safeAreaLayoutGuide" }) ?? (view.tagDescription + ".safeAreaLayoutGuide")
-            } else {
-                return ""
-            }
-        }
-        func superTagFromItem(_ item: AnyObject?) -> String {
-            if let view = (item as? UIView)?.superview {
-                return tagFromItem(view)
-            } else if let view = (item as? UILayoutGuide)?.owningView?.superview {
-                return tagFromItem(view)
-            } else {
-                return tagFromItem(item)
-            }
-        }
-        func isSystemConstraint(_ constraint: NSLayoutConstraint) -> Bool {
-            let description = constraint.debugDescription
-            guard let range = description.range(of: "'UIViewSafeAreaLayoutGuide-[:alpha:]*'", options: [.regularExpression], range: description.startIndex..<description.endIndex) else { return false }
-            return !range.isEmpty
-        }
-        guard !isSystemConstraint(constraint) else { return nil }
-        superTag = superTagFromItem(constraint.firstItem)
-        firstTag = tagFromItem(constraint.firstItem)
+    private init(constraint: NSLayoutConstraint, tags: [String: String]) {
+        let tagger = Tagger(tags: tags)
+        superTag = tagger.superTagFromItem(constraint.firstItem)
+        firstTag = tagger.tagFromItem(constraint.firstItem)
         firstAttribute = constraint.firstAttribute.description
         firstAttributes = [firstAttribute]
-        secondTag = tagFromItem(constraint.secondItem)
+        secondTag = tagger.tagFromItem(constraint.secondItem)
         secondAttribute = constraint.secondAttribute.description
         relation = constraint.relation.description
         constant = constraint.constant.description
-    }
-    
-    func appendingFirstAttribute(_ firstAttribute: String) -> Self {
-        var token = self
-        token.firstAttributes.append(firstAttribute)
-        return token
     }
     
     let superTag: String
@@ -194,11 +159,62 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
         return descriptions.joined(separator: ".")
     }
     
+    func appendingFirstAttribute(_ firstAttribute: String) -> Self {
+        var token = self
+        token.firstAttributes.append(firstAttribute)
+        return token
+    }
+    
     private func functionNameByRelation(_ relation: NSLayoutConstraint.Relation) -> String {
         relation.description
     }
     
-    final class Group: CustomStringConvertible {
+    struct Parser {
+        static func from(_ view: UIView, tags: [String: String]) -> [ConstraintToken] {
+            var constraints = view.constraints
+                .filter(Validator.isUserCreation)
+                .compactMap({ ConstraintToken(constraint: $0, tags: tags) })
+            constraints.append(contentsOf: view.subviews.flatMap({ from($0, tags:tags) }))
+            return constraints
+        }
+    }
+    
+    struct Validator {
+        static func isUserCreation(_ constraint: NSLayoutConstraint) -> Bool {
+            let description = constraint.debugDescription
+            guard let range = description.range(of: "'UIViewSafeAreaLayoutGuide-[:alpha:]*'", options: [.regularExpression], range: description.startIndex..<description.endIndex) else { return true }
+            return range.isEmpty
+        }
+    }
+    
+    struct Tagger {
+        let tags: [String: String]
+        func tagFromItem(_ item: AnyObject?) -> String {
+            if let view = item as? UIView {
+                return tags[view.tagDescription] ?? view.tagDescription
+            } else if let view = (item as? UILayoutGuide)?.owningView {
+                return tags[view.tagDescription].flatMap({ $0 + ".safeAreaLayoutGuide" }) ?? (view.tagDescription + ".safeAreaLayoutGuide")
+            } else {
+                return ""
+            }
+        }
+        
+        func superTagFromItem(_ item: AnyObject?) -> String {
+            if let view = (item as? UIView)?.superview {
+                return tagFromItem(view)
+            } else if let view = (item as? UILayoutGuide)?.owningView?.superview {
+                return tagFromItem(view)
+            } else {
+                return tagFromItem(item)
+            }
+        }
+        
+    }
+    
+    struct Group: CustomStringConvertible {
+        
+        let tokens: [ConstraintToken]
+        
         init(_ tokens: [ConstraintToken]) {
             self.tokens = tokens
         }
@@ -223,8 +239,6 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
             return mergedTokens.map({ "\t" + $0.description }).joined(separator: "\n")
         }
     }
-    
-    let tokens: [ConstraintToken]
     
     func intersect(_ token: ConstraintToken) -> Bool {
         return self.firstTag == token.firstTag
