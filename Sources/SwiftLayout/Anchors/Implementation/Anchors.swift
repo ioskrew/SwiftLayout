@@ -33,7 +33,7 @@ public final class Anchors: Constraint {
         return self
     }
     
-    public func to(_ relation: NSLayoutConstraint.Relation, to: To) -> Self {
+    private func to(_ relation: NSLayoutConstraint.Relation, to: To) -> Self {
         func update(_ updateItem: Constraint) -> Constraint {
             var updateItem = updateItem
             updateItem.relation = relation
@@ -47,39 +47,63 @@ public final class Anchors: Constraint {
         return self
     }
     
-    public func equalTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute? = nil) -> Self where I: ConstraintableItem {
-        to(.equal, to: .init(item: toItem, attribute: attribute, constant: .zero))
-    }
-    
-    public func greaterThanOrEqualTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute? = nil) -> Self where I: ConstraintableItem {
-        to(.greaterThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: .zero))
-    }
-    
-    public func lessThanOrEqualTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute? = nil) -> Self where I: ConstraintableItem {
-        to(.lessThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: .zero))
-    }
-    
-    public func equalTo<I>(_ toItem: I?, attribute: NSLayoutConstraint.Attribute? = nil, constant: CGFloat) -> Self where I: ConstraintableItem {
-        to(.equal, to: .init(item: toItem, attribute: attribute, constant: constant))
-    }
-    
     public func equalTo(constant: CGFloat) -> Self {
         to(.equal, to: .init(item: .deny, attribute: nil, constant: constant))
     }
     
-    public func greaterThanOrEqualTo(constant: CGFloat) -> Self {
+    public func greaterThanOrEqualTo(constant: CGFloat = .zero) -> Self {
         to(.greaterThanOrEqual, to: .init(item: .deny, attribute: nil, constant: constant))
     }
     
-    public func lessThanOrEqualTo(constant: CGFloat) -> Self {
+    public func lessThanOrEqualTo(constant: CGFloat = .zero) -> Self {
         to(.lessThanOrEqual, to: .init(item: .deny, attribute: nil, constant: constant))
     }
     
-    public func greaterThanOrEqualTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute? = nil, constant: CGFloat) -> Self where I: ConstraintableItem {
+    public func equalTo<I>(_ toItem: I) -> Self where I: ConstraintableItem {
+        to(.equal, to: .init(item: toItem, attribute: nil, constant: .zero))
+    }
+    
+    public func greaterThanOrEqualTo<I>(_ toItem: I) -> Self where I: ConstraintableItem {
+        to(.greaterThanOrEqual, to: .init(item: toItem, attribute: nil, constant: .zero))
+    }
+    
+    public func lessThanOrEqualTo<I>(_ toItem: I) -> Self where I: ConstraintableItem {
+        to(.lessThanOrEqual, to: .init(item: toItem, attribute: nil, constant: .zero))
+    }
+    
+    public func equalTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute) -> Self where I: ConstraintableItem {
+        to(.equal, to: .init(item: toItem, attribute: attribute, constant: .zero))
+    }
+    
+    public func greaterThanOrEqualTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute) -> Self where I: ConstraintableItem {
+        to(.greaterThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: .zero))
+    }
+    
+    public func lessThanOrEqualTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute) -> Self where I: ConstraintableItem {
+        to(.lessThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: .zero))
+    }
+    
+    public func equalTo<I>(_ toItem: I, constant: CGFloat) -> Self where I: ConstraintableItem {
+        to(.equal, to: .init(item: toItem, attribute: nil, constant: constant))
+    }
+    
+    public func greaterThanOrEqualTo<I>(_ toItem: I, constant: CGFloat) -> Self where I: ConstraintableItem {
+        to(.equal, to: .init(item: toItem, attribute: nil, constant: constant))
+    }
+    
+    public func lessThanOrEqualTo<I>(_ toItem: I, constant: CGFloat) -> Self where I: ConstraintableItem {
+        to(.equal, to: .init(item: toItem, attribute: nil, constant: constant))
+    }
+    
+    public func equalTo<I>(_ toItem: I?, attribute: NSLayoutConstraint.Attribute, constant: CGFloat) -> Self where I: ConstraintableItem {
+        to(.equal, to: .init(item: toItem, attribute: attribute, constant: constant))
+    }
+    
+    public func greaterThanOrEqualTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute, constant: CGFloat) -> Self where I: ConstraintableItem {
         to(.greaterThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: constant))
     }
     
-    public func lessThanOrEqualTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute? = nil, constant: CGFloat) -> Self where I: ConstraintableItem {
+    public func lessThanOrEqualTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute, constant: CGFloat) -> Self where I: ConstraintableItem {
         to(.lessThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: constant))
     }
     
