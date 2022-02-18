@@ -94,10 +94,6 @@ class AnchorsTests: XCTestCase {
         XCTAssertEqual(anchor.firstAttribute, .width)
         XCTAssertEqual(anchor.secondAttribute, .notAnAttribute)
         XCTAssertEqual(anchor.constant, 24)
-        
-        anchor.isActive = true
-        
-        print(subview.systemLayoutSizeFitting(.init(width: 0, height: 0)))
     }
     
     func testAnchorsBuilder() {
