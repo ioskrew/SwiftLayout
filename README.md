@@ -36,7 +36,7 @@ dependencies: [
 
 ## migration from current view
 
-The structure of the view is complicated, so it may not be easy to apply the library. In that case, **SwiftLayout** provides an utility type to easily replace the configuration of the view with SwiftLayout.
+The structure of the view - Moreover, if related to building the interface - is usually so complicated. so it may not be easy to apply the library. In that case, **SwiftLayout** provides an utility type to easily replace the configuration of the view with SwiftLayout.
 
 that's name is **SwiftLayouPrinter**.
 
