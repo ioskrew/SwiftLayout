@@ -65,7 +65,7 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
         private func fromConstraints(_ constraints: [ConstraintToken]?, identifier: String) -> [String] {
             guard  let constraintTokens = constraints else { return [identifier] }
             var identifiers = [identifier + ".anchors {"]
-            identifiers.append(ConstraintTokenGroup(constraintTokens).description)
+            identifiers.append(ConstraintToken.Group(constraintTokens).description)
             identifiers.append("}")
             return identifiers
         }
@@ -76,7 +76,7 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
                 identifiers = [identifier + " {"]
             } else if let selfConstraints = constraints {
                 identifiers = [identifier + ".anchors {"]
-                identifiers.append(ConstraintTokenGroup(selfConstraints).description)
+                identifiers.append(ConstraintToken.Group(selfConstraints).description)
                 identifiers.append("}.subviews {")
             } else {
                 identifiers = [identifier + " {"]
@@ -112,39 +112,7 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
         }
         
     }
-    
-    final class ConstraintTokenGroup: CustomStringConvertible {
-        let tokens: [ConstraintToken]
-        init(_ tokens: [ConstraintToken]) {
-            self.tokens = tokens
-        }
-        
-        var description: String {
-            var mergedTokens: [ConstraintToken] = []
-            for token in tokens {
-                if mergedTokens.isEmpty {
-                    mergedTokens.append(token)
-                } else {
-                    func intersect(_ rhs: ConstraintToken) -> (ConstraintToken) -> Bool {
-                        { lhs in
-                            lhs.firstTag == rhs.firstTag
-                            && lhs.secondTag == rhs.secondTag
-                            && lhs.constant == rhs.constant
-                            && lhs.relation == rhs.relation
-                        }
-                    }
-                    if let groupToken = mergedTokens.first(where: intersect(token)) {
-                        groupToken.firstAttributes.append(token.firstAttribute)
-                    } else {
-                        mergedTokens.append(token)
-                    }
-                }
-            }
-            
-            return mergedTokens.map({ "\t" + $0.description }).joined(separator: "\n")
-        }
-    }
-    
+     
     final class ConstraintToken: CustomStringConvertible {
         
         struct Parser {
@@ -218,7 +186,40 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
         private func functionNameByRelation(_ relation: NSLayoutConstraint.Relation) -> String {
             relation.description
         }
+    
+        final class Group: CustomStringConvertible {
+            let tokens: [ConstraintToken]
+            init(_ tokens: [ConstraintToken]) {
+                self.tokens = tokens
+            }
+            
+            var description: String {
+                var mergedTokens: [ConstraintToken] = []
+                for token in tokens {
+                    if mergedTokens.isEmpty {
+                        mergedTokens.append(token)
+                    } else {
+                        func intersect(_ rhs: ConstraintToken) -> (ConstraintToken) -> Bool {
+                            { lhs in
+                                lhs.firstTag == rhs.firstTag
+                                && lhs.secondTag == rhs.secondTag
+                                && lhs.constant == rhs.constant
+                                && lhs.relation == rhs.relation
+                            }
+                        }
+                        if let groupToken = mergedTokens.first(where: intersect(token)) {
+                            groupToken.firstAttributes.append(token.firstAttribute)
+                        } else {
+                            mergedTokens.append(token)
+                        }
+                    }
+                }
+                
+                return mergedTokens.map({ "\t" + $0.description }).joined(separator: "\n")
+            }
+        }
         
     }
-
+    
+   
 }
