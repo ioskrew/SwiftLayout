@@ -384,7 +384,6 @@ final class DSLTests: XCTestCase {
         root.frame = .init(origin: .zero, size: .init(width: 100, height: 100))
         root.setNeedsLayout()
         root.layoutIfNeeded()
-        print(root.constraints)
         XCTAssertEqual(child.frame.size, .init(width: 60, height: 60))
     }
     
@@ -536,7 +535,6 @@ final class DSLTests: XCTestCase {
             deactivable?.deactive()
             test = .topGreaterThanOrEqualToSuperWithConstant
             deactivable = layout().active()
-            print(root.constraints)
             XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .greaterThanOrEqual, constant: 78.0).count, 1)
         }
 

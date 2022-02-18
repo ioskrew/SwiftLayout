@@ -35,7 +35,6 @@ class PrintingTests: XCTestCase {
         }
         """.tabbed
         let result = SwiftLayoutPrinter(root).print()
-        print(result)
         XCTAssertEqual(result, expect)
     }
     
@@ -56,7 +55,6 @@ class PrintingTests: XCTestCase {
         }
         """.tabbed
         let result = SwiftLayoutPrinter(root).print()
-        print(result)
         XCTAssertEqual(result, expect)
     }
     
@@ -79,7 +77,6 @@ class PrintingTests: XCTestCase {
         }
         """.tabbed
         let result = SwiftLayoutPrinter(root).print()
-        print(result)
         XCTAssertEqual(result, expect)
     }
     
@@ -105,7 +102,6 @@ class PrintingTests: XCTestCase {
         }
         """.tabbed
         let result = SwiftLayoutPrinter(root).print()
-        print(result)
         XCTAssertEqual(result, expect)
     }
     
@@ -121,7 +117,6 @@ class PrintingTests: XCTestCase {
         }
         """.tabbed
         let result = SwiftLayoutPrinter(root).print()
-        print(result)
         XCTAssertEqual(result, expect)
     }
     
@@ -144,7 +139,6 @@ class PrintingTests: XCTestCase {
         }
         """.tabbed
         let result = SwiftLayoutPrinter(root).print()
-        print(result)
         XCTAssertEqual(result, expect)
     }
     
@@ -174,7 +168,6 @@ class PrintingTests: XCTestCase {
         }
         """.tabbed
         let result = SwiftLayoutPrinter(root).print()
-        print(result)
         XCTAssertEqual(result, expect)
     }
 
@@ -224,7 +217,6 @@ class PrintingTests: XCTestCase {
         }
         """.tabbed
         let result = SwiftLayoutPrinter(root).print()
-        print(result)
         XCTAssertEqual(result, expect)
     }
     
@@ -252,7 +244,6 @@ class PrintingTests: XCTestCase {
         """.tabbed
         
         let result = SwiftLayoutPrinter(root, tags: [child: "child", grand: "grandchild"]).print()
-        print(result)
         XCTAssertEqual(result, expect)
     }
     
