@@ -1,4 +1,4 @@
-<img src="https://user-images.githubusercontent.com/3011832/153903060-9049ebc5-4a6f-4050-98f0-1ebdd3c97da8.svg" alt="SwiftLayout Logo" height="70" />
+<img src="https://user-images.githubusercontent.com/3011832/154659440-d206a01e-a6bd-47a0-8428-5357799816de.png" alt="SwiftLayout Logo" height="70" />
 
 *Yesterday never dies*
 
