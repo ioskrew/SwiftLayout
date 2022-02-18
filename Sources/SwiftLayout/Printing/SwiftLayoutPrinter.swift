@@ -37,6 +37,48 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
         return token.description
     }
     
+    struct Describer {
+        
+        let constraints: [ConstraintToken]?
+        let views: [ViewToken]
+        let identifier: String
+        
+        func describing() -> String {
+            if views.isEmpty {
+                return fromConstraints(constraints, identifier: identifier).joined(separator: "\n")
+            } else {
+                return fromViews(constraints, views: views, identifier: identifier).joined(separator: "\n")
+            }
+        }
+        
+        private func fromConstraints(_ constraints: [ConstraintToken]?, identifier: String) -> [String] {
+            guard  let constraintTokens = constraints else { return [identifier] }
+            var identifiers = [identifier + ".anchors {"]
+            identifiers.append(ConstraintTokenGroup(constraintTokens).description)
+            identifiers.append("}")
+            return identifiers
+        }
+        
+        private func fromViews(_ constraints: [ConstraintToken]?, views: [ViewToken], identifier: String) -> [String] {
+            var identifiers: [String] = []
+            if constraints == nil {
+                identifiers = [identifier + " {"]
+            } else if let selfConstraints = constraints {
+                identifiers = [identifier + ".anchors {"]
+                identifiers.append(ConstraintTokenGroup(selfConstraints).description)
+                identifiers.append("}.subviews {")
+            } else {
+                identifiers = [identifier + " {"]
+            }
+            identifiers.append(contentsOf: views.map({ token in
+                token.description.split(separator: "\n").map({ "\t" + $0 }).joined(separator: "\n")
+            }))
+            identifiers.append("}")
+            return identifiers
+        }
+        
+    }
+    
     final class ViewToken: CustomStringConvertible {
         
         private init(identifier: String, views: [ViewToken]) {
@@ -75,47 +117,6 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
             }
         }
         
-        struct Describer {
-            
-            let constraints: [ConstraintToken]?
-            let views: [ViewToken]
-            let identifier: String
-            
-            func describing() -> String {
-                if views.isEmpty {
-                    return fromConstraints(constraints, identifier: identifier).joined(separator: "\n")
-                } else {
-                    return fromViews(constraints, views: views, identifier: identifier).joined(separator: "\n")
-                }
-            }
-            
-            private func fromConstraints(_ constraints: [ConstraintToken]?, identifier: String) -> [String] {
-                guard  let constraintTokens = constraints else { return [identifier] }
-                var identifiers = [identifier + ".anchors {"]
-                identifiers.append(ConstraintTokenGroup(constraintTokens).description)
-                identifiers.append("}")
-                return identifiers
-            }
-            
-            private func fromViews(_ constraints: [ConstraintToken]?, views: [ViewToken], identifier: String) -> [String] {
-                var identifiers: [String] = []
-                if constraints == nil {
-                    identifiers = [identifier + " {"]
-                } else if let selfConstraints = constraints {
-                    identifiers = [identifier + ".anchors {"]
-                    identifiers.append(ConstraintTokenGroup(selfConstraints).description)
-                    identifiers.append("}.subviews {")
-                } else {
-                    identifiers = [identifier + " {"]
-                }
-                identifiers.append(contentsOf: views.map({ token in
-                    token.description.split(separator: "\n").map({ "\t" + $0 }).joined(separator: "\n")
-                }))
-                identifiers.append("}")
-                return identifiers
-            }
-            
-        }
     }
     
     final class ConstraintTokenGroup: CustomStringConvertible {
