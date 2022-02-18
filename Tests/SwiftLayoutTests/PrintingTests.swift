@@ -318,7 +318,7 @@ class PrintingTests: XCTestCase {
         }
         """.tabbed
         
-        let result = SwiftLayoutPrinter(cell, tags: [cell: "contentView"]).print(.accessibilityIdentifiers)
+        let result = SwiftLayoutPrinter(cell, tags: [cell: "contentView"], options: .accessibilityIdentifiers).print()
         XCTAssertEqual(result, expect)
     }
     
