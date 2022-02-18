@@ -318,12 +318,12 @@ class PrintingTests: XCTestCase {
         }
         """.tabbed
         
-        let result = SwiftLayoutPrinter(cell, tags: [cell: "contentView"], options: .accessibilityIdentifiers).print()
+        let result = SwiftLayoutPrinter(cell, tags: [cell: "contentView"], options: .automaticIdentifierAssignment).print()
         XCTAssertEqual(result, expect)
     }
     
     func testAccessibilityIdentifierSettings() {
-        let cell = Cell(.accessibilityIdentifiers)
+        let cell = Cell(.automaticIdentifierAssignment)
         
         XCTAssertEqual(cell.profileView.accessibilityIdentifier, "profileView")
         XCTAssertEqual(cell.nameLabel.accessibilityIdentifier, "nameLabel")

@@ -29,7 +29,7 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
             return ""
         }
         
-        if options.contains(.accessibilityIdentifiers) {
+        if options.contains(.automaticIdentifierAssignment) {
             IdentifierUpdater(view).update()
         }
         
