@@ -199,7 +199,6 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
     }
     
     final class Group: CustomStringConvertible {
-        let tokens: [ConstraintToken]
         init(_ tokens: [ConstraintToken]) {
             self.tokens = tokens
         }
@@ -210,15 +209,7 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
                 if mergedTokens.isEmpty {
                     mergedTokens.append(token)
                 } else {
-                    func intersect(_ rhs: ConstraintToken) -> (ConstraintToken) -> Bool {
-                        { lhs in
-                            lhs.firstTag == rhs.firstTag
-                            && lhs.secondTag == rhs.secondTag
-                            && lhs.constant == rhs.constant
-                            && lhs.relation == rhs.relation
-                        }
-                    }
-                    if let prevToken = mergedTokens.first(where: intersect(token)) {
+                    if let prevToken = mergedTokens.first(where: token.intersect) {
                         let newToken = prevToken.appendingFirstAttribute(token.firstAttribute)
                         guard let index = mergedTokens.firstIndex(of: prevToken) else { continue }
                         mergedTokens.remove(at: index)
@@ -231,5 +222,14 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
             
             return mergedTokens.map({ "\t" + $0.description }).joined(separator: "\n")
         }
+    }
+    
+    let tokens: [ConstraintToken]
+    
+    func intersect(_ token: ConstraintToken) -> Bool {
+        return self.firstTag == token.firstTag
+        && self.secondTag == token.secondTag
+        && self.constant == token.constant
+        && self.relation == token.relation
     }
 }
