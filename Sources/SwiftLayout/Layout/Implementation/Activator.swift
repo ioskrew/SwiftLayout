@@ -21,9 +21,7 @@ enum Activator {
         deactivate(deactivation: deactivation, withViewInformationSet: viewInfoSet)
         
         if options.contains(.accessibilityIdentifiers) {
-            if let rootobject: AnyObject = deactivation.building ?? viewInfoSet.rootview {
-                IdentifierUpdater(rootobject).update()
-            }
+            updateIdentifiers(fromBuilding: deactivation.building, viewInfoSet: viewInfoSet)
         }
         
         let constrains = layout.viewConstraints(viewInfoSet)
@@ -33,13 +31,8 @@ enum Activator {
         deactivation.viewInfos = viewInfoSet
         deactivation.constraints = ConstraintsSet(constraints: constrains)
         
-        if options.contains(.usingAnimation), let root = viewInfos.first(where: { $0.superview == nil })?.view {
-            UIView.animate(withDuration: 0.25) {
-                root.layoutIfNeeded()
-                viewInfos.forEach { information in
-                    information.animation()
-                }
-            }
+        if options.contains(.usingAnimation) {
+            animate(viewInfos: viewInfos)
         }
         
         return deactivation
@@ -61,5 +54,27 @@ private extension Activator {
         }
         
         NSLayoutConstraint.activate(constrains)
+    }
+    
+    static func updateIdentifiers(fromBuilding building: LayoutBuilding?, viewInfoSet: ViewInformationSet) {
+        guard let rootobject: AnyObject = building ?? viewInfoSet.rootview else {
+            assertionFailure("Could not find root view for LayoutOptions.accessibilityIdentifiers. Please use LayoutBuilding.")
+            return
+        }
+        
+        IdentifierUpdater(rootobject).update()
+    }
+    
+    static func animate(viewInfos: [ViewInformation]) {
+        guard let root = viewInfos.first(where: { $0.superview == nil })?.view else {
+            return
+        }
+        
+        UIView.animate(withDuration: 0.25) {
+            root.layoutIfNeeded()
+            viewInfos.forEach { information in
+                information.animation()
+            }
+        }
     }
 }
