@@ -24,10 +24,7 @@ struct LayoutImp: Layout {
         let sublayoutImp = sublayouts?.compactMap { LayoutImp(layout: $0) }
         
         if let view = layout as? UIView? {
-            guard let view = view else {
-                return nil
-            }
-            
+            guard let view = view else { return nil }
             self.view = view
             self.sublayouts = sublayoutImp ?? []
             self.anchors = anchors ?? []
@@ -35,8 +32,12 @@ struct LayoutImp: Layout {
             self.view = layoutImp.view
             self.sublayouts = sublayoutImp ?? layoutImp.sublayouts
             self.anchors = anchors ?? layoutImp.anchors
+        } else if let layoutImps = layout as? [LayoutImp], let layoutImp = layoutImps.first {
+            self.view = layoutImp.view
+            self.sublayouts = sublayoutImp ?? layoutImp.sublayouts
+            self.anchors = anchors ?? layoutImp.anchors
         } else {
-            assertionFailure("The layout protocol does not allow external adoption")
+            assertionFailure("received layout is not acceptable type: \(type(of: layout))")
             return nil
         }
     }

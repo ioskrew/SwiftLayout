@@ -422,6 +422,208 @@ final class DSLTests: XCTestCase {
         XCTAssertEqual(view.contentView.accessibilityIdentifier, "contentView")
         XCTAssertEqual(view.nameLabel.accessibilityIdentifier, "nameLabel")
     }
+    
+    func testRules() {
+        let root = UIView().viewTag.root
+        let child = UIView().viewTag.child
+        let friend = UIView().viewTag.friend
+        
+        enum TestCase {
+            case topEqualToNameless
+            case topEqualToSuper
+            case topEqualToSuperWithConstant
+            case topGreaterThanOrEqualToNameless
+            case topGreaterThanOrEqualToSuperWithConstant
+            case topGreaterThanOrEqualToSuper
+            case topLessThanOrEqualToNameless
+            case topLessThanOrEqualToSuper
+            case topLessThanOrEqualToSuperWithConstant
+            
+            case topOfFriendEqualToBottomOfChild
+            case widthOfFriendEqualToNameless
+            case widthOfFriendEqualToSuper
+            case widthOfFriendEqualToChild
+            case widthOfFriendEqualToHeightOfChild
+            case widthOfFriendEqualToConstant
+            case widthOfFriendEqualToChildWithConstant
+        }
+        
+        var test = TestCase.topEqualToNameless
+        @LayoutBuilder
+        func layout() -> Layout {
+            root {
+                child.anchors {
+                    switch test {
+                    case .topEqualToNameless:
+                        Anchors(.top)
+                    case .topEqualToSuper:
+                        Anchors(.top).equalTo(root)
+                    case .topEqualToSuperWithConstant:
+                        Anchors(.top).equalTo(root, constant: 78.0)
+                    case .topGreaterThanOrEqualToNameless:
+                        Anchors(.top).greaterThanOrEqualTo()
+                    case .topGreaterThanOrEqualToSuper:
+                        Anchors(.top).greaterThanOrEqualTo(root)
+                    case .topGreaterThanOrEqualToSuperWithConstant:
+                        Anchors(.top).greaterThanOrEqualTo(root, constant: 78.0)
+                    case .topLessThanOrEqualToNameless:
+                        Anchors(.top).lessThanOrEqualTo()
+                    case .topLessThanOrEqualToSuper:
+                        Anchors(.top).lessThanOrEqualTo(root)
+                    case .topLessThanOrEqualToSuperWithConstant:
+                        Anchors(.top).lessThanOrEqualTo(root, constant: 78.0)
+                    default:
+                        Anchors.cap
+                    }
+                }
+                friend.anchors {
+                    switch test {
+                    case .topOfFriendEqualToBottomOfChild:
+                        Anchors(.top).equalTo(child, attribute: .bottom)
+                        Anchors.shoe
+                    case .widthOfFriendEqualToNameless:
+                        Anchors(.width)
+                        Anchors.shoe
+                    case .widthOfFriendEqualToSuper:
+                        Anchors(.width).equalTo(root)
+                        Anchors.shoe
+                    case .widthOfFriendEqualToChild:
+                        Anchors(.width).equalTo(child)
+                        Anchors.shoe
+                    case .widthOfFriendEqualToHeightOfChild:
+                        Anchors(.width).equalTo(child, attribute: .height)
+                        Anchors.shoe
+                    case .widthOfFriendEqualToConstant:
+                        Anchors(.width).equalTo(constant: 78.0)
+                        Anchors.shoe
+                    case .widthOfFriendEqualToChildWithConstant:
+                        Anchors(.width).equalTo(child, constant: 78.0)
+                        Anchors.shoe
+                    default:
+                        Anchors.shoe
+                    }
+                }
+            }
+        }
+        
+        context("top equal to nameless") {
+            deactivable = layout().active()
+            XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .equal).count, 1)
+        }
+
+        context("top equal to super") {
+            deactivable?.deactive()
+            test = .topEqualToSuper
+            deactivable = layout().active()
+            XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .equal).count, 1)
+        }
+
+        context("top equal to super with constant of 78.0") {
+            deactivable?.deactive()
+            test = .topEqualToSuperWithConstant
+            deactivable = layout().active()
+            XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .equal, constant: 78.0).count, 1)
+        }
+        
+        context("top greater than or equal to nameless") {
+            deactivable?.deactive()
+            test = .topGreaterThanOrEqualToNameless
+            deactivable = layout().active()
+            XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .greaterThanOrEqual).count, 1)
+        }
+        
+        context("top greater than or equal to nameless with constant of 78.0") {
+            deactivable?.deactive()
+            test = .topGreaterThanOrEqualToSuperWithConstant
+            deactivable = layout().active()
+            print(root.constraints)
+            XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .greaterThanOrEqual, constant: 78.0).count, 1)
+        }
+
+        context("top greater than or equal to super") {
+            deactivable?.deactive()
+            test = .topGreaterThanOrEqualToSuper
+            deactivable = layout().active()
+            XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .greaterThanOrEqual).count, 1)
+        }
+
+        context("top less than or equal to nameless") {
+            deactivable?.deactive()
+            test = .topLessThanOrEqualToNameless
+            deactivable = layout().active()
+            XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .lessThanOrEqual).count, 1)
+        }
+
+        context("top less than or equal to super") {
+            deactivable?.deactive()
+            test = .topLessThanOrEqualToSuper
+            deactivable = layout().active()
+            XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .lessThanOrEqual).count, 1)
+        }
+        
+        context("top less than or equal to super with constant of 78.0") {
+            deactivable?.deactive()
+            test = .topLessThanOrEqualToSuperWithConstant
+            deactivable = layout().active()
+            XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .lessThanOrEqual, constant: 78.0).count, 1)
+        }
+        
+        context("top of friend equal to bottom of child") {
+            deactivable?.deactive()
+            test = .topOfFriendEqualToBottomOfChild
+            deactivable = layout().active()
+            XCTAssertEqual(root.findConstraints(items: (friend, child), attributes: (.top, .bottom), relation: .equal).count, 1)
+        }
+        
+        context("top of friend equal to bottom of child") {
+            deactivable?.deactive()
+            test = .topOfFriendEqualToBottomOfChild
+            deactivable = layout().active()
+            XCTAssertEqual(root.findConstraints(items: (friend, child), attributes: (.top, .bottom), relation: .equal).count, 1)
+        }
+        
+        context("width of friend equal to width of nameless") {
+            deactivable?.deactive()
+            test = .widthOfFriendEqualToNameless
+            deactivable = layout().active()
+            XCTAssertEqual(root.findConstraints(items: (friend, root), attributes: (.width, .width), relation: .equal).count, 1)
+        }
+        
+        context("width of friend equal to width of super") {
+            deactivable?.deactive()
+            test = .widthOfFriendEqualToSuper
+            deactivable = layout().active()
+            XCTAssertEqual(root.findConstraints(items: (friend, root), attributes: (.width, .width), relation: .equal).count, 1)
+        }
+        
+        context("width of friend equal to width of child") {
+            deactivable?.deactive()
+            test = .widthOfFriendEqualToChild
+            deactivable = layout().active()
+            XCTAssertEqual(root.findConstraints(items: (friend, child), attributes: (.width, .width), relation: .equal).count, 1)
+        }
+        
+        context("width of friend equal to height of child") {
+            deactivable?.deactive()
+            test = .widthOfFriendEqualToHeightOfChild
+            deactivable = layout().active()
+            XCTAssertEqual(root.findConstraints(items: (friend, child), attributes: (.width, .height), relation: .equal).count, 1)
+        }
+        
+        context("width of friend equal to constant of 78.0") {
+            deactivable?.deactive()
+            test = .widthOfFriendEqualToConstant
+            deactivable = layout().active()
+            XCTAssertEqual(root.findConstraints(items: (friend, nil), attributes: (.width, .notAnAttribute), relation: .equal, constant: 78.0).count, 1)
+        }
+        
+        context("width of friend equal to child with constant of 78.0") {
+            deactivable?.deactive()
+            test = .widthOfFriendEqualToChildWithConstant
+            deactivable = layout().active()
+            XCTAssertEqual(root.findConstraints(items: (friend, child), attributes: (.width, .width), relation: .equal, constant: 78.0).count, 1)
+        }
+    }
 }
 
 extension Anchors {

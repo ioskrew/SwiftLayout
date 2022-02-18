@@ -60,9 +60,12 @@ NSLayoutConstraint.active([
 ```
 
 > print(SwiftLayoutPrinter(view,  tags: [view: "root", grandchildView: "grandchild").print())
-> or
+
+or
+
 > (lldb) po SwiftLayoutPrinter(view, tags: [view: "root", grandchildView: "grandchild"]).print() or print(.accessibilityIdentifiers)
-> as a result
+
+as a result
 
 ```swift
 view {
@@ -72,7 +75,7 @@ view {
 }
 ```
 
-- What do you think about? **That easy**.
+**That easy**
 
 ## usage
 
