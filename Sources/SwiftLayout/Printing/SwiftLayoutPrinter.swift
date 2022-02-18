@@ -73,9 +73,7 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
             if subtokens.isEmpty {
                 if let selfConstraints = selfConstraints {
                     identifiers = [identifier + ".anchors {"]
-                    identifiers.append(contentsOf: selfConstraints.map({ token in
-                        "\t" + token.description
-                    }))
+                    identifiers.append(ConstraintTokenGroup(selfConstraints).description)
                     identifiers.append("}")
                 } else {
                     identifiers = [identifier]
@@ -85,9 +83,7 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
                     identifiers = [identifier + " {"]
                 } else if let selfConstraints = selfConstraints {
                     identifiers = [identifier + ".anchors {"]
-                    identifiers.append(contentsOf: selfConstraints.map({ token in
-                        "\t" + token.description
-                    }))
+                    identifiers.append(ConstraintTokenGroup(selfConstraints).description)
                     identifiers.append("}.subviews {")
                 } else {
                     identifiers = [identifier + " {"]
@@ -98,6 +94,38 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
                 identifiers.append("}")
             }
             return identifiers.joined(separator: "\n")
+        }
+    }
+    
+    final class ConstraintTokenGroup: CustomStringConvertible {
+        let tokens: [ConstraintToken]
+        init(_ tokens: [ConstraintToken]) {
+            self.tokens = tokens
+        }
+        
+        var description: String {
+            var mergedTokens: [ConstraintToken] = []
+            for token in tokens {
+                if mergedTokens.isEmpty {
+                    mergedTokens.append(token)
+                } else {
+                    func intersect(_ rhs: ConstraintToken) -> (ConstraintToken) -> Bool {
+                        { lhs in
+                            lhs.firstTag == rhs.firstTag
+                            && lhs.secondTag == rhs.secondTag
+                            && lhs.constant == rhs.constant
+                            && lhs.relation == rhs.relation
+                        }
+                    }
+                    if let groupToken = mergedTokens.first(where: intersect(token)) {
+                        groupToken.firstAttributes.append(token.firstAttribute)
+                    } else {
+                        mergedTokens.append(token)
+                    }
+                }
+            }
+            
+            return mergedTokens.map({ "\t" + $0.description }).joined(separator: "\n")
         }
     }
     
@@ -112,34 +140,62 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
                     return ""
                 }
             }
+            func superTagFromItem(_ item: AnyObject?) -> String {
+                if let view = (item as? UIView)?.superview {
+                    return tagFromItem(view)
+                } else if let view = (item as? UILayoutGuide)?.owningView?.superview {
+                    return tagFromItem(view)
+                } else {
+                    return tagFromItem(item)
+                }
+            }
             func isSystemConstraint(_ constraint: NSLayoutConstraint) -> Bool {
                 let description = constraint.debugDescription
                 guard let range = description.range(of: "'UIViewSafeAreaLayoutGuide-[:alpha:]*'", options: [.regularExpression], range: description.startIndex..<description.endIndex) else { return false }
                 return !range.isEmpty
             }
             guard !isSystemConstraint(constraint) else { return nil }
+            superTag = superTagFromItem(constraint.firstItem)
             firstTag = tagFromItem(constraint.firstItem)
             firstAttribute = constraint.firstAttribute.description
+            firstAttributes = [firstAttribute]
             secondTag = tagFromItem(constraint.secondItem)
             secondAttribute = constraint.secondAttribute.description
             relation = constraint.relation.description
             constant = constraint.constant.description
         }
         
+        let superTag: String
         let firstTag: String
         let firstAttribute: String
+        var firstAttributes: [String]
         let secondTag: String
         let secondAttribute: String
         let relation: String
         let constant: String
         
         var description: String {
-            if secondTag.isEmpty {
-                return "Anchors(.\(firstAttribute)).to(.\(relation), to: .init(attribute: .\(secondAttribute), constant: \(constant)))"
-            } else {
-                return "Anchors(.\(firstAttribute)).to(.\(relation), to: .init(item: \(secondTag), attribute: .\(secondAttribute), constant: \(constant)))"
+            var descriptions: [String] = ["Anchors(\(firstAttributes.map({ "." + $0 }).joined(separator: ", ")))"]
+            var arguments: [String] = []
+            if !secondTag.isEmpty && superTag != secondTag {
+                arguments.append(secondTag)
             }
+            if firstAttribute != secondAttribute && secondAttribute != NSLayoutConstraint.Attribute.notAnAttribute.description {
+                arguments.append("attribute: .\(secondAttribute)")
+            }
+            if constant != "0.0" {
+                arguments.append("constant: \(constant)")
+            }
+            if !arguments.isEmpty {
+                descriptions.append("\(relation)To(\(arguments.joined(separator: ", ")))")
+            }
+            return descriptions.joined(separator: ".")
         }
+        
+        private func functionNameByRelation(_ relation: NSLayoutConstraint.Relation) -> String {
+            relation.description
+        }
+        
     }
 
 }

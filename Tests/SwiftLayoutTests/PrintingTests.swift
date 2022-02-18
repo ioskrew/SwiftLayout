@@ -117,8 +117,7 @@ class PrintingTests: XCTestCase {
         
         let expect = """
         root.anchors {
-            Anchors(.width).to(.equal, to: .init(attribute: .notAnAttribute, constant: 0.0))
-            Anchors(.height).to(.equal, to: .init(attribute: .notAnAttribute, constant: 0.0))
+            Anchors(.width, .height)
         }
         """.tabbed
         let result = SwiftLayoutPrinter(root).print()
@@ -132,15 +131,15 @@ class PrintingTests: XCTestCase {
         deactivable = root {
             child.anchors {
                 Anchors(.top)
-                Anchors(.bottom).to(.equal, to: .init(item: root, attribute: .bottom, constant: -10.0))
+                Anchors(.bottom).equalTo(constant: -10.0)
             }
         }.active()
         
         let expect = """
         root {
             child.anchors {
-                Anchors(.top).to(.equal, to: .init(item: root, attribute: .top, constant: 0.0))
-                Anchors(.bottom).to(.equal, to: .init(item: root, attribute: .bottom, constant: -10.0))
+                Anchors(.top)
+                Anchors(.bottom).equalTo(constant: -10.0)
             }
         }
         """.tabbed
@@ -156,7 +155,7 @@ class PrintingTests: XCTestCase {
         deactivable = root {
             child.anchors {
                 Anchors(.top)
-                Anchors(.bottom).to(.equal, to: .init(item: root, attribute: .bottom, constant: -10.0))
+                Anchors(.bottom).equalTo(constant: -10.0)
             }
             friend.anchors {
                 Anchors(.top).equalTo(child, attribute: .bottom)
@@ -166,11 +165,11 @@ class PrintingTests: XCTestCase {
         let expect = """
         root {
             child.anchors {
-                Anchors(.top).to(.equal, to: .init(item: root, attribute: .top, constant: 0.0))
-                Anchors(.bottom).to(.equal, to: .init(item: root, attribute: .bottom, constant: -10.0))
+                Anchors(.top)
+                Anchors(.bottom).equalTo(constant: -10.0)
             }
             friend.anchors {
-                Anchors(.top).to(.equal, to: .init(item: child, attribute: .bottom, constant: 0.0))
+                Anchors(.top).equalTo(child, attribute: .bottom)
             }
         }
         """.tabbed
@@ -190,10 +189,7 @@ class PrintingTests: XCTestCase {
         let expect = """
         root {
             label.anchors {
-                Anchors(.top).to(.equal, to: .init(item: root, attribute: .top, constant: 0.0))
-                Anchors(.leading).to(.equal, to: .init(item: root, attribute: .leading, constant: 0.0))
-                Anchors(.trailing).to(.equal, to: .init(item: root, attribute: .trailing, constant: 0.0))
-                Anchors(.bottom).to(.equal, to: .init(item: root, attribute: .bottom, constant: 0.0))
+                Anchors(.top, .leading, .trailing, .bottom)
             }
         }
         """.tabbed
@@ -219,16 +215,10 @@ class PrintingTests: XCTestCase {
         let expect = """
         root {
             child.anchors {
-                Anchors(.top).to(.equal, to: .init(item: root, attribute: .top, constant: 0.0))
-                Anchors(.leading).to(.equal, to: .init(item: root, attribute: .leading, constant: 0.0))
-                Anchors(.trailing).to(.equal, to: .init(item: root, attribute: .trailing, constant: 0.0))
-                Anchors(.bottom).to(.equal, to: .init(item: root, attribute: .bottom, constant: 0.0))
+                Anchors(.top, .leading, .trailing, .bottom)
             }.subviews {
                 grandchild.anchors {
-                    Anchors(.top).to(.equal, to: .init(item: child, attribute: .top, constant: 0.0))
-                    Anchors(.leading).to(.equal, to: .init(item: child, attribute: .leading, constant: 0.0))
-                    Anchors(.trailing).to(.equal, to: .init(item: child, attribute: .trailing, constant: 0.0))
-                    Anchors(.bottom).to(.equal, to: .init(item: child, attribute: .bottom, constant: 0.0))
+                    Anchors(.top, .leading, .trailing, .bottom)
                 }
             }
         }
@@ -255,7 +245,7 @@ class PrintingTests: XCTestCase {
         root {
             child {
                 grandchild.anchors {
-                    Anchors(.top).to(.equal, to: .init(item: child, attribute: .top, constant: 0.0))
+                    Anchors(.top)
                 }
             }
         }
@@ -267,28 +257,25 @@ class PrintingTests: XCTestCase {
     }
     
     func testSafeAreaLayoutGuide() {
-        let expect = """
-        root {
-            child.anchors {
-                Anchors(.top).to(.equal, to: .init(item: root.safeAreaLayoutGuide, attribute: .top, constant: 0.0))
-                Anchors(.bottom).to(.equal, to: .init(item: root.safeAreaLayoutGuide, attribute: .bottom, constant: 0.0))
-                Anchors(.leading).to(.equal, to: .init(item: root, attribute: .leading, constant: 0.0))
-            }
-        }
-        """.tabbed
-        
         let root = UIView().viewTag.root
         let child = UIView().viewTag.child
         deactivable = root {
             child.anchors {
-                Anchors(.top).equalTo(root.safeAreaLayoutGuide, attribute: .top)
-                Anchors(.bottom).equalTo(root.safeAreaLayoutGuide, attribute: .bottom)
-                Anchors(.leading).equalTo(root, attribute: .leading)
+                Anchors(.top, .bottom).equalTo(root.safeAreaLayoutGuide)
+                Anchors(.leading)
             }
         }.active()
         
+        let expect = """
+        root {
+            child.anchors {
+                Anchors(.top, .bottom).equalTo(root.safeAreaLayoutGuide)
+                Anchors(.leading)
+            }
+        }
+        """.tabbed
+       
         let result = SwiftLayoutPrinter(root).print()
-        print(result)
         XCTAssertEqual(result, expect)
     }
     
@@ -340,6 +327,36 @@ class PrintingTests: XCTestCase {
         
         XCTAssertEqual(cell.profileView.accessibilityIdentifier, "profileView")
         XCTAssertEqual(cell.nameLabel.accessibilityIdentifier, "nameLabel")
+    }
+    
+    func testMoreEfficientPrinting() {
+        let root = UIView().viewTag.root
+        let child = UIView().viewTag.child
+        let friend = UIView().viewTag.friend
+        deactivable = root {
+            child.anchors {
+                Anchors.cap
+            }
+            friend.anchors {
+                Anchors.shoe
+                Anchors(.top).greaterThanOrEqualTo(child, attribute: .bottom, constant: 8)
+            }
+        }.active()
+        
+        let expect = """
+        root {
+            child.anchors {
+                Anchors(.top, .leading, .trailing)
+            }
+            friend.anchors {
+                Anchors(.leading, .trailing, .bottom)
+                Anchors(.top).greaterThanOrEqualTo(child, attribute: .bottom, constant: 8.0)
+            }
+        }
+        """.tabbed
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
+        
     }
 }
 

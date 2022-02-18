@@ -67,6 +67,14 @@ public final class Anchors: Constraint {
         to(.equal, to: .init(item: .deny, attribute: nil, constant: constant))
     }
     
+    public func greaterThanOrEqualTo(constant: CGFloat) -> Self {
+        to(.greaterThanOrEqual, to: .init(item: .deny, attribute: nil, constant: constant))
+    }
+    
+    public func lessThanOrEqualTo(constant: CGFloat) -> Self {
+        to(.lessThanOrEqual, to: .init(item: .deny, attribute: nil, constant: constant))
+    }
+    
     public func greaterThanOrEqualTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute? = nil, constant: CGFloat) -> Self where I: ConstraintableItem {
         to(.greaterThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: constant))
     }
