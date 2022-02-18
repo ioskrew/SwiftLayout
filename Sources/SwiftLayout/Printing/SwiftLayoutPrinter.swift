@@ -115,7 +115,11 @@ private struct ViewToken {
 }
 
 // MARK: - ConstraintToken
-private final class ConstraintToken: CustomStringConvertible {
+private struct ConstraintToken: CustomStringConvertible, Hashable {
+    static func == (lhs: ConstraintToken, rhs: ConstraintToken) -> Bool {
+        lhs.hashValue == rhs.hashValue
+    }
+    
     struct Parser {
         static func from(_ view: UIView, tags: [String: String]) -> [ConstraintToken] {
             view.constraints.compactMap({ ConstraintToken(constraint: $0, tags: tags) }) + view.subviews.flatMap({ from($0, tags:tags) })
@@ -155,6 +159,12 @@ private final class ConstraintToken: CustomStringConvertible {
         secondAttribute = constraint.secondAttribute.description
         relation = constraint.relation.description
         constant = constraint.constant.description
+    }
+    
+    func appendingFirstAttribute(_ firstAttribute: String) -> Self {
+        var token = self
+        token.firstAttributes.append(firstAttribute)
+        return token
     }
     
     let superTag: String
@@ -208,8 +218,11 @@ private final class ConstraintToken: CustomStringConvertible {
                             && lhs.relation == rhs.relation
                         }
                     }
-                    if let groupToken = mergedTokens.first(where: intersect(token)) {
-                        groupToken.firstAttributes.append(token.firstAttribute)
+                    if let prevToken = mergedTokens.first(where: intersect(token)) {
+                        let newToken = prevToken.appendingFirstAttribute(token.firstAttribute)
+                        guard let index = mergedTokens.firstIndex(of: prevToken) else { continue }
+                        mergedTokens.remove(at: index)
+                        mergedTokens.insert(contentsOf: [newToken], at: index)
                     } else {
                         mergedTokens.append(token)
                     }
