@@ -476,14 +476,14 @@ final class DSLTests: XCTestCase {
             deactivable = layout().active()
             XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .equal).count, 1)
         }
-        
+
         context("top equal to super") {
             deactivable?.deactive()
             test = .topEqualToSuper
             deactivable = layout().active()
             XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .equal).count, 1)
         }
-        
+
         context("top equal to super with constant of 78.0") {
             deactivable?.deactive()
             test = .topEqualToSuperWithConstant
@@ -502,23 +502,24 @@ final class DSLTests: XCTestCase {
             deactivable?.deactive()
             test = .topGreaterThanOrEqualToSuperWithConstant
             deactivable = layout().active()
+            print(root.constraints)
             XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .greaterThanOrEqual, constant: 78.0).count, 1)
         }
-        
+
         context("top greater than or equal to super") {
             deactivable?.deactive()
             test = .topGreaterThanOrEqualToSuper
             deactivable = layout().active()
             XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .greaterThanOrEqual).count, 1)
         }
-        
+
         context("top less than or equal to nameless") {
             deactivable?.deactive()
             test = .topLessThanOrEqualToNameless
             deactivable = layout().active()
             XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .lessThanOrEqual).count, 1)
         }
-        
+
         context("top less than or equal to super") {
             deactivable?.deactive()
             test = .topLessThanOrEqualToSuper

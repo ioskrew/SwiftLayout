@@ -88,11 +88,11 @@ public final class Anchors: Constraint {
     }
     
     public func greaterThanOrEqualTo<I>(_ toItem: I, constant: CGFloat) -> Self where I: ConstraintableItem {
-        to(.equal, to: .init(item: toItem, attribute: nil, constant: constant))
+        to(.greaterThanOrEqual, to: .init(item: toItem, attribute: nil, constant: constant))
     }
     
     public func lessThanOrEqualTo<I>(_ toItem: I, constant: CGFloat) -> Self where I: ConstraintableItem {
-        to(.equal, to: .init(item: toItem, attribute: nil, constant: constant))
+        to(.lessThanOrEqual, to: .init(item: toItem, attribute: nil, constant: constant))
     }
     
     public func equalTo<I>(_ toItem: I?, attribute: NSLayoutConstraint.Attribute, constant: CGFloat) -> Self where I: ConstraintableItem {
@@ -111,15 +111,20 @@ public final class Anchors: Constraint {
         var constraints: [NSLayoutConstraint] = []
         for item in items {
             let from = fromItem
+            let attribute = item.attribute
+            let relation = item.relation
             let to = item.toItem(toItem)
+            let toAttribute = item.toAttribute(attribute)
+            let multiplier = item.multiplier
+            let constant = item.constant
             assert(to is UIView || to is UILayoutGuide || to == nil, "to: \(to.debugDescription) is not item")
             constraints.append(NSLayoutConstraint(item: from,
-                                                  attribute: item.attribute,
-                                                  relatedBy: item.relation,
+                                                  attribute: attribute,
+                                                  relatedBy: relation,
                                                   toItem: to,
-                                                  attribute: item.toAttribute(item.attribute),
-                                                  multiplier: item.multiplier,
-                                                  constant: item.constant))
+                                                  attribute: toAttribute,
+                                                  multiplier: multiplier,
+                                                  constant: constant))
         }
         return constraints
     }
@@ -128,15 +133,20 @@ public final class Anchors: Constraint {
         var constraints: [NSLayoutConstraint] = []
         for item in items {
             let from = fromItem
+            let attribute = item.attribute
+            let relation = item.relation
             let to = item.toItem(toItem, identifiers: identifiers)
+            let toAttribute = item.toAttribute(attribute)
+            let multiplier = item.multiplier
+            let constant = item.constant
             assert(to is UIView || to is UILayoutGuide || to == nil, "to: \(to.debugDescription) is not item")
             constraints.append(NSLayoutConstraint(item: from,
-                                                  attribute: item.attribute,
-                                                  relatedBy: item.relation,
+                                                  attribute: attribute,
+                                                  relatedBy: relation,
                                                   toItem: to,
-                                                  attribute: item.toAttribute(item.attribute),
-                                                  multiplier: item.multiplier,
-                                                  constant: item.constant))
+                                                  attribute: toAttribute,
+                                                  multiplier: multiplier,
+                                                  constant: constant))
         }
         return constraints
     }
