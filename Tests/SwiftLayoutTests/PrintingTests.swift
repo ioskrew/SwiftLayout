@@ -338,8 +338,9 @@ class PrintingTests: XCTestCase {
                 Anchors.cap
             }
             friend.anchors {
-                Anchors.shoe
+                Anchors(.leading, .bottom)
                 Anchors(.top).greaterThanOrEqualTo(child, attribute: .bottom, constant: 8)
+                Anchors(.trailing).equalTo(child)
             }
         }.active()
         
@@ -349,8 +350,9 @@ class PrintingTests: XCTestCase {
                 Anchors(.top, .leading, .trailing)
             }
             friend.anchors {
-                Anchors(.leading, .trailing, .bottom)
+                Anchors(.leading, .bottom)
                 Anchors(.top).greaterThanOrEqualTo(child, attribute: .bottom, constant: 8.0)
+                Anchors(.trailing).equalTo(child)
             }
         }
         """.tabbed

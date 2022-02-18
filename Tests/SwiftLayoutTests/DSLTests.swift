@@ -438,6 +438,14 @@ final class DSLTests: XCTestCase {
             case topLessThanOrEqualToNameless
             case topLessThanOrEqualToSuper
             case topLessThanOrEqualToSuperWithConstant
+            
+            case topOfFriendEqualToBottomOfChild
+            case widthOfFriendEqualToNameless
+            case widthOfFriendEqualToSuper
+            case widthOfFriendEqualToChild
+            case widthOfFriendEqualToHeightOfChild
+            case widthOfFriendEqualToConstant
+            case widthOfFriendEqualToChildWithConstant
         }
         
         var test = TestCase.topEqualToNameless
@@ -464,10 +472,36 @@ final class DSLTests: XCTestCase {
                         Anchors(.top).lessThanOrEqualTo(root)
                     case .topLessThanOrEqualToSuperWithConstant:
                         Anchors(.top).lessThanOrEqualTo(root, constant: 78.0)
+                    default:
+                        Anchors.cap
                     }
                 }
                 friend.anchors {
-                    
+                    switch test {
+                    case .topOfFriendEqualToBottomOfChild:
+                        Anchors(.top).equalTo(child, attribute: .bottom)
+                        Anchors.shoe
+                    case .widthOfFriendEqualToNameless:
+                        Anchors(.width)
+                        Anchors.shoe
+                    case .widthOfFriendEqualToSuper:
+                        Anchors(.width).equalTo(root)
+                        Anchors.shoe
+                    case .widthOfFriendEqualToChild:
+                        Anchors(.width).equalTo(child)
+                        Anchors.shoe
+                    case .widthOfFriendEqualToHeightOfChild:
+                        Anchors(.width).equalTo(child, attribute: .height)
+                        Anchors.shoe
+                    case .widthOfFriendEqualToConstant:
+                        Anchors(.width).equalTo(constant: 78.0)
+                        Anchors.shoe
+                    case .widthOfFriendEqualToChildWithConstant:
+                        Anchors(.width).equalTo(child, constant: 78.0)
+                        Anchors.shoe
+                    default:
+                        Anchors.shoe
+                    }
                 }
             }
         }
@@ -526,11 +560,68 @@ final class DSLTests: XCTestCase {
             deactivable = layout().active()
             XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .lessThanOrEqual).count, 1)
         }
+        
         context("top less than or equal to super with constant of 78.0") {
             deactivable?.deactive()
             test = .topLessThanOrEqualToSuperWithConstant
             deactivable = layout().active()
             XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .lessThanOrEqual, constant: 78.0).count, 1)
+        }
+        
+        context("top of friend equal to bottom of child") {
+            deactivable?.deactive()
+            test = .topOfFriendEqualToBottomOfChild
+            deactivable = layout().active()
+            XCTAssertEqual(root.findConstraints(items: (friend, child), attributes: (.top, .bottom), relation: .equal).count, 1)
+        }
+        
+        context("top of friend equal to bottom of child") {
+            deactivable?.deactive()
+            test = .topOfFriendEqualToBottomOfChild
+            deactivable = layout().active()
+            XCTAssertEqual(root.findConstraints(items: (friend, child), attributes: (.top, .bottom), relation: .equal).count, 1)
+        }
+        
+        context("width of friend equal to width of nameless") {
+            deactivable?.deactive()
+            test = .widthOfFriendEqualToNameless
+            deactivable = layout().active()
+            XCTAssertEqual(root.findConstraints(items: (friend, root), attributes: (.width, .width), relation: .equal).count, 1)
+        }
+        
+        context("width of friend equal to width of super") {
+            deactivable?.deactive()
+            test = .widthOfFriendEqualToSuper
+            deactivable = layout().active()
+            XCTAssertEqual(root.findConstraints(items: (friend, root), attributes: (.width, .width), relation: .equal).count, 1)
+        }
+        
+        context("width of friend equal to width of child") {
+            deactivable?.deactive()
+            test = .widthOfFriendEqualToChild
+            deactivable = layout().active()
+            XCTAssertEqual(root.findConstraints(items: (friend, child), attributes: (.width, .width), relation: .equal).count, 1)
+        }
+        
+        context("width of friend equal to height of child") {
+            deactivable?.deactive()
+            test = .widthOfFriendEqualToHeightOfChild
+            deactivable = layout().active()
+            XCTAssertEqual(root.findConstraints(items: (friend, child), attributes: (.width, .height), relation: .equal).count, 1)
+        }
+        
+        context("width of friend equal to constant of 78.0") {
+            deactivable?.deactive()
+            test = .widthOfFriendEqualToConstant
+            deactivable = layout().active()
+            XCTAssertEqual(root.findConstraints(items: (friend, nil), attributes: (.width, .notAnAttribute), relation: .equal, constant: 78.0).count, 1)
+        }
+        
+        context("width of friend equal to child with constant of 78.0") {
+            deactivable?.deactive()
+            test = .widthOfFriendEqualToChildWithConstant
+            deactivable = layout().active()
+            XCTAssertEqual(root.findConstraints(items: (friend, child), attributes: (.width, .width), relation: .equal, constant: 78.0).count, 1)
         }
     }
 }
