@@ -23,14 +23,6 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
     
     public func print(_ options: LayoutOptions = []) -> String {
         
-        func tokens(_ view: UIView, tags: [String: String]) -> ViewToken {
-            ViewToken(identifier: tags[view.tagDescription] ?? view.tagDescription, subtokens: view.subviews.map({ tokens($0, tags: tags) }))
-        }
-        
-        func constraints(_ view: UIView, tags: [String: String]) -> [ConstraintToken] {
-            view.constraints.compactMap({ ConstraintToken(constraint: $0, tags: tags) }) + view.subviews.flatMap({ constraints($0, tags:tags) })
-        }
-        
         guard let view = view else {
             return ""
         }
@@ -39,61 +31,90 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
             IdentifierUpdater(view).update()
         }
 
-        let token = tokens(view, tags: tags)
-        let constraints = constraints(view, tags: tags)
-        token.constraints = constraints
+        let token = ViewToken.Parser.from(view, tags: tags)
+        let constraints = ConstraintToken.Parser.from(view, tags: tags)
+        token.tokens = constraints
         return token.description
     }
     
     final class ViewToken: CustomStringConvertible {
-        internal init(identifier: String, subtokens: [SwiftLayoutPrinter.ViewToken]) {
+        
+        private init(identifier: String, views: [ViewToken]) {
             self.identifier = identifier
-            self.subtokens = subtokens
+            self.views = views
         }
         
         let identifier: String
-        let subtokens: [ViewToken]
+        let views: [ViewToken]
         
-        var constraints: [ConstraintToken] = [] {
+        var tokens: [ConstraintToken] = [] {
             didSet {
-                subtokens.forEach { token in
-                    token.constraints = constraints
+                views.forEach { token in
+                    token.tokens = tokens
                 }
             }
         }
         
-        var selfConstraints: [ConstraintToken]? {
-            let constraints = self.constraints.filter({ $0.firstTag == identifier })
+        var constraintsForIdentifier: [ConstraintToken]? {
+            let constraints = self.tokens.filter({ $0.firstTag == identifier })
             if constraints.isEmpty { return nil }
             return constraints
         }
         
         var description: String {
-            var identifiers: [String]
-            if subtokens.isEmpty {
-                if let selfConstraints = selfConstraints {
-                    identifiers = [identifier + ".anchors {"]
-                    identifiers.append(ConstraintTokenGroup(selfConstraints).description)
-                    identifiers.append("}")
+            Describer(constraints: constraintsForIdentifier, views: views, identifier: identifier).describing()
+        }
+        
+        struct Parser {
+            static func from(_ view: UIView, tags: [String: String]) -> ViewToken {
+                if let identifier = tags[view.tagDescription] {
+                    return ViewToken(identifier: identifier, views: view.subviews.map({ from($0, tags: tags) }))
                 } else {
-                    identifiers = [identifier]
+                    return ViewToken(identifier: view.tagDescription, views: view.subviews.map({ from($0, tags: tags) }))
                 }
-            } else {
-                if selfConstraints == nil {
+            }
+        }
+        
+        struct Describer {
+            
+            let constraints: [ConstraintToken]?
+            let views: [ViewToken]
+            let identifier: String
+            
+            func describing() -> String {
+                if views.isEmpty {
+                    return fromConstraints(constraints, identifier: identifier).joined(separator: "\n")
+                } else {
+                    return fromViews(constraints, views: views, identifier: identifier).joined(separator: "\n")
+                }
+            }
+            
+            private func fromConstraints(_ constraints: [ConstraintToken]?, identifier: String) -> [String] {
+                guard  let constraintTokens = constraints else { return [identifier] }
+                var identifiers = [identifier + ".anchors {"]
+                identifiers.append(ConstraintTokenGroup(constraintTokens).description)
+                identifiers.append("}")
+                return identifiers
+            }
+            
+            private func fromViews(_ constraints: [ConstraintToken]?, views: [ViewToken], identifier: String) -> [String] {
+                var identifiers: [String] = []
+                if constraints == nil {
                     identifiers = [identifier + " {"]
-                } else if let selfConstraints = selfConstraints {
+                } else if let selfConstraints = constraints {
                     identifiers = [identifier + ".anchors {"]
                     identifiers.append(ConstraintTokenGroup(selfConstraints).description)
                     identifiers.append("}.subviews {")
                 } else {
                     identifiers = [identifier + " {"]
                 }
-                identifiers.append(contentsOf: subtokens.map({ token in
+                identifiers.append(contentsOf: views.map({ token in
                     token.description.split(separator: "\n").map({ "\t" + $0 }).joined(separator: "\n")
                 }))
                 identifiers.append("}")
+                return identifiers
             }
-            return identifiers.joined(separator: "\n")
+            
         }
     }
     
@@ -130,7 +151,14 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
     }
     
     final class ConstraintToken: CustomStringConvertible {
-        internal init?(constraint: NSLayoutConstraint, tags: [String: String]) {
+        
+        struct Parser {
+            static func from(_ view: UIView, tags: [String: String]) -> [ConstraintToken] {
+                view.constraints.compactMap({ ConstraintToken(constraint: $0, tags: tags) }) + view.subviews.flatMap({ from($0, tags:tags) })
+            }
+        }
+        
+        private init?(constraint: NSLayoutConstraint, tags: [String: String]) {
             func tagFromItem(_ item: AnyObject?) -> String {
                 if let view = item as? UIView {
                     return tags[view.tagDescription] ?? view.tagDescription
