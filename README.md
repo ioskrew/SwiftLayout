@@ -70,7 +70,7 @@ view {
 }
 ```
 
-- What do you think about? That easy.
+- What do you think about? **That easy**.
 
 ## usage
 
