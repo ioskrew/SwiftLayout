@@ -12,10 +12,10 @@ DSL library that implements hierarchy of views and constraints declaratively
 
 ## overview
 
-- no more needs using add subview
-- no more directly create NSLayoutConstraint or using NSLayoutAnchor
-  - *alright, sometimes may be you needs that. ok. you can use it in Layout*
-- relation between view become blackboxing, enable to structured by conditions, always views and constraints be coupled, not separated.
+- can managing view hierarchy, autolayouts, and conditional statements through DSL syntax.
+- changing it's condition does not update all. it is only updates the necessary part.
+- when you want, can setting automatically accessibility identifier for debugging or using. when an issue occurredrequirements, it's easy to know what view is wrong with the exception statement.
+- Is it difficult to change the current view structure to SwiftLayout? SwiftLayoutPrinter prints the current view structure as the syntax of SwiftLayout.
 
 ## requirements
 
@@ -31,6 +31,46 @@ dependencies: [
   .package(url: "https://github.com/ioskrew/SwiftLayout", from: "1.3.0"),
 ],
 ```
+
+
+
+## migration from current view
+
+The structure of the view is complicated, so it may not be easy to apply the library. In that case, **SwiftLayout** provides an utility type to easily replace the configuration of the view with SwiftLayout.
+
+that's name is **SwiftLayouPrinter**.
+
+- parsing and printing from the structures of view, subviews, and constraints to syntax codes of SwiftLayout.
+- printing pair of type and memory address of views or accessibilityIdentifier of views.
+- replacing pair of type and memory address to tags.
+
+```swift
+let view: UIView
+let child: UILabel
+NSLayoutConstraint.active([
+  child.topAnchor.constraint(eqaulTo: view.topAnchor),
+  child.leadingAnchor.constraint(eqaulTo: view.leadingAnchor),
+  child.trailingAnchor.constraint(eqaulTo: view.trailingAnchor),
+  child.bottomAnchor.constraint(eqaulTo: view.bottomAnchor),
+])
+
+// ok, real world must be more complex. i know it :)
+```
+
+> print(SwiftLayoutPrinter(view,  tags: [view: "root", grandchildView: "grandchild").print())
+> or
+> (lldb) po SwiftLayoutPrinter(view, tags: [view: "root", grandchildView: "grandchild"]).print() or print(.accessibilityIdentifiers)
+> as a result
+
+```swift
+view {
+	child.anchors {
+		Anchors(.top, .leading, .trailing, .bottom)
+	}
+}
+```
+
+- What do you think about? That easy.
 
 ## usage
 
@@ -285,43 +325,5 @@ root {
   red.anchors {
     Anchors.boundary.eqaulTo(root.safeAreaLayoutGuide)
   }
-}
-```
-
-## migration
-
-The structure of the view is complicated, so it may not be easy to apply the library. In that case, **SwiftLayout** provides an utility type to easily replace the configuration of the view with SwiftLayout.
-
-that's name is **SwiftLayouPrinter**.
-
-- parsing and printing from the structures of view, subviews, and constraints to syntax codes of SwiftLayout.
-- printing pair of type and memory address of views or accessibilityIdentifier of views.
-- replacing pair of type and memory address to tags.
-
-```swift
-let view: UIView
-let child: UILabel
-let grandchild: UIView
-.......... // toooo complex
-```
-> print(SwiftLayoutPrinter(view,  tags: [view: "root", grandchildView: "grandchild").print())
-> or
-> (lldb) po SwiftLayoutPrinter(view, tags: [view: "root", grandchildView: "grandchild"]).print()
-as a result
-```swift
-view {
-	child.anchors {
-		Anchors(.top).to(.equal, to: .init(item: root, attribute: .top, constant: 0.0))
-		Anchors(.leading).to(.equal, to: .init(item: root, attribute: .leading, constant: 0.0))
-		Anchors(.trailing).to(.equal, to: .init(item: root, attribute: .trailing, constant: 0.0))
-		Anchors(.bottom).to(.equal, to: .init(item: root, attribute: .bottom, constant: 0.0))
-	}.subviews {
-		grandchild.anchors {
-			Anchors(.top).to(.equal, to: .init(item: 0x0abcd:UILabel, attribute: .top, constant: 0.0)) // 0x0abcd:UILabel is child
-			Anchors(.leading).to(.equal, to: .init(item: 0x0abcd:UILabel, attribute: .leading, constant: 0.0))
-			Anchors(.trailing).to(.equal, to: .init(item: 0x0abcd:UILabel, attribute: .trailing, constant: 0.0))
-			Anchors(.bottom).to(.equal, to: .init(item: 0x0abcd:UILabel, attribute: .bottom, constant: 0.0))
-		}
-	}
 }
 ```
