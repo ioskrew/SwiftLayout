@@ -31,30 +31,35 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
             IdentifierUpdater(view).update()
         }
 
-        let token = ViewToken.Parser.from(view, tags: tags)
+        let viewToken = ViewToken.Parser.from(view, tags: tags)
         let constraints = ConstraintToken.Parser.from(view, tags: tags)
-        token.tokens = constraints
-        return Describer(token).description
+        return Describer(viewToken, constraints).description
     }
     
     struct Describer: CustomStringConvertible {
         
-        init(_ token: ViewToken) {
-            self.constraints = token.constraintsForIdentifier
+        init(_ token: ViewToken, _ constraints: [ConstraintToken]) {
             self.views = token.views
+            self.constraints = constraints
             self.identifier = token.identifier
         }
         
         var description: String {
             if views.isEmpty {
-                return fromConstraints(constraints, identifier: identifier).joined(separator: "\n")
+                return fromConstraints(constraintsOfIdentifier, identifier: identifier).joined(separator: "\n")
             } else {
-                return fromViews(constraints, views: views, identifier: identifier).joined(separator: "\n")
+                return fromViews(constraintsOfIdentifier, views: views, identifier: identifier).joined(separator: "\n")
             }
         }
         
-        private let constraints: [ConstraintToken]?
+        private var constraintsOfIdentifier: [ConstraintToken]? {
+            let constraints = constraints.filter({ $0.firstTag == identifier })
+            if constraints.isEmpty { return nil }
+            return constraints
+        }
+        
         private let views: [ViewToken]
+        private let constraints: [ConstraintToken]
         private let identifier: String
         
         private func fromConstraints(_ constraints: [ConstraintToken]?, identifier: String) -> [String] {
@@ -76,8 +81,8 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
             } else {
                 identifiers = [identifier + " {"]
             }
-            identifiers.append(contentsOf: views.map({ token in
-                let description = Describer(token).description
+            identifiers.append(contentsOf: views.map({ view in
+                let description = Describer(view, self.constraints).description
                 return description.split(separator: "\n").map({ "\t" + $0 }).joined(separator: "\n")
             }))
             identifiers.append("}")
@@ -95,20 +100,6 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
         
         let identifier: String
         let views: [ViewToken]
-        
-        var tokens: [ConstraintToken] = [] {
-            didSet {
-                views.forEach { token in
-                    token.tokens = tokens
-                }
-            }
-        }
-        
-        var constraintsForIdentifier: [ConstraintToken]? {
-            let constraints = self.tokens.filter({ $0.firstTag == identifier })
-            if constraints.isEmpty { return nil }
-            return constraints
-        }
         
         struct Parser {
             static func from(_ view: UIView, tags: [String: String]) -> ViewToken {
