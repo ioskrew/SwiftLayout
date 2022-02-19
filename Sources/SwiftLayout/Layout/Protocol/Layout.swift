@@ -35,13 +35,21 @@ public extension Layout {
     }
 }
 
-public extension Layout {
-    func active(_ options: LayoutOptions = []) -> Deactivable {
-        guard let layoutImp = LayoutImp(layout: self) else {
-            return Deactivation()
+extension Layout {
+    public func active(_ options: LayoutOptions = []) -> Deactivable {
+        Activator.active(layout: extractLayoutImpFromSelf(), options: options)
+    }
+    
+    func extractLayoutImpFromSelf() -> [LayoutImp] {
+        if let layoutImps = self as? [LayoutImp] {
+            return layoutImps
+        } else if let layoutImp = self as? LayoutImp {
+            return [layoutImp]
+        } else if let layoutImp = LayoutImp(layout: self) {
+            return [layoutImp]
+        } else {
+            return []
         }
-        
-        return Activator.active(layout: layoutImp, options: options)
     }
 }
 

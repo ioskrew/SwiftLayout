@@ -605,6 +605,9 @@ final class DSLTests: XCTestCase {
         let a = UIView().viewTag.a
         let child = UIView().viewTag.child
         let b = UIView().viewTag.b
+        child.addSubview(b)
+        let c = UIView().viewTag.c
+        let cchild = UIView().viewTag.cchild
         
         @LayoutBuilder
         func layout() -> Layout {
@@ -616,11 +619,23 @@ final class DSLTests: XCTestCase {
             b.anchors {
                 Anchors(.width, .height).equalTo(constant: 120.0)
             }
+            c {
+                cchild.anchors {
+                    Anchors.boundary
+                }
+            }
         }
         deactivable = layout().active()
         
         XCTAssertEqual(a.constraints.count, 4)
         XCTAssertEqual(b.constraints.count, 2)
+        XCTAssertEqual(c.constraints.count, 4)
+        
+        XCTAssertNil(a.superview)
+        XCTAssertEqual(child.superview, a)
+        XCTAssertEqual(b.superview, child)
+        XCTAssertNil(c.superview)
+        XCTAssertEqual(cchild.superview, c)
     }
 }
 

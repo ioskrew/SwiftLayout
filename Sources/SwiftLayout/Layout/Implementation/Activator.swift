@@ -9,13 +9,13 @@ import Foundation
 import UIKit
 
 enum Activator {
-    static func active(layout: LayoutImp, options: LayoutOptions = [], building: LayoutBuilding? = nil) -> Deactivation {
+    static func active(layout: [LayoutImp], options: LayoutOptions = [], building: LayoutBuilding? = nil) -> Deactivation {
         return update(layout: layout, fromDeactivation: Deactivation(building: building), options: options)
     }
 
     @discardableResult
-    static func update(layout: LayoutImp, fromDeactivation deactivation: Deactivation, options: LayoutOptions) -> Deactivation {
-        let viewInfos = layout.viewInformations
+    static func update(layout: [LayoutImp], fromDeactivation deactivation: Deactivation, options: LayoutOptions) -> Deactivation {
+        let viewInfos = layout.flatMap(\.viewInformations)
         let viewInfoSet = ViewInformationSet(infos: viewInfos)
         
         deactivate(deactivation: deactivation, withViewInformationSet: viewInfoSet)
@@ -24,7 +24,7 @@ enum Activator {
             updateIdentifiers(fromBuilding: deactivation.building, viewInfoSet: viewInfoSet)
         }
         
-        let constrains = layout.viewConstraints(viewInfoSet)
+        let constrains = layout.flatMap({ $0.viewConstraints(viewInfoSet) })
         
         activate(viewInfos: viewInfos, constrains: constrains)
         
