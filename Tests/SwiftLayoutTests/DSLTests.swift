@@ -622,6 +622,28 @@ final class DSLTests: XCTestCase {
             XCTAssertEqual(root.findConstraints(items: (friend, child), attributes: (.width, .width), relation: .equal, constant: 78.0).count, 1)
         }
     }
+    
+    func testLayoutCanHasMultipleRootLayouts() {
+        let a = UIView().viewTag.a
+        let child = UIView().viewTag.child
+        let b = UIView().viewTag.b
+        
+        @LayoutBuilder
+        func layout() -> Layout {
+            a {
+                child.anchors {
+                    Anchors.boundary
+                }
+            }
+            b.anchors {
+                Anchors(.width, .height).equalTo(constant: 120.0)
+            }
+        }
+        deactivable = layout().active()
+        
+        XCTAssertEqual(a.constraints.count, 4)
+        XCTAssertEqual(b.constraints.count, 2)
+    }
 }
 
 extension Anchors {

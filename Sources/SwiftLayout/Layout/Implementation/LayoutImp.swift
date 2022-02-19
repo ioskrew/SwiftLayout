@@ -32,10 +32,12 @@ struct LayoutImp: Layout {
             self.view = layoutImp.view
             self.sublayouts = sublayoutImp ?? layoutImp.sublayouts
             self.anchors = anchors ?? layoutImp.anchors
-        } else if let layoutImps = layout as? [LayoutImp], let layoutImp = layoutImps.first {
-            self.view = layoutImp.view
-            self.sublayouts = sublayoutImp ?? layoutImp.sublayouts
-            self.anchors = anchors ?? layoutImp.anchors
+        } else if let layoutImps = layout as? [LayoutImp], !layoutImps.isEmpty {
+            var layoutImps = layoutImps
+            let firstLayout = layoutImps.removeFirst()
+            self.view = firstLayout.view
+            self.sublayouts = (sublayoutImp ?? firstLayout.sublayouts) + layoutImps
+            self.anchors = anchors ?? firstLayout.anchors
         } else {
             assertionFailure("received layout is not acceptable type: \(type(of: layout))")
             return nil
