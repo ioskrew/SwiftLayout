@@ -199,28 +199,6 @@ final class DSLTests: XCTestCase {
         XCTAssertNotNil(root.findConstraints(items: (blue, red), attributes: (.centerY, .centerY)).first)
     }
     
-    func testAnchorsFromNSLayoutAnchor() {
-        view = LayoutHostingView(root {
-            red.anchors {
-                Anchors.cap
-                red.bottomAnchor.constraint(equalTo: blue.topAnchor)
-            }
-            blue.anchors {
-                Anchors.shoe
-            }
-        })
-        
-        // root가 constraint를 다 가져감
-        XCTAssertEqual(root.constraints.count, 7)
-        for attr in [NSLayoutConstraint.Attribute.top, .leading, .trailing] {
-            XCTAssertNotNil(root.findConstraints(items: (red, root), attributes: (attr, attr)).first)
-        }
-        XCTAssertNotNil(root.findConstraints(items: (red, blue), attributes: (.bottom, .top)).first)
-        for attr in [NSLayoutConstraint.Attribute.leading, .trailing, .bottom] {
-            XCTAssertNotNil(root.findConstraints(items: (blue, root), attributes: (attr, attr)).first)
-        }
-    }
-    
     func testViewLayout() {
         view = LayoutHostingView(root {
             red.anchors {
