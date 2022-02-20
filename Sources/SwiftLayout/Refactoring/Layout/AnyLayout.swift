@@ -5,7 +5,7 @@ protocol AnyLayoutBox: Layout, LayoutTraversal {}
 struct _AnyLayoutBox<L: Layout>: AnyLayoutBox {
     let layout: L
     
-    func traverse(_ superview: UIView?, traverseHandler handler: (UIView?, UIView) -> Void) {
+    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
         cast(layout) { traversal in
             traversal.traverse(superview, traverseHandler: handler)
         }

@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 
-typealias TraverseHandler = (_ superview: UIView?, _ subview: UIView) -> Void
+typealias TraverseHandler = (_ superview: UIView?, _ subview: UIView, _ identifier: String?, _ animationDisabled: Bool) -> Void
 
 protocol LayoutTraversal {
     func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler)
@@ -15,7 +15,13 @@ extension Array where Element == LayoutTraversal {
 }
 
 extension LayoutTraversal {
-    var viewInformations: [ViewInformation] { [] }
+    var viewInformations: [ViewInformation] {
+        var informations: [ViewInformation] = []
+        traverse(nil) { superview, subview, identifier, animationDisabled in
+            informations.append(.init(superview: superview, view: subview, identifier: identifier, animationDisabled: animationDisabled))
+        }
+        return informations
+    }
     var viewConstraints: [NSLayoutConstraint] { [] }
     func viewConstraints(_ viewInfoSet: ViewInformationSet) -> [NSLayoutConstraint] { [] }
     
@@ -25,14 +31,8 @@ extension LayoutTraversal {
     }
 }
 
-extension LayoutTraversal where Self: UIView {
-    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
-        handler(superview, self)
-    }
-}
-
 extension AnchorsLayout: LayoutTraversal {
-    func traverse(_ superview: UIView?, traverseHandler handler: (UIView?, UIView) -> Void) {
+    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
         cast(layout) { traversal in
             traversal.traverse(superview, traverseHandler: handler)
         }
@@ -40,13 +40,13 @@ extension AnchorsLayout: LayoutTraversal {
 }
 
 extension AnyLayout: LayoutTraversal {
-    func traverse(_ superview: UIView?, traverseHandler handler: (UIView?, UIView) -> Void) {
+    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
         box.traverse(superview, traverseHandler: handler)
     }
 }
 
 extension ArrayLayout: LayoutTraversal {
-    func traverse(_ superview: UIView?, traverseHandler handler: (UIView?, UIView) -> Void) {
+    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
         for layout in layouts {
             cast(layout) { traversal in
                 traversal.traverse(superview, traverseHandler: handler)
@@ -56,7 +56,7 @@ extension ArrayLayout: LayoutTraversal {
 }
 
 extension ConditionalLayout: LayoutTraversal {
-    func traverse(_ superview: UIView?, traverseHandler handler: (UIView?, UIView) -> Void) {
+    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
         switch layout {
         case let .trueLayout(layout):
             cast(layout) { traversal in
@@ -71,7 +71,7 @@ extension ConditionalLayout: LayoutTraversal {
 }
 
 extension OptionalLayout: LayoutTraversal {
-    func traverse(_ superview: UIView?, traverseHandler handler: (UIView?, UIView) -> Void) {
+    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
         layout.flatMap { layout in
             cast(layout) { traversal in
                 traversal.traverse(superview, traverseHandler: handler)
@@ -81,7 +81,7 @@ extension OptionalLayout: LayoutTraversal {
 }
 
 extension SublayoutLayout: LayoutTraversal {
-    func traverse(_ superview: UIView?, traverseHandler handler: (UIView?, UIView) -> Void) {
+    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
         cast(superlayout) { traversal in
             traversal.traverse(superview, traverseHandler: handler)
         }
@@ -92,14 +92,14 @@ extension SublayoutLayout: LayoutTraversal {
 }
 
 extension TupleLayout: LayoutTraversal {
-    func traverse(_ superview: UIView?, traverseHandler handler: (UIView?, UIView) -> Void) {
+    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
         
     }
 }
 
 extension ViewLayout: LayoutTraversal {
-    func traverse(_ superview: UIView?, traverseHandler handler: (UIView?, UIView) -> Void) {
-        handler(superview, view)
+    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
+        handler(superview, view, identifier, animationDisabled)
         cast(sublayout) { traversal in
             traversal.traverse(view, traverseHandler: handler)
         }
@@ -107,7 +107,7 @@ extension ViewLayout: LayoutTraversal {
 }
 
 extension UIView: LayoutTraversal {
-    func traverse(_ superview: UIView?, traverseHandler handler: (UIView?, UIView) -> Void) {
-        handler(superview, self)
+    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
+        handler(superview, self, nil, false)
     }
 }
