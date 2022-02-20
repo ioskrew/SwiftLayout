@@ -93,7 +93,40 @@ extension SublayoutLayout: LayoutTraversal {
 
 extension TupleLayout: LayoutTraversal {
     func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
-        
+        if let traversals = layout as? (LayoutTraversal, LayoutTraversal) {
+            traversals.0.traverse(superview, traverseHandler: handler)
+            traversals.1.traverse(superview, traverseHandler: handler)
+        } else if let traversals = layout as? (LayoutTraversal, LayoutTraversal, LayoutTraversal) {
+            traversals.0.traverse(superview, traverseHandler: handler)
+            traversals.1.traverse(superview, traverseHandler: handler)
+            traversals.2.traverse(superview, traverseHandler: handler)
+        } else if let traversals = layout as? (LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal) {
+            traversals.0.traverse(superview, traverseHandler: handler)
+            traversals.1.traverse(superview, traverseHandler: handler)
+            traversals.2.traverse(superview, traverseHandler: handler)
+            traversals.3.traverse(superview, traverseHandler: handler)
+        } else if let traversals = layout as? (LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal) {
+            traversals.0.traverse(superview, traverseHandler: handler)
+            traversals.1.traverse(superview, traverseHandler: handler)
+            traversals.2.traverse(superview, traverseHandler: handler)
+            traversals.3.traverse(superview, traverseHandler: handler)
+            traversals.4.traverse(superview, traverseHandler: handler)
+        } else if let traversals = layout as? (LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal) {
+            traversals.0.traverse(superview, traverseHandler: handler)
+            traversals.1.traverse(superview, traverseHandler: handler)
+            traversals.2.traverse(superview, traverseHandler: handler)
+            traversals.3.traverse(superview, traverseHandler: handler)
+            traversals.4.traverse(superview, traverseHandler: handler)
+            traversals.5.traverse(superview, traverseHandler: handler)
+        } else if let traversals = layout as? (LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal) {
+            traversals.0.traverse(superview, traverseHandler: handler)
+            traversals.1.traverse(superview, traverseHandler: handler)
+            traversals.2.traverse(superview, traverseHandler: handler)
+            traversals.3.traverse(superview, traverseHandler: handler)
+            traversals.4.traverse(superview, traverseHandler: handler)
+            traversals.5.traverse(superview, traverseHandler: handler)
+            traversals.6.traverse(superview, traverseHandler: handler)
+        }
     }
 }
 
