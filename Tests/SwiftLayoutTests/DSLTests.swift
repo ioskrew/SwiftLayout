@@ -22,6 +22,7 @@ final class DSLTests: XCTestCase {
     var root: UIView!
     var red: UIView!
     var blue: UIView!
+    var green: UIView!
     
     override func setUpWithError() throws {
         continueAfterFailure = false
@@ -29,6 +30,7 @@ final class DSLTests: XCTestCase {
         root = UIView().viewTag.root
         red = UIView().viewTag.red
         blue = UIView().viewTag.blue
+        green = UIView().viewTag.green
     }
     
     override func tearDownWithError() throws {
@@ -51,6 +53,30 @@ final class DSLTests: XCTestCase {
         
         XCTAssertEqual(red.superview, root)
         XCTAssertEqual(blue.superview, root)
+    }
+    
+    func testSimpleDepth() {
+        deactivable = root {
+            red {
+                blue
+            }
+        }.active()
+        
+        XCTAssertEqual(red.superview, root)
+        XCTAssertEqual(blue.superview, red)
+    }
+    
+    func testSimpleDepthAndTuple() {
+        deactivable = root {
+            red {
+                blue
+                green
+            }
+        }.active()
+        
+        XCTAssertEqual(red.superview, root)
+        XCTAssertEqual(blue.superview, red)
+        XCTAssertEqual(green.superview, red)
     }
     
     func testDontTouchRootViewByDeactivation() {
