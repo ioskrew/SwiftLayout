@@ -108,6 +108,6 @@ extension ViewLayout: LayoutTraversal {
 
 extension UIView: LayoutTraversal {
     func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
-        handler(superview, self, nil, false)
+        handler(superview, self, self.accessibilityIdentifier, false)
     }
 }

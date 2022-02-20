@@ -5,6 +5,7 @@ import UIKit
 final class LayoutViewTreeTests: XCTestCase {
         
     var root: UIView = UIView().viewTag.root
+    var child: UIView = UIView().viewTag.child
     var button: UIButton = UIButton().viewTag.button
     var label: UILabel = UILabel().viewTag.label
     var redView: UIView = UIView().viewTag.redView
@@ -14,6 +15,7 @@ final class LayoutViewTreeTests: XCTestCase {
     
     override func setUp() {
         root = UIView().viewTag.root
+        child = UIView().viewTag.child
         button = UIButton().viewTag.button
         label = UILabel().viewTag.label
         redView = UIView().viewTag.redView

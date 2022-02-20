@@ -33,6 +33,25 @@ final class DSLTests: XCTestCase {
     override func tearDownWithError() throws {
     }
     
+    
+    func testSimple() {
+        deactivable = root {
+            red
+        }.active()
+        
+        XCTAssertEqual(red.superview, root)
+    }
+    
+    func testTuple() {
+        deactivable = root {
+            red
+            blue
+        }.active()
+        
+        XCTAssertEqual(red.superview, root)
+        XCTAssertEqual(blue.superview, root)
+    }
+    
     func testDontTouchRootViewByDeactivation() {
         let old = UIView().viewTag.old
         old.addSubview(root)

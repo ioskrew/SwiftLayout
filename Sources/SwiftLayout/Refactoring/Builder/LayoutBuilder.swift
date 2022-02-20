@@ -38,6 +38,10 @@ public struct LayoutBuilder {
         OptionalLayout(layout: component)
     }
     
+    public static func buildIf<L: Layout>(_ component: L?) -> OptionalLayout<L> {
+        OptionalLayout(layout: component)
+    }
+    
     public static func buildEither<True: Layout, False: Layout>(first component: True) -> ConditionalLayout<True, False> {
         ConditionalLayout<True, False>(layout: .trueLayout(component))
     }

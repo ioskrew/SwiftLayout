@@ -16,7 +16,7 @@ extension Layout {
 }
 
 public extension Layout where Self: UIView {
-    func callAsFunction<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<Self, L> {
+    func callAsFunction<L: Layout>(@LayoutBuilder _ build: () -> L) -> some Layout {
         ViewLayout(self, sublayout: build())
     }
     
@@ -47,3 +47,4 @@ public extension Layout {
 }
 
 extension UIView: Layout {}
+extension Optional: Layout where Wrapped: Layout {}
