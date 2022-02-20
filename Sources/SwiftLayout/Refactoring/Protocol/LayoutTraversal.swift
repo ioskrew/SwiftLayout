@@ -33,9 +33,7 @@ extension LayoutTraversal {
 
 extension AnchorsLayout: LayoutTraversal {
     func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
-        cast(layout) { traversal in
-            traversal.traverse(superview, traverseHandler: handler)
-        }
+        layout.traverse(superview, traverseHandler: handler)
     }
 }
 

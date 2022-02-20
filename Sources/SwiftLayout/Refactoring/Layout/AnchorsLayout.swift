@@ -1,12 +1,12 @@
 import Foundation
 import UIKit
 
-public struct AnchorsLayout<L: Layout>: Layout {
+public struct AnchorsLayout<V: UIView, L: Layout>: Layout {
     
-    let layout: L
+    let layout: ViewLayout<V, L>
     let anchors: [Constraint]
     
     public var debugDescription: String {
-        "AnchorsLayout<\(L.self)>"
+        "AnchorsLayout<\(V.self), \(L.self)>"
     }
 }
