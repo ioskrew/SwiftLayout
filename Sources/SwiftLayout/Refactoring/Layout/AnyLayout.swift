@@ -1,14 +1,13 @@
 import Foundation
+import UIKit
 
 protocol AnyLayoutBox: Layout, LayoutTraversal {}
 struct _AnyLayoutBox<L: Layout>: AnyLayoutBox {
     let layout: L
     
-    var traversals: [LayoutTraversal] {
-        if let traversal = layout as? LayoutTraversal {
-            return [traversal]
-        } else {
-            return []
+    func traverse(_ superview: UIView?, traverseHandler handler: (UIView?, UIView) -> Void) {
+        cast(layout) { traversal in
+            traversal.traverse(superview, traverseHandler: handler)
         }
     }
     
