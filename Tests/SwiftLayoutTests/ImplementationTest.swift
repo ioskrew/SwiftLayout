@@ -33,12 +33,12 @@ final class ImplementationTest: XCTestCase {
                 button
                 image
             }
-        } as! LayoutImp
+        } as! LayoutTraversal
         
         var result: [String] = []
-        layout.traversal { superLayout, currentLayout in
-            let superDescription = superLayout?.view.accessibilityIdentifier ?? "nil"
-            let currentDescription = currentLayout.view.accessibilityIdentifier ?? "nil"
+        for viewInformation in layout.viewInformations {
+            let superDescription = viewInformation.superview?.accessibilityIdentifier ?? "nil"
+            let currentDescription = viewInformation.view?.accessibilityIdentifier ?? "nil"
             let description = "\(superDescription), \(currentDescription)"
             result.append(description)
         }
@@ -65,7 +65,7 @@ final class ImplementationTest: XCTestCase {
         }
         
         class SelfReferenceView: UIView, LayoutBuilding {
-            var layout: Layout {
+            var layout: some Layout {
                 self {
                     DeinitView().anchors {
                         Anchors.boundary
@@ -104,7 +104,7 @@ final class ImplementationTest: XCTestCase {
                     Anchors.boundary
                 }
             }
-        } as? LayoutImp
+        } as? LayoutTraversal
         
         XCTAssertNotNil(layout)
         XCTAssertEqual(layout?.viewInformations.map(\.view), [root, child, friend])
@@ -140,28 +140,28 @@ final class ImplementationTest: XCTestCase {
         }
         
         guard
-            let f1 = f1 as? LayoutImp,
-            let f2 = f2 as? LayoutImp,
-            let f3 = f3 as? LayoutImp,
-            let f4 = f4 as? LayoutImp,
-            let f5 = f5 as? LayoutImp,
-            let f6 = f6 as? LayoutImp
+            let f1 = f1 as? LayoutTraversal,
+            let f2 = f2 as? LayoutTraversal,
+            let f3 = f3 as? LayoutTraversal,
+            let f4 = f4 as? LayoutTraversal,
+            let f5 = f5 as? LayoutTraversal,
+            let f6 = f6 as? LayoutTraversal
         else {
             XCTFail()
             return
         }
         
         XCTAssertEqual(f1.viewInformations, f2.viewInformations)
-        XCTAssertEqual(f1.viewConstraints().weakens, f2.viewConstraints().weakens)
+        XCTAssertEqual(f1.viewConstraints.weakens, f2.viewConstraints.weakens)
         
         XCTAssertEqual(f3.viewInformations, f4.viewInformations)
-        XCTAssertEqual(f3.viewConstraints().weakens, f4.viewConstraints().weakens)
+        XCTAssertEqual(f3.viewConstraints.weakens, f4.viewConstraints.weakens)
         
         XCTAssertEqual(f4.viewInformations, f5.viewInformations)
-        XCTAssertNotEqual(f4.viewConstraints().weakens, f5.viewConstraints().weakens)
+        XCTAssertNotEqual(f4.viewConstraints.weakens, f5.viewConstraints.weakens)
         
         XCTAssertNotEqual(f5.viewInformations, f6.viewInformations)
-        XCTAssertNotEqual(f5.viewConstraints().weakens, f6.viewConstraints().weakens)
+        XCTAssertNotEqual(f5.viewConstraints.weakens, f6.viewConstraints.weakens)
         
     }
     
@@ -183,7 +183,7 @@ final class ImplementationTest: XCTestCase {
             
             var deactivable: Deactivable?
             
-            var layout: Layout {
+            var layout: some Layout {
                 root {
                     if flag {
                         child.anchors {
@@ -234,7 +234,7 @@ final class ImplementationTest: XCTestCase {
                 Anchors(.top).equalTo("label", attribute: .bottom)
                 Anchors.shoe
             }
-        }.active() as? Deactivation
+        }.anyLayout.active() as? Deactivation<AnyLayoutBuilding<AnyLayout>>
         
         let labelByIdentifier = deactivation?.viewForIdentifier("label")
         XCTAssertEqual(labelByIdentifier?.accessibilityIdentifier, "label")
@@ -255,21 +255,16 @@ final class ImplementationTest: XCTestCase {
             Anchors.boundary.equalTo("label")
         }).subviews {
             UILabel().identifying("label")
-        }
+        }.anyLayout
         
-        guard let layoutImp = layout as? LayoutImp else {
-            XCTFail()
-            return
-        }
-        
-        deactivable = layoutImp.active()
+        deactivable = layout.active()
         
         let label = deactivable?.viewForIdentifier("label")
         
 
-        let viewInfos = layoutImp.viewInformations
+        let viewInfos = layout.viewInformations
         let viewInfoSet = ViewInformationSet(infos: viewInfos)
-        let constrains = layoutImp.viewConstraints(viewInfoSet)
+        let constrains = layout.viewConstraints(viewInfoSet)
         
         XCTAssertNotNil(label)
         XCTAssertEqual(Set(root.constraints.weakens), Set(constrains.weakens))

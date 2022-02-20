@@ -9,7 +9,8 @@ import Foundation
 import UIKit
 
 public protocol LayoutBuilding: AnyObject {
-    var layout: Layout { get }
+    associatedtype LayoutBody: Layout
+    var layout: LayoutBody { get }
     var deactivable: Deactivable? { get set }
 }
 
@@ -20,12 +21,11 @@ public extension LayoutBuilding {
     }
     
     func updateLayout(_ options: LayoutOptions = []) {
-        let layoutImps = self.layout.extractLayoutImpFromSelf()
-        guard !layoutImps.isEmpty else { return }
-        if let deactivation = self.deactivable as? Deactivation {
-            Activator.update(layout: layoutImps, fromDeactivation: deactivation, options: options)
+        let layout = self.layout
+        if let deactivation = self.deactivable as? Deactivation<Self> {
+            Activator.update(layout: layout, fromDeactivation: deactivation, options: options)
         } else {
-            let deactivation = Activator.active(layout: layoutImps, options: options, building: self)
+            let deactivation = Activator.active(layout: layout, options: options, building: self)
             self.deactivable = deactivation
         }
     }

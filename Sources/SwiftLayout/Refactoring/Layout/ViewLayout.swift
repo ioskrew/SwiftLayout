@@ -1,24 +1,34 @@
 import Foundation
 import UIKit
 
-public struct ViewLayout<V: UIView, L: Layout>: Layout {
+public final class ViewLayout<V: UIView, SubLayout: Layout>: Layout {
     
     let view: V
     
-    let sublayout: L
+    var sublayout: SubLayout
+    var anchors: [Constraint] = []
     
-    var animationDisabled: Bool = false
+    private(set) var animationDisabled: Bool = false
+    
     var identifier: String? {
         get { view.accessibilityIdentifier }
         set { view.accessibilityIdentifier = newValue }
     }
     
-    init(_ view: V, sublayout: L) {
+    init(_ view: V, sublayout: SubLayout) {
         self.view = view
         self.sublayout = sublayout
+        self.anchors = []
+        self.animationDisabled = false
     }
+        
+    public func animationDisable() -> Self {
+        self.animationDisabled = true
+        return self
+    }
+
     
-    var debugDescription: String {
-        ""
+    public var debugDescription: String {
+        view.tagDescription + ": [\(sublayout.debugDescription)]"
     }
 }

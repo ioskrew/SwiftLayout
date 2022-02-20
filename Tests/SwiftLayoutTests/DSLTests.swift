@@ -372,7 +372,7 @@ final class DSLTests: XCTestCase {
         
         var deactivable: Deactivable?
         
-        var layout: Layout {
+        var layout: some Layout {
             contentView {
                 nameLabel
             }
@@ -669,16 +669,16 @@ extension NSLayoutConstraint {
 
 class LayoutHostingView: UIView, LayoutBuilding {
     
-    let content: Layout
+    let content: AnyLayout
     
-    var layout: Layout {
+    var layout: some Layout {
         content
     }
     
     var deactivable: Deactivable?
     
-    init(_ _content: Layout) {
-        content = _content
+    init<L: Layout>(_ _content: L) {
+        content = _content.anyLayout
         super.init(frame: .zero)
         updateLayout()
     }

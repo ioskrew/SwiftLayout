@@ -9,52 +9,42 @@ import UIKit
 
 public protocol Layout: CustomDebugStringConvertible {}
 
-public extension Layout {
-    func callAsFunction(@LayoutBuilder _ build: () -> [Layout]) -> Layout {
-        return LayoutImp(layout: self, sublayouts: build())
-    }
-    
-    func subviews(@LayoutBuilder _ build: () -> [Layout]) -> Layout {
-        return LayoutImp(layout: self, sublayouts: build())
-    }
-    
-    func anchors(@AnchorsBuilder _ anchors: () -> [Constraint]) -> Layout {
-        return LayoutImp(layout: self, anchors: anchors())
-    }
-    
-    func identifying(_ identifier: String) -> Layout {
-        var layoutImp = LayoutImp(layout: self)
-        layoutImp?.identifier = identifier
-        return layoutImp
-    }
-    
-    func animationDisable() -> Layout {
-        var layoutImp = LayoutImp(layout: self)
-        layoutImp?.animationDisabled = true
-        return layoutImp
+extension Layout {
+    public var anyLayout: AnyLayout {
+        AnyLayout(self)
     }
 }
 
-extension Layout {
-    public func active(_ options: LayoutOptions = []) -> Deactivable {
-        Activator.active(layout: extractLayoutImpFromSelf(), options: options)
+public extension Layout where Self: UIView {
+    func callAsFunction<L: Layout>(@LayoutBuilder _ build: () -> L) -> some Layout {
+        ViewLayout(self, sublayout: build())
     }
     
-    func extractLayoutImpFromSelf() -> [LayoutImp] {
-        if let layoutImps = self as? [LayoutImp] {
-            return layoutImps
-        } else if let layoutImp = self as? LayoutImp {
-            return [layoutImp]
-        } else if let layoutImp = LayoutImp(layout: self) {
-            return [layoutImp]
-        } else {
-            return []
-        }
+    func identifying(_ identifier: String) -> some Layout {
+        let layout = ViewLayout(self, sublayout: EmptyLayout())
+        layout.identifier = identifier
+        return layout
     }
+}
+
+public extension Layout {
+    
+    func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> some Layout {
+        SublayoutLayout(self, build())
+    }
+    
+    func subviews<L: Layout>(@LayoutBuilder _ build: () -> L) -> some Layout {
+        SublayoutLayout(self, build())
+    }
+    
+    func anchors(@AnchorsBuilder _ anchors: () -> [Constraint]) -> some Layout {
+        AnchorLayout(self, anchors())
+    }
+    
+    func active(_ options: LayoutOptions = []) -> Deactivable {
+        Activator.active(layout: self, options: options)
+    }
+    
 }
 
 extension UIView: Layout {}
-
-extension Array: Layout where Element == Layout {}
-
-extension Optional: Layout where Wrapped: Layout {}
