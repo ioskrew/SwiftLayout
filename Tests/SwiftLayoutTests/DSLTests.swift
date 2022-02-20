@@ -79,6 +79,18 @@ final class DSLTests: XCTestCase {
         XCTAssertEqual(green.superview, red)
     }
     
+    func testSimpleBoundary() {
+        deactivable = root {
+            red.anchors {
+                Anchors.boundary
+            }
+        }.active()
+        
+        XCTAssertEqual(red.superview, root)
+        XCTAssertEqual(root.constraints.count, 4)
+        XCTAssertEqual(root.findConstraints(items: (red, root)).weakens, Anchors.boundary.constraints(item: red, toItem: root).weakens)
+    }
+    
     func testDontTouchRootViewByDeactivation() {
         let old = UIView().viewTag.old
         old.addSubview(root)
@@ -734,3 +746,110 @@ class LayoutHostingView: UIView, LayoutBuilding {
     }
     
 }
+
+private extension Collection where Element: CustomHashable {
+    var weakens: [WeakReference<Element>] {
+        map(WeakReference.init)
+    }
+}
+
+private final class WeakReference<Origin>: Hashable where Origin: CustomHashable {
+    static func == (lhs: WeakReference<Origin>, rhs: WeakReference<Origin>) -> Bool {
+        lhs.hashValue == rhs.hashValue
+    }
+    
+    internal init(origin: Origin? = nil) {
+        self.origin = origin
+    }
+    
+    weak var origin: Origin?
+    
+    func hash(into hasher: inout Hasher) {
+        origin?.customHash(&hasher)
+    }
+}
+
+extension NSLayoutConstraint: CustomHashable {
+    func customHash(_ hasher: inout Hasher) {
+        hasher.combine(firstItem as? NSObject)
+        hasher.combine(firstAttribute)
+        hasher.combine(secondItem as? NSObject)
+        hasher.combine(secondAttribute)
+        hasher.combine(relation)
+        hasher.combine(constant)
+        hasher.combine(multiplier)
+        hasher.combine(priority)
+    }
+}
+
+extension WeakReference: CustomDebugStringConvertible where Origin: NSLayoutConstraint {
+    var debugDescription: String {
+        guard let origin = origin else { return "WK constraint: unknown: \(UUID().uuidString)" }
+        guard let first = origin.firstItem as? UIView else { return "WK constraint: unknown: \(UUID().uuidString)" }
+        if let second = origin.secondItem as? UIView {
+            return "WK constraint: \(first.tagDescription) \(origin.relation)[\(origin.constant)x\(origin.multiplier)] \(second.tagDescription)"
+        } else if let second = origin.secondItem as? UILayoutGuide {
+            return "WK constraint: \(first.tagDescription) \(origin.relation)[\(origin.constant)x\(origin.multiplier)] \(second.tagDescription)"
+        } else {
+            return "WK constraint: \(first.tagDescription) \(origin.relation)[\(origin.constant)x\(origin.multiplier)]"
+        }
+    }
+}
+
+private struct AddressDescriptor<Object>: CustomStringConvertible where Object: AnyObject {
+    let description: String
+    
+    init(_ object: Object) {
+        self.description = Unmanaged<Object>.passUnretained(object).toOpaque().debugDescription + ":\(type(of: object))"
+    }
+}
+
+private struct TagDescriptor<Value>: CustomDebugStringConvertible where Value: TagDescriptable, Value: AnyObject {
+    internal init(_ value: Value) {
+        self.value = value
+    }
+    
+    let value: Value
+    
+    var valueHasIdentifier: Bool {
+        value.accessibilityIdentifier != nil
+    }
+    
+    var identifier: String {
+        if let identifier = value.accessibilityIdentifier {
+            return identifier
+        } else {
+            return AddressDescriptor(value).description
+        }
+    }
+    
+    var debugDescription: String {
+        identifier
+    }
+    
+}
+
+private protocol CustomHashable: AnyObject {
+    func customHash(_ hasher: inout Hasher)
+}
+
+private protocol TagDescriptable {
+    var accessibilityIdentifier: String? { get }
+}
+
+extension TagDescriptable where Self: UIView {
+    var tagDescription: String {
+        TagDescriptor(self).debugDescription
+    }
+}
+
+extension TagDescriptable where Self: UILayoutGuide {
+    var tagDescription: String {
+        TagDescriptor(self).debugDescription
+    }
+    
+    var accessibilityIdentifier: String? { owningView?.accessibilityIdentifier }
+}
+
+extension UIView: TagDescriptable {}
+extension UILayoutGuide: TagDescriptable {}
