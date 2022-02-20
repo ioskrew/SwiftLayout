@@ -24,7 +24,6 @@ public final class ViewLayout<V: UIView, SubLayout: Layout>: Layout {
         self.animationDisabled = true
         return self
     }
-
     
     public var debugDescription: String {
         view.tagDescription + ": [\(sublayout.debugDescription)]"

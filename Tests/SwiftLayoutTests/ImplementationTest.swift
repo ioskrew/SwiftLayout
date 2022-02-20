@@ -139,18 +139,6 @@ final class ImplementationTest: XCTestCase {
             friend.anchors { Anchors.boundary }
         }
         
-        guard
-            let f1 = f1 as? LayoutTraversal,
-            let f2 = f2 as? LayoutTraversal,
-            let f3 = f3 as? LayoutTraversal,
-            let f4 = f4 as? LayoutTraversal,
-            let f5 = f5 as? LayoutTraversal,
-            let f6 = f6 as? LayoutTraversal
-        else {
-            XCTFail()
-            return
-        }
-        
         XCTAssertEqual(f1.viewInformations, f2.viewInformations)
         XCTAssertEqual(f1.viewConstraints.weakens, f2.viewConstraints.weakens)
         

@@ -16,7 +16,7 @@ extension Layout {
 }
 
 public extension Layout where Self: UIView {
-    func callAsFunction<L: Layout>(@LayoutBuilder _ build: () -> L) -> some Layout {
+    func callAsFunction<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<Self, L> {
         ViewLayout(self, sublayout: build())
     }
     
@@ -37,14 +37,13 @@ public extension Layout {
         SublayoutLayout(self, build())
     }
     
-    func anchors(@AnchorsBuilder _ anchors: () -> [Constraint]) -> some Layout {
-        AnchorLayout(self, anchors())
-    }
-    
     func active(_ options: LayoutOptions = []) -> Deactivable {
         Activator.active(layout: self, options: options)
     }
     
+    func anchors(@AnchorsBuilder _ build: () -> [Constraint]) -> some Layout {
+        AnchorsLayout(layout: self, anchors: build())
+    }
 }
 
 extension UIView: Layout {}

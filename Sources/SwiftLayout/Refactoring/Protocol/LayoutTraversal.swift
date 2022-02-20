@@ -31,8 +31,8 @@ extension LayoutTraversal where Self: UIView {
     }
 }
 
-extension AnchorLayout: LayoutTraversal {
-    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
+extension AnchorsLayout: LayoutTraversal {
+    func traverse(_ superview: UIView?, traverseHandler handler: (UIView?, UIView) -> Void) {
         cast(layout) { traversal in
             traversal.traverse(superview, traverseHandler: handler)
         }
