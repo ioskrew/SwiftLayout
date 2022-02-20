@@ -1,59 +1,98 @@
 import Foundation
 import UIKit
 
+typealias ViewTraverseHandler = (_ superview: UIView?, _ subview: UIView) -> Void
+typealias ConstraintTraversehandler = (_ constraints: [NSLayoutConstraint]) -> Void
+
 protocol LayoutTraversal {
-    var viewInformations: [ViewInformation] { get }
-    var viewConstraints: [NSLayoutConstraint] { get }
-    func viewConstraints(_ viewInfoSet: ViewInformationSet) -> [NSLayoutConstraint]
+    var traversals: [LayoutTraversal] { get }
+    func traverse(_ superview: UIView?, viewTraverseHandler handler: ViewTraverseHandler)
+    func traverse(constraintTraverseHandler handler: ConstraintTraversehandler)
+}
+
+extension Array where Element == LayoutTraversal {
+    mutating func appendLayout<L: Layout>(_ l: L) {
+        guard let traversal = l as? LayoutTraversal else { return }
+        append(traversal)
+    }
 }
 
 extension LayoutTraversal {
     var viewInformations: [ViewInformation] { [] }
     var viewConstraints: [NSLayoutConstraint] { [] }
     func viewConstraints(_ viewInfoSet: ViewInformationSet) -> [NSLayoutConstraint] { [] }
+    
+    fileprivate func cast<L: Layout>(_ layout: L, _ handler: (LayoutTraversal) -> Void) -> Void {
+        guard let traversal = layout as? LayoutTraversal else { return }
+        handler(traversal)
+    }
 }
 
-extension LayoutTraversal {
-//    func traversal(superLayout: LayoutImp? = nil, handler: (_ superLayout: LayoutImp?, _ currentLayout: LayoutImp) -> Void) {
-//        handler(superLayout, self)
-//        layouts.forEach { $0.traversal(superLayout: self, handler: handler) }
-//    }
-//
-//    var viewInformations: [ViewInformation] {
-//        var result: [ViewInformation] = []
-//
-//        traversal { superLayout, currentLayout in
-//            result.append(
-//                ViewInformation(
-//                    superview: superLayout?.view,
-//                    view: currentLayout.view,
-//                    identifier: currentLayout.identifier,
-//                    animationDisabled: currentLayout.animationDisabled
-//                )
-//            )
-//        }
-//
-//        return result
-//    }
-//
-//    func viewConstraints(_ identifiers: ViewInformationSet? = nil) -> [NSLayoutConstraint] {
-//        var result: [NSLayoutConstraint] = []
-//
-//        traversal { superLayout, currentLayout in
-//            result.append(contentsOf: currentLayout.anchors.flatMap {
-//                $0.constraints(item: currentLayout.view, toItem: superLayout?.view, identifiers: identifiers)
-//            })
-//        }
-//
-//        return result
-//    }
-
+extension LayoutTraversal where Self: UIView {
+    func traverse(_ superview: UIView?, viewTraverseHandler handler: ViewTraverseHandler) {
+        handler(superview, self)
+    }
+    func traverse(constraintTraverseHandler handler: ConstraintTraversehandler) {}
 }
 
-extension ViewLayout: LayoutTraversal {}
+extension AnchorLayout: LayoutTraversal {
+    
+    func traverse(_ superview: UIView?, viewTraverseHandler handler: (UIView?, UIView) -> Void) {
+        cast(layout) { traversal in
+            traversal.traverse(superview, viewTraverseHandler: handler)
+        }
+    }
+    
+    func traverse(constraintTraverseHandler handler: ([NSLayoutConstraint]) -> Void) {
+        handler(anchors.constraints(item: <#T##NSObject#>, toItem: <#T##NSObject?#>, identifiers: <#T##ViewInformationSet?#>))
+    }
+    
+}
+
+extension ArrayLayout: LayoutTraversal {
+    var traversals: [LayoutTraversal] {
+        self.layouts.compactMap({ $0 as? LayoutTraversal })
+    }
+}
+
+extension ConditionalLayout: LayoutTraversal {
+    var traversals: [LayoutTraversal] {
+        var traversals: [LayoutTraversal] = []
+        switch layout {
+        case let .trueLayout(layout):
+            traversals.appendLayout(layout)
+        case let .falseLayout(layout):
+            traversals.appendLayout(layout)
+        }
+        return traversals
+    }
+}
+
+extension OptionalLayout: LayoutTraversal {
+    var traversals: [LayoutTraversal] {
+        guard let traversal = self.layout as? LayoutTraversal else { return [] }
+        return [traversal]
+    }
+}
+
+extension SublayoutLayout: LayoutTraversal {
+    var traversals: [LayoutTraversal] {
+        var traversals: [LayoutTraversal] = []
+        traversals.appendLayout(superlayout)
+        traversals.appendLayout(sublayout)
+        return traversals
+    }
+}
+
 extension TupleLayout: LayoutTraversal {}
-extension OptionalLayout: LayoutTraversal {}
-extension ArrayLayout: LayoutTraversal {}
-extension ConditionalLayout: LayoutTraversal {}
-extension AnyLayout: LayoutTraversal {}
-extension AnchorLayout: LayoutTraversal {}
+
+extension ViewLayout: LayoutTraversal {
+    var traversals: [LayoutTraversal] {
+        var traversals: [LayoutTraversal] = []
+        traversals.appendLayout(view)
+        traversals.appendLayout(sublayout)
+        return traversals
+    }
+}
+
+extension UIView: LayoutTraversal {}

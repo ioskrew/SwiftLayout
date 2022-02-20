@@ -1,8 +1,16 @@
 import Foundation
 
-protocol AnyLayoutBox: Layout {}
+protocol AnyLayoutBox: Layout, LayoutTraversal {}
 struct _AnyLayoutBox<L: Layout>: AnyLayoutBox {
     let layout: L
+    
+    var traversals: [LayoutTraversal] {
+        if let traversal = layout as? LayoutTraversal {
+            return [traversal]
+        } else {
+            return []
+        }
+    }
     
     var debugDescription: String {
         "_AnyLayoutBox<\(L.self)>"
