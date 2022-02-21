@@ -19,7 +19,7 @@ extension Array where Element == LayoutTraversal {
 extension LayoutTraversal {
     var viewInformations: [ViewInformation] {
         var informations: [ViewInformation] = []
-        traverse(nil, continueAfterViewLayout: false) { superview, subview, identifier, animationDisabled in
+        traverse(nil, continueAfterViewLayout: true) { superview, subview, identifier, animationDisabled in
             informations.append(.init(superview: superview, view: subview, identifier: identifier, animationDisabled: animationDisabled))
         }
         return informations
@@ -27,7 +27,7 @@ extension LayoutTraversal {
     func viewConstraints(_ viewInfoSet: ViewInformationSet) -> [NSLayoutConstraint] {
         var layoutConstraints: [NSLayoutConstraint] = []
         traverse(nil, viewInfoSet: viewInfoSet) { superview, subview, constraints, viewInfoSet in
-//            layoutConstraints.append(contentsOf: constraints.constraints(item: subview, toItem: superview, viewInfoSet: viewInfoSet))
+            layoutConstraints.append(contentsOf: constraints.constraints(item: subview, toItem: superview, viewInfoSet: viewInfoSet))
         }
         return layoutConstraints
     }
@@ -39,10 +39,14 @@ extension LayoutTraversal {
 
 extension AnchorsLayout: LayoutTraversal {
     func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
-        layout.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+        cast(layout)?.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
     }
     func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: (UIView?, UIView, [Constraint], ViewInformationSet) -> Void) {
-        layout.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: handler)
+        guard let traversal = cast(layout) else { return }
+        traversal.traverse(superview, continueAfterViewLayout: false, traverseHandler: { superview, subview, identifier, animationDisabled in
+            handler(superview, subview, anchors, viewInfoSet)
+            traversal.traverse(subview, viewInfoSet: viewInfoSet, constraintHndler: handler)
+        })
     }
 }
 

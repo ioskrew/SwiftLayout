@@ -53,5 +53,4 @@ public struct LayoutBuilder {
     public static func buildLimitedAvailability<L: Layout>(_ component: L) -> AnyLayout {
         AnyLayout(component)
     }
-    
 }

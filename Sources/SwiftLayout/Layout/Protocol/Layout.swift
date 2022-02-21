@@ -13,6 +13,9 @@ extension Layout {
     public var anyLayout: AnyLayout {
         AnyLayout(self)
     }
+    public func anchors(@AnchorsBuilder _ build: () -> [Constraint]) -> AnchorsLayout<Self> {
+        AnchorsLayout(layout: self, anchors: build())
+    }
 }
 
 public extension Layout where Self: UIView {
@@ -24,10 +27,6 @@ public extension Layout where Self: UIView {
         let layout = ViewLayout(self, sublayout: EmptyLayout())
         layout.identifier = identifier
         return layout
-    }
-    
-    func anchors(@AnchorsBuilder _ build: () -> [Constraint]) -> some Layout {
-        AnchorsLayout(layout: ViewLayout(self, sublayout: EmptyLayout()), anchors: build())
     }
     
     func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> some Layout {
@@ -51,10 +50,6 @@ public extension Layout {
     
     func active(_ options: LayoutOptions = []) -> Deactivable {
         Activator.active(layout: self, options: options)
-    }
-    
-    func anchors(@AnchorsBuilder _ build: () -> [Constraint]) -> some Layout {
-        EmptyLayout()
     }
 }
 
