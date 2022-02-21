@@ -82,7 +82,7 @@ private struct Describer: CustomStringConvertible {
         } else if let selfConstraints = constraints {
             identifiers = [identifier + ".anchors {"]
             identifiers.append(ConstraintToken.Group(selfConstraints).description)
-            identifiers.append("}.subviews {")
+            identifiers.append("}.sublayout {")
         } else {
             identifiers = [identifier + " {"]
         }

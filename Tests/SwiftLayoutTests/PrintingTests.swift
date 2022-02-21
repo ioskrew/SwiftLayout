@@ -193,7 +193,7 @@ extension PrintingTests {
         XCTAssertEqual(result, expect)
     }
     
-    func testPrintWithTwwDepthsWithSubviews() throws {
+    func testPrintWithTwwDepthsWithSublayout() throws {
         let root = UIView().viewTag.root
         let child = UIView().viewTag.child
         let grandchild = UIView().viewTag.grandchild
@@ -212,7 +212,7 @@ extension PrintingTests {
         root {
             child.anchors {
                 Anchors(.top, .leading, .trailing, .bottom)
-            }.subviews {
+            }.sublayout {
                 grandchild.anchors {
                     Anchors(.top, .leading, .trailing, .bottom)
                 }
