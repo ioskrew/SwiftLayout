@@ -30,3 +30,13 @@ extension Array: Constraint where Element == Constraint {
         return constraints
     }
 }
+
+extension Optional: Constraint where Wrapped: Constraint {
+    public func constraints(item: NSObject, toItem: NSObject?, identifiers: ViewInformationSet?) -> [NSLayoutConstraint] {
+        return self?.constraints(item: item, toItem: toItem, identifiers: identifiers) ?? []
+    }
+    
+    public func constraints(item: NSObject, toItem: NSObject?) -> [NSLayoutConstraint] {
+        return self?.constraints(item: item, toItem: toItem) ?? []
+    }
+}
