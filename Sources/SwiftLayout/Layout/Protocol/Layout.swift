@@ -72,6 +72,7 @@ extension Layout {
 }
 
 extension UIView: Layout {}
+
 extension Optional: Layout where Wrapped: Layout {
     public func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: (UIView?, UIView, String?, Bool) -> Void) {
         self?.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)

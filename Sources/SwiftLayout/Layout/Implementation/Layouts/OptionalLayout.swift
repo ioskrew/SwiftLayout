@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 
 public struct OptionalLayout<L: Layout>: Layout {
-    let layout: L?
+    let layout: Optional<L>
     
     public var debugDescription: String {
         "OptionalLayout<\(L.self)>"

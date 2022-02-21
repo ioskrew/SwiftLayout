@@ -201,7 +201,7 @@ extension PrintingTests {
         deactivable = root {
             child.anchors{
                 Anchors.boundary
-            }.subviews {
+            }.sublayout {
                 grandchild.anchors {
                     Anchors.boundary
                 }

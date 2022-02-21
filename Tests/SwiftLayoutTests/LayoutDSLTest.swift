@@ -78,7 +78,7 @@ extension LayoutDSLTest {
     }
     
     func testSimpleWithSublayout() {
-        deactivable = root.subviews({
+        deactivable = root.sublayout({
             red
         }).active()
         
@@ -129,6 +129,17 @@ extension LayoutDSLTest {
         XCTAssertEqual(red.superview, root)
         XCTAssertEqual(root.constraints.count, 4)
         XCTAssertEqual(Weakens(root.findConstraints(items: (red, root))), Weakens(Anchors.boundary.constraints(item: red, toItem: root)))
+    }
+    
+    func testSimpleIUOView() {
+        var child: UIView?
+        child = UIView().viewTag.child
+        
+        deactivable = root {
+            child
+        }.active()
+        
+        XCTAssertEqual(child?.superview, root)
     }
     
     func testDontTouchRootViewByDeactive() {
