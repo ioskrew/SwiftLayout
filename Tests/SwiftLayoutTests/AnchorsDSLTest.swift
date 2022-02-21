@@ -144,18 +144,18 @@ extension AnchorsDSLTest {
         XCTAssertEqual(root.findConstraints(items: (red, root), attributes: (.trailing, .trailing)).count, 1)
     }
     
-    func testAnchorsWithOptionalNSLayoutAnchor() {
-        let optionalConstraint: NSLayoutConstraint? = red.trailingAnchor.constraint(equalTo: blue.leadingAnchor)
-        let nilConstraint: NSLayoutConstraint? = nil
+    func testOptionalAnchors() {
+        let optionalAnchor: Anchors? = Anchors(.trailing).equalTo(blue, attribute: .leading)
+        let nilAnchor: Anchors? = nil
 
         deactivable = root {
             red.anchors {
                 Anchors(.top, .leading, .bottom)
-                optionalConstraint
+                optionalAnchor
             }
             blue.anchors {
                 Anchors(.top, .trailing, .bottom)
-                nilConstraint
+                nilAnchor
             }
         }.active()
 
@@ -199,14 +199,16 @@ extension AnchorsDSLTest {
         }
     }
     
-    func testAnchorsFromNSLayoutAnchor() {
+    func testAnchorsFromSeperately() {
         deactivable = root {
             red.anchors {
                 Anchors.cap
-                red.bottomAnchor.constraint(equalTo: blue.topAnchor)
             }
             blue.anchors {
                 Anchors.shoe
+            }
+            red.anchors {
+                Anchors(.bottom).equalTo(blue, attribute: .top)
             }
         }.active()
         
