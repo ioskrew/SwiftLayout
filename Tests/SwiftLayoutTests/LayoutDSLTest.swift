@@ -132,7 +132,7 @@ extension LayoutDSLTest {
     }
     
     func testSimpleIUOView() {
-        var child: UIView?
+        var child: UIView!
         child = UIView().viewTag.child
         
         deactivable = root {
