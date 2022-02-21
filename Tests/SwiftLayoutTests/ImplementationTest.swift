@@ -70,7 +70,7 @@ extension ImplementationTest {
                 self {
                     DeinitView().anchors {
                         Anchors.boundary
-                    }.subviews {
+                    }.sublayout {
                         DeinitView()
                     }
                 }
@@ -94,7 +94,7 @@ extension ImplementationTest {
         let layout = root {
             child.anchors {
                 Anchors.boundary
-            }.subviews {
+            }.sublayout {
                 friend.anchors {
                     Anchors.boundary
                 }
