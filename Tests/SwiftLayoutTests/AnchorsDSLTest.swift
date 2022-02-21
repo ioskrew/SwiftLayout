@@ -144,6 +144,61 @@ extension AnchorsDSLTest {
         XCTAssertEqual(root.findConstraints(items: (red, root), attributes: (.trailing, .trailing)).count, 1)
     }
     
+    func testAnchorsWithOptionalNSLayoutAnchor() {
+        let optionalConstraint: NSLayoutConstraint? = red.trailingAnchor.constraint(equalTo: blue.leadingAnchor)
+        let nilConstraint: NSLayoutConstraint? = nil
+
+        deactivable = root {
+            red.anchors {
+                Anchors(.top, .leading, .bottom)
+                optionalConstraint
+            }
+            blue.anchors {
+                Anchors(.top, .trailing, .bottom)
+                nilConstraint
+            }
+        }.active()
+
+        XCTAssertEqual(root.subviews, [red, blue])
+        XCTAssertEqual(red.superview, root)
+        XCTAssertEqual(blue.superview, root)
+
+        // root takes all constraints
+        XCTAssertEqual(root.constraints.count, 7)
+
+        for attr in [NSLayoutConstraint.Attribute.top, .leading, .bottom] {
+            XCTAssertNotNil(root.findConstraints(items: (red, root), attributes: (attr, attr)).first)
+        }
+        XCTAssertNotNil(root.findConstraints(items: (red, blue), attributes: (.trailing, .leading)).first)
+        for attr in [NSLayoutConstraint.Attribute.top, .trailing, .bottom] {
+            XCTAssertNotNil(root.findConstraints(items: (blue, root), attributes: (attr, attr)).first)
+        }
+    }
+    
+    func testAnchorsWithForIn() {
+        let attributes: [NSLayoutConstraint.Attribute] = [
+            .top,
+            .bottom,
+            .leading,
+            .trailing
+        ]
+
+        deactivable = root.anchors {
+            for attr in attributes {
+                Anchors(attr).equalTo(red)
+            }
+        }.subviews {
+            red
+        }.active()
+        
+        XCTAssertEqual(root.subviews, [red])
+        XCTAssertEqual(red.superview, root)
+        
+        for attr in attributes {
+            XCTAssertNotNil(root.findConstraints(items: (root, red), attributes: (attr, attr)).first)
+        }
+    }
+    
     func testAnchorsFromNSLayoutAnchor() {
         deactivable = root {
             red.anchors {
