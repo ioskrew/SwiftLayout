@@ -149,7 +149,50 @@ extension LayoutDSLTest {
         XCTAssertEqual(root.superview, old)
     }
     
-    func testLayoutWithTrueFlag() {
+    func testLayoutIfWithTrueFlag() {
+        let flag = true
+
+        deactivable = root {
+            red {
+                button
+            }
+            
+            if flag {
+                label
+            }
+        }.active()
+        
+        XCTAssertEqual(root.subviews.count, 2)
+        
+        XCTAssertEqual(red.superview, root)
+        XCTAssertEqual(button.superview, red)
+        
+        XCTAssertEqual(label.superview, root)
+    }
+    
+    func testLayoutIfWithFalseFlag() {
+        let flag = false
+
+        deactivable = root {
+            red {
+                button
+            }
+            
+            if flag {
+                label
+                UILabel()
+            }
+        }.active()
+        
+        XCTAssertEqual(root.subviews.count, 1)
+        
+        XCTAssertEqual(red.superview, root)
+        XCTAssertEqual(button.superview, red)
+        
+        XCTAssertEqual(label.superview, nil)
+    }
+    
+    func testLayoutEitherWithTrueFlag() {
         let flag = true
 
         deactivable = root {
@@ -173,7 +216,7 @@ extension LayoutDSLTest {
         XCTAssertEqual(image.superview, nil)
     }
     
-    func testLayoutWithFalseFlag() {
+    func testLayoutEitherWithFalseFlag() {
         let flag = false
 
         deactivable = root {
