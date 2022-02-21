@@ -155,7 +155,7 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
         if constant != "0.0" {
             arguments.append("constant: \(constant)")
         }
-        if !arguments.isEmpty {
+        if !arguments.isEmpty || relation != "equal" {
             descriptions.append("\(relation)To(\(arguments.joined(separator: ", ")))")
         }
         return descriptions.joined(separator: ".")

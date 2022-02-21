@@ -325,7 +325,37 @@ extension PrintingTests {
         """.tabbed
         
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
+    }
+    
+    func testGreaterThanAndLessThan() {
+        let root = UIView().viewTag.root
+        let child = UIView().viewTag.child
+        let friend = UIView().viewTag.friend
+        deactivable = root {
+            child.anchors {
+                Anchors(.top).greaterThanOrEqualTo()
+                Anchors(.bottom).lessThanOrEqualTo()
+                Anchors(.height).equalTo(constant: 12.0)
+            }
+            friend.anchors {
+                Anchors(.height).equalTo(child)
+            }
+        }.active()
         
+        let expect = """
+        root {
+            child.anchors {
+                Anchors(.top).greaterThanOrEqualTo()
+                Anchors(.bottom).lessThanOrEqualTo()
+                Anchors(.height).equalTo(constant: 12.0)
+            }
+            friend.anchors {
+                Anchors(.height).equalTo(child)
+            }
+        }
+        """.tabbed
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
     }
 }
 
