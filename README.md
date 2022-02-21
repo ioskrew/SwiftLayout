@@ -68,9 +68,9 @@ as a result
 
 ```swift
 view {
-	child.anchors {
-		Anchors(.top, .leading, .trailing, .bottom)
-	}
+    child.anchors {
+        Anchors(.top, .leading, .trailing, .bottom)
+    }
 }
 ```
 
