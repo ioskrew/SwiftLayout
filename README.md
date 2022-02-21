@@ -30,7 +30,7 @@ DSL library that implements hierarchy of views and constraints declaratively
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "1.3.0"),
+  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "1.6.0"),
 ],
 ```
 
@@ -163,7 +163,7 @@ root {
 
 root.anchors {
   Anchors.boundary.equalTo(red)
-}.subviews { // subviews should be in LayoutBuilder in subviews function after anchors.
+}.sublayout { // subviews should be in LayoutBuilder in subviews function after anchors.
   red
 }
 
@@ -270,7 +270,6 @@ release deactivable or call of deactivate?.deactive() make release all subviews 
 
 protocol **LayoutBuilding** make easy to updating.
 
-```swift
 final class ViewController: UIViewController, LayoutBuilding {
 
   var showRed: Bool = true
@@ -280,7 +279,7 @@ final class ViewController: UIViewController, LayoutBuilding {
 
   var deactivable: Deactivable?
 
-  var layout: Layout {
+  var layout: some Layout {
     view {
       if showRed {
         red
@@ -297,7 +296,6 @@ final class ViewController: UIViewController, LayoutBuilding {
     updateLayout(animated: true)
   }
 }
-```
 
 - call animationDisable() make that blocks to escape from animations.
   
