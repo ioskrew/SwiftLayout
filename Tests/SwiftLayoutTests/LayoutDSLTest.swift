@@ -1,13 +1,14 @@
 import XCTest
 import UIKit
-@testable import SwiftLayout
+import SwiftLayout
 
-final class LayoutViewTreeTests: XCTestCase {
+final class LayoutDSLTest: XCTestCase {
         
     var root: UIView = UIView().viewTag.root
     var button: UIButton = UIButton().viewTag.button
     var label: UILabel = UILabel().viewTag.label
-    var redView: UIView = UIView().viewTag.redView
+    var red: UIView = UIView().viewTag.red
+    var blue: UIView = UIView().viewTag.blue
     var image: UIImageView = UIImageView().viewTag.image
     
     var deactivable: Deactivable?
@@ -16,47 +17,41 @@ final class LayoutViewTreeTests: XCTestCase {
         root = UIView().viewTag.root
         button = UIButton().viewTag.button
         label = UILabel().viewTag.label
-        redView = UIView().viewTag.redView
+        red = UIView().viewTag.red
+        blue = UIView().viewTag.red
         image = UIImageView().viewTag.image
     }
     
     override func tearDown() {
         deactivable = nil
     }
-    
+}
+
+extension LayoutDSLTest {
     func testActive() {
-        // given
-        let grand = UIView().viewTag.grand
-        
-        // when
         deactivable = root {
-            redView {
+            red {
                 button
                 label
-                grand {
+                blue {
                     image
                 }
             }
         }.active()
         
-        // then
-        XCTAssertEqual(image.superview, grand)
-        XCTAssertEqual(grand.superview, redView)
-        XCTAssertEqual(label.superview, redView)
-        XCTAssertEqual(button.superview, redView)
-        XCTAssertEqual(redView.superview, root)
+        XCTAssertEqual(image.superview, blue)
+        XCTAssertEqual(blue.superview, red)
+        XCTAssertEqual(label.superview, red)
+        XCTAssertEqual(button.superview, red)
+        XCTAssertEqual(red.superview, root)
     }
     
     func testDeactive() {
-        // given
-        let grand = UIView().viewTag.grand
-        
-        // when
         deactivable = root {
-            redView {
+            red {
                 button
                 label
-                grand {
+                blue {
                     image
                 }
             }
@@ -64,21 +59,36 @@ final class LayoutViewTreeTests: XCTestCase {
         
         deactivable?.deactive()
         
-        // then
         XCTAssertEqual(image.superview, nil)
-        XCTAssertEqual(grand.superview, nil)
+        XCTAssertEqual(blue.superview, nil)
         XCTAssertEqual(label.superview, nil)
         XCTAssertEqual(button.superview, nil)
-        XCTAssertEqual(redView.superview, nil)
+        XCTAssertEqual(red.superview, nil)
     }
     
-    func testActiveWithTrueFlag() {
-        // given
+    func testDontTouchRootViewByDeactive() {
+        let old = UIView().viewTag.old
+        old.addSubview(root)
+        root.translatesAutoresizingMaskIntoConstraints = true
+        
+        deactivable = root {
+            red.anchors {
+                Anchors.boundary
+            }
+        }.active()
+        
+        XCTAssertTrue(root.translatesAutoresizingMaskIntoConstraints)
+        
+        deactivable?.deactive()
+        
+        XCTAssertEqual(root.superview, old)
+    }
+    
+    func testLayoutWithTrueFlag() {
         let flag = true
 
-        // when
         deactivable = root {
-            redView {
+            red {
                 button
             }
             
@@ -89,23 +99,20 @@ final class LayoutViewTreeTests: XCTestCase {
             }
         }.active()
         
-        // then
         XCTAssertEqual(root.subviews.count, 2)
         
-        XCTAssertEqual(redView.superview, root)
-        XCTAssertEqual(button.superview, redView)
+        XCTAssertEqual(red.superview, root)
+        XCTAssertEqual(button.superview, red)
         
         XCTAssertEqual(label.superview, root)
         XCTAssertEqual(image.superview, nil)
     }
     
-    func testActiveWithFalseFlag() {
-        // given
+    func testLayoutWithFalseFlag() {
         let flag = false
 
-        // when
         deactivable = root {
-            redView {
+            red {
                 button
             }
             
@@ -117,24 +124,21 @@ final class LayoutViewTreeTests: XCTestCase {
             }
         }.active()
         
-        // then
         XCTAssertEqual(root.subviews.count, 2)
         
-        XCTAssertEqual(redView.superview, root)
-        XCTAssertEqual(button.superview, redView)
+        XCTAssertEqual(red.superview, root)
+        XCTAssertEqual(button.superview, red)
         
         XCTAssertEqual(label.superview, nil)
         XCTAssertEqual(image.superview, root)
     }
     
-    func testActiveWithOptionalViews() {
-        // given
+    func testLayoutWithOptionalViews() {
         let optionalView: UIView? = UIView().viewTag.optionalView
         let nilView: UIView? = nil
 
-        // when
         deactivable = root {
-            redView {
+            red {
                 button
             }
             
@@ -142,29 +146,38 @@ final class LayoutViewTreeTests: XCTestCase {
             nilView
         }.active()
         
-        // then
         XCTAssertEqual(root.subviews.count, 2)
         
-        XCTAssertEqual(redView.superview, root)
-        XCTAssertEqual(button.superview, redView)
+        XCTAssertEqual(red.superview, root)
+        XCTAssertEqual(button.superview, red)
         
         XCTAssertEqual(optionalView?.superview, root)
         XCTAssertEqual(nilView?.superview, nil)
     }
-}
-
-@dynamicMemberLookup
-struct Tag<Taggable> where Taggable: UIAccessibilityIdentification {
-    let taggable: Taggable
     
-    subscript(dynamicMember tag: String) -> Taggable {
-        taggable.accessibilityIdentifier = tag
-        return taggable
+    func testLayoutWithForIn() {
+        let views: [UILabel] = (0..<10).map(\.description).map {
+            let label = UILabel()
+            label.text = $0.description
+            return label
+        }
+        
+        deactivable = root {
+            for view in views {
+                view
+            }
+        }.active()
+        
+        XCTAssertEqual(root.subviews.count, views.count)
+        XCTAssertEqual(root.subviews, views)
     }
-}
-
-extension UIAccessibilityIdentification {
-    var viewTag: Tag<Self> {
-        Tag(taggable: self)
+    
+    func testLayoutWithInstantView() {
+        deactivable = root {
+            UILabel()
+            UIImageView()
+        }.active()
+        
+        XCTAssertEqual(root.subviews.count, 2)
     }
 }
