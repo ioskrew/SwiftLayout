@@ -30,7 +30,7 @@ enum Activator {
             updateIdentifiers(fromBuilding: deactivation.building, viewInfoSet: viewInfoSet)
         }
         
-        let constrains = layout.viewConstraints
+        let constrains = layout.viewConstraints(viewInfoSet)
         
         activate(viewInfos: viewInfos, constrains: constrains)
         

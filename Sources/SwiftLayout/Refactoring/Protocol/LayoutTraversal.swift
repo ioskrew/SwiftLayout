@@ -2,9 +2,11 @@ import Foundation
 import UIKit
 
 typealias TraverseHandler = (_ superview: UIView?, _ subview: UIView, _ identifier: String?, _ animationDisabled: Bool) -> Void
+typealias ConstraintHandler = (_ superview: UIView?, _ subview: UIView, _ constraints: [Constraint], _ viewInfoSet: ViewInformationSet) -> Void
 
 protocol LayoutTraversal {
-    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler)
+    func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler)
+    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: ConstraintHandler)
 }
 
 extension Array where Element == LayoutTraversal {
@@ -17,128 +19,173 @@ extension Array where Element == LayoutTraversal {
 extension LayoutTraversal {
     var viewInformations: [ViewInformation] {
         var informations: [ViewInformation] = []
-        traverse(nil) { superview, subview, identifier, animationDisabled in
+        traverse(nil, continueAfterViewLayout: false) { superview, subview, identifier, animationDisabled in
             informations.append(.init(superview: superview, view: subview, identifier: identifier, animationDisabled: animationDisabled))
         }
         return informations
     }
-    var viewConstraints: [NSLayoutConstraint] { [] }
-    func viewConstraints(_ viewInfoSet: ViewInformationSet) -> [NSLayoutConstraint] { [] }
+    func viewConstraints(_ viewInfoSet: ViewInformationSet) -> [NSLayoutConstraint] {
+        var layoutConstraints: [NSLayoutConstraint] = []
+        traverse(nil, viewInfoSet: viewInfoSet) { superview, subview, constraints, viewInfoSet in
+//            layoutConstraints.append(contentsOf: constraints.constraints(item: subview, toItem: superview, viewInfoSet: viewInfoSet))
+        }
+        return layoutConstraints
+    }
     
-    func cast<L: Layout>(_ layout: L, _ handler: (LayoutTraversal) -> Void) -> Void {
-        guard let traversal = layout as? LayoutTraversal else { return }
-        handler(traversal)
+    func cast<L: Layout>(_ layout: L) -> LayoutTraversal? {
+        layout as? LayoutTraversal
     }
 }
 
 extension AnchorsLayout: LayoutTraversal {
-    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
-        layout.traverse(superview, traverseHandler: handler)
+    func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
+        layout.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+    }
+    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: (UIView?, UIView, [Constraint], ViewInformationSet) -> Void) {
+        layout.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: handler)
     }
 }
 
 extension AnyLayout: LayoutTraversal {
-    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
-        box.traverse(superview, traverseHandler: handler)
+    func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
+        box.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+    }
+    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: (UIView?, UIView, [Constraint], ViewInformationSet) -> Void) {
+        box.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: handler)
     }
 }
 
 extension ArrayLayout: LayoutTraversal {
-    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
+    func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
         for layout in layouts {
-            cast(layout) { traversal in
-                traversal.traverse(superview, traverseHandler: handler)
-            }
+            cast(layout)?.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+        }
+    }
+    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: (UIView?, UIView, [Constraint], ViewInformationSet) -> Void) {
+        for layout in layouts {
+            cast(layout)?.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: handler)
         }
     }
 }
 
 extension ConditionalLayout: LayoutTraversal {
-    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
+    func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
         switch layout {
         case let .trueLayout(layout):
-            cast(layout) { traversal in
-                traversal.traverse(superview, traverseHandler: handler)
-            }
+            cast(layout)?.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
         case let .falseLayout(layout):
-            cast(layout) { traversal in
-                traversal.traverse(superview, traverseHandler: handler)
-            }
+            cast(layout)?.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+        }
+    }
+    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: (UIView?, UIView, [Constraint], ViewInformationSet) -> Void) {
+        switch layout {
+        case let .trueLayout(layout):
+            cast(layout)?.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: handler)
+        case let .falseLayout(layout):
+            cast(layout)?.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: handler)
         }
     }
 }
 
 extension OptionalLayout: LayoutTraversal {
-    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
-        layout.flatMap { layout in
-            cast(layout) { traversal in
-                traversal.traverse(superview, traverseHandler: handler)
-            }
+    func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
+        switch layout {
+        case let .some(layout):
+            cast(layout)?.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+        case .none:
+            break
+        }
+    }
+    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: (UIView?, UIView, [Constraint], ViewInformationSet) -> Void) {
+        switch layout {
+        case let .some(layout):
+            cast(layout)?.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: handler)
+        case .none:
+            break
         }
     }
 }
 
 extension SublayoutLayout: LayoutTraversal {
-    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
-        cast(superlayout) { traversal in
-            traversal.traverse(superview, traverseHandler: handler)
-        }
-        cast(sublayout) { traversal in
-            traversal.traverse(superview, traverseHandler: handler)
-        }
+    func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
+        cast(superlayout)?.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+        cast(sublayout)?.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+    }
+    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: (UIView?, UIView, [Constraint], ViewInformationSet) -> Void) {
+        cast(superlayout)?.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: handler)
+        cast(sublayout)?.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: handler)
     }
 }
 
 extension TupleLayout: LayoutTraversal {
-    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
-        if let traversals = layout as? (LayoutTraversal, LayoutTraversal) {
-            traversals.0.traverse(superview, traverseHandler: handler)
-            traversals.1.traverse(superview, traverseHandler: handler)
-        } else if let traversals = layout as? (LayoutTraversal, LayoutTraversal, LayoutTraversal) {
-            traversals.0.traverse(superview, traverseHandler: handler)
-            traversals.1.traverse(superview, traverseHandler: handler)
-            traversals.2.traverse(superview, traverseHandler: handler)
-        } else if let traversals = layout as? (LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal) {
-            traversals.0.traverse(superview, traverseHandler: handler)
-            traversals.1.traverse(superview, traverseHandler: handler)
-            traversals.2.traverse(superview, traverseHandler: handler)
-            traversals.3.traverse(superview, traverseHandler: handler)
-        } else if let traversals = layout as? (LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal) {
-            traversals.0.traverse(superview, traverseHandler: handler)
-            traversals.1.traverse(superview, traverseHandler: handler)
-            traversals.2.traverse(superview, traverseHandler: handler)
-            traversals.3.traverse(superview, traverseHandler: handler)
-            traversals.4.traverse(superview, traverseHandler: handler)
-        } else if let traversals = layout as? (LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal) {
-            traversals.0.traverse(superview, traverseHandler: handler)
-            traversals.1.traverse(superview, traverseHandler: handler)
-            traversals.2.traverse(superview, traverseHandler: handler)
-            traversals.3.traverse(superview, traverseHandler: handler)
-            traversals.4.traverse(superview, traverseHandler: handler)
-            traversals.5.traverse(superview, traverseHandler: handler)
-        } else if let traversals = layout as? (LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal) {
-            traversals.0.traverse(superview, traverseHandler: handler)
-            traversals.1.traverse(superview, traverseHandler: handler)
-            traversals.2.traverse(superview, traverseHandler: handler)
-            traversals.3.traverse(superview, traverseHandler: handler)
-            traversals.4.traverse(superview, traverseHandler: handler)
-            traversals.5.traverse(superview, traverseHandler: handler)
-            traversals.6.traverse(superview, traverseHandler: handler)
+    
+    var traversals: [LayoutTraversal] {
+        Mirror(reflecting: layout).children.compactMap { (_, value) in
+            value as? LayoutTraversal
+        }
+//        if let traversals = layout as? (LayoutTraversal, LayoutTraversal) {
+//            traversals.0.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+//            traversals.1.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+//        } else if let traversals = layout as? (LayoutTraversal, LayoutTraversal, LayoutTraversal) {
+//            traversals.0.traverse(superview, stopFirst: continueAfterViewLayout, stopFirst: continueAfterViewLayout, traverseHandler: handler)
+//            traversals.1.traverse(superview, stopFirst: continueAfterViewLayout, stopFirst: continueAfterViewLayout, traverseHandler: handler)
+//            traversals.2.traverse(superview, stopFirst: continueAfterViewLayout, stopFirst: continueAfterViewLayout, traverseHandler: handler)
+//        } else if let traversals = layout as? (LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal) {
+//            traversals.0.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+//            traversals.1.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+//            traversals.2.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+//            traversals.3.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+//        } else if let traversals = layout as? (LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal) {
+//            traversals.0.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+//            traversals.1.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+//            traversals.2.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+//            traversals.3.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+//            traversals.4.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+//        } else if let traversals = layout as? (LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal) {
+//            traversals.0.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+//            traversals.1.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+//            traversals.2.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+//            traversals.3.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+//            traversals.4.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+//            traversals.5.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+//        } else if let traversals = layout as? (LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal, LayoutTraversal) {
+//            traversals.0.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+//            traversals.1.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+//            traversals.2.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+//            traversals.3.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+//            traversals.4.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+//            traversals.5.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+//            traversals.6.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+//        }
+    }
+    
+    func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
+        for traversal in traversals {
+            traversal.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+        }
+    }
+    
+    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: (UIView?, UIView, [Constraint], ViewInformationSet) -> Void) {
+        for traversal in traversals {
+            traversal.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: handler)
         }
     }
 }
 
 extension ViewLayout: LayoutTraversal {
-    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
+    func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
         handler(superview, view, identifier, animationDisabled)
-        cast(sublayout) { traversal in
-            traversal.traverse(view, traverseHandler: handler)
-        }
+        guard continueAfterViewLayout else { return }
+        cast(sublayout)?.traverse(view, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+    }
+    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: (UIView?, UIView, [Constraint], ViewInformationSet) -> Void) {
+        cast(sublayout)?.traverse(view, viewInfoSet: viewInfoSet, constraintHndler: handler)
     }
 }
 
 extension UIView: LayoutTraversal {
-    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
+    func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
         handler(superview, self, self.accessibilityIdentifier, false)
     }
+    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: (UIView?, UIView, [Constraint], ViewInformationSet) -> Void) {}
 }

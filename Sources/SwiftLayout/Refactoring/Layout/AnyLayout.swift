@@ -5,12 +5,13 @@ protocol AnyLayoutBox: Layout, LayoutTraversal {}
 struct _AnyLayoutBox<L: Layout>: AnyLayoutBox {
     let layout: L
     
-    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
-        cast(layout) { traversal in
-            traversal.traverse(superview, traverseHandler: handler)
-        }
+    func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: (UIView?, UIView, String?, Bool) -> Void) {
+        cast(layout)?.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
     }
     
+    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: (UIView?, UIView, [Constraint], ViewInformationSet) -> Void) {
+        cast(layout)?.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: handler)
+    }
     var debugDescription: String {
         "_AnyLayoutBox<\(L.self)>"
     }
