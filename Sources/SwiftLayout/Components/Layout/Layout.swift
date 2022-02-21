@@ -37,18 +37,6 @@ extension Layout {
     }
 }
 
-public extension Layout where Self: UIView {
-    func callAsFunction<L: Layout>(@LayoutBuilder _ build: () -> L) -> some Layout {
-        ViewLayout(self, sublayout: build())
-    }
-    
-    func identifying(_ identifier: String) -> some Layout {
-        let layout = ViewLayout(self, sublayout: EmptyLayout())
-        layout.identifier = identifier
-        return layout
-    }
-}
-
 extension Layout {
     public var viewInformations: [ViewInformation] {
         var informations: [ViewInformation] = []
@@ -69,22 +57,4 @@ extension Layout {
     public func viewConstraints() -> [NSLayoutConstraint] {
         self.viewConstraints(.init())
     }
-}
-
-extension UIView: Layout {}
-extension Optional: Layout where Wrapped: Layout {
-    public func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: (UIView?, UIView, String?, Bool) -> Void) {
-        self?.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
-    }
-    
-    public func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: (UIView?, UIView, [Constraint], ViewInformationSet) -> Void) {
-        self?.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: handler)
-    }
-}
-
-public extension UIView {
-    func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
-        handler(superview, self, self.accessibilityIdentifier, false)
-    }
-    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: (UIView?, UIView, [Constraint], ViewInformationSet) -> Void) {}
 }
