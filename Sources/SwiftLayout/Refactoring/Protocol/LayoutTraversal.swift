@@ -112,12 +112,18 @@ extension OptionalLayout: LayoutTraversal {
 
 extension SublayoutLayout: LayoutTraversal {
     func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
-        cast(superlayout)?.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
-        cast(sublayout)?.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+        cast(superlayout)?.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: { superview, subview, identifier, animationDisabled in
+            handler(superview, subview, identifier, animationDisabled)
+            cast(sublayout)?.traverse(subview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+        })
     }
     func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: (UIView?, UIView, [Constraint], ViewInformationSet) -> Void) {
-        cast(superlayout)?.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: handler)
-        cast(sublayout)?.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: handler)
+        let traversalSuper = cast(superlayout)
+        let traversalSub = cast(sublayout)
+        traversalSuper?.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: { superview, subview, constraints, viewInfoSet in
+            handler(superview, subview, constraints, viewInfoSet)
+            traversalSub?.traverse(subview, viewInfoSet: viewInfoSet, constraintHndler: handler)
+        })
     }
 }
 

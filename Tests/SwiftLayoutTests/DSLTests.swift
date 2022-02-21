@@ -45,6 +45,14 @@ final class DSLTests: XCTestCase {
         XCTAssertEqual(red.superview, root)
     }
     
+    func testSimpleWithSublayout() {
+        deactivable = root.subviews({
+            red
+        }).active()
+        
+        XCTAssertEqual(red.superview, root)
+    }
+    
     func testTuple() {
         deactivable = root {
             red
