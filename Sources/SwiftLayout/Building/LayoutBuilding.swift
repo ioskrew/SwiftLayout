@@ -20,14 +20,12 @@ public extension LayoutBuilding {
     }
     
     func updateLayout(_ options: LayoutOptions = []) {
-        guard let layoutImp = self.layout as? LayoutImp else {
-            return
-        }
-        
+        let layoutImps = self.layout.extractLayoutImpFromSelf()
+        guard !layoutImps.isEmpty else { return }
         if let deactivation = self.deactivable as? Deactivation {
-            Activator.update(layout: layoutImp, fromDeactivation: deactivation, options: options)
+            Activator.update(layout: layoutImps, fromDeactivation: deactivation, options: options)
         } else {
-            let deactivation = Activator.active(layout: layoutImp, options: options, building: self)
+            let deactivation = Activator.active(layout: layoutImps, options: options, building: self)
             self.deactivable = deactivation
         }
     }
