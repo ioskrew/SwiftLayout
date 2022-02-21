@@ -42,3 +42,14 @@ public final class ViewLayout<V: UIView, SubLayout: Layout>: Layout {
     }
    
 }
+
+public extension ViewLayout {
+    func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
+        handler(superview, view, identifier, animationDisabled)
+        guard continueAfterViewLayout else { return }
+        sublayout.traverse(view, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+    }
+    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: (UIView?, UIView, [Constraint], ViewInformationSet) -> Void) {
+        sublayout.traverse(view, viewInfoSet: viewInfoSet, constraintHndler: handler)
+    }
+}

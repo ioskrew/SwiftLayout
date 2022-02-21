@@ -20,7 +20,6 @@ enum Activator {
 
     @discardableResult
     static func update<L: Layout, LB: LayoutBuilding>(layout: L, fromDeactivation deactivation: Deactivation<LB>, options: LayoutOptions) -> Deactivation<LB> {
-        guard let layout = layout as? Layout&LayoutTraversal else { return .init() }
         let viewInfos = layout.viewInformations
         let viewInfoSet = ViewInformationSet(infos: viewInfos)
         

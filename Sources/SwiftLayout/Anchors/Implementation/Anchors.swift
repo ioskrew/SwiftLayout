@@ -33,7 +33,7 @@ public final class Anchors: Constraint {
         return self
     }
     
-    private func to(_ relation: NSLayoutConstraint.Relation, to: To) -> Self {
+    private func to(_ relation: NSLayoutConstraint.Relation, to: ConstraintTarget) -> Self {
         func update(_ updateItem: Constraint) -> Constraint {
             var updateItem = updateItem
             updateItem.relation = relation
@@ -151,14 +151,14 @@ public final class Anchors: Constraint {
         return constraints
     }
     
-    public struct To {
+    struct ConstraintTarget {
         public init<I>(item: I?, attribute: NSLayoutConstraint.Attribute?, constant: CGFloat) where I: ConstraintableItem {
             self.item = ItemFromView(item).item
             self.attribute = attribute
             self.constant = constant
         }
         
-        public init(item: Item = .transparent, attribute: NSLayoutConstraint.Attribute?, constant: CGFloat) {
+        init(item: Item = .transparent, attribute: NSLayoutConstraint.Attribute?, constant: CGFloat) {
             self.item = item
             self.attribute = attribute
             self.constant = constant
@@ -201,7 +201,7 @@ public final class Anchors: Constraint {
         }
     }
     
-    public enum Item: Hashable {
+    enum Item: Hashable {
         case object(NSObject)
         case identifier(String)
         case transparent
