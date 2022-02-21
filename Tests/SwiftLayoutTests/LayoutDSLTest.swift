@@ -142,6 +142,20 @@ extension LayoutDSLTest {
         XCTAssertEqual(child?.superview, root)
     }
     
+    func testOptionalChain() {
+        var child: UIView?
+        child = UIView().viewTag.child
+        
+        deactivable = root {
+            child?.anchors({
+                Anchors.boundary
+            })
+        }.active()
+        
+        XCTAssertEqual(child?.superview, root)
+        XCTAssertEqual(root.constraints.count, 4)
+    }
+    
     func testDontTouchRootViewByDeactive() {
         let old = UIView().viewTag.old
         old.addSubview(root)
