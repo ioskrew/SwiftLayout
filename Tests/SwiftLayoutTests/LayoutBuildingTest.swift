@@ -45,7 +45,7 @@ extension LayoutBuildingTest {
         
         var deactivable: Deactivable?
         
-        var layout: Layout {
+        var layout: some Layout {
             root {
                 if flag {
                     child.anchors {

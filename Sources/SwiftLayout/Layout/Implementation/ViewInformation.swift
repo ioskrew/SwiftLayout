@@ -8,25 +8,25 @@
 import Foundation
 import UIKit
 
-final class ViewInformation: Hashable {
+public final class ViewInformation: Hashable {
     
-    static func == (lhs: ViewInformation, rhs: ViewInformation) -> Bool {
+    public static func == (lhs: ViewInformation, rhs: ViewInformation) -> Bool {
         lhs.hashValue == rhs.hashValue
     }
     
-    init(superview: UIView?, view: UIView?, identifier: String?, animationDisabled: Bool) {
+    public init(superview: UIView?, view: UIView?, identifier: String?, animationDisabled: Bool) {
         self.superview = superview
         self.view = view
         self.identifier = identifier
         self.animationDisabled = animationDisabled
     }
     
-    private(set) weak var superview: UIView?
-    private(set) weak var view: UIView?
-    let identifier: String?
-    let animationDisabled: Bool
+    private(set) public weak var superview: UIView?
+    private(set) public weak var view: UIView?
+    public let identifier: String?
+    public let animationDisabled: Bool
     
-    func hash(into hasher: inout Hasher) {
+    public func hash(into hasher: inout Hasher) {
         hasher.combine(superview)
         hasher.combine(view)
         hasher.combine(identifier)

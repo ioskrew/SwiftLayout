@@ -35,12 +35,12 @@ extension ImplementationTest {
                 button
                 image
             }
-        } as! LayoutImp
+        }
         
         var result: [String] = []
-        layout.traversal { superLayout, currentLayout in
-            let superDescription = superLayout?.view.accessibilityIdentifier ?? "nil"
-            let currentDescription = currentLayout.view.accessibilityIdentifier ?? "nil"
+        for viewInformation in layout.viewInformations {
+            let superDescription = viewInformation.superview?.accessibilityIdentifier ?? "nil"
+            let currentDescription = viewInformation.view?.accessibilityIdentifier ?? "nil"
             let description = "\(superDescription), \(currentDescription)"
             result.append(description)
         }
@@ -66,7 +66,7 @@ extension ImplementationTest {
         }
         
         class SelfReferenceView: UIView, LayoutBuilding {
-            var layout: Layout {
+            var layout: some Layout {
                 self {
                     DeinitView().anchors {
                         Anchors.boundary
@@ -99,46 +99,46 @@ extension ImplementationTest {
                     Anchors.boundary
                 }
             }
-        } as? LayoutImp
+        }
         
         XCTAssertNotNil(layout)
-        XCTAssertEqual(layout?.viewInformations.map(\.view), [root, child, friend])
+        XCTAssertEqual(layout.viewInformations.map(\.view), [root, child, friend])
     }
     
     func testLayoutCompare() {
         let f1 = root {
             child
-        } as! LayoutImp
-        
+        }
+
         let f2 = root {
            child
-        } as! LayoutImp
-        
+        }
+
         let f3 = root {
             child.anchors { Anchors.boundary }
-        } as! LayoutImp
-        
+        }
+
         let f4 = root {
             child.anchors { Anchors.boundary }
-        } as! LayoutImp
-        
+        }
+
         let f5 = root {
             child.anchors { Anchors.cap }
-        } as! LayoutImp
-        
+        }
+
         let f6 = root {
             friend.anchors { Anchors.boundary }
-        } as! LayoutImp
-        
+        }
+
         XCTAssertEqual(f1.viewInformations, f2.viewInformations)
         XCTAssertEqual(f1.viewConstraints().weakens, f2.viewConstraints().weakens)
-        
+
         XCTAssertEqual(f3.viewInformations, f4.viewInformations)
         XCTAssertEqual(f3.viewConstraints().weakens, f4.viewConstraints().weakens)
-        
+
         XCTAssertEqual(f4.viewInformations, f5.viewInformations)
         XCTAssertNotEqual(f4.viewConstraints().weakens, f5.viewConstraints().weakens)
-        
+
         XCTAssertNotEqual(f5.viewInformations, f6.viewInformations)
         XCTAssertNotEqual(f5.viewConstraints().weakens, f6.viewConstraints().weakens)
     }
@@ -165,7 +165,7 @@ extension ImplementationTest {
         
         var deactivable: Deactivable?
         
-        var layout: Layout {
+        var layout: some Layout {
             contentView {
                 nameLabel
             }
@@ -204,7 +204,7 @@ extension ImplementationTest {
                 Anchors(.top).equalTo("label", attribute: .bottom)
                 Anchors.shoe
             }
-        }.active() as? Deactivation
+        }.anyLayout.active() as? Deactivation<AnyLayoutBuilding<AnyLayout>>
         
         let label = deactivation?.viewForIdentifier("label")
         XCTAssertEqual(label?.accessibilityIdentifier, "label")

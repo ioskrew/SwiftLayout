@@ -7,13 +7,13 @@
 
 import UIKit
 
-final class Deactivation: Deactivable {
+final class Deactivation<LB: LayoutBuilding>: Deactivable {
     
-    convenience init(building: LayoutBuilding? = nil) {
+    convenience init(building: LB? = nil) {
         self.init(viewInfos: .init(), constraints: .init(), building: building)
     }
     
-    init(viewInfos: ViewInformationSet, constraints: ConstraintsSet, building: LayoutBuilding? = nil) {
+    init(viewInfos: ViewInformationSet, constraints: ConstraintsSet, building: LB? = nil) {
         self.viewInfos = viewInfos
         self.constraints = constraints
         self.building = building
@@ -27,7 +27,7 @@ final class Deactivation: Deactivable {
     var constraints: ConstraintsSet
     
     /// injected on activating
-    private(set) weak var building: LayoutBuilding?
+    private(set) weak var building: LB?
     
     func deactive() {
         deactiveViews()

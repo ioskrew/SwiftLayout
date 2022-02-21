@@ -339,7 +339,7 @@ extension PrintingTests {
         
         var deactivable: Deactivable?
         
-        var layout: Layout {
+        var layout: some Layout {
             self {
                 profileView
                 nameLabel

@@ -9,13 +9,18 @@ import Foundation
 import UIKit
 
 enum Activator {
-    static func active(layout: [LayoutImp], options: LayoutOptions = [], building: LayoutBuilding? = nil) -> Deactivation {
+    
+    static func active<L: Layout>(layout: L, options: LayoutOptions = []) -> Deactivation<AnyLayoutBuilding<L>> {
+        return update(layout: layout, fromDeactivation: Deactivation(building: AnyLayoutBuilding(layout)), options: options)
+    }
+    
+    static func active<L: Layout, LB: LayoutBuilding>(layout: L, options: LayoutOptions = [], building: LB) -> Deactivation<LB>  where LB.LayoutBody == L {
         return update(layout: layout, fromDeactivation: Deactivation(building: building), options: options)
     }
 
     @discardableResult
-    static func update(layout: [LayoutImp], fromDeactivation deactivation: Deactivation, options: LayoutOptions) -> Deactivation {
-        let viewInfos = layout.flatMap(\.viewInformations)
+    static func update<L: Layout, LB: LayoutBuilding>(layout: L, fromDeactivation deactivation: Deactivation<LB>, options: LayoutOptions) -> Deactivation<LB> {
+        let viewInfos = layout.viewInformations
         let viewInfoSet = ViewInformationSet(infos: viewInfos)
         
         deactivate(deactivation: deactivation, withViewInformationSet: viewInfoSet)
@@ -24,7 +29,7 @@ enum Activator {
             updateIdentifiers(fromBuilding: deactivation.building, viewInfoSet: viewInfoSet)
         }
         
-        let constrains = layout.flatMap({ $0.viewConstraints(viewInfoSet) })
+        let constrains = layout.viewConstraints(viewInfoSet)
         
         activate(viewInfos: viewInfos, constrains: constrains)
         
@@ -40,7 +45,7 @@ enum Activator {
 }
 
 private extension Activator {
-    static func deactivate(deactivation: Deactivation, withViewInformationSet viewInfoSet: ViewInformationSet) {
+    static func deactivate<LB: LayoutBuilding>(deactivation: Deactivation<LB>, withViewInformationSet viewInfoSet: ViewInformationSet) {
         deactivation.deactiveConstraints()
         
         for existedView in deactivation.viewInfos.infos where !viewInfoSet.infos.contains(existedView) {
@@ -56,7 +61,7 @@ private extension Activator {
         NSLayoutConstraint.activate(constrains)
     }
     
-    static func updateIdentifiers(fromBuilding building: LayoutBuilding?, viewInfoSet: ViewInformationSet) {
+    static func updateIdentifiers<LB: LayoutBuilding>(fromBuilding building: LB?, viewInfoSet: ViewInformationSet) {
         guard let rootobject: AnyObject = building ?? viewInfoSet.rootview else {
             assertionFailure("Could not find root view for LayoutOptions.accessibilityIdentifiers. Please use LayoutBuilding.")
             return

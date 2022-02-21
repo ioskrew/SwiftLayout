@@ -5,16 +5,19 @@ import SwiftLayout
 final class LayoutDSLTest: XCTestCase {
         
     var root: UIView = UIView().viewTag.root
+    var child: UIView = UIView().viewTag.child
     var button: UIButton = UIButton().viewTag.button
     var label: UILabel = UILabel().viewTag.label
     var red: UIView = UIView().viewTag.red
     var blue: UIView = UIView().viewTag.blue
+    var green: UIView = UIView().viewTag.green
     var image: UIImageView = UIImageView().viewTag.image
     
     var deactivable: Deactivable?
     
     override func setUp() {
         root = UIView().viewTag.root
+        child = UIView().viewTag.child
         button = UIButton().viewTag.button
         label = UILabel().viewTag.label
         red = UIView().viewTag.red
@@ -64,6 +67,68 @@ extension LayoutDSLTest {
         XCTAssertEqual(label.superview, nil)
         XCTAssertEqual(button.superview, nil)
         XCTAssertEqual(red.superview, nil)
+    }
+    
+    func testSimple() {
+        deactivable = root {
+            red
+        }.active()
+        
+        XCTAssertEqual(red.superview, root)
+    }
+    
+    func testSimpleWithSublayout() {
+        deactivable = root.subviews({
+            red
+        }).active()
+        
+        XCTAssertEqual(red.superview, root)
+    }
+    
+    func testTuple() {
+        deactivable = root {
+            red
+            blue
+        }.active()
+        
+        XCTAssertEqual(red.superview, root)
+        XCTAssertEqual(blue.superview, root)
+    }
+    
+    func testSimpleDepth() {
+        deactivable = root {
+            red {
+                blue
+            }
+        }.active()
+        
+        XCTAssertEqual(red.superview, root)
+        XCTAssertEqual(blue.superview, red)
+    }
+    
+    func testSimpleDepthAndTuple() {
+        deactivable = root {
+            red {
+                blue
+                green
+            }
+        }.active()
+        
+        XCTAssertEqual(red.superview, root)
+        XCTAssertEqual(blue.superview, red)
+        XCTAssertEqual(green.superview, red)
+    }
+    
+    func testSimpleBoundary() {
+        deactivable = root {
+            red.anchors {
+                Anchors.boundary
+            }
+        }.active()
+        
+        XCTAssertEqual(red.superview, root)
+        XCTAssertEqual(root.constraints.count, 4)
+        XCTAssertEqual(Weakens(root.findConstraints(items: (red, root))), Weakens(Anchors.boundary.constraints(item: red, toItem: root)))
     }
     
     func testDontTouchRootViewByDeactive() {
