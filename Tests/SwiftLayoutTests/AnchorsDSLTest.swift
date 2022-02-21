@@ -53,7 +53,7 @@ extension AnchorsDSLTest {
         deactivable = root {
             red.anchors {
                 Anchors.boundary
-            }.subviews {
+            }.sublayout {
                 blue.anchors {
                     Anchors(.centerX, .centerY)
                 }
@@ -187,7 +187,7 @@ extension AnchorsDSLTest {
             for attr in attributes {
                 Anchors(attr).equalTo(red)
             }
-        }.subviews {
+        }.sublayout {
             red
         }.active()
         
@@ -230,7 +230,7 @@ extension AnchorsDSLTest {
     func testAnchorsFromLayoutGuide() {
         deactivable = root.anchors {
             Anchors.boundary.equalTo(red.safeAreaLayoutGuide)
-        }.subviews {
+        }.sublayout {
             red
         }.active()
         
@@ -245,7 +245,7 @@ extension AnchorsDSLTest {
     func testAnchorsFromIdentifier() {
         deactivable = root.anchors {
             Anchors.boundary.equalTo("label")
-        }.subviews {
+        }.sublayout {
             UILabel().identifying("label")
         }.active()
         

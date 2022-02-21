@@ -78,9 +78,9 @@ extension LayoutDSLTest {
     }
     
     func testSimpleWithSublayout() {
-        deactivable = root.subviews({
+        deactivable = root.sublayout{
             red
-        }).active()
+        }.active()
         
         XCTAssertEqual(red.superview, root)
     }
