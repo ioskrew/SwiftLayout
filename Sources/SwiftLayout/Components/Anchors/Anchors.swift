@@ -254,7 +254,7 @@ extension Anchors {
 }
 
 extension Anchors {
-    private struct ConstraintTarget {
+    struct ConstraintTarget {
         init<I>(item: I?, attribute: NSLayoutConstraint.Attribute?, constant: CGFloat) where I: ConstraintableItem {
             self.item = ItemFromView(item).item
             self.attribute = attribute

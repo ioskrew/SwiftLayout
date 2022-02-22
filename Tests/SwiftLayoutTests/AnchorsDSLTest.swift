@@ -359,3 +359,88 @@ extension AnchorsDSLTest {
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
     }
 }
+
+// MARK: - Anchors from UILayoutAnchor
+extension AnchorsDSLTest {
+    
+    func testAnchorsEqualToUILayoutAnchor() {
+        deactivable = root {
+            red.anchors {
+                Anchors(.top).equalTo(root.topAnchor)
+                Anchors(.leading).equalTo(root.leadingAnchor)
+                Anchors(.trailing).equalTo(root.trailingAnchor, constant: -14.0)
+                Anchors(.bottom).equalTo(root.bottomAnchor)
+                Anchors(.width).equalTo(root.widthAnchor)
+                Anchors(.height).equalTo(root.heightAnchor)
+                Anchors(.centerX).equalTo(root.centerXAnchor)
+                Anchors(.centerY).equalTo(root.centerYAnchor)
+            }
+        }.active()
+        
+        let expect = """
+        root {
+            red.anchors {
+                Anchors(.top, .leading, .bottom, .width, .height, .centerX, .centerY)
+                Anchors(.trailing).equalTo(constant: -14.0)
+            }
+        }
+        """.tabbed
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
+    }
+    
+    func testAnchorsGreaterThanOrEqualToUILayoutAnchor() {
+        
+        deactivable = root {
+            red.anchors {
+                Anchors(.top).greaterThanOrEqualTo(root.topAnchor)
+                Anchors(.leading).greaterThanOrEqualTo(root.leadingAnchor)
+                Anchors(.trailing).greaterThanOrEqualTo(root.trailingAnchor)
+                Anchors(.bottom).greaterThanOrEqualTo(root.bottomAnchor, constant: 13)
+                Anchors(.width).greaterThanOrEqualTo(root.widthAnchor)
+                Anchors(.height).greaterThanOrEqualTo(root.heightAnchor)
+                Anchors(.centerX).greaterThanOrEqualTo(root.centerXAnchor)
+                Anchors(.centerY).greaterThanOrEqualTo(root.centerYAnchor)
+            }
+        }.active()
+        
+        let expect = """
+        root {
+            red.anchors {
+                Anchors(.top, .leading, .trailing, .width, .height, .centerX, .centerY).greaterThanOrEqualTo()
+                Anchors(.bottom).greaterThanOrEqualTo(constant: 13.0)
+            }
+        }
+        """.tabbed
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
+    }
+    
+    func testAnchorsLessThanOrEqualToUILayoutAnchor() {
+        
+        deactivable = root {
+            red.anchors {
+                Anchors(.top).lessThanOrEqualTo(root.topAnchor)
+                Anchors(.leading).lessThanOrEqualTo(root.leadingAnchor)
+                Anchors(.trailing).lessThanOrEqualTo(root.trailingAnchor)
+                Anchors(.bottom).lessThanOrEqualTo(root.bottomAnchor)
+                Anchors(.width).lessThanOrEqualTo(root.widthAnchor)
+                Anchors(.height).lessThanOrEqualTo(root.heightAnchor, constant: 12)
+                Anchors(.centerX).lessThanOrEqualTo(root.centerXAnchor)
+                Anchors(.centerY).lessThanOrEqualTo(root.centerYAnchor)
+            }
+        }.active()
+        
+        let expect = """
+        root {
+            red.anchors {
+                Anchors(.top, .leading, .trailing, .bottom, .width, .centerX, .centerY).lessThanOrEqualTo()
+                Anchors(.height).lessThanOrEqualTo(constant: 12.0)
+            }
+        }
+        """.tabbed
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
+    }
+    
+}
