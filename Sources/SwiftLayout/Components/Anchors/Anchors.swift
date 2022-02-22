@@ -10,6 +10,8 @@ import UIKit
 
 public final class Anchors: Constraint {
     
+    var items: [Constraint] = []
+    
     public convenience init(_ attributes: NSLayoutConstraint.Attribute...) {
         let items = attributes.map { Anchors.Constraint(attribute: $0) }
         self.init(items: items)
@@ -23,16 +25,53 @@ public final class Anchors: Constraint {
     internal init(items: [Anchors.Constraint] = []) {
         self.items = items
     }
-    
-    var items: [Constraint] = []
-    
-    public func setConstant(_ constant: CGFloat) -> Self {
-        for i in 0..<items.count {
-            items[i].constant = constant
+
+    public func constraints(item fromItem: NSObject, toItem: NSObject?) -> [NSLayoutConstraint] {
+        var constraints: [NSLayoutConstraint] = []
+        for item in items {
+            let from = fromItem
+            let attribute = item.attribute
+            let relation = item.relation
+            let to = item.toItem(toItem)
+            let toAttribute = item.toAttribute(attribute)
+            let multiplier = item.multiplier
+            let constant = item.constant
+            assert(to is UIView || to is UILayoutGuide || to == nil, "to: \(to.debugDescription) is not item")
+            constraints.append(NSLayoutConstraint(item: from,
+                                                  attribute: attribute,
+                                                  relatedBy: relation,
+                                                  toItem: to,
+                                                  attribute: toAttribute,
+                                                  multiplier: multiplier,
+                                                  constant: constant))
         }
-        return self
+        return constraints
     }
     
+    public func constraints(item fromItem: NSObject, toItem: NSObject?, viewInfoSet: ViewInformationSet?) -> [NSLayoutConstraint] {
+        var constraints: [NSLayoutConstraint] = []
+        for item in items {
+            let from = fromItem
+            let attribute = item.attribute
+            let relation = item.relation
+            let to = item.toItem(toItem, viewInfoSet: viewInfoSet)
+            let toAttribute = item.toAttribute(attribute)
+            let multiplier = item.multiplier
+            let constant = item.constant
+            assert(to is UIView || to is UILayoutGuide || to == nil, "to: \(to.debugDescription) is not item")
+            constraints.append(NSLayoutConstraint(item: from,
+                                                  attribute: attribute,
+                                                  relatedBy: relation,
+                                                  toItem: to,
+                                                  attribute: toAttribute,
+                                                  multiplier: multiplier,
+                                                  constant: constant))
+        }
+        return constraints
+    }
+}
+
+extension Anchors {
     private func to(_ relation: NSLayoutConstraint.Relation, to: ConstraintTarget) -> Self {
         func update(_ updateItem: Constraint) -> Constraint {
             var updateItem = updateItem
@@ -46,7 +85,7 @@ public final class Anchors: Constraint {
         items = items.map(update)
         return self
     }
-    
+
     public func equalTo(constant: CGFloat) -> Self {
         to(.equal, to: .init(item: .deny, attribute: nil, constant: constant))
     }
@@ -107,51 +146,22 @@ public final class Anchors: Constraint {
         to(.lessThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: constant))
     }
     
-    public func constraints(item fromItem: NSObject, toItem: NSObject?) -> [NSLayoutConstraint] {
-        var constraints: [NSLayoutConstraint] = []
-        for item in items {
-            let from = fromItem
-            let attribute = item.attribute
-            let relation = item.relation
-            let to = item.toItem(toItem)
-            let toAttribute = item.toAttribute(attribute)
-            let multiplier = item.multiplier
-            let constant = item.constant
-            assert(to is UIView || to is UILayoutGuide || to == nil, "to: \(to.debugDescription) is not item")
-            constraints.append(NSLayoutConstraint(item: from,
-                                                  attribute: attribute,
-                                                  relatedBy: relation,
-                                                  toItem: to,
-                                                  attribute: toAttribute,
-                                                  multiplier: multiplier,
-                                                  constant: constant))
+    public func setConstant(_ constant: CGFloat) -> Self {
+        for i in 0..<items.count {
+            items[i].constant = constant
         }
-        return constraints
+        return self
     }
-    
-    public func constraints(item fromItem: NSObject, toItem: NSObject?, viewInfoSet: ViewInformationSet?) -> [NSLayoutConstraint] {
-        var constraints: [NSLayoutConstraint] = []
-        for item in items {
-            let from = fromItem
-            let attribute = item.attribute
-            let relation = item.relation
-            let to = item.toItem(toItem, viewInfoSet: viewInfoSet)
-            let toAttribute = item.toAttribute(attribute)
-            let multiplier = item.multiplier
-            let constant = item.constant
-            assert(to is UIView || to is UILayoutGuide || to == nil, "to: \(to.debugDescription) is not item")
-            constraints.append(NSLayoutConstraint(item: from,
-                                                  attribute: attribute,
-                                                  relatedBy: relation,
-                                                  toItem: to,
-                                                  attribute: toAttribute,
-                                                  multiplier: multiplier,
-                                                  constant: constant))
+    public func setMultiplier(_ multiplier: CGFloat) -> Self {
+        for i in 0..<items.count {
+            items[i].multiplier = multiplier
         }
-        return constraints
+        return self
     }
-    
-    struct ConstraintTarget {
+}
+
+extension Anchors {
+    private struct ConstraintTarget {
         public init<I>(item: I?, attribute: NSLayoutConstraint.Attribute?, constant: CGFloat) where I: ConstraintableItem {
             self.item = ItemFromView(item).item
             self.attribute = attribute
