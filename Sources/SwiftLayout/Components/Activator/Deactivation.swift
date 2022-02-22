@@ -55,7 +55,7 @@ final class Deactivation<LB: LayoutBuilding>: Deactivable {
     }
 }
 
-struct ConstraintsSet {
+struct ConstraintsSet: Hashable {
     
     let constraints: Set<WeakReference<NSLayoutConstraint>>
     

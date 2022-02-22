@@ -204,15 +204,16 @@ extension ImplementationTest {
                 Anchors(.top).equalTo("label", attribute: .bottom)
                 Anchors.shoe
             }
-        }.anyLayout.active() as? Deactivation<AnyLayoutBuilding<AnyLayout>>
+        }.active()
         
-        let label = deactivation?.viewForIdentifier("label")
+        let label = deactivation.viewForIdentifier("label")
+        XCTAssertNotNil(label)
         XCTAssertEqual(label?.accessibilityIdentifier, "label")
         
-        let secondView = deactivation?.viewForIdentifier("secondView")
+        let secondView = deactivation.viewForIdentifier("secondView")
         XCTAssertEqual(secondView?.accessibilityIdentifier, "secondView")
         
-        let currents = deactivation?.constraints.constraints ?? []
+        let currents = deactivation.constraints?.constraints ?? []
         let labelConstraints = Set(Anchors.cap.constraints(item: label!, toItem: root).weakens)
         XCTAssertEqual(currents.intersection(labelConstraints), labelConstraints)
         
