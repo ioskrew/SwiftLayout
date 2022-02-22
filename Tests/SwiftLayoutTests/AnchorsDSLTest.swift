@@ -340,4 +340,22 @@ extension AnchorsDSLTest {
         print(root.constraints)
         XCTAssertEqual(red.frame.size, .init(width: 60, height: 60))
     }
+    
+    func testConvenience() {
+        deactivable = root {
+            red.anchors {
+                Anchors.allSides(root)
+            }
+        }.active()
+        
+        let expect = """
+        root {
+            red.anchors {
+                Anchors(.leading, .trailing, .top, .bottom)
+            }
+        }
+        """.tabbed
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
+    }
 }
