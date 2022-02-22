@@ -81,7 +81,8 @@ extension LayoutDSLTest {
         deactivable = root {
             UILabel().config { view in
                 view.text = "RED"
-                return view.viewTag.red
+                view.accessibilityIdentifier = "red"
+                return view
             }
         }.active()
         
