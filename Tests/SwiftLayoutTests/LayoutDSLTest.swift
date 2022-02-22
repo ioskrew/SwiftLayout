@@ -13,7 +13,7 @@ final class LayoutDSLTest: XCTestCase {
     var green: UIView = UIView().viewTag.green
     var image: UIImageView = UIImageView().viewTag.image
     
-    var deactivable: Deactivable?
+    var deactivable: Set<AnyDeactivable> = []
     
     override func setUp() {
         root = UIView().viewTag.root
@@ -26,13 +26,13 @@ final class LayoutDSLTest: XCTestCase {
     }
     
     override func tearDown() {
-        deactivable = nil
+        deactivable = []
     }
 }
 
 extension LayoutDSLTest {
     func testActive() {
-        deactivable = root {
+        root {
             red {
                 button
                 label
@@ -40,7 +40,7 @@ extension LayoutDSLTest {
                     image
                 }
             }
-        }.active()
+        }.active().store(&deactivable)
         
         XCTAssertEqual(image.superview, blue)
         XCTAssertEqual(blue.superview, red)
@@ -50,7 +50,7 @@ extension LayoutDSLTest {
     }
     
     func testDeactive() {
-        deactivable = root {
+        root {
             red {
                 button
                 label
@@ -58,9 +58,9 @@ extension LayoutDSLTest {
                     image
                 }
             }
-        }.active()
+        }.active().store(&deactivable)
         
-        deactivable?.deactive()
+        deactivable = []
         
         XCTAssertEqual(image.superview, nil)
         XCTAssertEqual(blue.superview, nil)
@@ -70,49 +70,49 @@ extension LayoutDSLTest {
     }
     
     func testSimple() {
-        deactivable = root {
+        root {
             red
-        }.active()
+        }.active().store(&deactivable)
         
         XCTAssertEqual(red.superview, root)
     }
     
     func testSimpleWithSublayout() {
-        deactivable = root.sublayout{
+        root.sublayout{
             red
-        }.active()
+        }.active().store(&deactivable)
         
         XCTAssertEqual(red.superview, root)
     }
     
     func testTuple() {
-        deactivable = root {
+        root {
             red
             blue
-        }.active()
+        }.active().store(&deactivable)
         
         XCTAssertEqual(red.superview, root)
         XCTAssertEqual(blue.superview, root)
     }
     
     func testSimpleDepth() {
-        deactivable = root {
+        root {
             red {
                 blue
             }
-        }.active()
+        }.active().store(&deactivable)
         
         XCTAssertEqual(red.superview, root)
         XCTAssertEqual(blue.superview, red)
     }
     
     func testSimpleDepthAndTuple() {
-        deactivable = root {
+        root {
             red {
                 blue
                 green
             }
-        }.active()
+        }.active().store(&deactivable)
         
         XCTAssertEqual(red.superview, root)
         XCTAssertEqual(blue.superview, red)
@@ -120,11 +120,11 @@ extension LayoutDSLTest {
     }
     
     func testSimpleBoundary() {
-        deactivable = root {
+        root {
             red.anchors {
                 Anchors.boundary
             }
-        }.active()
+        }.active().store(&deactivable)
         
         XCTAssertEqual(red.superview, root)
         XCTAssertEqual(root.constraints.count, 4)
@@ -136,15 +136,15 @@ extension LayoutDSLTest {
         old.addSubview(root)
         root.translatesAutoresizingMaskIntoConstraints = true
         
-        deactivable = root {
+        root {
             red.anchors {
                 Anchors.boundary
             }
-        }.active()
+        }.active().store(&deactivable)
         
         XCTAssertTrue(root.translatesAutoresizingMaskIntoConstraints)
         
-        deactivable?.deactive()
+        deactivable = []
         
         XCTAssertEqual(root.superview, old)
     }
@@ -152,7 +152,7 @@ extension LayoutDSLTest {
     func testLayoutIfWithTrueFlag() {
         let flag = true
 
-        deactivable = root {
+        root {
             red {
                 button
             }
@@ -160,7 +160,7 @@ extension LayoutDSLTest {
             if flag {
                 label
             }
-        }.active()
+        }.active().store(&deactivable)
         
         XCTAssertEqual(root.subviews.count, 2)
         
@@ -173,7 +173,7 @@ extension LayoutDSLTest {
     func testLayoutIfWithFalseFlag() {
         let flag = false
 
-        deactivable = root {
+        root {
             red {
                 button
             }
@@ -182,7 +182,7 @@ extension LayoutDSLTest {
                 label
                 UILabel()
             }
-        }.active()
+        }.active().store(&deactivable)
         
         XCTAssertEqual(root.subviews.count, 1)
         
@@ -195,7 +195,7 @@ extension LayoutDSLTest {
     func testLayoutEitherWithTrueFlag() {
         let flag = true
 
-        deactivable = root {
+        root {
             red {
                 button
             }
@@ -205,7 +205,7 @@ extension LayoutDSLTest {
             } else {
                 image
             }
-        }.active()
+        }.active().store(&deactivable)
         
         XCTAssertEqual(root.subviews.count, 2)
         
@@ -219,7 +219,7 @@ extension LayoutDSLTest {
     func testLayoutEitherWithFalseFlag() {
         let flag = false
 
-        deactivable = root {
+        root {
             red {
                 button
             }
@@ -230,7 +230,7 @@ extension LayoutDSLTest {
             } else {
                 image
             }
-        }.active()
+        }.active().store(&deactivable)
         
         XCTAssertEqual(root.subviews.count, 2)
         
@@ -245,14 +245,14 @@ extension LayoutDSLTest {
         let optionalView: UIView? = UIView().viewTag.optionalView
         let nilView: UIView? = nil
 
-        deactivable = root {
+        root {
             red {
                 button
             }
             
             optionalView
             nilView
-        }.active()
+        }.active().store(&deactivable)
         
         XCTAssertEqual(root.subviews.count, 2)
         
@@ -270,21 +270,21 @@ extension LayoutDSLTest {
             return label
         }
         
-        deactivable = root {
+        root {
             for view in views {
                 view
             }
-        }.active()
+        }.active().store(&deactivable)
         
         XCTAssertEqual(root.subviews.count, views.count)
         XCTAssertEqual(root.subviews, views)
     }
     
     func testLayoutWithInstantView() {
-        deactivable = root {
+        root {
             UILabel()
             UIImageView()
-        }.active()
+        }.active().store(&deactivable)
         
         XCTAssertEqual(root.subviews.count, 2)
     }
