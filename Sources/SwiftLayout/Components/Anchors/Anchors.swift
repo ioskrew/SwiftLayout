@@ -27,25 +27,7 @@ public final class Anchors: Constraint {
     }
 
     public func constraints(item fromItem: NSObject, toItem: NSObject?) -> [NSLayoutConstraint] {
-        var constraints: [NSLayoutConstraint] = []
-        for item in items {
-            let from = fromItem
-            let attribute = item.attribute
-            let relation = item.relation
-            let to = item.toItem(toItem)
-            let toAttribute = item.toAttribute(attribute)
-            let multiplier = item.multiplier
-            let constant = item.constant
-            assert(to is UIView || to is UILayoutGuide || to == nil, "to: \(to.debugDescription) is not item")
-            constraints.append(NSLayoutConstraint(item: from,
-                                                  attribute: attribute,
-                                                  relatedBy: relation,
-                                                  toItem: to,
-                                                  attribute: toAttribute,
-                                                  multiplier: multiplier,
-                                                  constant: constant))
-        }
-        return constraints
+        constraints(item: fromItem, toItem: toItem, viewInfoSet: nil)
     }
     
     public func constraints(item fromItem: NSObject, toItem: NSObject?, viewInfoSet: ViewInformationSet?) -> [NSLayoutConstraint] {
