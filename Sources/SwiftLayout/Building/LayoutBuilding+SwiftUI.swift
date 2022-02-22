@@ -11,47 +11,34 @@ import UIKit
 #if canImport(SwiftUI)
 import SwiftUI
 
-extension SwiftUI.UIViewRepresentable where Self: UIView, Self: LayoutBuilding {
-    
-    public func makeUIView(context: Context) -> Self {
-        return self
+public struct LayoutViewRepresentable<V>: UIViewRepresentable where V: UIView & LayoutBuilding {
+    private let view: V
+    public init(_ view: V) {
+        self.view = view
     }
     
-    public func updateUIView(_ uiView: Self, context: Context) {
+    public func makeUIView(context: Context) -> V {
+        return view
+    }
+    
+    public func updateUIView(_ uiView: V, context: Context) {
         uiView.updateLayout()
     }
-    
 }
 
-extension SwiftUI.UIViewControllerRepresentable where Self: UIViewController, Self: LayoutBuilding {
-    
-    public func makeUIViewController(context: Context) -> Self {
-        return self
+
+public struct LayoutViewControllerRepresentable<VC>: UIViewControllerRepresentable where VC: UIViewController & LayoutBuilding {
+    private let viewController: VC
+    public init(_ viewController: VC) {
+        self.viewController = viewController
     }
-    
-    public func updateUIViewController(_ uiViewController: Self, context: Context) {
+
+    public func makeUIViewController(context: Context) -> VC {
+        return viewController
+    }
+
+    public func updateUIViewController(_ uiViewController: VC, context: Context) {
         uiViewController.updateLayout()
-    }
-    
-}
-
-public protocol LayoutViewRepresentable: SwiftUI.UIViewRepresentable where Self: UIView, Self: LayoutBuilding {
-    static var layoutBuildingPreviews: Self { get }
-}
-
-extension LayoutViewRepresentable {
-    public static var layoutBuildingPreviews: Self {
-        Self.init(frame: .zero)
-    }
-}
-
-public protocol LayoutViewControllerRepresentable: SwiftUI.UIViewControllerRepresentable where Self: UIViewController, Self: LayoutBuilding {
-    static var layoutBuildingPreviews: Self { get }
-}
-
-extension LayoutViewControllerRepresentable {
-    public static var layoutBuildingPreviews: Self {
-        Self.init(nibName: nil, bundle: nil)
     }
 }
 
