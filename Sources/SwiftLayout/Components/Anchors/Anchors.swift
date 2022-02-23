@@ -10,6 +10,8 @@ import UIKit
 
 public final class Anchors: Constraint {
     
+    var items: [Constraint] = []
+    
     public convenience init(_ attributes: NSLayoutConstraint.Attribute...) {
         let items = attributes.map { Anchors.Constraint(attribute: $0) }
         self.init(items: items)
@@ -24,112 +26,7 @@ public final class Anchors: Constraint {
         self.items = items
     }
     
-    var items: [Constraint] = []
-    
-    public func setConstant(_ constant: CGFloat) -> Self {
-        for i in 0..<items.count {
-            items[i].constant = constant
-        }
-        return self
-    }
-    
-    private func to(_ relation: NSLayoutConstraint.Relation, to: ConstraintTarget) -> Self {
-        func update(_ updateItem: Constraint) -> Constraint {
-            var updateItem = updateItem
-            updateItem.relation = relation
-            updateItem.toItem = to.item
-            updateItem.toAttribute = to.attribute
-            updateItem.constant = to.constant
-            return updateItem
-        }
-        
-        items = items.map(update)
-        return self
-    }
-    
-    public func equalTo(constant: CGFloat) -> Self {
-        to(.equal, to: .init(item: .deny, attribute: nil, constant: constant))
-    }
-    
-    public func greaterThanOrEqualTo(constant: CGFloat = .zero) -> Self {
-        to(.greaterThanOrEqual, to: .init(item: .deny, attribute: nil, constant: constant))
-    }
-    
-    public func lessThanOrEqualTo(constant: CGFloat = .zero) -> Self {
-        to(.lessThanOrEqual, to: .init(item: .deny, attribute: nil, constant: constant))
-    }
-    
-    public func equalTo<I>(_ toItem: I) -> Self where I: ConstraintableItem {
-        to(.equal, to: .init(item: toItem, attribute: nil, constant: .zero))
-    }
-    
-    public func greaterThanOrEqualTo<I>(_ toItem: I) -> Self where I: ConstraintableItem {
-        to(.greaterThanOrEqual, to: .init(item: toItem, attribute: nil, constant: .zero))
-    }
-    
-    public func lessThanOrEqualTo<I>(_ toItem: I) -> Self where I: ConstraintableItem {
-        to(.lessThanOrEqual, to: .init(item: toItem, attribute: nil, constant: .zero))
-    }
-    
-    public func equalTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute) -> Self where I: ConstraintableItem {
-        to(.equal, to: .init(item: toItem, attribute: attribute, constant: .zero))
-    }
-    
-    public func greaterThanOrEqualTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute) -> Self where I: ConstraintableItem {
-        to(.greaterThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: .zero))
-    }
-    
-    public func lessThanOrEqualTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute) -> Self where I: ConstraintableItem {
-        to(.lessThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: .zero))
-    }
-    
-    public func equalTo<I>(_ toItem: I, constant: CGFloat) -> Self where I: ConstraintableItem {
-        to(.equal, to: .init(item: toItem, attribute: nil, constant: constant))
-    }
-    
-    public func greaterThanOrEqualTo<I>(_ toItem: I, constant: CGFloat) -> Self where I: ConstraintableItem {
-        to(.greaterThanOrEqual, to: .init(item: toItem, attribute: nil, constant: constant))
-    }
-    
-    public func lessThanOrEqualTo<I>(_ toItem: I, constant: CGFloat) -> Self where I: ConstraintableItem {
-        to(.lessThanOrEqual, to: .init(item: toItem, attribute: nil, constant: constant))
-    }
-    
-    public func equalTo<I>(_ toItem: I?, attribute: NSLayoutConstraint.Attribute, constant: CGFloat) -> Self where I: ConstraintableItem {
-        to(.equal, to: .init(item: toItem, attribute: attribute, constant: constant))
-    }
-    
-    public func greaterThanOrEqualTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute, constant: CGFloat) -> Self where I: ConstraintableItem {
-        to(.greaterThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: constant))
-    }
-    
-    public func lessThanOrEqualTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute, constant: CGFloat) -> Self where I: ConstraintableItem {
-        to(.lessThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: constant))
-    }
-    
-    public func constraints(item fromItem: NSObject, toItem: NSObject?) -> [NSLayoutConstraint] {
-        var constraints: [NSLayoutConstraint] = []
-        for item in items {
-            let from = fromItem
-            let attribute = item.attribute
-            let relation = item.relation
-            let to = item.toItem(toItem)
-            let toAttribute = item.toAttribute(attribute)
-            let multiplier = item.multiplier
-            let constant = item.constant
-            assert(to is UIView || to is UILayoutGuide || to == nil, "to: \(to.debugDescription) is not item")
-            constraints.append(NSLayoutConstraint(item: from,
-                                                  attribute: attribute,
-                                                  relatedBy: relation,
-                                                  toItem: to,
-                                                  attribute: toAttribute,
-                                                  multiplier: multiplier,
-                                                  constant: constant))
-        }
-        return constraints
-    }
-    
-    public func constraints(item fromItem: NSObject, toItem: NSObject?, viewInfoSet: ViewInformationSet?) -> [NSLayoutConstraint] {
+    public func constraints(item fromItem: NSObject, toItem: NSObject?, viewInfoSet: ViewInformationSet? = nil) -> [NSLayoutConstraint] {
         var constraints: [NSLayoutConstraint] = []
         for item in items {
             let from = fromItem
@@ -150,9 +47,215 @@ public final class Anchors: Constraint {
         }
         return constraints
     }
+}
+
+extension Anchors {
+    private func to(_ relation: NSLayoutConstraint.Relation, to: ConstraintTarget) -> Self {
+        func update(_ updateItem: Constraint) -> Constraint {
+            var updateItem = updateItem
+            updateItem.relation = relation
+            updateItem.toItem = to.item
+            updateItem.toAttribute = to.attribute
+            updateItem.constant = to.constant
+            return updateItem
+        }
+        
+        items = items.map(update)
+        return self
+    }
+
+    ///
+    /// Set constraint attributes of ``Anchors``
+    ///
+    /// - Parameter constant: Represents the `constant` property of `NSLayoutConstraint`.
+    /// - Returns: ``Anchors``
+    ///
+    public func equalTo(constant: CGFloat) -> Self {
+        to(.equal, to: .init(item: .deny, attribute: nil, constant: constant))
+    }
     
+    ///
+    /// Set constraint attributes of ``Anchors``
+    ///
+    /// - Parameter constant: Represents the `constant` property of `NSLayoutConstraint`.
+    /// - Returns: ``Anchors``
+    ///
+    public func greaterThanOrEqualTo(constant: CGFloat = .zero) -> Self {
+        to(.greaterThanOrEqual, to: .init(item: .deny, attribute: nil, constant: constant))
+    }
+    
+    ///
+    /// Set constraint attributes of ``Anchors``
+    ///
+    /// - Parameter constant: Represents the `constant` property of `NSLayoutConstraint`.
+    /// - Returns: ``Anchors``
+    ///
+    public func lessThanOrEqualTo(constant: CGFloat = .zero) -> Self {
+        to(.lessThanOrEqual, to: .init(item: .deny, attribute: nil, constant: constant))
+    }
+    
+    ///
+    /// Set constraint attributes of ``Anchors``
+    ///
+    /// - Parameter toItem: Represents the `secondItem` property of `NSLayoutConstraint`. It will be UIView, UILayoutGuide, or identifier String.
+    /// - Returns: ``Anchors``
+    ///
+    public func equalTo<I>(_ toItem: I) -> Self where I: ConstraintableItem {
+        to(.equal, to: .init(item: toItem, attribute: nil, constant: .zero))
+    }
+    
+    ///
+    /// Set constraint attributes of ``Anchors``
+    ///
+    /// - Parameter toItem: Represents the `secondItem` property of `NSLayoutConstraint`. It will be UIView, UILayoutGuide, or identifier String.
+    /// - Returns: ``Anchors``
+    ///
+    public func greaterThanOrEqualTo<I>(_ toItem: I) -> Self where I: ConstraintableItem {
+        to(.greaterThanOrEqual, to: .init(item: toItem, attribute: nil, constant: .zero))
+    }
+    
+    ///
+    /// Set constraint attributes of ``Anchors``
+    ///
+    /// - Parameter toItem: Represents the `secondItem` property of `NSLayoutConstraint`. It will be UIView, UILayoutGuide, or identifier String.
+    /// - Returns: ``Anchors``
+    ///
+    public func lessThanOrEqualTo<I>(_ toItem: I) -> Self where I: ConstraintableItem {
+        to(.lessThanOrEqual, to: .init(item: toItem, attribute: nil, constant: .zero))
+    }
+    
+    ///
+    /// Set constraint attributes of ``Anchors``
+    ///
+    /// - Parameter toItem: Represents the `secondItem` property of `NSLayoutConstraint`. It will be UIView, UILayoutGuide, or identifier String.
+    /// - Parameter attribute: Represents the `secondAttribute` property of `NSLayoutConstraint`.
+    /// - Returns: ``Anchors``
+    ///
+    public func equalTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute) -> Self where I: ConstraintableItem {
+        to(.equal, to: .init(item: toItem, attribute: attribute, constant: .zero))
+    }
+    
+    ///
+    /// Set constraint attributes of ``Anchors``
+    ///
+    /// - Parameter toItem: Represents the `secondItem` property of `NSLayoutConstraint`. It will be UIView, UILayoutGuide, or identifier String.
+    /// - Parameter attribute: Represents the `secondAttribute` property of `NSLayoutConstraint`.
+    /// - Returns: ``Anchors``
+    ///
+    public func greaterThanOrEqualTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute) -> Self where I: ConstraintableItem {
+        to(.greaterThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: .zero))
+    }
+    
+    ///
+    /// Set constraint attributes of ``Anchors``
+    ///
+    /// - Parameter toItem: Represents the `secondItem` property of `NSLayoutConstraint`. It will be UIView, UILayoutGuide, or identifier String.
+    /// - Parameter attribute: Represents the `secondAttribute` property of `NSLayoutConstraint`.
+    /// - Returns: ``Anchors``
+    ///
+    public func lessThanOrEqualTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute) -> Self where I: ConstraintableItem {
+        to(.lessThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: .zero))
+    }
+    
+    ///
+    /// Set constraint attributes of ``Anchors``
+    ///
+    /// - Parameter toItem: Represents the `secondItem` property of `NSLayoutConstraint`. It will be UIView, UILayoutGuide, or identifier String.
+    /// - Parameter constant: Represents the `constant` property of `NSLayoutConstraint`.
+    /// - Returns: ``Anchors``
+    ///
+    public func equalTo<I>(_ toItem: I, constant: CGFloat) -> Self where I: ConstraintableItem {
+        to(.equal, to: .init(item: toItem, attribute: nil, constant: constant))
+    }
+    
+    ///
+    /// Set constraint attributes of ``Anchors``
+    ///
+    /// - Parameter toItem: Represents the `secondItem` property of `NSLayoutConstraint`. It will be UIView, UILayoutGuide, or identifier String.
+    /// - Parameter constant: Represents the `constant` property of `NSLayoutConstraint`.
+    /// - Returns: ``Anchors``
+    ///
+    public func greaterThanOrEqualTo<I>(_ toItem: I, constant: CGFloat) -> Self where I: ConstraintableItem {
+        to(.greaterThanOrEqual, to: .init(item: toItem, attribute: nil, constant: constant))
+    }
+    
+    ///
+    /// Set constraint attributes of ``Anchors``
+    ///
+    /// - Parameter toItem: Represents the `secondItem` property of `NSLayoutConstraint`. It will be UIView, UILayoutGuide, or identifier String.
+    /// - Parameter constant: Represents the `constant` property of `NSLayoutConstraint`.
+    /// - Returns: ``Anchors``
+    ///
+    public func lessThanOrEqualTo<I>(_ toItem: I, constant: CGFloat) -> Self where I: ConstraintableItem {
+        to(.lessThanOrEqual, to: .init(item: toItem, attribute: nil, constant: constant))
+    }
+    
+    ///
+    /// Set constraint attributes of ``Anchors``
+    ///
+    /// - Parameter toItem: Represents the `secondItem` property of `NSLayoutConstraint`. It will be UIView, UILayoutGuide, or identifier String.
+    /// - Parameter attribute: Represents the `secondAttribute` property of `NSLayoutConstraint`.
+    /// - Parameter constant: Represents the `constant` property of `NSLayoutConstraint`.
+    /// - Returns: ``Anchors``
+    ///
+    public func equalTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute, constant: CGFloat) -> Self where I: ConstraintableItem {
+        to(.equal, to: .init(item: toItem, attribute: attribute, constant: constant))
+    }
+    
+    ///
+    /// Set constraint attributes of ``Anchors``
+    ///
+    /// - Parameter toItem: Represents the `secondItem` property of `NSLayoutConstraint`. It will be UIView, UILayoutGuide, or identifier String.
+    /// - Parameter attribute: Represents the `secondAttribute` property of `NSLayoutConstraint`.
+    /// - Parameter constant: Represents the `constant` property of `NSLayoutConstraint`.
+    /// - Returns: ``Anchors``
+    ///
+    public func greaterThanOrEqualTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute, constant: CGFloat) -> Self where I: ConstraintableItem {
+        to(.greaterThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: constant))
+    }
+    
+    ///
+    /// Set constraint attributes of ``Anchors``
+    ///
+    /// - Parameter toItem: Represents the `secondItem` property of `NSLayoutConstraint`. It will be UIView, UILayoutGuide, or identifier String.
+    /// - Parameter attribute: Represents the `secondAttribute` property of `NSLayoutConstraint`.
+    /// - Parameter constant: Represents the `constant` property of `NSLayoutConstraint`.
+    /// - Returns: ``Anchors``
+    ///
+    public func lessThanOrEqualTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute, constant: CGFloat) -> Self where I: ConstraintableItem {
+        to(.lessThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: constant))
+    }
+    
+    ///
+    /// Set the `constraint` of ``Anchors``
+    ///
+    /// - Parameter constant: Represents the `constant` property of `NSLayoutConstraint`.
+    /// - Returns: ``Anchors``
+    ///
+    public func setConstant(_ constant: CGFloat) -> Self {
+        for i in 0..<items.count {
+            items[i].constant = constant
+        }
+        return self
+    }
+    
+    ///
+    /// Set the `multiplier` of ``Anchors``
+    ///
+    /// - Parameter multiplier: Represents the `multiplier` property of `NSLayoutConstraint`.
+    /// - Returns: ``Anchors``
+    ///
+    public func setMultiplier(_ multiplier: CGFloat) -> Self {
+        for i in 0..<items.count {
+            items[i].multiplier = multiplier
+        }
+        return self
+    }
+}
+
+extension Anchors {
     struct ConstraintTarget {
-        public init<I>(item: I?, attribute: NSLayoutConstraint.Attribute?, constant: CGFloat) where I: ConstraintableItem {
+        init<I>(item: I?, attribute: NSLayoutConstraint.Attribute?, constant: CGFloat) where I: ConstraintableItem {
             self.item = ItemFromView(item).item
             self.attribute = attribute
             self.constant = constant
@@ -226,4 +329,27 @@ public final class Anchors: Constraint {
             }
         }
     }
+}
+
+public extension Anchors {
+    
+    func equalTo<LA: LayoutAnchor&NSObject>(_ layoutAnchor: LA, constant: CGFloat = .zero) -> Self? {
+        guard let target = layoutAnchor.constraintTargetWithConstant(constant) else { return nil }
+        return to(.equal, to: target)
+    }
+    
+    func greaterThanOrEqualTo<LA: LayoutAnchor&NSObject>(_ layoutAnchor: LA, constant: CGFloat = .zero) -> Self? {
+        guard let target = layoutAnchor.constraintTargetWithConstant(constant) else { return nil }
+        return to(.greaterThanOrEqual, to: target)
+    }
+    
+    func lessThanOrEqualTo<LA: LayoutAnchor&NSObject>(_ layoutAnchor: LA, constant: CGFloat = .zero) -> Self? {
+        guard let target = layoutAnchor.constraintTargetWithConstant(constant) else { return nil }
+        return to(.lessThanOrEqual, to: target)
+    }
+    
+}
+
+func ==<LA: LayoutAnchor&NSObject, RA: LayoutAnchor&NSObject>(_ lhs: LA, _ rhs: RA) -> Bool {
+    lhs.isEqual(rhs)
 }

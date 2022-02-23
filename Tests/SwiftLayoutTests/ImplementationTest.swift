@@ -286,7 +286,7 @@ extension ImplementationTest {
         child.translatesAutoresizingMaskIntoConstraints = false
         root.addSubview(child)
         
-        let constraint = anchors.constraints(item: child, toItem: root)
+        let constraint = anchors.constraints(item: child, toItem: root, viewInfoSet: nil)
         XCTAssertEqual(constraint.count, 4)
     }
     
