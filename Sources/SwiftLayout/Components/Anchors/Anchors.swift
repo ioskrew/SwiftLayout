@@ -333,23 +333,69 @@ extension Anchors {
 
 public extension Anchors {
     
-    func equalTo<LA: LayoutAnchor&NSObject>(_ layoutAnchor: LA, constant: CGFloat = .zero) -> Self? {
-        guard let target = layoutAnchor.constraintTargetWithConstant(constant) else { return nil }
+    func equalTo(_ layoutAnchor: NSLayoutXAxisAnchor) -> Self {
+        let target = constraintTargetWithConstant(layoutAnchor)
         return to(.equal, to: target)
     }
     
-    func greaterThanOrEqualTo<LA: LayoutAnchor&NSObject>(_ layoutAnchor: LA, constant: CGFloat = .zero) -> Self? {
-        guard let target = layoutAnchor.constraintTargetWithConstant(constant) else { return nil }
+    func equalTo(_ layoutAnchor: NSLayoutYAxisAnchor) -> Self {
+        let target = constraintTargetWithConstant(layoutAnchor)
+        return to(.equal, to: target)
+    }
+    
+    func equalTo(_ layoutAnchor: NSLayoutDimension) -> Self {
+        let target = constraintTargetWithConstant(layoutAnchor)
+        return to(.equal, to: target)
+    }
+    
+    func greaterThanOrEqualTo(_ layoutAnchor: NSLayoutXAxisAnchor) -> Self {
+        let target = constraintTargetWithConstant(layoutAnchor)
         return to(.greaterThanOrEqual, to: target)
     }
     
-    func lessThanOrEqualTo<LA: LayoutAnchor&NSObject>(_ layoutAnchor: LA, constant: CGFloat = .zero) -> Self? {
-        guard let target = layoutAnchor.constraintTargetWithConstant(constant) else { return nil }
+    func greaterThanOrEqualTo(_ layoutAnchor: NSLayoutYAxisAnchor) -> Self {
+        let target = constraintTargetWithConstant(layoutAnchor)
+        return to(.greaterThanOrEqual, to: target)
+    }
+    
+    func greaterThanOrEqualTo(_ layoutAnchor: NSLayoutDimension) -> Self {
+        let target = constraintTargetWithConstant(layoutAnchor)
+        return to(.greaterThanOrEqual, to: target)
+    }
+    
+    func lessThanOrEqualTo(_ layoutAnchor: NSLayoutXAxisAnchor) -> Self {
+        let target = constraintTargetWithConstant(layoutAnchor)
         return to(.lessThanOrEqual, to: target)
     }
     
-}
-
-func ==<LA: LayoutAnchor&NSObject, RA: LayoutAnchor&NSObject>(_ lhs: LA, _ rhs: RA) -> Bool {
-    lhs.isEqual(rhs)
+    func lessThanOrEqualTo(_ layoutAnchor: NSLayoutYAxisAnchor) -> Self {
+        let target = constraintTargetWithConstant(layoutAnchor)
+        return to(.lessThanOrEqual, to: target)
+    }
+    
+    func lessThanOrEqualTo(_ layoutAnchor: NSLayoutDimension) -> Self {
+        let target = constraintTargetWithConstant(layoutAnchor)
+        return to(.lessThanOrEqual, to: target)
+    }
+    
+    private func constraintTargetWithConstant(_ layoutAnchor: NSLayoutXAxisAnchor) -> Anchors.ConstraintTarget {
+        targetFromConstraint(UIView().leadingAnchor.constraint(equalTo: layoutAnchor))
+    }
+    
+    private func constraintTargetWithConstant(_ layoutAnchor: NSLayoutYAxisAnchor) -> Anchors.ConstraintTarget {
+        targetFromConstraint(UIView().topAnchor.constraint(equalTo: layoutAnchor))
+    }
+    
+    private func constraintTargetWithConstant(_ layoutAnchor: NSLayoutDimension) -> Anchors.ConstraintTarget {
+        targetFromConstraint(UIView().widthAnchor.constraint(equalTo: layoutAnchor))
+    }
+    
+    private func targetFromConstraint(_ constraint: NSLayoutConstraint) -> Anchors.ConstraintTarget {
+        if let object = constraint.secondItem as? NSObject {
+            return .init(item: .object(object), attribute: constraint.secondAttribute, constant: .zero)
+        } else {
+            return .init(item: .transparent, attribute: constraint.secondAttribute, constant: .zero)
+        }
+    }
+    
 }
