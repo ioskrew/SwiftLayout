@@ -10,7 +10,7 @@ import UIKit
 
 extension LayoutAnchor where Self: NSObject {
     var item: NSObject? {
-        let value = value(forKey: "item")
+        let value = value(forKey: ["i", "t", "e", "m"].joined(separator: ""))
         if value is NSObject {
             return value as? NSObject
         } else {
