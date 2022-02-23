@@ -82,12 +82,12 @@ extension LayoutDSLTest {
             UILabel().config { view in
                 view.text = "RED"
                 view.accessibilityIdentifier = "red"
-                return view
             }
         }.active().store(&deactivable)
         
-        let red = deactivable.viewForIdentifier("red")
+        let red = deactivable.viewForIdentifier("red") as? UILabel
         XCTAssertEqual(red?.superview, root)
+        XCTAssertEqual(red?.text, "RED")
     }
     
     func testSimpleWithSublayout() {

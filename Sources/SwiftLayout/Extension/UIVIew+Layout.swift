@@ -21,6 +21,11 @@ public extension Layout where Self: UIView {
         ViewLayout(self, sublayout: build())
     }
     
+    func config(_ config: (Self) -> Void) -> some Layout {
+        config(self)
+        return ViewLayout(self, sublayout: EmptyLayout())
+    }
+    
     func identifying(_ identifier: String) -> some Layout {
         let layout = ViewLayout(self, sublayout: EmptyLayout())
         layout.identifier = identifier
