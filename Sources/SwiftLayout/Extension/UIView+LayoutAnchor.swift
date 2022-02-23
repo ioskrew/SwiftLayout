@@ -9,97 +9,23 @@ import Foundation
 import UIKit
 
 extension LayoutAnchor where Self: NSObject {
-    var item: NSObject? {
-        let value = value(forKey: ["i", "t", "e", "m"].joined(separator: ""))
-        if value is NSObject {
-            return value as? NSObject
+    private func targetFromConstraint(_ constraint: NSLayoutConstraint, constant: CGFloat) -> Anchors.ConstraintTarget? {
+        if let object = constraint.secondItem as? NSObject {
+            return .init(item: .object(object), attribute: constraint.secondAttribute, constant: constant)
         } else {
-            return nil
+            return .init(item: .transparent, attribute: constraint.secondAttribute, constant: constant)
         }
     }
-    var view: UIView? {
-        if item is UIView {
-            return item as? UIView
-        } else {
-            return nil
-        }
-    }
-    
-    var layoutGuide: UILayoutGuide? {
-        if item is UILayoutGuide {
-            return item as? UILayoutGuide
-        } else {
-            return nil
-        }
-    }
-    
     func constraintTargetWithConstant(_ constant: CGFloat) -> Anchors.ConstraintTarget? {
-        if let view = view {
-            return Anchors.ConstraintTarget(item: view, attribute: view.attributeFromAnchor(self), constant: constant)
-        } else if let layoutGuide = layoutGuide {
-            return Anchors.ConstraintTarget(item: layoutGuide, attribute: layoutGuide.attributeFromAnchor(self), constant: constant)
+        let dummy = UIView()
+        if let x = self as? NSLayoutXAxisAnchor {
+            return targetFromConstraint(dummy.leadingAnchor.constraint(equalTo: x, constant: constant), constant: constant)
+        } else if let y = self as? NSLayoutYAxisAnchor {
+            return targetFromConstraint(dummy.topAnchor.constraint(equalTo: y, constant: constant), constant: constant)
+        } else if let size = self as? NSLayoutDimension {
+            return targetFromConstraint(dummy.widthAnchor.constraint(equalTo: size, constant: constant), constant: constant)
         } else {
             return nil
-        }
-    }
-}
-
-extension UIView {
-    func attributeFromAnchor<LA: LayoutAnchor&NSObject>(_ anchor: LA) -> NSLayoutConstraint.Attribute {
-        if self.topAnchor == anchor {
-            return .top
-        } else if self.bottomAnchor == anchor {
-            return .bottom
-        } else if self.leadingAnchor == anchor {
-            return .leading
-        } else if self.trailingAnchor == anchor {
-            return .trailing
-        } else if self.leftAnchor == anchor {
-            return .left
-        } else if self.rightAnchor == anchor {
-            return .right
-        } else if self.centerXAnchor == anchor {
-            return .centerX
-        } else if self.centerYAnchor == anchor {
-            return .centerY
-        } else if self.widthAnchor == anchor {
-            return .width
-        } else if self.heightAnchor == anchor {
-            return .height
-        } else if self.firstBaselineAnchor == anchor {
-            return .firstBaseline
-        } else if self.lastBaselineAnchor == anchor {
-            return .lastBaseline
-        } else {
-            return .notAnAttribute
-        }
-    }
-}
-
-extension UILayoutGuide {
-    func attributeFromAnchor<LA: LayoutAnchor&NSObject>(_ anchor: LA) -> NSLayoutConstraint.Attribute {
-        if self.topAnchor == anchor {
-            return .top
-        } else if self.bottomAnchor == anchor {
-            return .bottom
-        } else if self.leadingAnchor == anchor {
-            return .leading
-        } else if self.trailingAnchor == anchor {
-            return .trailing
-        } else if self.leftAnchor == anchor {
-            return .left
-        } else if self.rightAnchor == anchor {
-            return .right
-        } else if self.centerXAnchor == anchor {
-            return .centerX
-        } else if self.centerYAnchor == anchor {
-            return .centerY
-        } else if self.widthAnchor == anchor {
-            return .width
-        } else if self.heightAnchor == anchor {
-            return .height
-        } else {
-            return .notAnAttribute
         }
     }
 }
