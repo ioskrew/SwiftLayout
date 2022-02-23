@@ -16,8 +16,8 @@ public protocol Layout: CustomDebugStringConvertible {
 }
 
 extension Layout {
-    public func active(_ options: LayoutOptions = []) -> Deactivable {
-        Activator.active(layout: self, options: options)
+    public func active(_ options: LayoutOptions = []) -> AnyDeactivable {
+        AnyDeactivable(Activator.active(layout: self, options: options))
     }
     
     public var anyLayout: AnyLayout {

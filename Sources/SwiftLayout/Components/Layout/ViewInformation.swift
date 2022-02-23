@@ -57,7 +57,7 @@ public final class ViewInformation: Hashable {
     }
 }
 
-public struct ViewInformationSet {
+public struct ViewInformationSet: Hashable {
     
     let infos: Set<ViewInformation>
     var rootview: UIView? { infos.first(where: { $0.superview == nil })?.view }
