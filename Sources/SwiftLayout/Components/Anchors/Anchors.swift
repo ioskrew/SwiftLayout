@@ -254,7 +254,7 @@ extension Anchors {
 }
 
 extension Anchors {
-    private struct ConstraintTarget {
+    struct ConstraintTarget {
         init<I>(item: I?, attribute: NSLayoutConstraint.Attribute?, constant: CGFloat) where I: ConstraintableItem {
             self.item = ItemFromView(item).item
             self.attribute = attribute
@@ -329,4 +329,27 @@ extension Anchors {
             }
         }
     }
+}
+
+public extension Anchors {
+    
+    func equalTo<LA: LayoutAnchor&NSObject>(_ layoutAnchor: LA, constant: CGFloat = .zero) -> Self? {
+        guard let target = layoutAnchor.constraintTargetWithConstant(constant) else { return nil }
+        return to(.equal, to: target)
+    }
+    
+    func greaterThanOrEqualTo<LA: LayoutAnchor&NSObject>(_ layoutAnchor: LA, constant: CGFloat = .zero) -> Self? {
+        guard let target = layoutAnchor.constraintTargetWithConstant(constant) else { return nil }
+        return to(.greaterThanOrEqual, to: target)
+    }
+    
+    func lessThanOrEqualTo<LA: LayoutAnchor&NSObject>(_ layoutAnchor: LA, constant: CGFloat = .zero) -> Self? {
+        guard let target = layoutAnchor.constraintTargetWithConstant(constant) else { return nil }
+        return to(.lessThanOrEqual, to: target)
+    }
+    
+}
+
+func ==<LA: LayoutAnchor&NSObject, RA: LayoutAnchor&NSObject>(_ lhs: LA, _ rhs: RA) -> Bool {
+    lhs.isEqual(rhs)
 }
