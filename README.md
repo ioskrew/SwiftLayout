@@ -198,9 +198,11 @@ in this case, **Anchors** cannot have constraint with variable name. so you can 
 ```swift
 root {
   RedLabel().identifiying("red").anchors {
-    Anchors.cap()n  }
+    Anchors.cap()
+  }
   blue.anchors {
-    Anchors.shoe()n    Anchors(.top).equalTo("red", attribute: .bottom)
+    Anchors.shoe()
+    Anchors(.top).equalTo("red", attribute: .bottom)
     Anchors(.height).equalTo("red")
   }
 }
