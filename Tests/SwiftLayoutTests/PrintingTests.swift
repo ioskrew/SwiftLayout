@@ -357,6 +357,12 @@ extension PrintingTests {
         
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
     }
+    
+    func testSample() {
+        let cell = SampleCell(frame: .zero)
+        cell.initViews()
+        print(SwiftLayoutPrinter(cell, tags: [cell: "cell", cell.contentView: "contentView"], options: .automaticIdentifierAssignment))
+    }
 }
 
 extension PrintingTests {
@@ -388,4 +394,29 @@ extension PrintingTests {
             updateLayout()
         }
     }
+}
+
+class SampleCell: UITableViewCell {
+    
+    let firstNameLabel: UILabel = .init()
+    let lastNameLabel: UILabel = .init()
+    
+    func initViews() {
+        contentView.addSubview(firstNameLabel)
+        contentView.addSubview(lastNameLabel)
+        
+        firstNameLabel.translatesAutoresizingMaskIntoConstraints = false
+        lastNameLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            firstNameLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
+            firstNameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            firstNameLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            lastNameLabel.leadingAnchor.constraint(equalTo: firstNameLabel.trailingAnchor),
+            lastNameLabel.trailingAnchor.constraint(equalTo: firstNameLabel.trailingAnchor),
+            lastNameLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
+            lastNameLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+        ])
+    }
+    
 }
