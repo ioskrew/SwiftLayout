@@ -19,7 +19,7 @@ enum Activator {
     }
 
     @discardableResult
-    static func update<L: Layout, LB: LayoutBuilding>(layout: L, fromDeactivation deactivation: Deactivation<LB>, options: LayoutOptions) -> Deactivation<LB> {
+    static func update<L: Layout, LB: LayoutBuilding>(layout: L, fromDeactivation deactivation: Deactivation<LB>, options: LayoutOptions) -> (ViewInformationSet, ConstraintsSet) {
         let viewInfos = layout.viewInformations
         let viewInfoSet = ViewInformationSet(infos: viewInfos)
         
@@ -33,6 +33,14 @@ enum Activator {
         
         activate(viewInfos: viewInfos, constrains: constrains)
         
+        return (viewInfoSet, constrains)
+    }
+    
+    @discardableResult
+    static func update<L: Layout, LB: LayoutBuilding>(layout: L, fromDeactivation deactivation: Deactivation<LB>, options: LayoutOptions) -> Deactivation<LB> {
+        
+        let (viewInfoSet, constraints) = update(layout: layout, fromDeactivation: deactivation, options: options)
+        
         deactivation.viewInfos = viewInfoSet
         deactivation.constraints = ConstraintsSet(constraints: constrains)
         
@@ -42,6 +50,14 @@ enum Activator {
         
         return deactivation
     }
+}
+
+extension Activator {
+    
+    public static func permenentActive<L: Layout>(layout: L, options: LayoutOptions = []) {
+        
+    }
+    
 }
 
 private extension Activator {
