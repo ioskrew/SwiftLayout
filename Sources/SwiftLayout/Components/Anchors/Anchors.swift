@@ -26,7 +26,10 @@ public final class Anchors: Constraint {
         self.items = items
     }
     
-    public func constraints(item fromItem: NSObject, toItem: NSObject?, viewInfoSet: ViewInformationSet? = nil) -> [NSLayoutConstraint] {
+    public func constraints(item fromItem: NSObject, toItem: NSObject?) -> [NSLayoutConstraint] {
+        constraints(item: fromItem, toItem: toItem, viewInfoSet: nil)
+    }
+    public func constraints(item fromItem: NSObject, toItem: NSObject?, viewInfoSet: ViewInformationSet?) -> [NSLayoutConstraint] {
         var constraints: [NSLayoutConstraint] = []
         for item in items {
             let from = fromItem

@@ -49,11 +49,11 @@ extension LayoutBuildingTest {
             root {
                 if flag {
                     child.anchors {
-                        Anchors.boundary
+                        Anchors.allSides()
                     }
                 } else {
                     friend.anchors {
-                        Anchors.boundary
+                        Anchors.allSides()
                     }
                 }
             }

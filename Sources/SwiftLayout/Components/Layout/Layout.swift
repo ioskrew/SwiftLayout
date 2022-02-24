@@ -20,6 +20,10 @@ extension Layout {
         AnyDeactivable(Activator.active(layout: self, options: options))
     }
     
+    public func finalActive(_ options: LayoutOptions = []) {
+        Activator.finalActive(layout: self, options: options)
+    }
+    
     public var anyLayout: AnyLayout {
         AnyLayout(self)
     }
