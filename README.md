@@ -77,7 +77,7 @@ contentView {
 
 ```swift
 contentView {
-	firstNameLabel
+  firstNameLabel
 }
 ```
 
@@ -158,7 +158,7 @@ contentView.addSubview(firstNameLabel)
 (lldb) por SwiftLayoutPrinter(contentView)
 ...
 contentView {
-		firstNameLabel
+  firstNameLabel
 }
 ...
 ```
