@@ -176,14 +176,14 @@ extension PrintingTests {
         let root = UIView().viewTag.root
         deactivable = root {
             UILabel().viewTag.label.anchors {
-                Anchors.boundary
+                Anchors.allSides()
             }
         }.active()
         
         let expect = """
         root {
             label.anchors {
-                Anchors(.top, .leading, .trailing, .bottom)
+                Anchors(.leading, .trailing, .top, .bottom)
             }
         }
         """.tabbed
@@ -200,10 +200,10 @@ extension PrintingTests {
         
         deactivable = root {
             child.anchors{
-                Anchors.boundary
+                Anchors.allSides()
             }.sublayout {
                 grandchild.anchors {
-                    Anchors.boundary
+                    Anchors.allSides()
                 }
             }
         }.active()
@@ -211,10 +211,10 @@ extension PrintingTests {
         let expect = """
         root {
             child.anchors {
-                Anchors(.top, .leading, .trailing, .bottom)
+                Anchors(.leading, .trailing, .top, .bottom)
             }.sublayout {
                 grandchild.anchors {
-                    Anchors(.top, .leading, .trailing, .bottom)
+                    Anchors(.leading, .trailing, .top, .bottom)
                 }
             }
         }
@@ -302,7 +302,7 @@ extension PrintingTests {
         
         deactivable = root {
             child.anchors {
-                Anchors.cap
+                Anchors.cap()
             }
             friend.anchors {
                 Anchors(.leading, .bottom)
@@ -314,7 +314,7 @@ extension PrintingTests {
         let expect = """
         root {
             child.anchors {
-                Anchors(.top, .leading, .trailing)
+                Anchors(.leading, .trailing, .top)
             }
             friend.anchors {
                 Anchors(.leading, .bottom)

@@ -135,13 +135,13 @@ extension LayoutDSLTest {
     func testSimpleBoundary() {
         root {
             red.anchors {
-                Anchors.boundary
+                Anchors.allSides()
             }
         }.active().store(&deactivable)
         
         XCTAssertEqual(red.superview, root)
         XCTAssertEqual(root.constraints.count, 4)
-        XCTAssertEqual(Weakens(root.findConstraints(items: (red, root))), Weakens(Anchors.boundary.constraints(item: red, toItem: root)))
+        XCTAssertEqual(Weakens(root.findConstraints(items: (red, root))), Weakens(Anchors.allSides().constraints(item: red, toItem: root)))
     }
     
     func testDontTouchRootViewByDeactive() {
@@ -151,7 +151,7 @@ extension LayoutDSLTest {
         
         root {
             red.anchors {
-                Anchors.boundary
+                Anchors.allSides()
             }
         }.active().store(&deactivable)
         

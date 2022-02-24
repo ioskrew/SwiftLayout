@@ -1,12 +1,6 @@
 import UIKit
 import SwiftLayout
 
-extension Anchors {
-    static var boundary: Anchors { .init(.top, .leading, .trailing, .bottom) }
-    static var cap: Anchors { .init(.top, .leading, .trailing) }
-    static var shoe: Anchors { .init(.leading, .trailing, .bottom) }
-}
-
 extension UIView {
     func findConstraints(items: (NSObject?, NSObject?), attributes: (NSLayoutConstraint.Attribute, NSLayoutConstraint.Attribute)? = nil, relation: NSLayoutConstraint.Relation = .equal, constant: CGFloat = .zero, multiplier: CGFloat = 1.0) -> [NSLayoutConstraint] {
         var constraints = self.constraints.filter { constraint in

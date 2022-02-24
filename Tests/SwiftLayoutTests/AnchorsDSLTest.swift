@@ -52,7 +52,7 @@ extension AnchorsDSLTest {
     func testLayoutAfterAnchors() {
         deactivable = root {
             red.anchors {
-                Anchors.boundary
+                Anchors.allSides()
             }.sublayout {
                 blue.anchors {
                     Anchors(.centerX, .centerY)
@@ -76,18 +76,18 @@ extension AnchorsDSLTest {
         deactivable = root {
             red.anchors {
                 if toggle {
-                    Anchors.cap
+                    Anchors.cap()
                     Anchors(.bottom).equalTo(blue, attribute: .top)
                 } else {
-                    Anchors.shoe
+                    Anchors.shoe()
                     Anchors(.top).equalTo(blue, attribute: .bottom)
                 }
             }
             blue.anchors {
                 if toggle {
-                    Anchors.shoe
+                    Anchors.shoe()
                 } else {
-                    Anchors.cap
+                    Anchors.cap()
                 }
             }
         }.active()
@@ -113,18 +113,18 @@ extension AnchorsDSLTest {
         deactivable = root {
             red.anchors {
                 if toggle {
-                    Anchors.cap
+                    Anchors.cap()
                     Anchors(.bottom).equalTo(blue, attribute: .top)
                 } else {
-                    Anchors.shoe
+                    Anchors.shoe()
                     Anchors(.top).equalTo(blue, attribute: .bottom)
                 }
             }
             blue.anchors {
                 if toggle {
-                    Anchors.shoe
+                    Anchors.shoe()
                 } else {
-                    Anchors.cap
+                    Anchors.cap()
                 }
             }
         }.active()
@@ -202,10 +202,10 @@ extension AnchorsDSLTest {
     func testAnchorsFromSeperately() {
         deactivable = root {
             red.anchors {
-                Anchors.cap
+                Anchors.cap()
             }
             blue.anchors {
-                Anchors.shoe
+                Anchors.shoe()
             }
             red.anchors {
                 Anchors(.bottom).equalTo(blue, attribute: .top)
@@ -229,7 +229,7 @@ extension AnchorsDSLTest {
     
     func testAnchorsFromLayoutGuide() {
         deactivable = root.anchors {
-            Anchors.boundary.equalTo(red.safeAreaLayoutGuide)
+            Anchors.allSides(red.safeAreaLayoutGuide)
         }.sublayout {
             red
         }.active()
@@ -244,7 +244,7 @@ extension AnchorsDSLTest {
     
     func testAnchorsFromIdentifier() {
         deactivable = root.anchors {
-            Anchors.boundary.equalTo("label")
+            Anchors.allSides("label")
         }.sublayout {
             UILabel().identifying("label")
         }.active()

@@ -69,7 +69,7 @@ extension ImplementationTest {
             var layout: some Layout {
                 self {
                     DeinitView().anchors {
-                        Anchors.boundary
+                        Anchors.allSides()
                     }.sublayout {
                         DeinitView()
                     }
@@ -93,10 +93,10 @@ extension ImplementationTest {
     func testLayoutFlattening() {
         let layout = root {
             child.anchors {
-                Anchors.boundary
+                Anchors.allSides()
             }.sublayout {
                 friend.anchors {
-                    Anchors.boundary
+                    Anchors.allSides()
                 }
             }
         }
@@ -115,19 +115,19 @@ extension ImplementationTest {
         }
 
         let f3 = root {
-            child.anchors { Anchors.boundary }
+            child.anchors { Anchors.allSides() }
         }
 
         let f4 = root {
-            child.anchors { Anchors.boundary }
+            child.anchors { Anchors.allSides() }
         }
 
         let f5 = root {
-            child.anchors { Anchors.cap }
+            child.anchors { Anchors.cap() }
         }
 
         let f6 = root {
-            friend.anchors { Anchors.boundary }
+            friend.anchors { Anchors.allSides() }
         }
 
         XCTAssertEqual(f1.viewInformations, f2.viewInformations)
@@ -198,11 +198,11 @@ extension ImplementationTest {
     func testIdentifier() {
         let deactivation = root {
             UILabel().identifying("label").anchors {
-                Anchors.cap
+                Anchors.cap()
             }
             UIView().identifying("secondView").anchors {
                 Anchors(.top).equalTo("label", attribute: .bottom)
-                Anchors.shoe
+                Anchors.shoe()
             }
         }.active()
         
@@ -214,10 +214,10 @@ extension ImplementationTest {
         XCTAssertEqual(secondView?.accessibilityIdentifier, "secondView")
         
         let currents = deactivation.constraints?.constraints ?? []
-        let labelConstraints = Set(Anchors.cap.constraints(item: label!, toItem: root).weakens)
+        let labelConstraints = Set(Anchors.cap().constraints(item: label!, toItem: root).weakens)
         XCTAssertEqual(currents.intersection(labelConstraints), labelConstraints)
         
-        let secondViewConstraints = Set(Anchors.cap.constraints(item: label!, toItem: root).weakens)
+        let secondViewConstraints = Set(Anchors.cap().constraints(item: label!, toItem: root).weakens)
         XCTAssertEqual(currents.intersection(secondViewConstraints), secondViewConstraints)
         
         let constraintsBetweebViews = Set(Anchors(.top).equalTo(label!, attribute: .bottom).constraints(item: secondView!, toItem: label).weakens)
@@ -340,34 +340,34 @@ extension ImplementationTest {
                     case .topLessThanOrEqualToSuperWithConstant:
                         Anchors(.top).lessThanOrEqualTo(root, constant: 78.0)
                     default:
-                        Anchors.cap
+                        Anchors.cap()
                     }
                 }
                 friend.anchors {
                     switch test {
                     case .topOfFriendEqualToBottomOfChild:
                         Anchors(.top).equalTo(child, attribute: .bottom)
-                        Anchors.shoe
+                        Anchors.shoe()
                     case .widthOfFriendEqualToNameless:
                         Anchors(.width)
-                        Anchors.shoe
+                        Anchors.shoe()
                     case .widthOfFriendEqualToSuper:
                         Anchors(.width).equalTo(root)
-                        Anchors.shoe
+                        Anchors.shoe()
                     case .widthOfFriendEqualToChild:
                         Anchors(.width).equalTo(child)
-                        Anchors.shoe
+                        Anchors.shoe()
                     case .widthOfFriendEqualToHeightOfChild:
                         Anchors(.width).equalTo(child, attribute: .height)
-                        Anchors.shoe
+                        Anchors.shoe()
                     case .widthOfFriendEqualToConstant:
                         Anchors(.width).equalTo(constant: 78.0)
-                        Anchors.shoe
+                        Anchors.shoe()
                     case .widthOfFriendEqualToChildWithConstant:
                         Anchors(.width).equalTo(child, constant: 78.0)
-                        Anchors.shoe
+                        Anchors.shoe()
                     default:
-                        Anchors.shoe
+                        Anchors.shoe()
                     }
                 }
             }
