@@ -23,7 +23,7 @@ public struct IdentifierUpdater {
     
     public init(_ object: AnyObject) {
         self.object = object
-        self.identifieds = Mirror(reflecting: object).children.compactMap(Identified.init)
+        self.identifieds = MirrorDigger().dig(Mirror(reflecting: object))
     }
     
     public func update() {
@@ -48,4 +48,12 @@ public struct IdentifierUpdater {
         }
     }
     
+    struct MirrorDigger {
+        func dig(_ mirror: Mirror?) -> [Identified] {
+            guard let mirror = mirror else {
+                return []
+            }
+            return mirror.children.compactMap(Identified.init) + dig(mirror.superclassMirror)
+        }
+    }
 }

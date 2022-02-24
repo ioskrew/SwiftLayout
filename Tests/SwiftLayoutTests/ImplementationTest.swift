@@ -154,6 +154,14 @@ extension ImplementationTest {
         
         XCTAssertEqual(view.contentView.accessibilityIdentifier, "contentView")
         XCTAssertEqual(view.nameLabel.accessibilityIdentifier, "nameLabel")
+        
+        class Test2View: TestView {}
+        
+        let view2 = Test2View()
+        IdentifierUpdater(view2).update()
+        
+        XCTAssertEqual(view2.contentView.accessibilityIdentifier, "contentView")
+        XCTAssertEqual(view2.nameLabel.accessibilityIdentifier, "nameLabel")
     }
 }
 
