@@ -89,12 +89,12 @@ private extension Activator {
     }
     
     static func updateIdentifiers(rootObject: AnyObject? = nil, viewInfoSet: ViewInformationSet) {
-        guard let rootobject: UIView = rootObject as? UIView ?? viewInfoSet.rootview else {
+        guard let rootObject = rootObject ?? viewInfoSet.rootview else {
             assertionFailure("Could not find root view for LayoutOptions.accessibilityIdentifiers. Please use LayoutBuilding.")
             return
         }
         
-        IdentifierUpdater(rootobject).update()
+        IdentifierUpdater(rootObject).update()
     }
     
     static func animate(viewInfos: [ViewInformation]) {
