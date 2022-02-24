@@ -154,14 +154,14 @@ extension Anchors {
 
 root {
   red.anchors {
-    Anchors.boundary // top and leading and trailing and bottom constraints of red has equal relation to same attributes of root view.
+    Anchors.allSides() // top and leading and trailing and bottom constraints of red has equal relation to same attributes of root view.
   }
 }
 
 // or be able root view to red view relations like below
 
 root.anchors {
-  Anchors.boundary.equalTo(red)
+  Anchors.allSides().equalTo(red)
 }.sublayout { // subviews should be in LayoutBuilder in subviews function after anchors.
   red
 }
@@ -198,11 +198,9 @@ in this case, **Anchors** cannot have constraint with variable name. so you can 
 ```swift
 root {
   RedLabel().identifiying("red").anchors {
-    Anchors.cap
-  }
+    Anchors.cap()n  }
   blue.anchors {
-    Anchors.shoe
-    Anchors(.top).equalTo("red", attribute: .bottom)
+    Anchors.shoe()n    Anchors(.top).equalTo("red", attribute: .bottom)
     Anchors(.height).equalTo("red")
   }
 }
@@ -238,7 +236,7 @@ root {
 ```swift
 root {
   red.anchors {
-    Anchors.boundary
+    Anchors.allSides()
   }
 }
 ```
@@ -258,7 +256,7 @@ final class ViewController: UIViewController {
     super.viewDidLoad()
     deactivable = view { // view is that of ViewController
       red.anchors {
-        Anchors.boundary // boundary is custom property in samples.
+        Anchors.allSides() // boundary is custom property in samples.
       }     
     }.active()
   }
@@ -301,7 +299,7 @@ final class ViewController: UIViewController, LayoutBuilding {
   ```swift
   root {
     red.anchors {
-      Anchors.boundary
+      Anchors.allSides()
     }.animationDisable()
   }
   ```
@@ -332,7 +330,7 @@ struct ViewController_Previews: PreviewProvider {
 ```swift
 root {
   red.anchors {
-    Anchors.boundary.eqaulTo(root.safeAreaLayoutGuide)
+    Anchors.allSides().eqaulTo(root.safeAreaLayoutGuide)
   }
 }
 ```

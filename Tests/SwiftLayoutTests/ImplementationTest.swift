@@ -492,3 +492,33 @@ extension ImplementationTest {
     }
     
 }
+
+extension ImplementationTest {
+    func testFinalActive() {
+        let root = UIView().viewTag.root
+        let cap = UIView().viewTag.cap
+        let shoe = UIView().viewTag.shoe
+        
+        root {
+            cap.anchors {
+                Anchors.cap()
+            }
+            shoe.anchors {
+                Anchors.shoe()
+            }
+        }.finalActive()
+        
+        let expect = """
+        root {
+            cap.anchors {
+                Anchors(.leading, .trailing, .top)
+            }
+            shoe.anchors {
+                Anchors(.leading, .trailing, .bottom)
+            }
+        }
+        """.tabbed
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
+    }
+}
