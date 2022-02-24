@@ -10,7 +10,8 @@
 
 # Contents
 
-[TOC]
+* TOC
+{:toc}
 
 # requirements
 
