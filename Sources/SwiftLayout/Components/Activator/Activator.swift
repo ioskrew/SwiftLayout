@@ -19,7 +19,7 @@ enum Activator {
     }
 
     @discardableResult
-    static func update<L: Layout, LB: LayoutBuilding>(layout: L, fromDeactivation deactivation: Deactivation<LB>, options: LayoutOptions) -> (ViewInformationSet, ConstraintsSet) {
+    private static func updateAndReturnInfos<L: Layout, LB: LayoutBuilding>(layout: L, fromDeactivation deactivation: Deactivation<LB>, options: LayoutOptions) -> ([ViewInformation], [NSLayoutConstraint]) {
         let viewInfos = layout.viewInformations
         let viewInfoSet = ViewInformationSet(infos: viewInfos)
         
@@ -29,20 +29,20 @@ enum Activator {
             updateIdentifiers(fromBuilding: deactivation.building, viewInfoSet: viewInfoSet)
         }
         
-        let constrains = layout.viewConstraints(viewInfoSet)
+        let constraints = layout.viewConstraints(viewInfoSet)
         
-        activate(viewInfos: viewInfos, constrains: constrains)
+        activate(viewInfos: viewInfos, constraints: constraints)
         
-        return (viewInfoSet, constrains)
+        return (viewInfos, constraints)
     }
     
     @discardableResult
     static func update<L: Layout, LB: LayoutBuilding>(layout: L, fromDeactivation deactivation: Deactivation<LB>, options: LayoutOptions) -> Deactivation<LB> {
         
-        let (viewInfoSet, constraints) = update(layout: layout, fromDeactivation: deactivation, options: options)
+        let (viewInfos, constraints) = updateAndReturnInfos(layout: layout, fromDeactivation: deactivation, options: options)
         
-        deactivation.viewInfos = viewInfoSet
-        deactivation.constraints = ConstraintsSet(constraints: constrains)
+        deactivation.viewInfos = ViewInformationSet(infos: viewInfos)
+        deactivation.constraints = ConstraintsSet(constraints: constraints)
         
         if options.contains(.usingAnimation) {
             animate(viewInfos: viewInfos)
@@ -53,11 +53,18 @@ enum Activator {
 }
 
 extension Activator {
-    
-    public static func permenentActive<L: Layout>(layout: L, options: LayoutOptions = []) {
+    public static func finalActive<L: Layout>(layout: L, options: LayoutOptions = []) {
+        let viewInfos = layout.viewInformations
+        let viewInfoSet = ViewInformationSet(infos: viewInfos)
         
+        if options.contains(.automaticIdentifierAssignment) {
+            updateIdentifiers(viewInfoSet: viewInfoSet)
+        }
+        
+        let constraints = layout.viewConstraints(viewInfoSet)
+        
+        activate(viewInfos: viewInfos, constraints: constraints)
     }
-    
 }
 
 private extension Activator {
@@ -69,16 +76,20 @@ private extension Activator {
         }
     }
     
-    static func activate(viewInfos: [ViewInformation], constrains: [NSLayoutConstraint]) {
+    static func activate(viewInfos: [ViewInformation], constraints: [NSLayoutConstraint]) {
         for viewInfo in viewInfos {
             viewInfo.addSuperview()
         }
         
-        NSLayoutConstraint.activate(constrains)
+        NSLayoutConstraint.activate(constraints)
     }
     
     static func updateIdentifiers<LB: LayoutBuilding>(fromBuilding building: LB?, viewInfoSet: ViewInformationSet) {
-        guard let rootobject: AnyObject = building ?? viewInfoSet.rootview else {
+        updateIdentifiers(rootObject: building, viewInfoSet: viewInfoSet)
+    }
+    
+    static func updateIdentifiers(rootObject: AnyObject? = nil, viewInfoSet: ViewInformationSet) {
+        guard let rootobject: UIView = rootObject as? UIView ?? viewInfoSet.rootview else {
             assertionFailure("Could not find root view for LayoutOptions.accessibilityIdentifiers. Please use LayoutBuilding.")
             return
         }
