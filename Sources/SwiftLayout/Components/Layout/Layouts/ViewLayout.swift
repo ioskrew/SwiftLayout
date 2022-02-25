@@ -40,7 +40,6 @@ public final class ViewLayout<V: UIView, SubLayout: Layout>: Layout {
     public func subviews<L: Layout>(@LayoutBuilder _ build: () -> L) -> some Layout {
         sublayout(build)
     }
-   
 }
 
 public extension ViewLayout {

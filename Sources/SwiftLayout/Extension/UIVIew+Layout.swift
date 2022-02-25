@@ -25,10 +25,4 @@ public extension Layout where Self: UIView {
         config(self)
         return ViewLayout(self, sublayout: EmptyLayout())
     }
-    
-    func identifying(_ identifier: String) -> some Layout {
-        let layout = ViewLayout(self, sublayout: EmptyLayout())
-        layout.identifier = identifier
-        return layout
-    }
 }

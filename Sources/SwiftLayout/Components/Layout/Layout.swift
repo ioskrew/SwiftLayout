@@ -39,6 +39,13 @@ extension Layout {
     public func subviews<L: Layout>(@LayoutBuilder _ build: () -> L) -> some Layout {
         sublayout(build)
     }
+    
+    public func identifying(_ accessibilityIdentifier: String) -> some Layout {
+        traverse(nil, continueAfterViewLayout: false) { superview, subview, identifier, animationDisabled in
+            subview.accessibilityIdentifier = accessibilityIdentifier
+        }
+        return self
+    }
 }
 
 extension Layout {
