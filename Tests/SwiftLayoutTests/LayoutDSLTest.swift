@@ -301,4 +301,38 @@ extension LayoutDSLTest {
         
         XCTAssertEqual(root.subviews.count, 2)
     }
+    
+    func testFeatureCompose() {
+        root {
+            UILabel().config { label in
+                label.text = "HELLO"
+            }.identifying("label").anchors {
+                Anchors.cap()
+            }.sublayout {
+                UIView().identifying("UIView").anchors {
+                    Anchors.allSides()
+                }
+            }
+            UIButton().identifying("button").anchors {
+                Anchors.shoe()
+            }
+        }.active().store(&deactivable)
+        
+        let expect = """
+        root {
+            label.anchors {
+                Anchors(.leading, .trailing, .top)
+            }.sublayout {
+                UIView.anchors {
+                    Anchors(.leading, .trailing, .top, .bottom)
+                }
+            }
+            button.anchors {
+                Anchors(.leading, .trailing, .bottom)
+            }
+        }
+        """.tabbed
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
+    }
 }
