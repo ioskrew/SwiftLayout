@@ -331,7 +331,7 @@ extension LayoutDSLTest {
                 Anchors(.leading, .trailing, .bottom)
             }
         }
-        """
+        """.tabbed
         
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
     }
