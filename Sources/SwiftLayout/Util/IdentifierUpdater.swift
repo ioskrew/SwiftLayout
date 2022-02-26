@@ -53,7 +53,9 @@ public struct IdentifierUpdater {
             guard let mirror = mirror else {
                 return []
             }
-            return mirror.children.compactMap(Identified.init) + dig(mirror.superclassMirror)
+            return mirror.children.compactMap(Identified.init).flatMap({ identified in
+                [identified] + dig(Mirror(reflecting: identified.view))
+            }) + dig(mirror.superclassMirror)
         }
     }
 }
