@@ -3,7 +3,7 @@ import UIKit
 import SwiftLayout
 
 final class LayoutDSLTest: XCTestCase {
-        
+    
     var root: UIView = UIView().viewTag.root
     var child: UIView = UIView().viewTag.child
     var button: UIButton = UIButton().viewTag.button
@@ -164,7 +164,7 @@ extension LayoutDSLTest {
     
     func testLayoutIfWithTrueFlag() {
         let flag = true
-
+        
         root {
             red {
                 button
@@ -185,7 +185,7 @@ extension LayoutDSLTest {
     
     func testLayoutIfWithFalseFlag() {
         let flag = false
-
+        
         root {
             red {
                 button
@@ -207,7 +207,7 @@ extension LayoutDSLTest {
     
     func testLayoutEitherWithTrueFlag() {
         let flag = true
-
+        
         root {
             red {
                 button
@@ -231,7 +231,7 @@ extension LayoutDSLTest {
     
     func testLayoutEitherWithFalseFlag() {
         let flag = false
-
+        
         root {
             red {
                 button
@@ -257,7 +257,7 @@ extension LayoutDSLTest {
     func testLayoutWithOptionalViews() {
         let optionalView: UIView? = UIView().viewTag.optionalView
         let nilView: UIView? = nil
-
+        
         root {
             red {
                 button
@@ -342,13 +342,26 @@ extension LayoutDSLTest {
 extension LayoutDSLTest {
     
     class Child: UIView, LayoutBuilding {
+        
+        var showName: Bool = false {
+            didSet {
+                updateLayout()
+            }
+        }
         lazy var button = UIButton()
+        lazy var name = UILabel()
         
         var deactivable: Deactivable?
         var layout: some Layout {
             self {
-                button.anchors {
-                    Anchors(.centerX, .centerY)
+                if showName {
+                    name.anchors {
+                        Anchors(.centerX, .centerY)
+                    }
+                } else {
+                    button.anchors {
+                        Anchors(.centerX, .centerY)
+                    }
                 }
             }
         }
@@ -404,29 +417,55 @@ extension LayoutDSLTest {
     
     
     func testLayoutBuildingInRelation() {
-       
+        
         let first = First(multiplier: 0.75)
         
-        let printer = SwiftLayoutPrinter(first,
-                                         tags: [first: "first"],
-                                         options: .automaticIdentifierAssignment)
-        let expect = """
-        first {
-            label.anchors {
-                Anchors(.leading, .trailing, .top)
-                Anchors(.height).setMultiplier(0.75)
-            }
-            child.anchors {
-                Anchors(.top).equalTo(label, attribute: .bottom)
-                Anchors(.leading, .trailing, .bottom)
-            }.sublayout {
-                button.anchors {
-                    Anchors(.centerX, .centerY)
+        context("check multiplier setting") {
+            
+            let printer = SwiftLayoutPrinter(first,
+                                             tags: [first: "first"],
+                                             options: .automaticIdentifierAssignment)
+            let expect = """
+            first {
+                label.anchors {
+                    Anchors(.leading, .trailing, .top)
+                    Anchors(.height).setMultiplier(0.75)
+                }
+                child.anchors {
+                    Anchors(.top).equalTo(label, attribute: .bottom)
+                    Anchors(.leading, .trailing, .bottom)
+                }.sublayout {
+                    button.anchors {
+                        Anchors(.centerX, .centerY)
+                    }
                 }
             }
+            """.tabbed
+            
+            XCTAssertEqual(printer.print(), expect)
         }
-        """.tabbed
         
-        XCTAssertEqual(printer.print(), expect)
+        context("child shoe name label") {
+            first.child.showName.toggle()
+            let printer = SwiftLayoutPrinter(first, tags: [first: "first"], options: .automaticIdentifierAssignment)
+            let expect = """
+            first {
+                label.anchors {
+                    Anchors(.leading, .trailing, .top)
+                    Anchors(.height).setMultiplier(0.75)
+                }
+                child.anchors {
+                    Anchors(.top).equalTo(label, attribute: .bottom)
+                    Anchors(.leading, .trailing, .bottom)
+                }.sublayout {
+                    name.anchors {
+                        Anchors(.centerX, .centerY)
+                    }
+                }
+            }
+            """.tabbed
+            
+            XCTAssertEqual(printer.print(), expect)
+        }
     }
 }
