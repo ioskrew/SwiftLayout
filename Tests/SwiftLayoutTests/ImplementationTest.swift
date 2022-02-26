@@ -519,10 +519,10 @@ extension ImplementationTest {
         let expect = """
         root {
             cap.anchors {
-                Anchors(.leading, .trailing, .top)
+                Anchors(.top, .leading, .trailing)
             }
             shoe.anchors {
-                Anchors(.leading, .trailing, .bottom)
+                Anchors(.bottom, .leading, .trailing)
             }
         }
         """.tabbed

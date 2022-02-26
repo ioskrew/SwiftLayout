@@ -55,9 +55,11 @@ extension Activator {
             updateIdentifiers(viewInfoSet: viewInfoSet)
         }
         
+        updateViews(viewInfos: viewInfos)
+                
         let constraints = layout.viewConstraints(viewInfoSet)
         
-        activate(viewInfos: viewInfos, constraints: constraints)
+        updateConstraints(constraints: constraints)
     }
 }
 
@@ -83,6 +85,18 @@ private extension Activator {
         deactivation.viewInfos = ViewInformationSet(infos: viewInfos)
     }
     
+    static func updateViews(viewInfos: [ViewInformation]) {
+        let newInfos = viewInfos
+        
+        // add new views
+        for viewInfo in newInfos {
+            if viewInfo.superview != nil {
+                viewInfo.view?.translatesAutoresizingMaskIntoConstraints = false
+            }
+            viewInfo.addSuperview()
+        }
+    }
+    
     static func updateConstraints<LB: LayoutBuilding>(deactivation: Deactivation<LB>, constraints: [NSLayoutConstraint]) {
         let news = Set(constraints.weakens)
         let olds = Set(deactivation.constraints)
@@ -92,17 +106,9 @@ private extension Activator {
         deactivation.constraints = news
     }
     
-    static func activate(viewInfos: [ViewInformation], constraints: [NSLayoutConstraint]) {
-        for viewInfo in viewInfos {
-            viewInfo.addSuperview()
-        }
-       
-        var weakens: [WeakReference<NSLayoutConstraint>] = []
-        for weakConstraint in constraints.weakens where !weakens.contains(weakConstraint) {
-            weakens.append(weakConstraint)
-        }
-        
-        NSLayoutConstraint.activate(weakens.compactMap(\.origin))
+    static func updateConstraints(constraints: [NSLayoutConstraint]) {
+        let news = Set(constraints.weakens)
+        NSLayoutConstraint.activate(news.sorted().compactMap(\.origin))
     }
     
     static func updateIdentifiers<LB: LayoutBuilding>(fromBuilding building: LB?, viewInfoSet: ViewInformationSet) {

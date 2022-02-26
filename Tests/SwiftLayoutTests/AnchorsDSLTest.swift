@@ -262,11 +262,11 @@ extension AnchorsDSLTest {
 
 extension AnchorsDSLTest {
     func testAnchorsOfDimensionToItem1() {
-        deactivable = root {
+        root {
             red.anchors {
                 Anchors.allSides()
             }
-        }.active()
+        }.finalActive()
         
         XCTAssertEqual(root.constraints.count, 4)
         
