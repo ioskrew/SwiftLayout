@@ -142,7 +142,8 @@ private extension Activator {
         guard let root = viewInfos.first(where: { $0.superview == nil })?.view else {
             return
         }
-        root.updateConstraints()
+        root.setNeedsLayout()
+        root.layoutIfNeeded()
         let animationViewInfos = viewInfos.filter { view in
             !view.animationDisabled && !view.isNewlyAdded
         }
