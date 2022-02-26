@@ -80,8 +80,13 @@ private extension Activator {
         for viewInfo in viewInfos {
             viewInfo.addSuperview()
         }
+       
+        var weakens: [WeakReference<NSLayoutConstraint>] = []
+        for weakConstraint in constraints.weakens where !weakens.contains(weakConstraint) {
+            weakens.append(weakConstraint)
+        }
         
-        NSLayoutConstraint.activate(constraints)
+        NSLayoutConstraint.activate(weakens.compactMap(\.origin))
     }
     
     static func updateIdentifiers<LB: LayoutBuilding>(fromBuilding building: LB?, viewInfoSet: ViewInformationSet) {
