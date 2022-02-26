@@ -60,6 +60,7 @@ extension Layout {
     public func viewConstraints(_ viewInfoSet: ViewInformationSet) -> [NSLayoutConstraint] {
         var layoutConstraints: [NSLayoutConstraint] = []
         traverse(nil, viewInfoSet: viewInfoSet) { superview, subview, constraints, viewInfoSet in
+            if constraints.isEmpty { return }
             layoutConstraints.append(contentsOf: constraints.constraints(item: subview, toItem: superview, viewInfoSet: viewInfoSet))
         }
         return layoutConstraints
