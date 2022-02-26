@@ -44,7 +44,7 @@ public final class ViewInformation: Hashable {
     }
     
     func removeFromSuperview() {
-        guard superview != nil else { return }
+        guard superview == view?.superview else { return }
         view?.removeFromSuperview()
     }
     
