@@ -393,10 +393,26 @@ extension LayoutDSLTest {
         
         let first = First()
         
+        let printer = SwiftLayoutPrinter(first,
+                                         tags: [first: "first", first.child.button: "child.button"],
+                                         options: .automaticIdentifierAssignment)
         let expect = """
-        
+        first {
+            label.anchors {
+                Anchors(.leading, .trailing, .top)
+                Anchors(.height).equalTo(first).setMultiplier(0.7)
+            }
+            child.anchors {
+                Anchors(.top).equalTo(label, attribute: .bottom)
+                Anchors(.leading, .trailing, .bottom)
+            }.sublayout {
+                child.button.anchors {
+                    Anchors(.centerX, .centerY)
+                }
+            }
+        }
         """.tabbed
         
-        XCTAssertEqual(SwiftLayoutPrinter(first, tags: [first: "first", first.child.button: "child.button"], options: .automaticIdentifierAssignment).print(), expect)
+        XCTAssertEqual(printer.print(), expect)
     }
 }

@@ -132,6 +132,7 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
         secondAttribute = constraint.secondAttribute.description
         relation = constraint.relation.description
         constant = constraint.constant.description
+        multiplier = constraint.multiplier.description
     }
     
     let superTag: String
@@ -142,6 +143,7 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
     let secondAttribute: String
     let relation: String
     let constant: String
+    let multiplier: String
     
     var description: String {
         var descriptions: [String] = ["Anchors(\(firstAttributes.map({ "." + $0 }).joined(separator: ", ")))"]
@@ -157,6 +159,9 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
         }
         if !arguments.isEmpty || relation != "equal" {
             descriptions.append("\(relation)To(\(arguments.joined(separator: ", ")))")
+        }
+        if multiplier != "1.0" {
+            descriptions.append("setMultiplier(\(multiplier))")
         }
         return descriptions.joined(separator: ".")
     }
