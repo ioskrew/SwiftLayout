@@ -24,8 +24,10 @@ public final class ViewInformation: Hashable {
     private(set) public weak var superview: UIView?
     private(set) public weak var view: UIView?
     public let identifier: String?
+    
     public let animationDisabled: Bool
     
+    var capturedFrame: CGRect = .zero
     var isNewlyAdded: Bool = false
     
     public func hash(into hasher: inout Hasher) {
@@ -38,12 +40,12 @@ public final class ViewInformation: Hashable {
         guard let view = view else {
             return
         }
-        guard let superview = superview, superview != view.superview else {
-            return
+        if superview == view.superview {
+            isNewlyAdded = false
+        } else {
+            superview?.addSubview(view)
+            isNewlyAdded = true
         }
-        view.translatesAutoresizingMaskIntoConstraints = false
-        superview.addSubview(view)
-        isNewlyAdded = true
     }
     
     func removeFromSuperview() {
@@ -55,9 +57,17 @@ public final class ViewInformation: Hashable {
         .init(superview: superview, view: view, identifier: identifier, animationDisabled: animationDisabled)
     }
     
+    func captureCurrentFrame() {
+        capturedFrame = view?.frame ?? .zero
+    }
+    
     func animation() {
-        guard animationDisabled || isNewlyAdded else { return }
-        view?.layer.removeAllAnimations()
+        guard superview != nil && capturedFrame != .zero && !(animationDisabled && isNewlyAdded) else { return }
+        guard let newFrame = view?.frame else { return }
+        view?.frame = capturedFrame
+        UIView.animate(withDuration: 0.25, delay: 0.0, options: .curveEaseInOut, animations: { [weak view] in
+            view?.frame = newFrame
+        }, completion: nil)
     }
 }
 

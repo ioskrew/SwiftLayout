@@ -74,6 +74,9 @@ private extension Activator {
         
         // add new views
         for viewInfo in newInfos {
+            if viewInfo.superview != nil {
+                viewInfo.view?.translatesAutoresizingMaskIntoConstraints = false
+            }
             viewInfo.addSuperview()
         }
         
@@ -120,11 +123,13 @@ private extension Activator {
             return
         }
         
-        UIView.animate(withDuration: 0.25) {
-            root.layoutIfNeeded()
-            viewInfos.forEach { information in
-                information.animation()
-            }
+        let animationViewInfos = viewInfos.filter { view in
+            !view.animationDisabled && !view.isNewlyAdded
+        }
+        animationViewInfos.forEach({ $0.captureCurrentFrame() })
+        root.updateConstraints()
+        for viewInfo in animationViewInfos {
+            viewInfo.animation()
         }
     }
 }
