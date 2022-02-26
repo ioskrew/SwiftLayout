@@ -17,11 +17,11 @@ enum Activator {
     static func active<L: Layout, LB: LayoutBuilding>(layout: L, options: LayoutOptions = [], building: LB) -> Deactivation<LB>  where LB.LayoutBody == L {
         return update(layout: layout, fromDeactivation: Deactivation(building: building), options: options)
     }
-
+    
     private static func updateDeactivationForNewLayout<L: Layout, LB: LayoutBuilding>(layout: L, fromDeactivation deactivation: Deactivation<LB>, options: LayoutOptions) {
         let viewInfos = layout.viewInformations
         let viewInfoSet = ViewInformationSet(infos: viewInfos)
-
+        
         if options.contains(.automaticIdentifierAssignment) {
             updateIdentifiers(fromBuilding: deactivation.building, viewInfoSet: viewInfoSet)
         }
@@ -30,17 +30,23 @@ enum Activator {
         for viewInfo in viewInfos {
             viewInfo.captureCurrentFrame()
         }
-                
+        
         let constraints = layout.viewConstraints(viewInfoSet)
         
         if options.contains(.usingAnimation) {
             prepareAnimation(viewInfos: viewInfos)
         }
         
-        updateConstraints(deactivation: deactivation, constraints: constraints)
-        
         if options.contains(.usingAnimation) {
-            animation(viewInfos: viewInfos)
+            UIView.animate(withDuration: 0.25, delay: 0.0, options: [.beginFromCurrentState, .curveEaseInOut], animations: {
+                self.updateConstraints(deactivation: deactivation, constraints: constraints)
+                viewInfoSet.rootview?.layoutIfNeeded()
+                for viewInfo in viewInfos {
+                    viewInfo.animation()
+                }
+            }, completion: nil)
+        } else {
+            updateConstraints(deactivation: deactivation, constraints: constraints)
         }
     }
     
@@ -63,7 +69,7 @@ extension Activator {
         }
         
         updateViews(viewInfos: viewInfos)
-                
+        
         let constraints = layout.viewConstraints(viewInfoSet)
         
         updateConstraints(constraints: constraints)
@@ -138,17 +144,4 @@ private extension Activator {
         animationViewInfos.forEach({ $0.captureCurrentFrame() })
     }
     
-    static func animation(viewInfos: [ViewInformation]) {
-        guard let root = viewInfos.first(where: { $0.superview == nil })?.view else {
-            return
-        }
-        root.setNeedsLayout()
-        root.layoutIfNeeded()
-        let animationViewInfos = viewInfos.filter { view in
-            !view.animationDisabled && !view.isNewlyAdded
-        }
-        for viewInfo in animationViewInfos {
-            viewInfo.animation()
-        }
-    }
 }

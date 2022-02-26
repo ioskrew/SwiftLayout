@@ -62,12 +62,9 @@ public final class ViewInformation: Hashable {
     }
     
     func animation() {
+        guard let view = view else { return }
         guard superview != nil && capturedFrame != .zero && !(animationDisabled && isNewlyAdded) else { return }
-        guard let newFrame = view?.frame else { return }
-        view?.frame = capturedFrame
-        UIView.animate(withDuration: 0.25, delay: 0.0, options: .curveEaseInOut, animations: { [weak view] in
-            view?.frame = newFrame
-        }, completion: nil)
+        view.layoutIfNeeded()
     }
 }
 
