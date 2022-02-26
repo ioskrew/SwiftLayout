@@ -9,6 +9,9 @@ import Foundation
 import UIKit
 
 public final class AnyDeactivable: Deactivable, Hashable {
+    
+    typealias Constraints = Set<WeakReference<NSLayoutConstraint>>
+    
     public static func == (lhs: AnyDeactivable, rhs: AnyDeactivable) -> Bool {
         lhs.hashValue == rhs.hashValue
     }
@@ -16,7 +19,7 @@ public final class AnyDeactivable: Deactivable, Hashable {
     var deactivable: Deactivable
     
     var viewInfos: ViewInformationSet?
-    var constraints: ConstraintsSet?
+    var constraints: Constraints?
     
     init<LB>(_ deactivation: Deactivation<LB>) {
         deactivable = deactivation

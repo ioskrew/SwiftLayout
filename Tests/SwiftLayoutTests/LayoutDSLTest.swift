@@ -317,7 +317,7 @@ extension LayoutDSLTest {
         let expect = """
         root {
             child.anchors {
-                Anchors(.leading, .trailing, .top, .bottom)
+                Anchors(.top, .bottom, .leading, .trailing)
             }
         }
         """.tabbed
@@ -346,14 +346,14 @@ extension LayoutDSLTest {
         let expect = """
         root {
             hellolabel.anchors {
-                Anchors(.leading, .trailing, .top)
+                Anchors(.top, .leading, .trailing)
             }.sublayout {
                 lastview.anchors {
-                    Anchors(.leading, .trailing, .top, .bottom)
+                    Anchors(.top, .bottom, .leading, .trailing)
                 }
             }
             button.anchors {
-                Anchors(.leading, .trailing, .bottom)
+                Anchors(.bottom, .leading, .trailing)
             }
         }
         """.tabbed
@@ -453,12 +453,12 @@ extension LayoutDSLTest {
             let expect = """
             first {
                 label.anchors {
-                    Anchors(.leading, .trailing, .top)
+                    Anchors(.top, .leading, .trailing)
                     Anchors(.height).setMultiplier(0.75)
                 }
                 child.anchors {
                     Anchors(.top).equalTo(label, attribute: .bottom)
-                    Anchors(.leading, .trailing, .bottom)
+                    Anchors(.bottom, .leading, .trailing)
                 }.sublayout {
                     button.anchors {
                         Anchors(.centerX, .centerY)
@@ -476,12 +476,12 @@ extension LayoutDSLTest {
             let expect = """
             first {
                 label.anchors {
-                    Anchors(.leading, .trailing, .top)
+                    Anchors(.top, .leading, .trailing)
                     Anchors(.height).setMultiplier(0.75)
                 }
                 child.anchors {
                     Anchors(.top).equalTo(label, attribute: .bottom)
-                    Anchors(.leading, .trailing, .bottom)
+                    Anchors(.bottom, .leading, .trailing)
                 }.sublayout {
                     name.anchors {
                         Anchors(.centerX, .centerY)

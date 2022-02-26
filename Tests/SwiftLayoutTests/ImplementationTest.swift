@@ -221,7 +221,7 @@ extension ImplementationTest {
         let secondView = deactivation.viewForIdentifier("secondView")
         XCTAssertEqual(secondView?.accessibilityIdentifier, "secondView")
         
-        let currents = deactivation.constraints?.constraints ?? []
+        let currents = deactivation.constraints ?? []
         let labelConstraints = Set(Anchors.cap().constraints(item: label!, toItem: root).weakens)
         XCTAssertEqual(currents.intersection(labelConstraints), labelConstraints)
         

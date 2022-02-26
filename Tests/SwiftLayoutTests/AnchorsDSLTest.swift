@@ -351,7 +351,7 @@ extension AnchorsDSLTest {
         let expect = """
         root {
             red.anchors {
-                Anchors(.leading, .trailing, .top, .bottom)
+                Anchors(.top, .bottom, .leading, .trailing)
             }
         }
         """.tabbed
@@ -380,7 +380,7 @@ extension AnchorsDSLTest {
         let expect = """
         root {
             red.anchors {
-                Anchors(.top, .leading, .bottom, .width, .height, .centerX, .centerY)
+                Anchors(.top, .bottom, .leading, .width, .height, .centerX, .centerY)
                 Anchors(.trailing).equalTo(constant: -14.0)
             }
         }
@@ -434,7 +434,7 @@ extension AnchorsDSLTest {
         let expect = """
         root {
             red.anchors {
-                Anchors(.top, .leading, .trailing, .bottom, .width, .centerX, .centerY).lessThanOrEqualTo()
+                Anchors(.top, .bottom, .leading, .trailing, .width, .centerX, .centerY).lessThanOrEqualTo()
                 Anchors(.height).lessThanOrEqualTo(constant: 12.0)
             }
         }

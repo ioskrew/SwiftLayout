@@ -10,9 +10,22 @@ import UIKit
 
 protocol CustomHashable: AnyObject {
     func customHash(_ hasher: inout Hasher)
+    func isLessThan(_ hashable: Self) -> Bool
 }
 
-final class WeakReference<Origin>: Hashable where Origin: CustomHashable {
+final class WeakReference<Origin>: Hashable, Comparable where Origin: CustomHashable {
+    static func < (lhs: WeakReference<Origin>, rhs: WeakReference<Origin>) -> Bool {
+        if let lhs = lhs.origin {
+            if let rhs = rhs.origin {
+                return lhs.isLessThan(rhs)
+            } else {
+                return false
+            }
+        } else {
+            return false
+        }
+    }
+    
     static func == (lhs: WeakReference<Origin>, rhs: WeakReference<Origin>) -> Bool {
         lhs.hashValue == rhs.hashValue
     }
@@ -38,6 +51,40 @@ extension NSLayoutConstraint: CustomHashable {
         hasher.combine(constant)
         hasher.combine(multiplier)
         hasher.combine(priority)
+    }
+    
+    func isLessThan(_ hashable: NSLayoutConstraint) -> Bool {
+        if firstAttribute.rawValue < hashable.firstAttribute.rawValue {
+            return true
+        } else if firstAttribute == hashable.firstAttribute {
+            if secondAttribute.rawValue < hashable.secondAttribute.rawValue {
+                return true
+            } else if secondAttribute == hashable.secondAttribute {
+                if relation.rawValue < hashable.relation.rawValue {
+                    return true
+                } else if relation == hashable.relation {
+                    if constant < hashable.constant {
+                        return true
+                    } else if constant == hashable.constant {
+                        if multiplier < hashable.multiplier {
+                            return true
+                        } else if multiplier == hashable.multiplier {
+                            return priority < hashable.priority
+                        } else {
+                            return false
+                        }
+                    } else {
+                        return false
+                    }
+                } else {
+                    return false
+                }
+            } else {
+                return false
+            }
+        } else {
+            return false
+        }
     }
 }
 

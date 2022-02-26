@@ -18,32 +18,29 @@ enum Activator {
         return update(layout: layout, fromDeactivation: Deactivation(building: building), options: options)
     }
 
-    @discardableResult
-    private static func updateAndReturnInfos<L: Layout, LB: LayoutBuilding>(layout: L, fromDeactivation deactivation: Deactivation<LB>, options: LayoutOptions) -> ([ViewInformation], [NSLayoutConstraint]) {
+    private static func updateDeactivationForNewLayout<L: Layout, LB: LayoutBuilding>(layout: L, fromDeactivation deactivation: Deactivation<LB>, options: LayoutOptions) {
         let viewInfos = layout.viewInformations
         let viewInfoSet = ViewInformationSet(infos: viewInfos)
-        
-        updateViews(deactivation: deactivation, viewInfos: viewInfos)
-        
+
         if options.contains(.automaticIdentifierAssignment) {
             updateIdentifiers(fromBuilding: deactivation.building, viewInfoSet: viewInfoSet)
         }
         
+        updateViews(deactivation: deactivation, viewInfos: viewInfos)
+                
         let constraints = layout.viewConstraints(viewInfoSet)
         
         updateConstraints(deactivation: deactivation, constraints: constraints)
         
-        return (viewInfos, constraints)
+        if options.contains(.usingAnimation) {
+            animate(viewInfos: viewInfos)
+        }
     }
     
     @discardableResult
     static func update<L: Layout, LB: LayoutBuilding>(layout: L, fromDeactivation deactivation: Deactivation<LB>, options: LayoutOptions) -> Deactivation<LB> {
         
-        let (viewInfos, _) = updateAndReturnInfos(layout: layout, fromDeactivation: deactivation, options: options)
-        
-        if options.contains(.usingAnimation) {
-            animate(viewInfos: viewInfos)
-        }
+        updateDeactivationForNewLayout(layout: layout, fromDeactivation: deactivation, options: options)
         
         return deactivation
     }
@@ -84,17 +81,12 @@ private extension Activator {
     }
     
     static func updateConstraints<LB: LayoutBuilding>(deactivation: Deactivation<LB>, constraints: [NSLayoutConstraint]) {
-        NSLayoutConstraint.deactivate(deactivation.constraints.constraints.compactMap(\.origin))
+        let news = Set(constraints.weakens)
+        let olds = Set(deactivation.constraints)
         
-        var weakens: [WeakReference<NSLayoutConstraint>] = []
-        for weakConstraint in constraints.weakens where !weakens.contains(weakConstraint) {
-            weakens.append(weakConstraint)
-        }
-        
-        NSLayoutConstraint.activate(weakens.compactMap(\.origin))
-
-        
-        deactivation.constraints = ConstraintsSet(constraints: constraints)
+        NSLayoutConstraint.deactivate(olds.compactMap(\.origin))
+        NSLayoutConstraint.activate(news.sorted().compactMap(\.origin))
+        deactivation.constraints = news
     }
     
     static func deactivate<LB: LayoutBuilding>(deactivation: Deactivation<LB>, withViewInformationSet viewInfoSet: ViewInformationSet) {
