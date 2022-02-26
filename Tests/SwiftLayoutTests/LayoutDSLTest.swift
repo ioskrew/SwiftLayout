@@ -303,13 +303,38 @@ extension LayoutDSLTest {
     }
     
     func testFeatureCompose() {
+        deactivable = []
+        root.config({ root in
+            root.backgroundColor = .yellow
+        }).identifying("root").anchors({ }).sublayout {
+            UILabel().config({ label in
+                label.text = "hello"
+            }).identifying("child").anchors {
+                Anchors.allSides()
+            }
+        }.active().store(&deactivable)
+        
+        let expect = """
         root {
+            child.anchors {
+                Anchors(.leading, .trailing, .top, .bottom)
+            }
+        }
+        """.tabbed
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
+    }
+    
+    func testFeatureComposeComplex() {
+        root.config({ root in
+            root.backgroundColor = .yellow
+        }).sublayout {
             UILabel().config { label in
                 label.text = "HELLO"
-            }.identifying("label").anchors {
+            }.identifying("hellolabel").anchors {
                 Anchors.cap()
             }.sublayout {
-                UIView().identifying("UIView").anchors {
+                UIView().identifying("lastview").anchors {
                     Anchors.allSides()
                 }
             }
@@ -320,10 +345,10 @@ extension LayoutDSLTest {
         
         let expect = """
         root {
-            label.anchors {
+            hellolabel.anchors {
                 Anchors(.leading, .trailing, .top)
             }.sublayout {
-                UIView.anchors {
+                lastview.anchors {
                     Anchors(.leading, .trailing, .top, .bottom)
                 }
             }

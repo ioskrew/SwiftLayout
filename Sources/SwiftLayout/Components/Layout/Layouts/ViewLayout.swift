@@ -49,6 +49,10 @@ public extension ViewLayout {
         sublayout.traverse(view, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
     }
     func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: (UIView?, UIView, [Constraint], ViewInformationSet) -> Void) {
-        sublayout.traverse(view, viewInfoSet: viewInfoSet, constraintHndler: handler)
+        if sublayout is EmptyLayout {
+            handler(superview, view, [], viewInfoSet)
+        } else {
+            sublayout.traverse(view, viewInfoSet: viewInfoSet, constraintHndler: handler)
+        }
     }
 }
