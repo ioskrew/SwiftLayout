@@ -408,7 +408,7 @@ extension LayoutDSLTest {
         let first = First(multiplier: 0.75)
         
         let printer = SwiftLayoutPrinter(first,
-                                         tags: [first: "first", first.child.button: "child.button"],
+                                         tags: [first: "first"],
                                          options: .automaticIdentifierAssignment)
         let expect = """
         first {
@@ -420,7 +420,7 @@ extension LayoutDSLTest {
                 Anchors(.top).equalTo(label, attribute: .bottom)
                 Anchors(.leading, .trailing, .bottom)
             }.sublayout {
-                child.button.anchors {
+                button.anchors {
                     Anchors(.centerX, .centerY)
                 }
             }
