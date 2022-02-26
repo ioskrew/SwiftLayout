@@ -27,13 +27,20 @@ enum Activator {
         }
         
         updateViews(deactivation: deactivation, viewInfos: viewInfos)
+        for viewInfo in viewInfos {
+            viewInfo.captureCurrentFrame()
+        }
                 
         let constraints = layout.viewConstraints(viewInfoSet)
+        
+        if options.contains(.usingAnimation) {
+            prepareAnimation(viewInfos: viewInfos)
+        }
         
         updateConstraints(deactivation: deactivation, constraints: constraints)
         
         if options.contains(.usingAnimation) {
-            animate(viewInfos: viewInfos)
+            animation(viewInfos: viewInfos)
         }
     }
     
@@ -124,16 +131,21 @@ private extension Activator {
         IdentifierUpdater(rootObject).update()
     }
     
-    static func animate(viewInfos: [ViewInformation]) {
-        guard let root = viewInfos.first(where: { $0.superview == nil })?.view else {
-            return
-        }
-        
+    static func prepareAnimation(viewInfos: [ViewInformation]) {
         let animationViewInfos = viewInfos.filter { view in
             !view.animationDisabled && !view.isNewlyAdded
         }
         animationViewInfos.forEach({ $0.captureCurrentFrame() })
+    }
+    
+    static func animation(viewInfos: [ViewInformation]) {
+        guard let root = viewInfos.first(where: { $0.superview == nil })?.view else {
+            return
+        }
         root.updateConstraints()
+        let animationViewInfos = viewInfos.filter { view in
+            !view.animationDisabled && !view.isNewlyAdded
+        }
         for viewInfo in animationViewInfos {
             viewInfo.animation()
         }
