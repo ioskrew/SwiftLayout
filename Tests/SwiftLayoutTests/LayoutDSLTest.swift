@@ -470,7 +470,7 @@ extension LayoutDSLTest {
             XCTAssertEqual(printer.print(), expect)
         }
         
-        context("child shoe name label") {
+        context("child has name label") {
             first.child.showName.toggle()
             let printer = SwiftLayoutPrinter(first, tags: [first: "first"], options: .automaticIdentifierAssignment)
             let expect = """
