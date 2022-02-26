@@ -336,62 +336,76 @@ extension LayoutDSLTest {
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
     }
     
+}
+
+// MARK: - LayoutBuilding in LayoutBuilding
+extension LayoutDSLTest {
+    
+    class Child: UIView, LayoutBuilding {
+        lazy var button = UIButton()
+        
+        var deactivable: Deactivable?
+        var layout: some Layout {
+            self {
+                button.anchors {
+                    Anchors(.centerX, .centerY)
+                }
+            }
+        }
+        
+        override init(frame: CGRect) {
+            super.init(frame: frame)
+            updateLayout()
+        }
+        
+        required init?(coder: NSCoder) {
+            super.init(coder: coder)
+            updateLayout()
+        }
+    }
+    
+    class First: UIView, LayoutBuilding {
+        
+        lazy var label = UILabel()
+        lazy var child = Child()
+        
+        var deactivable: Deactivable?
+        var layout: some Layout {
+            self {
+                label.anchors {
+                    Anchors.cap()
+                    Anchors(.height).setMultiplier(multiplier)
+                }
+                child.anchors {
+                    Anchors(.top).equalTo(label, attribute: .bottom)
+                    Anchors.shoe()
+                }
+            }
+        }
+        
+        var multiplier: CGFloat = 1.0
+        
+        convenience init(multiplier: CGFloat) {
+            self.init(frame: .zero)
+            self.multiplier = multiplier
+            updateLayout()
+        }
+        
+        override init(frame: CGRect) {
+            super.init(frame: frame)
+            updateLayout()
+        }
+        
+        required init?(coder: NSCoder) {
+            super.init(coder: coder)
+            updateLayout()
+        }
+    }
+    
+    
     func testLayoutBuildingInRelation() {
-        
-        class Child: UIView, LayoutBuilding {
-            lazy var button = UIButton()
-            
-            var deactivable: Deactivable?
-            var layout: some Layout {
-                self {
-                    button.anchors {
-                        Anchors(.centerX, .centerY)
-                    }
-                }
-            }
-            
-            override init(frame: CGRect) {
-                super.init(frame: frame)
-                updateLayout()
-            }
-            
-            required init?(coder: NSCoder) {
-                super.init(coder: coder)
-                updateLayout()
-            }
-        }
-        
-        class First: UIView, LayoutBuilding {
-            
-            lazy var label = UILabel()
-            lazy var child = Child()
-            
-            var deactivable: Deactivable?
-            var layout: some Layout {
-                self {
-                    label.anchors {
-                        Anchors.cap()
-                        Anchors(.height).equalTo(self).setMultiplier(0.7)
-                    }
-                    child.anchors {
-                        Anchors(.top).equalTo(label, attribute: .bottom)
-                        Anchors.shoe()
-                    }
-                }
-            }
-            
-            override init(frame: CGRect) {
-                super.init(frame: frame)
-                updateLayout()
-            }
-            
-            required init?(coder: NSCoder) {
-                super.init(coder: coder)
-                updateLayout()
-            }
-        }
-        
-        let first = First()
+       
+        let first = First(multiplier: 0.75)
         
         let printer = SwiftLayoutPrinter(first,
                                          tags: [first: "first", first.child.button: "child.button"],
@@ -400,7 +414,7 @@ extension LayoutDSLTest {
         first {
             label.anchors {
                 Anchors(.leading, .trailing, .top)
-                Anchors(.height).equalTo(first).setMultiplier(0.7)
+                Anchors(.height).setMultiplier(0.75)
             }
             child.anchors {
                 Anchors(.top).equalTo(label, attribute: .bottom)

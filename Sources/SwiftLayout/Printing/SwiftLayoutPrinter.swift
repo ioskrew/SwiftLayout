@@ -251,6 +251,7 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
         return self.firstTag == token.firstTag
         && self.secondTag == token.secondTag
         && self.constant == token.constant
+        && self.multiplier == token.multiplier
         && self.relation == token.relation
     }
 }
