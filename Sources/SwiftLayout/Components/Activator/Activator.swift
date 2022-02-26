@@ -89,14 +89,6 @@ private extension Activator {
         deactivation.constraints = news
     }
     
-    static func deactivate<LB: LayoutBuilding>(deactivation: Deactivation<LB>, withViewInformationSet viewInfoSet: ViewInformationSet) {
-        deactivation.deactiveConstraints()
-        
-        for existedView in deactivation.viewInfos.infos where !viewInfoSet.infos.contains(existedView) {
-            existedView.removeFromSuperview()
-        }
-    }
-    
     static func activate(viewInfos: [ViewInformation], constraints: [NSLayoutConstraint]) {
         for viewInfo in viewInfos {
             viewInfo.addSuperview()

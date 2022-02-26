@@ -26,6 +26,8 @@ public final class ViewInformation: Hashable {
     public let identifier: String?
     public let animationDisabled: Bool
     
+    var isNewlyAdded: Bool = false
+    
     public func hash(into hasher: inout Hasher) {
         hasher.combine(superview)
         hasher.combine(view)
@@ -41,6 +43,7 @@ public final class ViewInformation: Hashable {
         }
         view.translatesAutoresizingMaskIntoConstraints = false
         superview.addSubview(view)
+        isNewlyAdded = true
     }
     
     func removeFromSuperview() {
@@ -53,7 +56,7 @@ public final class ViewInformation: Hashable {
     }
     
     func animation() {
-        guard animationDisabled else { return }
+        guard animationDisabled || isNewlyAdded else { return }
         view?.layer.removeAllAnimations()
     }
 }
