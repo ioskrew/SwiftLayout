@@ -3,7 +3,7 @@ import UIKit
 import SwiftLayout
 
 /// test cases for DSL syntax
-final class LayoutDSLTest: XCTestCase {
+final class LayoutDSLTests: XCTestCase {
     
     var root: UIView = UIView().viewTag.root
     var child: UIView = UIView().viewTag.child
@@ -32,7 +32,7 @@ final class LayoutDSLTest: XCTestCase {
 }
 
 // MARK: - normal syntax
-extension LayoutDSLTest {
+extension LayoutDSLTests {
     func testActive() {
         root {
             red {
@@ -134,7 +134,7 @@ extension LayoutDSLTest {
 }
 
 // MARK: - layouts in same first level
-extension LayoutDSLTest {
+extension LayoutDSLTests {
     
     func testLayoutsSameFirstLevel() {
         let root = TestView().viewTag.root
@@ -192,7 +192,7 @@ extension LayoutDSLTest {
 }
 
 // MARK: - conditional syntax
-extension LayoutDSLTest {
+extension LayoutDSLTests {
     func testIF() {
         @LayoutBuilder
         func layout(_ flag: Bool) -> some Layout {
