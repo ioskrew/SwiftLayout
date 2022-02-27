@@ -16,8 +16,8 @@ public extension UIView {
     func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: ConstraintHandler) {
         handler(superview, self, [], viewInfoSet)
     }
-    func setAnimationHandler(_ handler: @escaping (Self) -> Void) -> some Layout {
-        ViewLayout(self, sublayout: EmptyLayout())
+    func setAnimationHandler(_ handler: @escaping (UIView) -> Void) -> some Layout {
+        ViewLayout(self, sublayout: EmptyLayout()).setAnimationHandler(handler)
     }
 }
 
