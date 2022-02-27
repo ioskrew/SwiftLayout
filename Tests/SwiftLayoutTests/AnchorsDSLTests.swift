@@ -2,7 +2,8 @@ import XCTest
 import UIKit
 import SwiftLayout
 
-final class AnchorsDSLTest: XCTestCase {
+/// test cases for constraint DSL syntax
+final class AnchorsDSLTests: XCTestCase {
         
     var root: UIView = UIView().viewTag.root
     var red: UIView = UIView().viewTag.red
@@ -21,7 +22,7 @@ final class AnchorsDSLTest: XCTestCase {
     }
 }
 
-extension AnchorsDSLTest {
+extension AnchorsDSLTests {
     func testAnchors() {
         deactivable = root {
             red.anchors {
@@ -260,7 +261,7 @@ extension AnchorsDSLTest {
     }
 }
 
-extension AnchorsDSLTest {
+extension AnchorsDSLTests {
     func testAnchorsOfDimensionToItem1() {
         root {
             red.anchors {
@@ -315,7 +316,7 @@ extension AnchorsDSLTest {
 }
 
 // MARK: - Anchors from UILayoutAnchor
-extension AnchorsDSLTest {
+extension AnchorsDSLTests {
     
     func testAnchorsEqualToUILayoutAnchor() {
         deactivable = root {

@@ -288,13 +288,6 @@ extension PrintingTests {
         XCTAssertEqual(result, expect)
     }
     
-    func testAccessibilityIdentifierSettings() {
-        let cell = Cell(.automaticIdentifierAssignment)
-        
-        XCTAssertEqual(cell.profileView.accessibilityIdentifier, "profileView")
-        XCTAssertEqual(cell.nameLabel.accessibilityIdentifier, "nameLabel")
-    }
-    
     func testPrintMoreEfficiently() {
         let root = UIView().viewTag.root
         let child = UIView().viewTag.child
@@ -358,14 +351,18 @@ extension PrintingTests {
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
     }
     
-    func testSample() {
-        let cell = SampleCell(frame: .zero)
-        cell.initViews()
-        print(SwiftLayoutPrinter(cell, tags: [cell: "cell", cell.contentView: "contentView"], options: .automaticIdentifierAssignment))
-    }
 }
 
+// MARK: - automatic identifier assignment
 extension PrintingTests {
+    
+    func testautomaticIdentifierAssignmentOption() {
+        let cell = Cell(.automaticIdentifierAssignment)
+        
+        XCTAssertEqual(cell.profileView.accessibilityIdentifier, "profileView")
+        XCTAssertEqual(cell.nameLabel.accessibilityIdentifier, "nameLabel")
+    }
+    
     class Cell: UIView, LayoutBuilding {
         
         let options: LayoutOptions
@@ -396,27 +393,115 @@ extension PrintingTests {
     }
 }
 
-class SampleCell: UITableViewCell {
+// MARK: - identifier assignment deeply
+extension PrintingTests {
     
-    let firstNameLabel: UILabel = .init()
-    let lastNameLabel: UILabel = .init()
+    func testDeepAssignIdentifier() {
+        let gont = Gont()
+        
+        XCTAssertEqual(SwiftLayoutPrinter(gont, tags: [gont: "gont"]).print(), """
+        gont {
+            sea {
+                duny {
+                    nickname {
+                        sparrowhawk
+                    }
+                    truename {
+                        ged
+                    }
+                }
+            }
+        }
+        """.tabbed)
+    }
     
-    func initViews() {
-        contentView.addSubview(firstNameLabel)
-        contentView.addSubview(lastNameLabel)
+    class Earth: UIView {
+        let sea = UILabel()
+    }
+    
+    class Gont: Earth, LayoutBuilding {
+        let duny = Duny()
         
-        firstNameLabel.translatesAutoresizingMaskIntoConstraints = false
-        lastNameLabel.translatesAutoresizingMaskIntoConstraints = false
+        var deactivable: Deactivable?
+        var layout: some Layout {
+            self {
+                sea {
+                    duny
+                }
+            }
+        }
         
-        NSLayoutConstraint.activate([
-            firstNameLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
-            firstNameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            firstNameLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            lastNameLabel.leadingAnchor.constraint(equalTo: firstNameLabel.trailingAnchor),
-            lastNameLabel.trailingAnchor.constraint(equalTo: firstNameLabel.trailingAnchor),
-            lastNameLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
-            lastNameLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
-        ])
+        override init(frame: CGRect) {
+            super.init(frame: frame)
+            updateLayout(.automaticIdentifierAssignment)
+        }
+        
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+    }
+    
+    class Wizard: UIView {
+        let truename = UILabel()
+    }
+    
+    class Duny: Wizard, LayoutBuilding {
+        let nickname = UILabel()
+        
+        var deactivable: Deactivable?
+        var layout: some Layout {
+            self {
+                nickname {
+                    UIView().viewTag.sparrowhawk
+                }
+                truename {
+                    UIView().viewTag.ged
+                }
+            }
+        }
+        
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+        
+        override init(frame: CGRect) {
+            super.init(frame: frame)
+            updateLayout()
+        }
+    }
+    
+}
+
+// MARK: - print system constraint
+extension PrintingTests {
+    
+    func testSystemConstraint() {
+        
+        let root = UIView().viewTag.root
+        let label = UILabel().viewTag.label
+        label.font = .systemFont(ofSize: 12)
+        label.text = "HELLO"
+        @LayoutBuilder
+        func layout() -> some Layout {
+            root {
+                label.anchors {
+                    Anchors.allSides()
+                }
+            }
+        }
+        
+        layout().finalActive()
+        label.setNeedsLayout()
+        label.layoutIfNeeded()
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(includeSystems: true), """
+        root {
+            label.anchors {
+                Anchors(.top, .bottom, .leading, .trailing)
+                Anchors(.width).equalTo(constant: 38.666666666666664)
+                Anchors(.height).equalTo(constant: 14.333333333333334)
+            }
+        }
+        """.tabbed)
     }
     
 }

@@ -2,6 +2,7 @@ import XCTest
 import UIKit
 import SwiftLayout
 
+/// test cases for DSL syntax
 final class LayoutDSLTest: XCTestCase {
     
     var root: UIView = UIView().viewTag.root
@@ -21,7 +22,7 @@ final class LayoutDSLTest: XCTestCase {
         button = UIButton().viewTag.button
         label = UILabel().viewTag.label
         red = UIView().viewTag.red
-        blue = UIView().viewTag.red
+        blue = UIView().viewTag.blue
         image = UIImageView().viewTag.image
     }
     
@@ -30,6 +31,7 @@ final class LayoutDSLTest: XCTestCase {
     }
 }
 
+// MARK: - normal syntax
 extension LayoutDSLTest {
     func testActive() {
         root {
@@ -42,11 +44,19 @@ extension LayoutDSLTest {
             }
         }.active().store(&deactivable)
         
-        XCTAssertEqual(image.superview, blue)
-        XCTAssertEqual(blue.superview, red)
-        XCTAssertEqual(label.superview, red)
-        XCTAssertEqual(button.superview, red)
-        XCTAssertEqual(red.superview, root)
+        let expect = """
+        root {
+            red {
+                button
+                label
+                blue {
+                    image
+                }
+            }
+        }
+        """.tabbed
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
     }
     
     func testDeactive() {
@@ -62,471 +72,261 @@ extension LayoutDSLTest {
         
         deactivable = []
         
-        XCTAssertEqual(image.superview, nil)
-        XCTAssertEqual(blue.superview, nil)
-        XCTAssertEqual(label.superview, nil)
-        XCTAssertEqual(button.superview, nil)
-        XCTAssertEqual(red.superview, nil)
-    }
-    
-    func testSimple() {
-        root {
-            red
-        }.active().store(&deactivable)
+        let expect = """
+        root
+        """
         
-        XCTAssertEqual(red.superview, root)
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
     }
     
-    func testSimpleWithViewConfiguration() {
-        root {
-            UILabel().config { view in
-                view.text = "RED"
-                view.accessibilityIdentifier = "red"
-            }
-        }.active().store(&deactivable)
-        
-        let red = deactivable.viewForIdentifier("red") as? UILabel
-        XCTAssertEqual(red?.superview, root)
-        XCTAssertEqual(red?.text, "RED")
-    }
-    
-    func testSimpleWithSublayout() {
-        root.sublayout{
-            red
-        }.active().store(&deactivable)
-        
-        XCTAssertEqual(red.superview, root)
-    }
-    
-    func testTuple() {
-        root {
-            red
-            blue
-        }.active().store(&deactivable)
-        
-        XCTAssertEqual(red.superview, root)
-        XCTAssertEqual(blue.superview, root)
-    }
-    
-    func testSimpleDepth() {
+    func testFinalActive() {
         root {
             red {
-                blue
+                button
+                label
+                blue {
+                    image
+                }
             }
-        }.active().store(&deactivable)
+        }.finalActive()
         
-        XCTAssertEqual(red.superview, root)
-        XCTAssertEqual(blue.superview, red)
-    }
-    
-    func testSimpleDepthAndTuple() {
+        let expect = """
         root {
             red {
-                blue
-                green
+                button
+                label
+                blue {
+                    image
+                }
             }
-        }.active().store(&deactivable)
+        }
+        """.tabbed
         
-        XCTAssertEqual(red.superview, root)
-        XCTAssertEqual(blue.superview, red)
-        XCTAssertEqual(green.superview, red)
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
     }
     
-    func testSimpleBoundary() {
+    func testAllSides() {
         root {
             red.anchors {
                 Anchors.allSides()
+            }.sublayout {
+                blue.anchors {
+                    Anchors.allSides()
+                }
             }
         }.active().store(&deactivable)
         
-        XCTAssertEqual(red.superview, root)
-        XCTAssertEqual(root.constraints.count, 4)
-        XCTAssertEqual(Weakens(root.findConstraints(items: (red, root))), Weakens(Anchors.allSides().constraints(item: red, toItem: root)))
-    }
-    
-    func testDontTouchRootViewByDeactive() {
-        let old = UIView().viewTag.old
-        old.addSubview(root)
-        root.translatesAutoresizingMaskIntoConstraints = true
-        
+        let expect = """
         root {
             red.anchors {
-                Anchors.allSides()
+                Anchors(.top, .bottom, .leading, .trailing)
+            }.sublayout {
+                blue.anchors {
+                    Anchors(.top, .bottom, .leading, .trailing)
+                }
             }
-        }.active().store(&deactivable)
+        }
+        """
         
-        XCTAssertTrue(root.translatesAutoresizingMaskIntoConstraints)
-        
-        deactivable = []
-        
-        XCTAssertEqual(root.superview, old)
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect.tabbed)
     }
     
-    func testLayoutIfWithTrueFlag() {
-        let flag = true
+}
+
+// MARK: - layouts in same first level
+extension LayoutDSLTest {
+    
+    func testLayoutsSameFirstLevel() {
+        let root = TestView().viewTag.root
+        root.updateLayout()
         
+        let expect = """
         root {
-            red {
-                button
+            red.anchors {
+                Anchors(.top, .bottom, .leading, .trailing)
+            }.sublayout {
+                blue.anchors {
+                    Anchors(.top, .bottom, .leading, .trailing)
+                    Anchors(.height).equalTo(constant: 44.0)
+                }.sublayout {
+                    green.anchors {
+                        Anchors(.top, .bottom, .leading, .trailing)
+                        Anchors(.width).equalTo(constant: 88.0)
+                    }
+                }
             }
-            
-            if flag {
-                label
-            }
-        }.active().store(&deactivable)
-        
-        XCTAssertEqual(root.subviews.count, 2)
-        
-        XCTAssertEqual(red.superview, root)
-        XCTAssertEqual(button.superview, red)
-        
-        XCTAssertEqual(label.superview, root)
+        }
+        """
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect.tabbed)
     }
     
-    func testLayoutIfWithFalseFlag() {
-        let flag = false
+    private final class TestView: UIView, LayoutBuilding {
+        lazy var red = UIView().viewTag.red
+        lazy var blue = UIView().viewTag.blue
+        lazy var green = UIView().viewTag.green
         
-        root {
-            red {
-                button
+        var deactivable: Deactivable?
+        @LayoutBuilder
+        var layout: some Layout {
+            self {
+                red.anchors {
+                    Anchors.allSides()
+                }.sublayout {
+                    blue.anchors {
+                        Anchors.allSides()
+                    }.sublayout {
+                        green.anchors {
+                            Anchors.allSides()
+                        }
+                    }
+                }
             }
-            
-            if flag {
-                label
-                UILabel()
+            blue.anchors {
+                Anchors(.height).equalTo(constant: 44.0)
             }
-        }.active().store(&deactivable)
+            green.anchors {
+                Anchors(.width).equalTo(constant: 88.0)
+            }
+        }
+    }
+}
+
+// MARK: - conditional syntax
+extension LayoutDSLTest {
+    func testIF() {
+        @LayoutBuilder
+        func layout(_ flag: Bool) -> some Layout {
+            root {
+                red {
+                    button
+                }
+                
+                if flag {
+                    UIView().viewTag.true
+                } else {
+                    UIView().viewTag.false
+                }
+            }
+        }
         
-        XCTAssertEqual(root.subviews.count, 1)
+        context("if true") {
+            root = UIView().viewTag.root
+            layout(true).finalActive()
+            XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+            root {
+                red {
+                    button
+                }
+                true
+            }
+            """.tabbed)
+        }
         
-        XCTAssertEqual(red.superview, root)
-        XCTAssertEqual(button.superview, red)
+        context("if false") {
+            root = UIView().viewTag.root
+            layout(false).finalActive()
+            XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+            root {
+                red {
+                    button
+                }
+                false
+            }
+            """.tabbed)
+        }
         
-        XCTAssertEqual(label.superview, nil)
     }
     
-    func testLayoutEitherWithTrueFlag() {
-        let flag = true
-        
-        root {
-            red {
-                button
+    func testSwitchCase() {
+        enum Test: String, CaseIterable {
+            case first
+            case second
+            case third
+        }
+        @LayoutBuilder
+        func layout(_ test: Test) -> some Layout {
+            root {
+                child {
+                    switch test {
+                    case .first:
+                        UIView().viewTag.first
+                    case .second:
+                        UIView().viewTag.second
+                    case .third:
+                        UIView().viewTag.third
+                    }
+                }
             }
-            
-            if flag {
-                label
-            } else {
-                image
+        }
+        
+        for test in Test.allCases {
+            context("enum Test.\(test)") {
+                deactivable = []
+                layout(test).active().store(&deactivable)
+                XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+                root {
+                    child {
+                        \(test)
+                    }
+                }
+                """.tabbed)
             }
-        }.active().store(&deactivable)
-        
-        XCTAssertEqual(root.subviews.count, 2)
-        
-        XCTAssertEqual(red.superview, root)
-        XCTAssertEqual(button.superview, red)
-        
-        XCTAssertEqual(label.superview, root)
-        XCTAssertEqual(image.superview, nil)
-    }
-    
-    func testLayoutEitherWithFalseFlag() {
-        let flag = false
-        
-        root {
-            red {
-                button
-            }
-            
-            if flag {
-                label
-                UILabel()
-            } else {
-                image
-            }
-        }.active().store(&deactivable)
-        
-        XCTAssertEqual(root.subviews.count, 2)
-        
-        XCTAssertEqual(red.superview, root)
-        XCTAssertEqual(button.superview, red)
-        
-        XCTAssertEqual(label.superview, nil)
-        XCTAssertEqual(image.superview, root)
+        }
     }
     
     func testLayoutWithOptionalViews() {
-        let optionalView: UIView? = UIView().viewTag.optionalView
-        let nilView: UIView? = nil
         
-        root {
-            red {
-                button
+        @LayoutBuilder
+        func layout(_ view: UIView?) -> some Layout {
+            root {
+                red {
+                    view.identifying("optional")
+                }
             }
-            
-            optionalView
-            nilView
-        }.active().store(&deactivable)
+        }
         
-        XCTAssertEqual(root.subviews.count, 2)
+        context("view is nil") {
+            deactivable = []
+            layout(nil).active().store(&deactivable)
+            XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+            root {
+                red
+            }
+            """.tabbed)
+        }
         
-        XCTAssertEqual(red.superview, root)
-        XCTAssertEqual(button.superview, red)
-        
-        XCTAssertEqual(optionalView?.superview, root)
-        XCTAssertEqual(nilView?.superview, nil)
+        context("view is optional") {
+            deactivable = []
+            layout(UIView()).active().store(&deactivable)
+            XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+            root {
+                red {
+                    optional
+                }
+            }
+            """.tabbed)
+        }
     }
     
     func testLayoutWithForIn() {
-        let views: [UILabel] = (0..<10).map(\.description).map {
-            let label = UILabel()
-            label.text = $0.description
-            return label
+       
+        @LayoutBuilder
+        func layout() -> some Layout {
+            root {
+                for index in 0..<3 {
+                    UIView().identifying("view_\(index)")
+                }
+            }
         }
         
+        layout().active().store(&deactivable)
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
         root {
-            for view in views {
-                view
-            }
-        }.active().store(&deactivable)
-        
-        XCTAssertEqual(root.subviews.count, views.count)
-        XCTAssertEqual(root.subviews, views)
+            view_0
+            view_1
+            view_2
+        }
+        """.tabbed)
     }
     
-    func testLayoutWithInstantView() {
-        root {
-            UILabel()
-            UIImageView()
-        }.active().store(&deactivable)
-        
-        XCTAssertEqual(root.subviews.count, 2)
-    }
-    
-    func testFeatureCompose() {
-        deactivable = []
-        root.config({ root in
-            root.backgroundColor = .yellow
-        }).identifying("root").anchors({ }).sublayout {
-            UILabel().config({ label in
-                label.text = "hello"
-            }).identifying("child").anchors {
-                Anchors.allSides()
-            }
-        }.active().store(&deactivable)
-        
-        let expect = """
-        root {
-            child.anchors {
-                Anchors(.top, .bottom, .leading, .trailing)
-            }
-        }
-        """.tabbed
-        
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
-    }
-    
-    func testFeatureComposeComplex() {
-        root.config({ root in
-            root.backgroundColor = .yellow
-        }).sublayout {
-            UILabel().config { label in
-                label.text = "HELLO"
-            }.identifying("hellolabel").anchors {
-                Anchors.cap()
-            }.sublayout {
-                UIView().identifying("lastview").anchors {
-                    Anchors.allSides()
-                }
-            }
-            UIButton().identifying("button").anchors {
-                Anchors.shoe()
-            }
-        }.active().store(&deactivable)
-        
-        let expect = """
-        root {
-            hellolabel.anchors {
-                Anchors(.top, .leading, .trailing)
-            }.sublayout {
-                lastview.anchors {
-                    Anchors(.top, .bottom, .leading, .trailing)
-                }
-            }
-            button.anchors {
-                Anchors(.bottom, .leading, .trailing)
-            }
-        }
-        """.tabbed
-        
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
-    }
-    
-    func testFeatureComposeComplexWithAnimationHandling() {
-        root.config({ root in
-            root.backgroundColor = .yellow
-        }).sublayout {
-            UILabel().config { label in
-                label.text = "HELLO"
-            }.identifying("hellolabel").anchors {
-                Anchors.cap()
-            }.sublayout {
-                UIView().identifying("lastview").anchors {
-                    Anchors.allSides()
-                }
-            }
-            UIButton().identifying("button").anchors {
-                Anchors.shoe()
-            }
-        }.active().store(&deactivable)
-        
-        let expect = """
-        root {
-            hellolabel.anchors {
-                Anchors(.top, .leading, .trailing)
-            }.sublayout {
-                lastview.anchors {
-                    Anchors(.top, .bottom, .leading, .trailing)
-                }
-            }
-            button.anchors {
-                Anchors(.bottom, .leading, .trailing)
-            }
-        }
-        """.tabbed
-        
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
-    }
-
-}
-
-// MARK: - LayoutBuilding in LayoutBuilding
-extension LayoutDSLTest {
-    
-    class Child: UIView, LayoutBuilding {
-        
-        var showName: Bool = false {
-            didSet {
-                updateLayout()
-            }
-        }
-        lazy var button = UIButton()
-        lazy var name = UILabel()
-        
-        var deactivable: Deactivable?
-        var layout: some Layout {
-            self {
-                if showName {
-                    name.anchors {
-                        Anchors(.centerX, .centerY)
-                    }
-                } else {
-                    button.anchors {
-                        Anchors(.centerX, .centerY)
-                    }
-                }
-            }
-        }
-        
-        override init(frame: CGRect) {
-            super.init(frame: frame)
-            updateLayout()
-        }
-        
-        required init?(coder: NSCoder) {
-            super.init(coder: coder)
-            updateLayout()
-        }
-    }
-    
-    class First: UIView, LayoutBuilding {
-        
-        lazy var label = UILabel()
-        lazy var child = Child()
-        
-        var deactivable: Deactivable?
-        var layout: some Layout {
-            self {
-                label.anchors {
-                    Anchors.cap()
-                    Anchors(.height).setMultiplier(multiplier)
-                }
-                child.anchors {
-                    Anchors(.top).equalTo(label, attribute: .bottom)
-                    Anchors.shoe()
-                }
-            }
-        }
-        
-        var multiplier: CGFloat = 1.0
-        
-        convenience init(multiplier: CGFloat) {
-            self.init(frame: .zero)
-            self.multiplier = multiplier
-            updateLayout()
-        }
-        
-        override init(frame: CGRect) {
-            super.init(frame: frame)
-            updateLayout()
-        }
-        
-        required init?(coder: NSCoder) {
-            super.init(coder: coder)
-            updateLayout()
-        }
-    }
-    
-    
-    func testLayoutBuildingInRelation() {
-        
-        let first = First(multiplier: 0.75)
-        
-        context("check multiplier setting") {
-            
-            let printer = SwiftLayoutPrinter(first,
-                                             tags: [first: "first"],
-                                             options: .automaticIdentifierAssignment)
-            let expect = """
-            first {
-                label.anchors {
-                    Anchors(.top, .leading, .trailing)
-                    Anchors(.height).setMultiplier(0.75)
-                }
-                child.anchors {
-                    Anchors(.top).equalTo(label, attribute: .bottom)
-                    Anchors(.bottom, .leading, .trailing)
-                }.sublayout {
-                    button.anchors {
-                        Anchors(.centerX, .centerY)
-                    }
-                }
-            }
-            """.tabbed
-            
-            XCTAssertEqual(printer.print(), expect)
-        }
-        
-        context("child has name label") {
-            first.child.showName.toggle()
-            let printer = SwiftLayoutPrinter(first, tags: [first: "first"], options: .automaticIdentifierAssignment)
-            let expect = """
-            first {
-                label.anchors {
-                    Anchors(.top, .leading, .trailing)
-                    Anchors(.height).setMultiplier(0.75)
-                }
-                child.anchors {
-                    Anchors(.top).equalTo(label, attribute: .bottom)
-                    Anchors(.bottom, .leading, .trailing)
-                }.sublayout {
-                    name.anchors {
-                        Anchors(.centerX, .centerY)
-                    }
-                }
-            }
-            """.tabbed
-            
-            XCTAssertEqual(printer.print(), expect)
-        }
-    }
 }
