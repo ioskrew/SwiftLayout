@@ -142,6 +142,98 @@ contentView {
 
 - using **sublayout** function after **anchors**
 
+### animations
+
+```swift
+final class SampleView: UIView, LayoutBuilding {
+    enum Show {
+        case showYellow
+        case showBlack
+        case showAll
+    }
+    var deactivable: Deactivable?
+    lazy var yellow = UIView()
+    lazy var black = UIView()
+    var show: Show = .showAll {
+        didSet {
+            updateLayout(animated: true)
+        }
+    }
+    
+    var layout: some Layout {
+        self {
+            switch show {
+            case .showYellow:
+                yellow.anchors {
+                    Anchors.allSides()
+                }
+                black.setAnimationHandler({ view in
+                    view.alpha = 0.0
+                }).anchors {
+                    Anchors(.height).equalTo(constant: 0.0)
+                    Anchors.shoe()
+                }
+            case .showBlack:
+                yellow.setAnimationHandler({ view in
+                    view.alpha = 0.0
+                }).anchors {
+                    Anchors(.height).equalTo(constant: 0.0)
+                    Anchors.cap()
+                }
+                black.anchors {
+                    Anchors.allSides()
+                }
+            case .showAll:
+                yellow.setAnimationHandler({ view in
+                    view.alpha = 1.0
+                }).anchors {
+                    Anchors.cap()
+                    Anchors(.bottom).equalTo(black, attribute: .top)
+                    Anchors(.height).equalTo(black)
+                }
+                black.setAnimationHandler({ view in
+                    view.alpha = 1.0
+                }).anchors {
+                    Anchors.shoe()
+                }
+            }
+        }
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        initViews()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError()
+    }
+    
+    func initViews() {
+        yellow.backgroundColor = .yellow
+        black.backgroundColor = .darkGray
+        updateLayout(.automaticIdentifierAssignment)
+        isUserInteractionEnabled = true
+        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(toggle)))
+    }
+    
+    @objc
+    func toggle() {
+        switch show {
+        case .showYellow:
+            self.show = .showAll
+        case .showBlack:
+            self.show = .showAll
+        case .showAll:
+            self.show = Bool.random() ? .showYellow : .showBlack
+        }
+    }
+    
+}
+```
+
+[![animation in update layout](https://user-images.githubusercontent.com/3011832/155874823-e71cb9fb-8573-4241-9d30-d0bf28c0445a.png)](https://user-images.githubusercontent.com/3011832/155874757-f8ff8074-1f47-4c77-9f2a-d62358603457.mp4)
+
 # utility
 
 **SwiftLayoutPrinter**

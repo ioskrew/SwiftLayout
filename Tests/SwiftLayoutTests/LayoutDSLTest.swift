@@ -361,6 +361,42 @@ extension LayoutDSLTest {
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
     }
     
+    func testFeatureComposeComplexWithAnimationHandling() {
+        root.config({ root in
+            root.backgroundColor = .yellow
+        }).sublayout {
+            UILabel().config { label in
+                label.text = "HELLO"
+            }.identifying("hellolabel").anchors {
+                Anchors.cap()
+            }.sublayout {
+                UIView().identifying("lastview").anchors {
+                    Anchors.allSides()
+                }
+            }
+            UIButton().identifying("button").anchors {
+                Anchors.shoe()
+            }
+        }.active().store(&deactivable)
+        
+        let expect = """
+        root {
+            hellolabel.anchors {
+                Anchors(.top, .leading, .trailing)
+            }.sublayout {
+                lastview.anchors {
+                    Anchors(.top, .bottom, .leading, .trailing)
+                }
+            }
+            button.anchors {
+                Anchors(.bottom, .leading, .trailing)
+            }
+        }
+        """.tabbed
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
+    }
+
 }
 
 // MARK: - LayoutBuilding in LayoutBuilding

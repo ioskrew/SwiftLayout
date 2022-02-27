@@ -42,7 +42,7 @@ enum Activator {
                 self.updateConstraints(deactivation: deactivation, constraints: constraints)
                 viewInfoSet.rootview?.layoutIfNeeded()
                 for viewInfo in viewInfos {
-                    viewInfo.layoufIfPossible()
+                    viewInfo.animation()
                 }
             }, completion: nil)
         } else {
@@ -114,8 +114,8 @@ private extension Activator {
         let news = Set(constraints.weakens)
         let olds = Set(deactivation.constraints)
         
-        NSLayoutConstraint.deactivate(olds.subtracting(news).compactMap(\.origin))
-        NSLayoutConstraint.activate(news.subtracting(olds).sorted().compactMap(\.origin))
+        NSLayoutConstraint.deactivate(olds.compactMap(\.origin).filter(\.isActive))
+        NSLayoutConstraint.activate(news.sorted().compactMap(\.origin))
         deactivation.constraints = news
     }
     
@@ -139,7 +139,7 @@ private extension Activator {
     
     static func prepareAnimation(viewInfos: [ViewInformation]) {
         let animationViewInfos = viewInfos.filter { view in
-            !view.animationDisabled && !view.isNewlyAdded
+            !view.isNewlyAdded
         }
         animationViewInfos.forEach({ $0.captureCurrentFrame() })
     }

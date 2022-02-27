@@ -7,21 +7,25 @@ public final class ViewLayout<V: UIView, SubLayout: Layout>: Layout {
     
     var sublayout: SubLayout
     
-    private(set) var animationDisabled: Bool = false
-    
     var identifier: String? {
         get { view.accessibilityIdentifier }
         set { view.accessibilityIdentifier = newValue }
     }
     
+    var animationHandler: ViewInformation.AnimationHandler?
+    
     init(_ view: V, sublayout: SubLayout) {
         self.view = view
         self.sublayout = sublayout
-        self.animationDisabled = false
     }
         
+    @available(*, deprecated, message: "do nothing")
     public func animationDisable() -> Self {
-        self.animationDisabled = true
+        return self
+    }
+    
+    public func setAnimationHandler(_ handler: @escaping (UIView) -> Void) -> Self {
+        self.animationHandler = .init(view, handler: handler)
         return self
     }
     
@@ -44,11 +48,11 @@ public final class ViewLayout<V: UIView, SubLayout: Layout>: Layout {
 
 public extension ViewLayout {
     func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
-        handler(superview, view, identifier, animationDisabled)
+        handler(.init(superview: superview, view: view, animationHandler: animationHandler))
         guard continueAfterViewLayout else { return }
         sublayout.traverse(view, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
     }
-    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: (UIView?, UIView, [Constraint], ViewInformationSet) -> Void) {
+    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: ConstraintHandler) {
         if sublayout is EmptyLayout {
             handler(superview, view, [], viewInfoSet)
         } else {

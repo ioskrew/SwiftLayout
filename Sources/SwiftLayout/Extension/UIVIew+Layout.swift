@@ -11,10 +11,13 @@ extension UIView: Layout {}
 
 public extension UIView {
     func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
-        handler(superview, self, self.accessibilityIdentifier, false)
+        handler(.init(superview: superview, view: self))
     }
-    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: (UIView?, UIView, [Constraint], ViewInformationSet) -> Void) {
+    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: ConstraintHandler) {
         handler(superview, self, [], viewInfoSet)
+    }
+    func setAnimationHandler(_ handler: @escaping (UIView) -> Void) -> some Layout {
+        ViewLayout(self, sublayout: EmptyLayout()).setAnimationHandler(handler)
     }
 }
 
@@ -23,8 +26,13 @@ public extension Layout where Self: UIView {
         ViewLayout(self, sublayout: build())
     }
     
-    func config(_ config: (Self) -> Void) -> some Layout {
+    func config(_ config: (Self) -> Void) -> ViewLayout<Self, EmptyLayout> {
         config(self)
         return ViewLayout(self, sublayout: EmptyLayout())
+    }
+    
+    func setAnimationHandler(_ handler: @escaping (UIView) -> Void) -> ViewLayout<Self, EmptyLayout> {
+        let layout = ViewLayout(self, sublayout: EmptyLayout())
+        return layout.setAnimationHandler(handler)
     }
 }

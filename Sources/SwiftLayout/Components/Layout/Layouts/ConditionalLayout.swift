@@ -22,7 +22,7 @@ public extension ConditionalLayout {
             layout.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
         }
     }
-    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: (UIView?, UIView, [Constraint], ViewInformationSet) -> Void) {
+    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: ConstraintHandler) {
         switch layout {
         case let .trueLayout(layout):
             layout.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: handler)
