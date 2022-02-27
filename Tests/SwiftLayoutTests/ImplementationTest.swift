@@ -221,7 +221,7 @@ extension ImplementationTest {
         let secondView = deactivation.viewForIdentifier("secondView")
         XCTAssertEqual(secondView?.accessibilityIdentifier, "secondView")
         
-        let currents = deactivation.constraints?.constraints ?? []
+        let currents = deactivation.constraints ?? []
         let labelConstraints = Set(Anchors.cap().constraints(item: label!, toItem: root).weakens)
         XCTAssertEqual(currents.intersection(labelConstraints), labelConstraints)
         
@@ -519,10 +519,10 @@ extension ImplementationTest {
         let expect = """
         root {
             cap.anchors {
-                Anchors(.leading, .trailing, .top)
+                Anchors(.top, .leading, .trailing)
             }
             shoe.anchors {
-                Anchors(.leading, .trailing, .bottom)
+                Anchors(.bottom, .leading, .trailing)
             }
         }
         """.tabbed

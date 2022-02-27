@@ -9,11 +9,13 @@ import UIKit
 
 final class Deactivation<LB: LayoutBuilding>: Deactivable {
     
+    typealias Constraints = Set<WeakReference<NSLayoutConstraint>>
+    
     convenience init(building: LB? = nil) {
         self.init(viewInfos: .init(), constraints: .init(), building: building)
     }
     
-    init(viewInfos: ViewInformationSet, constraints: ConstraintsSet, building: LB? = nil) {
+    init(viewInfos: ViewInformationSet, constraints: Constraints, building: LB? = nil) {
         self.viewInfos = viewInfos
         self.constraints = constraints
         self.building = building
@@ -24,7 +26,7 @@ final class Deactivation<LB: LayoutBuilding>: Deactivable {
     }
     
     var viewInfos: ViewInformationSet
-    var constraints: ConstraintsSet
+    var constraints: Constraints
     
     /// injected on activating
     private(set) weak var building: LB?
@@ -35,7 +37,7 @@ final class Deactivation<LB: LayoutBuilding>: Deactivable {
     }
     
     func deactiveConstraints() {
-        let constraints = constraints.constraints.compactMap(\.origin).filter(\.isActive)
+        let constraints = constraints.compactMap(\.origin).filter(\.isActive)
         NSLayoutConstraint.deactivate(constraints)
         self.constraints = .init()
     }
@@ -52,14 +54,5 @@ final class Deactivation<LB: LayoutBuilding>: Deactivable {
     
     func viewForIdentifier(_ identifier: String) -> UIView? {
         viewInfos.infos.first(where: { $0.identifier == identifier })?.view
-    }
-}
-
-struct ConstraintsSet: Hashable {
-    
-    let constraints: Set<WeakReference<NSLayoutConstraint>>
-    
-    init(constraints: [NSLayoutConstraint] = []) {
-        self.constraints = Set(constraints.weakens)
     }
 }

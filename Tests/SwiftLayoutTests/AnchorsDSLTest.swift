@@ -262,12 +262,11 @@ extension AnchorsDSLTest {
 
 extension AnchorsDSLTest {
     func testAnchorsOfDimensionToItem1() {
-        deactivable = root {
+        root {
             red.anchors {
-                Anchors(.top, .leading)
-                Anchors(.width, .height)
+                Anchors.allSides()
             }
-        }.active()
+        }.finalActive()
         
         XCTAssertEqual(root.constraints.count, 4)
         
@@ -281,8 +280,8 @@ extension AnchorsDSLTest {
     func testAnchorsOfDimensionToItem2() {
         deactivable = root {
             red.anchors {
-                Anchors(.top, .leading)
-                Anchors(.width, .height).equalTo(constant: 80)
+                Anchors(.bottom, .trailing)
+                Anchors(.width, .height).equalTo(constant: 30)
             }
         }.active()
         
@@ -293,52 +292,7 @@ extension AnchorsDSLTest {
         root.setNeedsLayout()
         root.layoutIfNeeded()
         
-        XCTAssertEqual(red.bounds.size, .init(width: 80, height: 80))
-    }
-    
-    func testAnchorsOfDimensionToItem3() {
-        deactivable = root {
-            red.anchors {
-                Anchors(.top, .trailing, .bottom)
-                Anchors(.width, .height).equalTo(constant: 80)
-            }
-            blue.anchors {
-                Anchors(.trailing).equalTo(red, attribute: .leading)
-                Anchors(.top, .bottom)
-                Anchors(.width, .height).equalTo(constant: 80)
-            }
-        }.active()
-        
-        XCTAssertEqual(root.constraints.count, 6)
-        XCTAssertEqual(red.constraints.count, 2)
-        XCTAssertEqual(blue.constraints.count, 2)
-        
-        root.frame = .init(origin: .zero, size: .init(width: 200, height: 80))
-        root.setNeedsLayout()
-        root.layoutIfNeeded()
-        
-        XCTAssertEqual(red.frame.origin, .init(x: 120, y: 0))
-        XCTAssertEqual(blue.bounds.size, .init(width: 80, height: 80))
-        
-        XCTAssertEqual(blue.frame.origin, .init(x: 40, y: 0))
-        XCTAssertEqual(red.bounds.size, .init(width: 80, height: 80))
-    }
-    
-    func testAnchorsOfDimensionToItem4() {
-        deactivable = root {
-            red.anchors {
-                Anchors(.top, .leading).equalTo(constant: 20)
-                Anchors(.trailing, .bottom).equalTo(constant: -20)
-            }
-        }.active()
-        
-        XCTAssertEqual(root.constraints.count, 4)
-        
-        root.frame = .init(origin: .zero, size: .init(width: 100, height: 100))
-        root.setNeedsLayout()
-        root.layoutIfNeeded()
-        print(root.constraints)
-        XCTAssertEqual(red.frame.size, .init(width: 60, height: 60))
+        XCTAssertEqual(red.frame, .init(x: 70, y: 70, width: 30, height: 30))
     }
     
     func testConvenience() {
@@ -351,7 +305,7 @@ extension AnchorsDSLTest {
         let expect = """
         root {
             red.anchors {
-                Anchors(.leading, .trailing, .top, .bottom)
+                Anchors(.top, .bottom, .leading, .trailing)
             }
         }
         """.tabbed
@@ -380,7 +334,7 @@ extension AnchorsDSLTest {
         let expect = """
         root {
             red.anchors {
-                Anchors(.top, .leading, .bottom, .width, .height, .centerX, .centerY)
+                Anchors(.top, .bottom, .leading, .width, .height, .centerX, .centerY)
                 Anchors(.trailing).equalTo(constant: -14.0)
             }
         }
@@ -434,7 +388,7 @@ extension AnchorsDSLTest {
         let expect = """
         root {
             red.anchors {
-                Anchors(.top, .leading, .trailing, .bottom, .width, .centerX, .centerY).lessThanOrEqualTo()
+                Anchors(.top, .bottom, .leading, .trailing, .width, .centerX, .centerY).lessThanOrEqualTo()
                 Anchors(.height).lessThanOrEqualTo(constant: 12.0)
             }
         }

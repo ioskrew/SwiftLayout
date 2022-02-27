@@ -183,7 +183,7 @@ extension PrintingTests {
         let expect = """
         root {
             label.anchors {
-                Anchors(.leading, .trailing, .top, .bottom)
+                Anchors(.top, .bottom, .leading, .trailing)
             }
         }
         """.tabbed
@@ -211,10 +211,10 @@ extension PrintingTests {
         let expect = """
         root {
             child.anchors {
-                Anchors(.leading, .trailing, .top, .bottom)
+                Anchors(.top, .bottom, .leading, .trailing)
             }.sublayout {
                 grandchild.anchors {
-                    Anchors(.leading, .trailing, .top, .bottom)
+                    Anchors(.top, .bottom, .leading, .trailing)
                 }
             }
         }
@@ -314,11 +314,11 @@ extension PrintingTests {
         let expect = """
         root {
             child.anchors {
-                Anchors(.leading, .trailing, .top)
+                Anchors(.top, .leading, .trailing)
             }
             friend.anchors {
-                Anchors(.leading, .bottom)
                 Anchors(.top).greaterThanOrEqualTo(child, attribute: .bottom, constant: 8.0)
+                Anchors(.bottom, .leading)
                 Anchors(.trailing).equalTo(child)
             }
         }
