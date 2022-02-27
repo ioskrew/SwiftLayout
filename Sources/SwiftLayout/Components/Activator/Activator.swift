@@ -114,8 +114,8 @@ private extension Activator {
         let news = Set(constraints.weakens)
         let olds = Set(deactivation.constraints)
         
-        NSLayoutConstraint.deactivate(olds.subtracting(news).compactMap(\.origin))
-        NSLayoutConstraint.activate(news.subtracting(olds).sorted().compactMap(\.origin))
+        NSLayoutConstraint.deactivate(olds.compactMap(\.origin).filter(\.isActive))
+        NSLayoutConstraint.activate(news.compactMap(\.origin))
         deactivation.constraints = news
     }
     

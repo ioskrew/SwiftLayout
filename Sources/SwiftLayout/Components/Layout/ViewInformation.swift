@@ -62,6 +62,9 @@ public final class ViewInformation: Hashable {
     func animation() {
         guard let view = view else { return }
         guard superview != nil && capturedFrame != .zero && !isNewlyAdded else { return }
+        view.setNeedsUpdateConstraints()
+        view.updateConstraintsIfNeeded()
+        view.setNeedsLayout()
         view.layoutIfNeeded()
         animationHandler?.animation()
     }

@@ -13,6 +13,10 @@ public struct AnchorsBuilder {
         components
     }
     
+    public static func buildIf(_ components: [Constraint]?) -> [Constraint] {
+        components ?? []
+    }
+    
     public static func buildEither(first component: [Constraint]) -> [Constraint] {
         component
     }
