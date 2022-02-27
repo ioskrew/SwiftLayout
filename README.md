@@ -144,6 +144,9 @@ contentView {
 
 ### animations
 
+- updateLayout(animated: true) calling frame animations
+- in addition to - using **setAnimationHandler** for animation of each views
+
 ```swift
 final class SampleView: UIView, LayoutBuilding {
     enum Show {
@@ -156,7 +159,7 @@ final class SampleView: UIView, LayoutBuilding {
     lazy var black = UIView()
     var show: Show = .showAll {
         didSet {
-            updateLayout(animated: true)
+            updateLayout(animated: true) // call animations
         }
     }
     
@@ -168,7 +171,7 @@ final class SampleView: UIView, LayoutBuilding {
                     Anchors.allSides()
                 }
                 black.setAnimationHandler({ view in
-                    view.alpha = 0.0
+                    view.alpha = 0.0 // animation for black view in update layout
                 }).anchors {
                     Anchors(.height).equalTo(constant: 0.0)
                     Anchors.shoe()
