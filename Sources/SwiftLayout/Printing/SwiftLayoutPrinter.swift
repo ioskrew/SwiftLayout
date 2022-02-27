@@ -23,8 +23,10 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
         print()
     }
     
-    public func print() -> String {
-        
+    /// print ``SwiftLayout`` syntax from view structures
+    /// - Parameter includeSystems: print all constraints include system creations(safe layout guide, label size, etc...)
+    /// - Returns: String of SwiftLayout syntax
+    public func print(includeSystems: Bool = false) -> String {
         guard let view = view else {
             return ""
         }
@@ -34,7 +36,7 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
         }
         
         let viewToken = ViewToken.Parser.from(view, tags: tags)
-        let constraints = ConstraintToken.Parser.from(view, tags: tags)
+        let constraints = ConstraintToken.Parser.from(view, tags: tags, includeSystems: includeSystems)
         return Describer(viewToken, constraints).description
     }
     
@@ -177,20 +179,25 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
     }
     
     struct Parser {
-        static func from(_ view: UIView, tags: [String: String]) -> [ConstraintToken] {
-            var constraints = view.constraints
-                .filter(Validator.isUserCreation)
-                .compactMap({ ConstraintToken(constraint: $0, tags: tags) })
-            constraints.append(contentsOf: view.subviews.flatMap({ from($0, tags:tags) }))
-            return constraints
+        static func from(_ view: UIView, tags: [String: String], includeSystems: Bool = false) -> [ConstraintToken] {
+            let constraints = view.constraints
+                .filter({ Validator.isUserCreation($0, showSystemCreated: includeSystems) })
+            var tokens = constraints.map({ ConstraintToken(constraint: $0, tags: tags) })
+            tokens.append(contentsOf: view.subviews.flatMap({ from($0, tags:tags, includeSystems: includeSystems) }))
+            return tokens
         }
     }
     
     struct Validator {
-        static func isUserCreation(_ constraint: NSLayoutConstraint) -> Bool {
+        static func isUserCreation(_ constraint: NSLayoutConstraint, showSystemCreated: Bool = false) -> Bool {
             let description = constraint.debugDescription
-            guard let range = description.range(of: "'UIViewSafeAreaLayoutGuide-[:alpha:]*'", options: [.regularExpression], range: description.startIndex..<description.endIndex) else { return true }
-            return range.isEmpty
+            if showSystemCreated {
+                return true
+            } else {
+                guard description.contains("NSLayoutConstraint") else { return false }
+                guard let range = description.range(of: "'UIViewSafeAreaLayoutGuide-[:alpha:]*'", options: [.regularExpression], range: description.startIndex..<description.endIndex) else { return true }
+                return range.isEmpty
+            }
         }
     }
     

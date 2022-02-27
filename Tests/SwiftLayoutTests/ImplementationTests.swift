@@ -2,7 +2,8 @@ import XCTest
 import UIKit
 @testable import SwiftLayout
 
-final class ImplementationTest: XCTestCase {
+/// test cases for api rules except DSL syntax
+final class ImplementationTests: XCTestCase {
     var root = UIView().viewTag.root
     var child = UIView().viewTag.child
     var friend = UIView().viewTag.friend
@@ -21,7 +22,7 @@ final class ImplementationTest: XCTestCase {
     }
 }
 
-extension ImplementationTest {
+extension ImplementationTests {
     func testLayoutTraversal() {
         let root: UIView = UIView().viewTag.root
         let button: UIButton = UIButton().viewTag.button
@@ -163,9 +164,31 @@ extension ImplementationTest {
         XCTAssertEqual(view2.contentView.accessibilityIdentifier, "contentView")
         XCTAssertEqual(view2.nameLabel.accessibilityIdentifier, "nameLabel")
     }
+    
+    func testDontTouchRootViewByDeactive() {
+        let root = UIView().viewTag.root
+        let red = UIView().viewTag.red
+        let old = UIView().viewTag.old
+        old.addSubview(root)
+        root.translatesAutoresizingMaskIntoConstraints = true
+        
+        deactivable = root {
+            red.anchors {
+                Anchors.allSides()
+            }
+        }.active()
+        
+        XCTAssertTrue(root.translatesAutoresizingMaskIntoConstraints)
+        
+        deactivable?.deactive()
+        deactivable = nil
+        
+        XCTAssertEqual(root.superview, old)
+    }
+    
 }
 
-extension ImplementationTest {
+extension ImplementationTests {
     final class IdentifiedView: UIView, LayoutBuilding {
         
         lazy var contentView: UIView = UIView()
@@ -202,7 +225,7 @@ extension ImplementationTest {
     }
 }
 
-extension ImplementationTest {
+extension ImplementationTests {
     func testIdentifier() {
         let deactivation = root {
             UILabel().identifying("label").anchors {
@@ -233,7 +256,7 @@ extension ImplementationTest {
     }
 }
 
-extension ImplementationTest {
+extension ImplementationTests {
     func testAnchorConstraint() {
         root.addSubview(child)
         child.translatesAutoresizingMaskIntoConstraints = false
@@ -296,6 +319,30 @@ extension ImplementationTest {
         
         let constraint = anchors.constraints(item: child, toItem: root, viewInfoSet: nil)
         XCTAssertEqual(constraint.count, 4)
+    }
+    
+    func testIgnoreAnchorsDuplication() {
+        root {
+            child.anchors {
+                Anchors.allSides()
+                Anchors.cap()
+                Anchors.shoe()
+                Anchors(.height)
+                Anchors(.width).equalTo(constant: 44.0)
+                Anchors(.width).equalTo(constant: 44.0)
+            }
+        }.finalActive()
+        
+        let expect = """
+        root {
+            child.anchors {
+                Anchors(.top, .bottom, .leading, .trailing, .height)
+                Anchors(.width).equalTo(constant: 44.0)
+            }
+        }
+        """
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect.tabbed)
     }
     
     func testRules() {
@@ -501,7 +548,7 @@ extension ImplementationTest {
     
 }
 
-extension ImplementationTest {
+extension ImplementationTests {
     func testFinalActive() {
         let root = UIView().viewTag.root
         let cap = UIView().viewTag.cap
@@ -532,7 +579,7 @@ extension ImplementationTest {
 }
 
 // MARK: - Animation
-extension ImplementationTest {
+extension ImplementationTests {
     func testSetAnimationHandler() {
         deactivable = root {
             child.config({ view in
@@ -564,4 +611,103 @@ extension ImplementationTest {
         
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
     }
+}
+
+// MARK: - Decorations
+extension ImplementationTests {
+    
+    func testFeatureCompose() {
+        deactivable = root.config({ root in
+            root.backgroundColor = .yellow
+        }).identifying("root").anchors({ }).sublayout {
+            UILabel().config({ label in
+                label.text = "hello"
+            }).identifying("child").anchors {
+                Anchors.allSides()
+            }
+        }.active()
+        
+        let expect = """
+        root {
+            child.anchors {
+                Anchors(.top, .bottom, .leading, .trailing)
+            }
+        }
+        """.tabbed
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
+    }
+    
+    func testFeatureComposeComplex() {
+        deactivable = root.config({ root in
+            root.backgroundColor = .yellow
+        }).sublayout {
+            UILabel().config { label in
+                label.text = "HELLO"
+            }.identifying("hellolabel").anchors {
+                Anchors.cap()
+            }.sublayout {
+                UIView().identifying("lastview").anchors {
+                    Anchors.allSides()
+                }
+            }
+            UIButton().identifying("button").anchors {
+                Anchors.shoe()
+            }
+        }.active()
+        
+        let expect = """
+        root {
+            hellolabel.anchors {
+                Anchors(.top, .leading, .trailing)
+            }.sublayout {
+                lastview.anchors {
+                    Anchors(.top, .bottom, .leading, .trailing)
+                }
+            }
+            button.anchors {
+                Anchors(.bottom, .leading, .trailing)
+            }
+        }
+        """.tabbed
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
+    }
+    
+    func testFeatureComposeComplexWithAnimationHandling() {
+        deactivable = root.config({ root in
+            root.backgroundColor = .yellow
+        }).sublayout {
+            UILabel().config { label in
+                label.text = "HELLO"
+            }.identifying("hellolabel").anchors {
+                Anchors.cap()
+            }.sublayout {
+                UIView().identifying("lastview").anchors {
+                    Anchors.allSides()
+                }
+            }
+            UIButton().identifying("button").anchors {
+                Anchors.shoe()
+            }
+        }.active()
+        
+        let expect = """
+        root {
+            hellolabel.anchors {
+                Anchors(.top, .leading, .trailing)
+            }.sublayout {
+                lastview.anchors {
+                    Anchors(.top, .bottom, .leading, .trailing)
+                }
+            }
+            button.anchors {
+                Anchors(.bottom, .leading, .trailing)
+            }
+        }
+        """.tabbed
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
+    }
+
 }
