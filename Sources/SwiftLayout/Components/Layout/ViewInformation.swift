@@ -65,6 +65,27 @@ public final class ViewInformation: Hashable {
     }
 }
 
+extension ViewInformation {
+    
+    final class AnimationHandler {
+        internal init(_ view: UIView? = nil, handler: @escaping AnimationHandler.Handler) {
+            self.view = view
+            self.handler = handler
+        }
+        
+        typealias Handler = (UIView) -> Void
+        weak var view: UIView?
+        let handler: Handler
+        
+        func animation() {
+            guard let view = view else {
+                return
+            }
+            handler(view)
+        }
+    }
+}
+
 public struct ViewInformationSet: Hashable {
     
     let infos: Set<ViewInformation>

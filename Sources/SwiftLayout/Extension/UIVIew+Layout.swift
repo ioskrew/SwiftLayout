@@ -16,6 +16,9 @@ public extension UIView {
     func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: ConstraintHandler) {
         handler(superview, self, [], viewInfoSet)
     }
+    func setAnimationHandler(_ handler: @escaping (Self) -> Void) -> some Layout {
+        ViewLayout(self, sublayout: EmptyLayout())
+    }
 }
 
 public extension Layout where Self: UIView {
@@ -23,8 +26,13 @@ public extension Layout where Self: UIView {
         ViewLayout(self, sublayout: build())
     }
     
-    func config(_ config: (Self) -> Void) -> some Layout {
+    func config(_ config: (Self) -> Void) -> ViewLayout<Self, EmptyLayout> {
         config(self)
         return ViewLayout(self, sublayout: EmptyLayout())
+    }
+    
+    func setAnimationHandler(_ handler: @escaping (UIView) -> Void) -> ViewLayout<Self, EmptyLayout> {
+        let layout = ViewLayout(self, sublayout: EmptyLayout())
+        return layout.setAnimationHandler(handler)
     }
 }

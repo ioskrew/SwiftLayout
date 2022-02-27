@@ -12,6 +12,8 @@ public final class ViewLayout<V: UIView, SubLayout: Layout>: Layout {
         set { view.accessibilityIdentifier = newValue }
     }
     
+    var animationHandler: ViewInformation.AnimationHandler?
+    
     init(_ view: V, sublayout: SubLayout) {
         self.view = view
         self.sublayout = sublayout
@@ -19,6 +21,11 @@ public final class ViewLayout<V: UIView, SubLayout: Layout>: Layout {
         
     @available(*, deprecated, message: "do nothing")
     public func animationDisable() -> Self {
+        return self
+    }
+    
+    public func setAnimationHandler(_ handler: @escaping (UIView) -> Void) -> Self {
+        self.animationHandler = .init(view, handler: handler)
         return self
     }
     
