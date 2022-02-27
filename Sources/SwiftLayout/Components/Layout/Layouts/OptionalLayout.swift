@@ -18,7 +18,7 @@ public extension OptionalLayout {
             break
         }
     }
-    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: (UIView?, UIView, [Constraint], ViewInformationSet) -> Void) {
+    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: ConstraintHandler) {
         switch layout {
         case let .some(layout):
             layout.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: handler)

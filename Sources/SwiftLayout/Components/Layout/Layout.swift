@@ -7,8 +7,8 @@
 
 import UIKit
 
-public typealias TraverseHandler = (_ superview: UIView?, _ subview: UIView, _ identifier: String?, _ animationDisabled: Bool) -> Void
-public typealias ConstraintHandler = (_ superview: UIView?, _ subview: UIView, _ constraints: [Constraint], _ viewInfoSet: ViewInformationSet) -> Void
+public typealias TraverseHandler = (_ information: ViewInformation) -> Void
+public typealias ConstraintHandler = (_ superview: UIView?, _ subview: UIView?, _ constraints: [Constraint], _ viewInfoSet: ViewInformationSet) -> Void
 
 public protocol Layout: CustomDebugStringConvertible {
     func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler)
@@ -41,8 +41,8 @@ extension Layout {
     }
     
     public func identifying(_ accessibilityIdentifier: String) -> some Layout {
-        traverse(nil, continueAfterViewLayout: false) { superview, subview, identifier, animationDisabled in
-            subview.accessibilityIdentifier = accessibilityIdentifier
+        traverse(nil, continueAfterViewLayout: false) { information in
+            information.view?.accessibilityIdentifier = accessibilityIdentifier
         }
         return self
     }
@@ -51,8 +51,8 @@ extension Layout {
 extension Layout {
     public var viewInformations: [ViewInformation] {
         var informations: [ViewInformation] = []
-        traverse(nil, continueAfterViewLayout: true) { superview, subview, identifier, animationDisabled in
-            informations.append(.init(superview: superview, view: subview, identifier: identifier, animationDisabled: animationDisabled))
+        traverse(nil, continueAfterViewLayout: true) { information in
+            informations.append(information)
         }
         return informations
     }
@@ -60,6 +60,7 @@ extension Layout {
     public func viewConstraints(_ viewInfoSet: ViewInformationSet) -> [NSLayoutConstraint] {
         var layoutConstraints: [NSLayoutConstraint] = []
         traverse(nil, viewInfoSet: viewInfoSet) { superview, subview, constraints, viewInfoSet in
+            guard let subview = subview else { return }
             if constraints.isEmpty { return }
             layoutConstraints.append(contentsOf: constraints.constraints(item: subview, toItem: superview, viewInfoSet: viewInfoSet))
         }

@@ -15,7 +15,7 @@ public extension ArrayLayout {
             layout.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
         }
     }
-    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: (UIView?, UIView, [Constraint], ViewInformationSet) -> Void) {
+    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: ConstraintHandler) {
         for layout in layouts {
             layout.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: handler)
         }

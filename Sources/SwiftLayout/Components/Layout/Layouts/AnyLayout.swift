@@ -5,11 +5,11 @@ protocol AnyLayoutBox: Layout {}
 struct _AnyLayoutBox<L: Layout>: AnyLayoutBox {
     let layout: L
     
-    func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: (UIView?, UIView, String?, Bool) -> Void) {
+    func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
         layout.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
     }
     
-    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: (UIView?, UIView, [Constraint], ViewInformationSet) -> Void) {
+    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: ConstraintHandler) {
         layout.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: handler)
     }
     var debugDescription: String {
@@ -33,7 +33,7 @@ public extension AnyLayout {
     func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
         box.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
     }
-    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: (UIView?, UIView, [Constraint], ViewInformationSet) -> Void) {
+    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: ConstraintHandler) {
         box.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: handler)
     }
 }

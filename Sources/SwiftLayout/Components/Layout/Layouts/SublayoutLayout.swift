@@ -17,12 +17,12 @@ public struct SublayoutLayout<Super: Layout, Sub: Layout>: Layout {
 
 public extension SublayoutLayout {
     func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
-        superlayout.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: { superview, subview, identifier, animationDisabled in
-            handler(superview, subview, identifier, animationDisabled)
-            sublayout.traverse(subview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+        superlayout.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: { information in
+            handler(information)
+            sublayout.traverse(information.view, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
         })
     }
-    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: (UIView?, UIView, [Constraint], ViewInformationSet) -> Void) {
+    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: ConstraintHandler) {
         superlayout.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: { superview, subview, constraints, viewInfoSet in
             handler(superview, subview, constraints, viewInfoSet)
             sublayout.traverse(subview, viewInfoSet: viewInfoSet, constraintHndler: handler)
