@@ -19,7 +19,7 @@
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "1.6.0"),
+  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "1.7.0"),
 ],
 ```
 
@@ -250,7 +250,7 @@ contentView.addSubview(firstNameLabel)
 - You can use SwiftLayoutPrinter in source or debug console
 
 ```swift
-(lldb) por SwiftLayoutPrinter(contentView)
+(lldb) po SwiftLayoutPrinter(contentView)
 ...
 contentView {
   firstNameLabel
