@@ -7,8 +7,6 @@ public final class ViewLayout<V: UIView, SubLayout: Layout>: Layout {
     
     var sublayout: SubLayout
     
-    private(set) var animationDisabled: Bool = false
-    
     var identifier: String? {
         get { view.accessibilityIdentifier }
         set { view.accessibilityIdentifier = newValue }
@@ -17,11 +15,10 @@ public final class ViewLayout<V: UIView, SubLayout: Layout>: Layout {
     init(_ view: V, sublayout: SubLayout) {
         self.view = view
         self.sublayout = sublayout
-        self.animationDisabled = false
     }
         
+    @available(*, deprecated, message: "do nothing")
     public func animationDisable() -> Self {
-        self.animationDisabled = true
         return self
     }
     
@@ -44,7 +41,7 @@ public final class ViewLayout<V: UIView, SubLayout: Layout>: Layout {
 
 public extension ViewLayout {
     func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
-        handler(.init(superview: superview, view: view, identifier: identifier, animationDisabled: animationDisabled))
+        handler(.init(superview: superview, view: view))
         guard continueAfterViewLayout else { return }
         sublayout.traverse(view, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
     }

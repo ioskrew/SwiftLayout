@@ -11,7 +11,7 @@ extension UIView: Layout {}
 
 public extension UIView {
     func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
-        handler(.init(superview: superview, view: self, identifier: accessibilityIdentifier, animationDisabled: false))
+        handler(.init(superview: superview, view: self))
     }
     func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: ConstraintHandler) {
         handler(superview, self, [], viewInfoSet)

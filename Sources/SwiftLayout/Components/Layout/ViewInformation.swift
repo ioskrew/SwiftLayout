@@ -14,18 +14,15 @@ public final class ViewInformation: Hashable {
         lhs.hashValue == rhs.hashValue
     }
     
-    public init(superview: UIView?, view: UIView?, identifier: String?, animationDisabled: Bool) {
+    public init(superview: UIView?, view: UIView?) {
         self.superview = superview
         self.view = view
-        self.identifier = identifier
-        self.animationDisabled = animationDisabled
     }
     
     private(set) public weak var superview: UIView?
     private(set) public weak var view: UIView?
-    public let identifier: String?
+    public var identifier: String? { view?.accessibilityIdentifier }
     
-    public let animationDisabled: Bool
     
     var capturedFrame: CGRect = .zero
     var isNewlyAdded: Bool = false
@@ -54,7 +51,7 @@ public final class ViewInformation: Hashable {
     }
     
     func updatingSuperview(_ superview: UIView?) -> Self {
-        .init(superview: superview, view: view, identifier: identifier, animationDisabled: animationDisabled)
+        .init(superview: superview, view: view)
     }
     
     func captureCurrentFrame() {
@@ -63,7 +60,7 @@ public final class ViewInformation: Hashable {
     
     func layoufIfPossible() {
         guard let view = view else { return }
-        guard superview != nil && capturedFrame != .zero && !(animationDisabled && isNewlyAdded) else { return }
+        guard superview != nil && capturedFrame != .zero && !isNewlyAdded else { return }
         view.layoutIfNeeded()
     }
 }

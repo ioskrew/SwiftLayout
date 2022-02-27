@@ -139,7 +139,7 @@ private extension Activator {
     
     static func prepareAnimation(viewInfos: [ViewInformation]) {
         let animationViewInfos = viewInfos.filter { view in
-            !view.animationDisabled && !view.isNewlyAdded
+            !view.isNewlyAdded
         }
         animationViewInfos.forEach({ $0.captureCurrentFrame() })
     }
