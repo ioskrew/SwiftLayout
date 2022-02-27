@@ -14,15 +14,16 @@ public final class ViewInformation: Hashable {
         lhs.hashValue == rhs.hashValue
     }
     
-    public init(superview: UIView?, view: UIView?) {
+    public init(superview: UIView?, view: UIView?, animationHandler: ViewInformation.AnimationHandler? = nil) {
         self.superview = superview
         self.view = view
+        self.animationHandler = animationHandler
     }
     
     private(set) public weak var superview: UIView?
     private(set) public weak var view: UIView?
     public var identifier: String? { view?.accessibilityIdentifier }
-    
+    public let animationHandler: ViewInformation.AnimationHandler?
     
     var capturedFrame: CGRect = .zero
     var isNewlyAdded: Bool = false
@@ -58,22 +59,23 @@ public final class ViewInformation: Hashable {
         capturedFrame = view?.frame ?? .zero
     }
     
-    func layoufIfPossible() {
+    func animation() {
         guard let view = view else { return }
         guard superview != nil && capturedFrame != .zero && !isNewlyAdded else { return }
         view.layoutIfNeeded()
+        animationHandler?.animation()
     }
 }
 
 extension ViewInformation {
     
-    final class AnimationHandler {
-        internal init(_ view: UIView? = nil, handler: @escaping AnimationHandler.Handler) {
+    public final class AnimationHandler {
+        public init(_ view: UIView? = nil, handler: @escaping AnimationHandler.Handler) {
             self.view = view
             self.handler = handler
         }
         
-        typealias Handler = (UIView) -> Void
+        public typealias Handler = (UIView) -> Void
         weak var view: UIView?
         let handler: Handler
         

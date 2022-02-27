@@ -42,7 +42,7 @@ enum Activator {
                 self.updateConstraints(deactivation: deactivation, constraints: constraints)
                 viewInfoSet.rootview?.layoutIfNeeded()
                 for viewInfo in viewInfos {
-                    viewInfo.layoufIfPossible()
+                    viewInfo.animation()
                 }
             }, completion: nil)
         } else {
