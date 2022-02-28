@@ -1,9 +1,8 @@
 # ``SwiftLayout``
 
-![logo](swiftlayout-logo.png)
-
 DSL library for unite UIView and AutoLayout constraints
 
+![logo](swiftlayout-logo.png)
 
 ## overview
 

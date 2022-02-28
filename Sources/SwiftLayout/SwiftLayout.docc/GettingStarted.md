@@ -1,4 +1,4 @@
-# getting started for SwiftLayout
+# GettingStarted
 
 ## requirements
 
