@@ -1,0 +1,15 @@
+@Tutorials(name: "Documents") {
+    @Intro(title: "Capture you document and write memo") {
+        Description
+        
+<!--        @Image(source: <#file#>, alt: "<#accessible description#>")-->
+    }
+    
+    @Chapter(name: "Documents Essentials") {
+        Documents Essentials
+        
+        @Image(source: document-capture, alt: "capture document")
+        
+        @TutorialReference(tutorial: "doc:tutorial-create-project")
+    }
+}
