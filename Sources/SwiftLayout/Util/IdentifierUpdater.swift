@@ -8,31 +8,25 @@
 import Foundation
 import UIKit
 
-public struct IdentifierUpdater {
+public final class IdentifierUpdater {
     
     let object: AnyObject
-    let identifieds: [Identified]
-    
-    public var identifiersWithAddress: [String] {
-        identifieds.map({ $0.identifier + ":" + AddressDescriptor($0.view).description })
-    }
-    
-    public var identifiers: [String] {
-        identifieds.map(\.identifier)
-    }
+    let prefix: String
     
     public init(_ object: AnyObject, prefix: String = "") {
         self.object = object
-        self.identifieds = MirrorDigger().dig(Mirror(reflecting: object), prefix: prefix)
+        self.prefix = prefix
     }
     
     public func update() {
-        for identified in identifieds {
+        let digger = MirrorDigger()
+        digger.digging(Mirror(reflecting: object), prefix: prefix)
+        for identified in digger.identifieds {
             identified.prepare()
         }
     }
     
-    final class Identified: Hashable {
+    final class Identified: Hashable, CustomDebugStringConvertible {
         static func == (lhs: IdentifierUpdater.Identified, rhs: IdentifierUpdater.Identified) -> Bool {
             lhs.hashValue == rhs.hashValue
         }
@@ -56,13 +50,36 @@ public struct IdentifierUpdater {
         }
         
         func hash(into hasher: inout Hasher) {
-            hasher.combine(prefix)
             hasher.combine(identifier)
             hasher.combine(view)
         }
+        
+        var debugDescription: String {
+            if prefix.isEmpty {
+                return "\(identifier):\(type(of: view))"
+            } else {
+                return "\(prefix).\(identifier):\(type(of: view))"
+            }
+        }
     }
     
-    struct MirrorDigger {
+    final class MirrorDigger {
+        
+        private(set) var identifieds: Set<Identified> = []
+        
+        func digging(_ mirror: Mirror, prefix: String = "") {
+            if let superclassMirror = mirror.superclassMirror {
+                digging(superclassMirror, prefix: prefix)
+            }
+            for child in mirror.children {
+                guard let label = child.label?.replacingOccurrences(of: "$__lazy_storage_$_", with: "") else { continue }
+                guard let view = child.value as? UIView else { continue }
+                let identified = Identified(prefix: prefix, identifier: label, view: view)
+                if self.identifieds.contains(identified) { continue }
+                self.identifieds.insert(identified)
+                digging(Mirror(reflecting: view), prefix: identifier(prefix: prefix, identifier: label))
+            }
+        }
         
         func identifier(prefix: String, identifier: String) -> String {
             if prefix.isEmpty {
@@ -72,18 +89,5 @@ public struct IdentifierUpdater {
             }
         }
         
-        func dig(_ mirror: Mirror, prefix: String = "") -> [Identified] {
-            var identifieds: [Identified] = []
-            if let superclassMirror = mirror.superclassMirror {
-                identifieds.append(contentsOf: dig(superclassMirror, prefix: prefix))
-            }
-            for child in mirror.children {
-                guard let label = child.label?.replacingOccurrences(of: "$__lazy_storage_$_", with: "") else { continue }
-                guard let view = child.value as? UIView else { continue }
-                identifieds.append(Identified(prefix: prefix, identifier: label, view: view))
-                identifieds.append(contentsOf: dig(Mirror(reflecting: view), prefix: identifier(prefix: prefix, identifier: label)))
-            }
-            return identifieds
-        }
     }
 }

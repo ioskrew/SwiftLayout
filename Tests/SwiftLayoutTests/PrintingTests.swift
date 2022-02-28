@@ -434,7 +434,7 @@ extension PrintingTests {
     }
     
     class Gont: Earth, LayoutBuilding {
-        let duny = Duny()
+        lazy var duny = Duny(in: self)
         
         var deactivable: Deactivable?
         var layout: some Layout {
@@ -465,6 +465,14 @@ extension PrintingTests {
     }
     
     class Duny: Wizard, LayoutBuilding {
+        
+        init(in earth: Earth) {
+            super.init(frame: .zero)
+            self.earth = earth
+            updateLayout(.automaticIdentifierAssignment)
+        }
+        
+        weak var earth: Earth?
         let nickname = UILabel()
         
         var deactivable: Deactivable?
