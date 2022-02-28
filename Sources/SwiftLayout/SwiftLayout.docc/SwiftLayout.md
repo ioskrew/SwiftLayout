@@ -1,6 +1,9 @@
 # ``SwiftLayout``
 
+![logo](swiftlayout-logo.png)
+
 DSL library for unite UIView and AutoLayout constraints
+
 
 ## overview
 
@@ -26,4 +29,6 @@ NSLayoutConstraint.activate([
 
 ## topics
 
-### GettingStarted
+### essentials
+
+- <doc:GettingStarted>

@@ -1,19 +1,9 @@
-<img src="https://user-images.githubusercontent.com/3011832/154659440-d206a01e-a6bd-47a0-8428-5357799816de.png" alt="SwiftLayout Logo" height="180" />
-
-*Yesterday never dies*
-
-**A swifty way to use UIKit**
-
-[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fioskrew%2FSwiftLayout%2Fbadge%3Ftype%3Dswift-versions)](https://github.com/ioskrew/SwiftLayout)
-
-[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fioskrew%2FSwiftLayout%2Fbadge%3Ftype%3Dplatforms)](https://github.com/ioskrew/SwiftLayout)
-
-# requirements
+## requirements
 
 - iOS 13+
 - Swift 5.4+
 
-# installation
+## installation
 
 **SwiftLayout** supply **SPM** only
 
@@ -23,7 +13,7 @@ dependencies: [
 ],
 ```
 
-# simple usage
+## simple usage
 
 - for pure **UIKit**
 
@@ -71,7 +61,7 @@ contentView {
 
 *That easy* (thanx bob)
 
-# details
+## details
 
 ### addSubview
 
@@ -237,7 +227,7 @@ final class SampleView: UIView, LayoutBuilding {
 
 [![animation in update layout](https://user-images.githubusercontent.com/3011832/155874823-e71cb9fb-8573-4241-9d30-d0bf28c0445a.png)](https://user-images.githubusercontent.com/3011832/155874757-f8ff8074-1f47-4c77-9f2a-d62358603457.mp4)
 
-# utility
+## utility
 
 **SwiftLayoutPrinter**
 
@@ -260,7 +250,7 @@ contentView {
 
 *That easy*
 
-# credits
+## credits
 
 - oozoofrog([@oozoofrog](https://twitter.com/oozoofrog))
 - gmlwhdtjd([gmlwhdtjd](https://github.com/gmlwhdtjd))
