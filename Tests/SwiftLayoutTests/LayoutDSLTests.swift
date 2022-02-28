@@ -330,3 +330,56 @@ extension LayoutDSLTests {
     }
     
 }
+
+// MARK: GroupLayout
+
+extension LayoutDSLTests {
+    func testGroupLayout() {
+        let group1_1 = UIView().viewTag.group1_1
+        let group1_2 = UIView().viewTag.group1_2
+        let group2_1 = UIView().viewTag.group2_1
+        let group2_2 = UIView().viewTag.group2_2
+        
+        root {
+            GroupLayout {
+                group1_1.anchors {
+                    Anchors.cap()
+                }
+                group1_2.anchors {
+                    Anchors(.top).equalTo(group1_1, attribute: .bottom)
+                    Anchors.horizontal()
+                }
+            }
+            GroupLayout {
+                group2_1.anchors {
+                    Anchors(.top).equalTo(group1_2, attribute: .bottom)
+                    Anchors.horizontal()
+                }
+                group2_2.anchors {
+                    Anchors(.top).equalTo(group2_2, attribute: .bottom)
+                    Anchors.shoe()
+                }
+            }
+        }.finalActive()
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+        root {
+            group1_1.anchors {
+                Anchors(.top, .leading, .trailing)
+            }
+            group1_2.anchors {
+                Anchors(.top).equalTo(group1_1, attribute: .bottom)
+                Anchors(.leading, .trailing)
+            }
+            group2_1.anchors {
+                Anchors(.top).equalTo(group1_2, attribute: .bottom)
+                Anchors(.leading, .trailing)
+            }
+            group2_2.anchors {
+                Anchors(.bottom, .leading, .trailing)
+                Anchors(.top).equalTo(group2_2, attribute: .bottom)
+            }
+        }
+        """.tabbed)
+    }
+}
