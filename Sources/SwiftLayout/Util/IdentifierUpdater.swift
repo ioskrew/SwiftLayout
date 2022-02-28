@@ -21,9 +21,9 @@ public struct IdentifierUpdater {
         identifieds.map(\.identifier)
     }
     
-    public init(_ object: AnyObject) {
+    public init(_ object: AnyObject, prefix: String = "") {
         self.object = object
-        self.identifieds = MirrorDigger().dig(Mirror(reflecting: object))
+        self.identifieds = MirrorDigger().dig(Mirror(reflecting: object), prefix: prefix)
     }
     
     public func update() {
@@ -32,30 +32,58 @@ public struct IdentifierUpdater {
         }
     }
     
-    struct Identified: Hashable {
-        let identifier: String
-        let view: UIView
+    final class Identified: Hashable {
+        static func == (lhs: IdentifierUpdater.Identified, rhs: IdentifierUpdater.Identified) -> Bool {
+            lhs.hashValue == rhs.hashValue
+        }
         
-        init?(_ child: (String?, Any)) {
-            guard let identifier = child.0 else { return nil }
-            guard let view = child.1 as? UIView else { return nil }
-            self.identifier = identifier.replacingOccurrences(of: "$__lazy_storage_$_", with: "")
+        internal init(prefix: String = "", identifier: String, view: UIView) {
+            self.prefix = prefix
+            self.identifier = identifier
             self.view = view
         }
         
+        let prefix: String
+        let identifier: String
+        let view: UIView
+        
         func prepare() {
-            view.accessibilityIdentifier = identifier
+            if prefix.isEmpty {
+                view.accessibilityIdentifier = "\(identifier):\(type(of: view))"
+            } else {
+                view.accessibilityIdentifier = "\(prefix).\(identifier):\(type(of: view))"
+            }
+        }
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(prefix)
+            hasher.combine(identifier)
+            hasher.combine(view)
         }
     }
     
     struct MirrorDigger {
-        func dig(_ mirror: Mirror?) -> [Identified] {
-            guard let mirror = mirror else {
-                return []
+        
+        func identifier(prefix: String, identifier: String) -> String {
+            if prefix.isEmpty {
+                return identifier
+            } else {
+                return "\(prefix).\(identifier)"
             }
-            return mirror.children.compactMap(Identified.init).flatMap({ identified in
-                [identified] + dig(Mirror(reflecting: identified.view))
-            }) + dig(mirror.superclassMirror)
+        }
+        
+        func dig(_ mirror: Mirror, prefix: String = "") -> [Identified] {
+            var identifieds: [Identified] = []
+            if let superclassMirror = mirror.superclassMirror {
+                identifieds.append(contentsOf: dig(superclassMirror, prefix: prefix))
+            }
+            for child in mirror.children {
+                guard let label = child.label?.replacingOccurrences(of: "$__lazy_storage_$_", with: "") else { continue }
+                guard let view = child.value as? UIView else { continue }
+                identifieds.append(Identified(prefix: prefix, identifier: label, view: view))
+                identifieds.append(contentsOf: dig(Mirror(reflecting: view), prefix: identifier(prefix: prefix, identifier: label)))
+            }
+            return identifieds
         }
     }
 }
