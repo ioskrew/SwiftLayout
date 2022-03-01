@@ -6,6 +6,6 @@ public struct EmptyLayout: Layout {
         "EmptyLayout"
     }
     
-    public func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {}
-    public func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: ConstraintHandler) {}
+    public func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {}
+    public func traverse(_ superview: UIView?, constraintHndler handler: ConstraintHandler) {}
 }

@@ -16,12 +16,12 @@ public struct GroupLayout<L: Layout>: Layout {
         self.layout = handler()
     }
     
-    public func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: (ViewInformation) -> Void) {
-        layout.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+    public func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
+        layout.traverse(superview, traverseHandler: handler)
     }
     
-    public func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: (UIView?, UIView?, [Constraint], ViewInformationSet) -> Void) {
-        layout.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: handler)
+    public func traverse(_ superview: UIView?, constraintHndler handler: ConstraintHandler) {
+        layout.traverse(superview, constraintHndler: handler)
     }
     
     public var debugDescription: String {

@@ -10,14 +10,14 @@ public struct ArrayLayout<L: Layout>: Layout {
 }
 
 public extension ArrayLayout {
-    func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
+    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
         for layout in layouts {
-            layout.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+            layout.traverse(superview, traverseHandler: handler)
         }
     }
-    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: ConstraintHandler) {
+    func traverse(_ superview: UIView?, constraintHndler handler: ConstraintHandler) {
         for layout in layouts {
-            layout.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: handler)
+            layout.traverse(superview, constraintHndler: handler)
         }
     }
 }

@@ -8,12 +8,12 @@
 import UIKit
 
 extension Optional: Layout where Wrapped: Layout {
-    public func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
-        self?.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+    public func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
+        self?.traverse(superview, traverseHandler: handler)
     }
     
-    public func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: ConstraintHandler) {
-        self?.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: handler)
+    public func traverse(_ superview: UIView?, constraintHndler handler: ConstraintHandler) {
+        self?.traverse(superview, constraintHndler: handler)
     }
 }
 

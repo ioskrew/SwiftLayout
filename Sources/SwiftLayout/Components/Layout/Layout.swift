@@ -7,12 +7,12 @@
 
 import UIKit
 
-public typealias TraverseHandler = (_ information: ViewInformation) -> Void
-public typealias ConstraintHandler = (_ superview: UIView?, _ subview: UIView?, _ constraints: [Constraint], _ viewInfoSet: ViewInformationSet) -> Void
+public typealias TraverseHandler = (_ information: ViewInformation) -> Bool
+public typealias ConstraintHandler = (_ information: ViewInformation?, _ constraints: [Constraint]) -> Void
 
 public protocol Layout: CustomDebugStringConvertible {
-    func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler)
-    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: ConstraintHandler)
+    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler)
+    func traverse(_ superview: UIView?, constraintHndler handler: ConstraintHandler)
 }
 
 extension Layout {
@@ -41,33 +41,43 @@ extension Layout {
     }
     
     public func identifying(_ accessibilityIdentifier: String) -> some Layout {
-        traverse(nil, continueAfterViewLayout: false) { information in
-            information.view?.accessibilityIdentifier = accessibilityIdentifier
-        }
+        firstViewInformation(nil)?.view?.accessibilityIdentifier = accessibilityIdentifier
         return self
     }
 }
 
 extension Layout {
-    public var viewInformations: [ViewInformation] {
+    func firstViewInformation(_ superview: UIView?) -> ViewInformation? {
+        var information: ViewInformation?
+        traverse(superview) { currentViewInformation in
+            information = currentViewInformation
+            return false
+        }
+        return information
+    }
+    
+    var viewInformations: [ViewInformation] {
         var informations: [ViewInformation] = []
-        traverse(nil, continueAfterViewLayout: true) { information in
+        traverse(nil) { information in
             informations.append(information)
+            return true
         }
         return informations
     }
     
-    public func viewConstraints(_ viewInfoSet: ViewInformationSet) -> [NSLayoutConstraint] {
+    func viewConstraints(_ viewInfoSet: ViewInformationSet) -> [NSLayoutConstraint] {
         var layoutConstraints: [NSLayoutConstraint] = []
-        traverse(nil, viewInfoSet: viewInfoSet) { superview, subview, constraints, viewInfoSet in
-            guard let subview = subview else { return }
-            if constraints.isEmpty { return }
-            layoutConstraints.append(contentsOf: constraints.constraints(item: subview, toItem: superview, viewInfoSet: viewInfoSet))
+        traverse(nil) { information, constraints in
+            guard let subview = information?.view else {
+                return
+            }
+
+            layoutConstraints.append(contentsOf: constraints.constraints(item: subview, toItem: information?.superview, viewInfoSet: viewInfoSet))
         }
         return layoutConstraints
     }
     
-    public func viewConstraints() -> [NSLayoutConstraint] {
+    func viewConstraints() -> [NSLayoutConstraint] {
         self.viewConstraints(.init())
     }
 }

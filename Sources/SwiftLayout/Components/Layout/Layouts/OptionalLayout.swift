@@ -10,18 +10,18 @@ public struct OptionalLayout<L: Layout>: Layout {
 }
 
 public extension OptionalLayout {
-    func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
+    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
         switch layout {
         case let .some(layout):
-            layout.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+            layout.traverse(superview, traverseHandler: handler)
         case .none:
             break
         }
     }
-    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: ConstraintHandler) {
+    func traverse(_ superview: UIView?, constraintHndler handler: ConstraintHandler) {
         switch layout {
         case let .some(layout):
-            layout.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: handler)
+            layout.traverse(superview, constraintHndler: handler)
         case .none:
             break
         }
