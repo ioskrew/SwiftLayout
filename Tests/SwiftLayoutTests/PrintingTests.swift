@@ -284,7 +284,7 @@ extension PrintingTests {
         }
         """.tabbed
         
-        let result = SwiftLayoutPrinter(cell, tags: [cell: "contentView"], options: .automaticIdentifierAssignment).print()
+        let result = SwiftLayoutPrinter(cell, tags: [cell: "contentView"]).print(identifierAssignment: true, enableViewType: true)
         XCTAssertEqual(result, expect)
     }
     
@@ -359,8 +359,8 @@ extension PrintingTests {
     func testautomaticIdentifierAssignmentOption() {
         let cell = Cell(.automaticIdentifierAssignment)
         
-        XCTAssertEqual(cell.profileView.accessibilityIdentifier, "profileView:UIImageView")
-        XCTAssertEqual(cell.nameLabel.accessibilityIdentifier, "nameLabel:UILabel")
+        XCTAssertEqual(cell.profileView.accessibilityIdentifier, "profileView")
+        XCTAssertEqual(cell.nameLabel.accessibilityIdentifier, "nameLabel")
     }
     
     class Cell: UIView, LayoutBuilding {
@@ -399,7 +399,10 @@ extension PrintingTests {
     func testDeepAssignIdentifier() {
         let gont = Gont()
         
-        XCTAssertEqual(SwiftLayoutPrinter(gont, tags: [gont: "gont"]).print(), """
+        XCTAssertEqual(SwiftLayoutPrinter(gont, tags: [gont: "gont"]).print(identifierAssignment: true,
+                                                                            enablePrefixChain: true,
+                                                                            enableViewType: true),
+        """
         gont {
             sea:UILabel.anchors {
                 Anchors(.top, .bottom, .leading, .trailing)
@@ -452,7 +455,7 @@ extension PrintingTests {
         
         override init(frame: CGRect) {
             super.init(frame: frame)
-            updateLayout(.automaticIdentifierAssignment)
+            updateLayout()
         }
         
         required init?(coder: NSCoder) {
@@ -469,7 +472,7 @@ extension PrintingTests {
         init(in earth: Earth) {
             super.init(frame: .zero)
             self.earth = earth
-            updateLayout(.automaticIdentifierAssignment)
+            updateLayout()
         }
         
         weak var earth: Earth?
@@ -547,7 +550,7 @@ extension PrintingTests {
     func testSwiftLayoutPrinterPerformance() {
         measure {
             let gont = Gont()
-            print(SwiftLayoutPrinter(gont, tags: [gont: "gont"], options: .automaticIdentifierAssignment))
+            print(SwiftLayoutPrinter(gont, tags: [gont: "gont"]).print(identifierAssignment: true))
         }
     }
 }

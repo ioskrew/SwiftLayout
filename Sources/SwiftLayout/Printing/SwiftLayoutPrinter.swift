@@ -9,15 +9,13 @@ import Foundation
 import UIKit
 
 public struct SwiftLayoutPrinter: CustomStringConvertible {
-    public init(_ view: UIView, tags: [UIView: String] = [:], options: LayoutOptions = []) {
+    public init(_ view: UIView, tags: [UIView: String] = [:]) {
         self.view = view
         self.tags = Dictionary(uniqueKeysWithValues: tags.map({ ($0.key.tagDescription, $0.value) }))
-        self.options = options
     }
     
     weak var view: UIView?
     let tags: [String: String]
-    let options: LayoutOptions
     
     public var description: String {
         print()
@@ -26,13 +24,19 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
     /// print ``SwiftLayout`` syntax from view structures
     /// - Parameter includeSystems: print all constraints include system creations(safe layout guide, label size, etc...)
     /// - Returns: String of SwiftLayout syntax
-    public func print(includeSystems: Bool = false) -> String {
+    public func print(identifierAssignment: Bool = false,
+                      enablePrefixChain: Bool = false,
+                      enableViewType: Bool = false,
+                      includeSystems: Bool = false) -> String {
         guard let view = view else {
             return ""
         }
         
-        if options.contains(.automaticIdentifierAssignment) {
-            IdentifierUpdater(view).update()
+        if identifierAssignment {
+            IdentifierUpdater(view,
+                              fixedTags: Set(tags.keys),
+                              enablePrefixChain: enablePrefixChain,
+                              enableViewType: enableViewType).update()
         }
         
         let viewToken = ViewToken.Parser.from(view, tags: tags)

@@ -11,18 +11,28 @@ import UIKit
 public final class IdentifierUpdater {
     
     let object: AnyObject
+    let fixedTags: Set<String>
     let prefix: String
+    let enablePrefixChain: Bool
+    let enableViewType: Bool
     
-    public init(_ object: AnyObject, prefix: String = "") {
+    public init(_ object: AnyObject,
+                fixedTags: Set<String> = [],
+                prefix: String = "",
+                enablePrefixChain: Bool = false,
+                enableViewType: Bool = false) {
         self.object = object
+        self.fixedTags = fixedTags
         self.prefix = prefix
+        self.enablePrefixChain = enablePrefixChain
+        self.enableViewType = enableViewType
     }
     
     public func update() {
-        let digger = MirrorDigger()
+        let digger = MirrorDigger(enablePrefixChain: enablePrefixChain)
         digger.digging(Mirror(reflecting: object), prefix: prefix)
-        for identified in digger.identifieds {
-            identified.prepare()
+        for identified in digger.identifieds where !fixedTags.contains(TagDescriptor(identified.view).objectDescription) {
+            identified.prepare(enableViewType: enableViewType)
         }
     }
     
@@ -41,11 +51,20 @@ public final class IdentifierUpdater {
         let identifier: String
         let view: UIView
         
-        func prepare() {
-            if prefix.isEmpty {
-                view.accessibilityIdentifier = "\(identifier):\(type(of: view))"
+        func prepare(enableViewType: Bool = false) {
+            if enableViewType {
+                if prefix.isEmpty {
+                    view.accessibilityIdentifier = "\(identifier):\(type(of: view))"
+                } else {
+                    view.accessibilityIdentifier = "\(prefix).\(identifier):\(type(of: view))"
+                }
             } else {
-                view.accessibilityIdentifier = "\(prefix).\(identifier):\(type(of: view))"
+                
+                if prefix.isEmpty {
+                    view.accessibilityIdentifier = identifier
+                } else {
+                    view.accessibilityIdentifier = "\(prefix).\(identifier)"
+                }
             }
         }
         
@@ -64,8 +83,13 @@ public final class IdentifierUpdater {
     }
     
     final class MirrorDigger {
+        internal init(enablePrefixChain: Bool) {
+            self.enablePrefixChain = enablePrefixChain
+        }
         
         private(set) var identifieds: Set<Identified> = []
+        
+        let enablePrefixChain: Bool
         
         func digging(_ mirror: Mirror, prefix: String = "") {
             if let superclassMirror = mirror.superclassMirror {
@@ -82,7 +106,7 @@ public final class IdentifierUpdater {
         }
         
         func identifier(prefix: String, identifier: String) -> String {
-            if prefix.isEmpty {
+            if prefix.isEmpty || !enablePrefixChain {
                 return identifier
             } else {
                 return "\(prefix).\(identifier)"

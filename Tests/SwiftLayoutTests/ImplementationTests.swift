@@ -151,7 +151,7 @@ extension ImplementationTests {
         }
         
         let view = TestView()
-        IdentifierUpdater(view).update()
+        IdentifierUpdater(view, enableViewType: true).update()
         
         XCTAssertEqual(view.contentView.accessibilityIdentifier, "contentView:UIView")
         XCTAssertEqual(view.nameLabel.accessibilityIdentifier, "nameLabel:UILabel")
@@ -159,7 +159,7 @@ extension ImplementationTests {
         class Test2View: TestView {}
         
         let view2 = Test2View()
-        IdentifierUpdater(view2).update()
+        IdentifierUpdater(view2, enableViewType: true).update()
         
         XCTAssertEqual(view2.contentView.accessibilityIdentifier, "contentView:UIView")
         XCTAssertEqual(view2.nameLabel.accessibilityIdentifier, "nameLabel:UILabel")
@@ -220,8 +220,8 @@ extension ImplementationTests {
     
     func testAccessibilityIdentifierOption() {
         let view = IdentifiedView(.automaticIdentifierAssignment)
-        XCTAssertEqual(view.contentView.accessibilityIdentifier, "contentView:UIView")
-        XCTAssertEqual(view.nameLabel.accessibilityIdentifier, "nameLabel:UILabel")
+        XCTAssertEqual(view.contentView.accessibilityIdentifier, "contentView")
+        XCTAssertEqual(view.nameLabel.accessibilityIdentifier, "nameLabel")
     }
 }
 
