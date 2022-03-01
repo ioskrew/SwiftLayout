@@ -23,12 +23,16 @@ struct TagDescriptor<Value>: CustomDebugStringConvertible where Value: TagDescri
         if let identifier = value.accessibilityIdentifier {
             return identifier
         } else {
-            return AddressDescriptor(value).description
+            return objectDescription
         }
     }
     
     var debugDescription: String {
         identifier
+    }
+    
+    var objectDescription: String {
+        AddressDescriptor(value).description
     }
     
 }

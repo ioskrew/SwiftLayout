@@ -9,15 +9,13 @@ import Foundation
 import UIKit
 
 public struct SwiftLayoutPrinter: CustomStringConvertible {
-    public init(_ view: UIView, tags: [UIView: String] = [:], options: LayoutOptions = []) {
+    public init(_ view: UIView, tags: [UIView: String] = [:]) {
         self.view = view
         self.tags = Dictionary(uniqueKeysWithValues: tags.map({ ($0.key.tagDescription, $0.value) }))
-        self.options = options
     }
     
     weak var view: UIView?
     let tags: [String: String]
-    let options: LayoutOptions
     
     public var description: String {
         print()
@@ -26,17 +24,17 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
     /// print ``SwiftLayout`` syntax from view structures
     /// - Parameter includeSystems: print all constraints include system creations(safe layout guide, label size, etc...)
     /// - Returns: String of SwiftLayout syntax
-    public func print(includeSystems: Bool = false) -> String {
+    public func print(_ updater: IdentifierUpdater? = nil, systemConstraintsHidden: Bool = true) -> String {
         guard let view = view else {
             return ""
         }
         
-        if options.contains(.automaticIdentifierAssignment) {
-            IdentifierUpdater(view).update()
+        if let updater = updater {
+            updater.update(view, fixedTags: Set(tags.keys))
         }
         
         let viewToken = ViewToken.Parser.from(view, tags: tags)
-        let constraints = ConstraintToken.Parser.from(view, tags: tags, includeSystems: includeSystems)
+        let constraints = ConstraintToken.Parser.from(view, tags: tags, systemConstraintsHidden: systemConstraintsHidden)
         return Describer(viewToken, constraints).description
     }
     
@@ -179,24 +177,24 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
     }
     
     struct Parser {
-        static func from(_ view: UIView, tags: [String: String], includeSystems: Bool = false) -> [ConstraintToken] {
+        static func from(_ view: UIView, tags: [String: String], systemConstraintsHidden: Bool = true) -> [ConstraintToken] {
             let constraints = view.constraints
-                .filter({ Validator.isUserCreation($0, showSystemCreated: includeSystems) })
+                .filter({ Validator.isUserCreation($0, systemConstraintsHidden: systemConstraintsHidden) })
             var tokens = constraints.map({ ConstraintToken(constraint: $0, tags: tags) })
-            tokens.append(contentsOf: view.subviews.flatMap({ from($0, tags:tags, includeSystems: includeSystems) }))
+            tokens.append(contentsOf: view.subviews.flatMap({ from($0, tags:tags, systemConstraintsHidden: systemConstraintsHidden) }))
             return tokens
         }
     }
     
     struct Validator {
-        static func isUserCreation(_ constraint: NSLayoutConstraint, showSystemCreated: Bool = false) -> Bool {
+        static func isUserCreation(_ constraint: NSLayoutConstraint, systemConstraintsHidden: Bool = true) -> Bool {
             let description = constraint.debugDescription
-            if showSystemCreated {
-                return true
-            } else {
+            if systemConstraintsHidden {
                 guard description.contains("NSLayoutConstraint") else { return false }
                 guard let range = description.range(of: "'UIViewSafeAreaLayoutGuide-[:alpha:]*'", options: [.regularExpression], range: description.startIndex..<description.endIndex) else { return true }
                 return range.isEmpty
+            } else {
+                return true
             }
         }
     }
