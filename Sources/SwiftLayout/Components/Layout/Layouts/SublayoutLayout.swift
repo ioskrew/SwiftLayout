@@ -17,15 +17,17 @@ public struct SublayoutLayout<Super: Layout, Sub: Layout>: Layout {
 
 public extension SublayoutLayout {
     func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
-        superlayout.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: { information in
-            handler(information)
+        superlayout.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+        
+        if let information = superlayout.firstViewInformation(superview) {
             sublayout.traverse(information.view, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
-        })
+        }
     }
     func traverse(_ superview: UIView?, constraintHndler handler: ConstraintHandler) {
-        superlayout.traverse(superview, constraintHndler: { superview, subview, constraints in
-            handler(superview, subview, constraints)
-            sublayout.traverse(subview, constraintHndler: handler)
-        })
+        superlayout.traverse(superview, constraintHndler: handler)
+        
+        if let information = superlayout.firstViewInformation(superview) {
+            sublayout.traverse(information.view, constraintHndler: handler)
+        }
     }
 }
