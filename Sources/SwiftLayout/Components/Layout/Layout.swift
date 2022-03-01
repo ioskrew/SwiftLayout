@@ -47,7 +47,7 @@ extension Layout {
 }
 
 extension Layout {
-    public func firstViewInformation(_ superview: UIView?) -> ViewInformation? {
+    func firstViewInformation(_ superview: UIView?) -> ViewInformation? {
         var information: ViewInformation?
         traverse(superview) { currentViewInformation in
             information = currentViewInformation
@@ -56,7 +56,7 @@ extension Layout {
         return information
     }
     
-    public var viewInformations: [ViewInformation] {
+    var viewInformations: [ViewInformation] {
         var informations: [ViewInformation] = []
         traverse(nil) { information in
             informations.append(information)
@@ -65,7 +65,7 @@ extension Layout {
         return informations
     }
     
-    public func viewConstraints(_ viewInfoSet: ViewInformationSet) -> [NSLayoutConstraint] {
+    func viewConstraints(_ viewInfoSet: ViewInformationSet) -> [NSLayoutConstraint] {
         var layoutConstraints: [NSLayoutConstraint] = []
         traverse(nil) { information, constraints in
             guard
@@ -80,7 +80,7 @@ extension Layout {
         return layoutConstraints
     }
     
-    public func viewConstraints() -> [NSLayoutConstraint] {
+    func viewConstraints() -> [NSLayoutConstraint] {
         self.viewConstraints(.init())
     }
 }
