@@ -41,14 +41,20 @@ extension Layout {
     }
     
     public func identifying(_ accessibilityIdentifier: String) -> some Layout {
-        traverse(nil, continueAfterViewLayout: false) { information in
-            information.view?.accessibilityIdentifier = accessibilityIdentifier
-        }
+        firstViewInformation(nil)?.view?.accessibilityIdentifier = accessibilityIdentifier
         return self
     }
 }
 
 extension Layout {
+    public func firstViewInformation(_ superview: UIView?) -> ViewInformation? {
+        var information: ViewInformation?
+        traverse(superview, continueAfterViewLayout: false) { currentViewInformation in
+            information = currentViewInformation
+        }
+        return information
+    }
+    
     public var viewInformations: [ViewInformation] {
         var informations: [ViewInformation] = []
         traverse(nil, continueAfterViewLayout: true) { information in
