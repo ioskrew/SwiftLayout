@@ -10,8 +10,8 @@ import UIKit
 extension UIView: Layout {}
 
 public extension UIView {
-    func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
-        handler(.init(superview: superview, view: self))
+    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
+        _ = handler(.init(superview: superview, view: self))
     }
     func traverse(_ superview: UIView?, constraintHndler handler: ConstraintHandler) {
         handler(superview, self, [])

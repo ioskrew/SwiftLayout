@@ -12,8 +12,8 @@ public struct AnchorsLayout<L: Layout>: Layout {
 }
 
 public extension AnchorsLayout {
-    func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
-        layout.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
+        layout.traverse(superview, traverseHandler: handler)
     }
     func traverse(_ superview: UIView?, constraintHndler handler: ConstraintHandler) {
         let information = firstViewInformation(superview)

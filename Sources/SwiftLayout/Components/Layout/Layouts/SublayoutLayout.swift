@@ -16,11 +16,11 @@ public struct SublayoutLayout<Super: Layout, Sub: Layout>: Layout {
 }
 
 public extension SublayoutLayout {
-    func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
-        superlayout.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
+        superlayout.traverse(superview, traverseHandler: handler)
         
         if let information = superlayout.firstViewInformation(superview) {
-            sublayout.traverse(information.view, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+            sublayout.traverse(information.view, traverseHandler: handler)
         }
     }
     func traverse(_ superview: UIView?, constraintHndler handler: ConstraintHandler) {

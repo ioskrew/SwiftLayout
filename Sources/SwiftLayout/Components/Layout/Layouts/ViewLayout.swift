@@ -47,10 +47,10 @@ public final class ViewLayout<V: UIView, SubLayout: Layout>: Layout {
 }
 
 public extension ViewLayout {
-    func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
-        handler(.init(superview: superview, view: view, animationHandler: animationHandler))
-        guard continueAfterViewLayout else { return }
-        sublayout.traverse(view, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
+        let continuation = handler(.init(superview: superview, view: view, animationHandler: animationHandler))
+        guard continuation else { return }
+        sublayout.traverse(view, traverseHandler: handler)
     }
     func traverse(_ superview: UIView?, constraintHndler handler: ConstraintHandler) {
         if sublayout is EmptyLayout {

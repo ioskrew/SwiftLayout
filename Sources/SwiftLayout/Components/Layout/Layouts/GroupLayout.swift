@@ -16,8 +16,8 @@ public struct GroupLayout<L: Layout>: Layout {
         self.layout = handler()
     }
     
-    public func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
-        layout.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+    public func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
+        layout.traverse(superview, traverseHandler: handler)
     }
     
     public func traverse(_ superview: UIView?, constraintHndler handler: ConstraintHandler) {

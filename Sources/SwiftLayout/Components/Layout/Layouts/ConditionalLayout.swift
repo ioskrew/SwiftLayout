@@ -14,12 +14,12 @@ public struct ConditionalLayout<True: Layout, False: Layout>: Layout {
 }
 
 public extension ConditionalLayout {
-    func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
+    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
         switch layout {
         case let .trueLayout(layout):
-            layout.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+            layout.traverse(superview, traverseHandler: handler)
         case let .falseLayout(layout):
-            layout.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+            layout.traverse(superview, traverseHandler: handler)
         }
     }
     func traverse(_ superview: UIView?, constraintHndler handler: ConstraintHandler) {
