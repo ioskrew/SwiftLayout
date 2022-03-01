@@ -22,10 +22,15 @@ public extension LayoutBuilding {
     
     func updateLayout(_ options: LayoutOptions = []) {
         let layout = self.layout
-        if let deactivation = self.deactivable as? Deactivation<Self> {
+        
+        if options.contains(.automaticIdentifierAssignment) {
+            _ = layout.updateIdentifiers(rootObject: self)
+        }
+        
+        if let deactivation = self.deactivable as? Deactivation {
             Activator.update(layout: layout, fromDeactivation: deactivation, options: options)
         } else {
-            let deactivation = Activator.active(layout: layout, options: options, building: self)
+            let deactivation = Activator.active(layout: layout, options: options )
             self.deactivable = deactivation
         }
     }

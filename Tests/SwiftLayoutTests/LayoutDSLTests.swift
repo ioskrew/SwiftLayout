@@ -191,6 +191,59 @@ extension LayoutDSLTests {
     }
 }
 
+
+// MARK: - layouts in same first level
+extension LayoutDSLTests {
+    
+    func testUpdateIdentifiers() {
+        let container = TestViewContainer()
+        
+        container.root {
+            container.red {
+                container.button
+                container.label
+                container.blue {
+                    container.image
+                }
+            }
+        }
+        .updateIdentifiers(rootObject: container)
+        .active()
+        .store(&deactivable)
+        
+        let expect = """
+        root {
+            red {
+                button
+                label
+                blue {
+                    image
+                }
+            }
+        }
+        """.tabbed
+        
+        XCTAssertEqual(SwiftLayoutPrinter(container.root).print(), expect)
+        
+        XCTAssertEqual(container.root.accessibilityIdentifier, "root")
+        XCTAssertEqual(container.red.accessibilityIdentifier, "red")
+        XCTAssertEqual(container.button.accessibilityIdentifier, "button")
+        XCTAssertEqual(container.label.accessibilityIdentifier, "label")
+        XCTAssertEqual(container.blue.accessibilityIdentifier, "blue")
+        XCTAssertEqual(container.image.accessibilityIdentifier, "image")
+    }
+    
+    // This can be a UIViewController or a UIView.
+    private final class TestViewContainer {
+        let root = UIView()
+        let red = UIView()
+        let blue = UIView()
+        let button = UIButton()
+        let label = UILabel()
+        let image = UIImageView()
+    }
+}
+
 // MARK: - conditional syntax
 extension LayoutDSLTests {
     func testIF() {

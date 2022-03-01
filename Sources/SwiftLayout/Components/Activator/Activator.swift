@@ -10,21 +10,14 @@ import UIKit
 
 enum Activator {
     
-    static func active<L: Layout>(layout: L, options: LayoutOptions = []) -> Deactivation<AnyLayoutBuilding<L>> {
-        return update(layout: layout, fromDeactivation: Deactivation(building: AnyLayoutBuilding(layout)), options: options)
+    static func active<L: Layout>(layout: L, options: LayoutOptions = []) -> Deactivation {
+        return update(layout: layout, fromDeactivation: Deactivation(), options: options)
     }
     
-    static func active<L: Layout, LB: LayoutBuilding>(layout: L, options: LayoutOptions = [], building: LB) -> Deactivation<LB>  where LB.LayoutBody == L {
-        return update(layout: layout, fromDeactivation: Deactivation(building: building), options: options)
-    }
-    
-    private static func updateDeactivationForNewLayout<L: Layout, LB: LayoutBuilding>(layout: L, fromDeactivation deactivation: Deactivation<LB>, options: LayoutOptions) {
+    @discardableResult
+    static func update<L: Layout>(layout: L, fromDeactivation deactivation: Deactivation, options: LayoutOptions) -> Deactivation {
         let viewInfos = layout.viewInformations
         let viewInfoSet = ViewInformationSet(infos: viewInfos)
-        
-        if options.contains(.automaticIdentifierAssignment) {
-            updateIdentifiers(fromBuilding: deactivation.building, viewInfoSet: viewInfoSet)
-        }
         
         updateViews(deactivation: deactivation, viewInfos: viewInfos)
         for viewInfo in viewInfos {
@@ -48,12 +41,6 @@ enum Activator {
         } else {
             updateConstraints(deactivation: deactivation, constraints: constraints)
         }
-    }
-    
-    @discardableResult
-    static func update<L: Layout, LB: LayoutBuilding>(layout: L, fromDeactivation deactivation: Deactivation<LB>, options: LayoutOptions) -> Deactivation<LB> {
-        
-        updateDeactivationForNewLayout(layout: layout, fromDeactivation: deactivation, options: options)
         
         return deactivation
     }
@@ -64,10 +51,6 @@ extension Activator {
         let viewInfos = layout.viewInformations
         let viewInfoSet = ViewInformationSet(infos: viewInfos)
         
-        if options.contains(.automaticIdentifierAssignment) {
-            updateIdentifiers(viewInfoSet: viewInfoSet)
-        }
-        
         updateViews(viewInfos: viewInfos)
         
         let constraints = layout.viewConstraints(viewInfoSet)
@@ -77,7 +60,7 @@ extension Activator {
 }
 
 private extension Activator {
-    static func updateViews<LB: LayoutBuilding>(deactivation: Deactivation<LB>, viewInfos: [ViewInformation]) {
+    static func updateViews(deactivation: Deactivation, viewInfos: [ViewInformation]) {
         let newInfos = viewInfos
         let newInfosSet = Set(newInfos)
         let oldInfos = deactivation.viewInfos.infos
@@ -110,7 +93,7 @@ private extension Activator {
         }
     }
     
-    static func updateConstraints<LB: LayoutBuilding>(deactivation: Deactivation<LB>, constraints: [NSLayoutConstraint]) {
+    static func updateConstraints(deactivation: Deactivation, constraints: [NSLayoutConstraint]) {
         let news = Set(constraints.weakens)
         let olds = Set(deactivation.constraints)
         
@@ -124,24 +107,10 @@ private extension Activator {
         NSLayoutConstraint.activate(news.sorted().compactMap(\.origin))
     }
     
-    static func updateIdentifiers<LB: LayoutBuilding>(fromBuilding building: LB?, viewInfoSet: ViewInformationSet) {
-        updateIdentifiers(rootObject: building, viewInfoSet: viewInfoSet)
-    }
-    
-    static func updateIdentifiers(rootObject: AnyObject? = nil, viewInfoSet: ViewInformationSet) {
-        guard let rootObject = rootObject ?? viewInfoSet.rootview else {
-            assertionFailure("Could not find root view for LayoutOptions.accessibilityIdentifiers. Please use LayoutBuilding.")
-            return
-        }
-        
-        IdentifierUpdater.nameOnly.update(rootObject)
-    }
-    
     static func prepareAnimation(viewInfos: [ViewInformation]) {
         let animationViewInfos = viewInfos.filter { view in
             !view.isNewlyAdded
         }
         animationViewInfos.forEach({ $0.captureCurrentFrame() })
     }
-    
 }
