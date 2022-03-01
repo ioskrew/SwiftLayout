@@ -578,6 +578,22 @@ extension ImplementationTests {
     }
 }
 
+// MARK: - Anchors only
+extension ImplementationTests {
+    func testAnchorsOnly() {
+        let fixedView = UIView()
+        fixedView.anchors {
+            Anchors(.width, .height).equalTo(constant: 24.0)
+        }.finalActive()
+        
+        XCTAssertEqual(SwiftLayoutPrinter(fixedView, tags: [fixedView: "fixedView"]).print(), """
+        fixedView.anchors {
+            Anchors(.width, .height).equalTo(constant: 24.0)
+        }
+        """.tabbed)
+    }
+}
+
 // MARK: - Animation
 extension ImplementationTests {
     func testSetAnimationHandler() {
