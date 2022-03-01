@@ -134,7 +134,7 @@ private extension Activator {
             return
         }
         
-        IdentifierUpdater(rootObject).update()
+        IdentifierUpdater.nameOnly.update(rootObject)
     }
     
     static func prepareAnimation(viewInfos: [ViewInformation]) {

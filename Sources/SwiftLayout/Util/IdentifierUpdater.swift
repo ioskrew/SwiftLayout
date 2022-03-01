@@ -9,20 +9,26 @@ import Foundation
 import UIKit
 
 public final class IdentifierUpdater {
+    /// update identifiers with property name
+    public static var nameOnly: IdentifierUpdater { IdentifierUpdater(.nameOnly) }
+    /// update identifier with property name and type of view
+    public static var withTypeOfView: IdentifierUpdater { IdentifierUpdater(.withTypeOfView) }
+    /// update identifier with references and property name
+    public static var referenceAndName: IdentifierUpdater { IdentifierUpdater(.referenceAndName) }
+    /// update identifier with references and property name with type of view
+    public static var referenceAndNameWithTypeOfView: IdentifierUpdater { IdentifierUpdater(.referenceAndNameWithTypeOfView) }
     
-    let object: AnyObject
-    let prefix: String
+    private let option: IdentifierUpdater.Option
     
-    public init(_ object: AnyObject, prefix: String = "") {
-        self.object = object
-        self.prefix = prefix
+    private init(_ option: IdentifierUpdater.Option) {
+        self.option = option
     }
     
-    public func update() {
-        let digger = MirrorDigger()
-        digger.digging(Mirror(reflecting: object), prefix: prefix)
-        for identified in digger.identifieds {
-            identified.prepare()
+    public func update(_ target: Any, prefix: String = "", fixedTags: Set<String> = []) {
+        let digger = MirrorDigger(enablePrefixChain: option == .referenceAndName || option == .referenceAndNameWithTypeOfView )
+        digger.digging(Mirror(reflecting: target), prefix: prefix)
+        for identified in digger.identifieds where !fixedTags.contains(TagDescriptor(identified.view).objectDescription) {
+            identified.prepare(enableViewType: option == .withTypeOfView || option == .referenceAndNameWithTypeOfView)
         }
     }
     
@@ -41,11 +47,20 @@ public final class IdentifierUpdater {
         let identifier: String
         let view: UIView
         
-        func prepare() {
-            if prefix.isEmpty {
-                view.accessibilityIdentifier = "\(identifier):\(type(of: view))"
+        func prepare(enableViewType: Bool = false) {
+            if enableViewType {
+                if prefix.isEmpty {
+                    view.accessibilityIdentifier = "\(identifier):\(type(of: view))"
+                } else {
+                    view.accessibilityIdentifier = "\(prefix).\(identifier):\(type(of: view))"
+                }
             } else {
-                view.accessibilityIdentifier = "\(prefix).\(identifier):\(type(of: view))"
+                
+                if prefix.isEmpty {
+                    view.accessibilityIdentifier = identifier
+                } else {
+                    view.accessibilityIdentifier = "\(prefix).\(identifier)"
+                }
             }
         }
         
@@ -64,8 +79,13 @@ public final class IdentifierUpdater {
     }
     
     final class MirrorDigger {
+        internal init(enablePrefixChain: Bool) {
+            self.enablePrefixChain = enablePrefixChain
+        }
         
         private(set) var identifieds: Set<Identified> = []
+        
+        let enablePrefixChain: Bool
         
         func digging(_ mirror: Mirror, prefix: String = "") {
             if let superclassMirror = mirror.superclassMirror {
@@ -74,10 +94,12 @@ public final class IdentifierUpdater {
             for child in mirror.children {
                 guard let label = child.label?.replacingOccurrences(of: "$__lazy_storage_$_", with: "") else { continue }
                 guard let view = child.value as? UIView else { continue }
-                let identified = Identified(prefix: prefix, identifier: label, view: view)
+                let identified = Identified(prefix: enablePrefixChain ? prefix : "", identifier: label, view: view)
                 if self.identifieds.contains(identified) { continue }
                 self.identifieds.insert(identified)
-                digging(Mirror(reflecting: view), prefix: identifier(prefix: prefix, identifier: label))
+                if enablePrefixChain {
+                    digging(Mirror(reflecting: view), prefix: identifier(prefix: prefix, identifier: label))
+                }
             }
         }
         
@@ -89,5 +111,20 @@ public final class IdentifierUpdater {
             }
         }
         
+    }
+    
+    ///
+    /// set accessibility identifier from property name
+    ///
+    private enum Option {
+        case `none`
+        /// set identifier with property name
+        case nameOnly
+        /// set identifier with property name and type of view
+        case withTypeOfView
+        /// set identifier with prefix of reference owner chains and property name
+        case referenceAndName
+        /// set identifier with prefix of reference owner chains and property name with type of view
+        case referenceAndNameWithTypeOfView
     }
 }

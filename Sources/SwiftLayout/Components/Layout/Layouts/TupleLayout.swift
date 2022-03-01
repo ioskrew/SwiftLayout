@@ -21,15 +21,15 @@ public extension TupleLayout {
         }
     }
     
-    func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
+    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
         for traversal in traversals {
-            traversal.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+            traversal.traverse(superview, traverseHandler: handler)
         }
     }
     
-    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: ConstraintHandler) {
+    func traverse(_ superview: UIView?, constraintHndler handler: ConstraintHandler) {
         for traversal in traversals {
-            traversal.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: handler)
+            traversal.traverse(superview, constraintHndler: handler)
         }
     }
 }
