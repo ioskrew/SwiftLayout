@@ -17,7 +17,7 @@ public extension AnchorsLayout {
     }
     func traverse(_ superview: UIView?, constraintHndler handler: ConstraintHandler) {
         let information = firstViewInformation(superview)
-        handler(information?.superview, information?.view, anchors)
+        handler(information, anchors)
         layout.traverse(information?.view, constraintHndler: handler)
     }
 }

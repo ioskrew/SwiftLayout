@@ -8,7 +8,7 @@
 import UIKit
 
 public typealias TraverseHandler = (_ information: ViewInformation) -> Bool
-public typealias ConstraintHandler = (_ superview: UIView?, _ subview: UIView?, _ constraints: [Constraint]) -> Void
+public typealias ConstraintHandler = (_ information: ViewInformation?, _ constraints: [Constraint]) -> Void
 
 public protocol Layout: CustomDebugStringConvertible {
     func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler)
@@ -67,10 +67,15 @@ extension Layout {
     
     public func viewConstraints(_ viewInfoSet: ViewInformationSet) -> [NSLayoutConstraint] {
         var layoutConstraints: [NSLayoutConstraint] = []
-        traverse(nil) { superview, subview, constraints in
-            guard let subview = subview else { return }
-            if constraints.isEmpty { return }
-            layoutConstraints.append(contentsOf: constraints.constraints(item: subview, toItem: superview, viewInfoSet: viewInfoSet))
+        traverse(nil) { information, constraints in
+            guard
+                let subview = information?.view,
+                constraints.isEmpty == false
+            else {
+                return
+            }
+
+            layoutConstraints.append(contentsOf: constraints.constraints(item: subview, toItem: information?.superview, viewInfoSet: viewInfoSet))
         }
         return layoutConstraints
     }
