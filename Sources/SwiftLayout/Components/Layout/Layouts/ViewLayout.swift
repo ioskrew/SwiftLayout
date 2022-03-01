@@ -53,10 +53,6 @@ public extension ViewLayout {
         sublayout.traverse(view, traverseHandler: handler)
     }
     func traverse(_ superview: UIView?, constraintHndler handler: ConstraintHandler) {
-        if sublayout is EmptyLayout {
-            handler(superview, view, [])
-        } else {
-            sublayout.traverse(view, constraintHndler: handler)
-        }
+        sublayout.traverse(view, constraintHndler: handler)
     }
 }
