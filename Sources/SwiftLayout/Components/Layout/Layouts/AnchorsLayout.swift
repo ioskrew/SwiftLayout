@@ -12,13 +12,12 @@ public struct AnchorsLayout<L: Layout>: Layout {
 }
 
 public extension AnchorsLayout {
-    func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
-        layout.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
+    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
+        layout.traverse(superview, traverseHandler: handler)
     }
-    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: ConstraintHandler) {
-        layout.traverse(superview, continueAfterViewLayout: false, traverseHandler: { information in
-            handler(information.superview, information.view, anchors, viewInfoSet)
-            layout.traverse(information.view, viewInfoSet: viewInfoSet, constraintHndler: handler)
-        })
+    func traverse(_ superview: UIView?, constraintHndler handler: ConstraintHandler) {
+        let information = firstViewInformation(superview)
+        handler(information, anchors)
+        layout.traverse(superview, constraintHndler: handler)
     }
 }

@@ -259,6 +259,34 @@ extension AnchorsDSLTests {
             XCTAssertNotNil(root.findConstraints(items: (root, label), attributes: (attr, attr)).first)
         }
     }
+    
+    func testDuplicateAnchorBuilder() {
+        deactivable = root {
+            red.anchors {
+                Anchors(.top, .leading, .bottom)
+            }.anchors {
+                Anchors(.trailing).equalTo(blue, attribute: .leading)
+            }
+            blue.anchors {
+                Anchors(.top, .trailing, .bottom)
+            }
+        }.active()
+        
+        XCTAssertEqual(root.subviews, [red, blue])
+        XCTAssertEqual(red.superview, root)
+        XCTAssertEqual(blue.superview, root)
+        
+        // root takes all constraints
+        XCTAssertEqual(root.constraints.count, 7)
+        
+        for attr in [NSLayoutConstraint.Attribute.top, .leading, .bottom] {
+            XCTAssertNotNil(root.findConstraints(items: (red, root), attributes: (attr, attr)).first)
+        }
+        XCTAssertNotNil(root.findConstraints(items: (red, blue), attributes: (.trailing, .leading)).first)
+        for attr in [NSLayoutConstraint.Attribute.top, .trailing, .bottom] {
+            XCTAssertNotNil(root.findConstraints(items: (blue, root), attributes: (attr, attr)).first)
+        }
+    }
 }
 
 extension AnchorsDSLTests {

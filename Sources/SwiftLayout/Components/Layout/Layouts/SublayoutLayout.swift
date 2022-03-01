@@ -16,16 +16,18 @@ public struct SublayoutLayout<Super: Layout, Sub: Layout>: Layout {
 }
 
 public extension SublayoutLayout {
-    func traverse(_ superview: UIView?, continueAfterViewLayout: Bool, traverseHandler handler: TraverseHandler) {
-        superlayout.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: { information in
-            handler(information)
-            sublayout.traverse(information.view, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
-        })
+    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
+        superlayout.traverse(superview, traverseHandler: handler)
+        
+        if let information = superlayout.firstViewInformation(superview) {
+            sublayout.traverse(information.view, traverseHandler: handler)
+        }
     }
-    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: ConstraintHandler) {
-        superlayout.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: { superview, subview, constraints, viewInfoSet in
-            handler(superview, subview, constraints, viewInfoSet)
-            sublayout.traverse(subview, viewInfoSet: viewInfoSet, constraintHndler: handler)
-        })
+    func traverse(_ superview: UIView?, constraintHndler handler: ConstraintHandler) {
+        superlayout.traverse(superview, constraintHndler: handler)
+        
+        if let information = superlayout.firstViewInformation(superview) {
+            sublayout.traverse(information.view, constraintHndler: handler)
+        }
     }
 }
