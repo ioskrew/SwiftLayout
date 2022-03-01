@@ -279,8 +279,8 @@ extension PrintingTests {
         let cell = Cell()
         let expect = """
         contentView {
-            profileView
-            nameLabel
+            profileView:UIImageView
+            nameLabel:UILabel
         }
         """.tabbed
         
@@ -359,8 +359,8 @@ extension PrintingTests {
     func testautomaticIdentifierAssignmentOption() {
         let cell = Cell(.automaticIdentifierAssignment)
         
-        XCTAssertEqual(cell.profileView.accessibilityIdentifier, "profileView")
-        XCTAssertEqual(cell.nameLabel.accessibilityIdentifier, "nameLabel")
+        XCTAssertEqual(cell.profileView.accessibilityIdentifier, "profileView:UIImageView")
+        XCTAssertEqual(cell.nameLabel.accessibilityIdentifier, "nameLabel:UILabel")
     }
     
     class Cell: UIView, LayoutBuilding {
@@ -401,13 +401,27 @@ extension PrintingTests {
         
         XCTAssertEqual(SwiftLayoutPrinter(gont, tags: [gont: "gont"]).print(), """
         gont {
-            sea {
-                duny {
-                    nickname {
-                        sparrowhawk
+            sea:UILabel.anchors {
+                Anchors(.top, .bottom, .leading, .trailing)
+            }.sublayout {
+                duny:Duny.anchors {
+                    Anchors(.centerX).setMultiplier(1.2000000476837158)
+                    Anchors(.centerY).setMultiplier(0.800000011920929)
+                }.sublayout {
+                    duny.nickname:UILabel.anchors {
+                        Anchors(.top, .leading, .trailing)
+                    }.sublayout {
+                        sparrowhawk.anchors {
+                            Anchors(.top, .bottom, .leading, .trailing)
+                        }
                     }
-                    truename {
-                        ged
+                    duny.truename:UILabel.anchors {
+                        Anchors(.top).equalTo(duny.nickname:UILabel, attribute: .bottom)
+                        Anchors(.bottom, .leading, .trailing)
+                    }.sublayout {
+                        ged.anchors {
+                            Anchors(.top, .bottom, .leading, .trailing)
+                        }
                     }
                 }
             }
@@ -420,13 +434,18 @@ extension PrintingTests {
     }
     
     class Gont: Earth, LayoutBuilding {
-        let duny = Duny()
+        lazy var duny = Duny(in: self)
         
         var deactivable: Deactivable?
         var layout: some Layout {
             self {
-                sea {
-                    duny
+                sea.anchors({
+                    Anchors.allSides()
+                }).sublayout {
+                    duny.anchors {
+                        Anchors(.centerX).setMultiplier(1.2)
+                        Anchors(.centerY).setMultiplier(0.8)
+                    }
                 }
             }
         }
@@ -446,16 +465,33 @@ extension PrintingTests {
     }
     
     class Duny: Wizard, LayoutBuilding {
+        
+        init(in earth: Earth) {
+            super.init(frame: .zero)
+            self.earth = earth
+            updateLayout(.automaticIdentifierAssignment)
+        }
+        
+        weak var earth: Earth?
         let nickname = UILabel()
         
         var deactivable: Deactivable?
         var layout: some Layout {
             self {
-                nickname {
-                    UIView().viewTag.sparrowhawk
+                nickname.anchors({
+                    Anchors.cap()
+                }).sublayout {
+                    UIView().viewTag.sparrowhawk.anchors {
+                        Anchors.allSides()
+                    }
                 }
-                truename {
-                    UIView().viewTag.ged
+                truename.anchors({
+                    Anchors(.top).equalTo(nickname.bottomAnchor)
+                    Anchors.shoe()
+                }).sublayout {
+                    UIView().viewTag.ged.anchors {
+                        Anchors.allSides()
+                    }
                 }
             }
         }
@@ -504,4 +540,14 @@ extension PrintingTests {
         """.tabbed)
     }
     
+}
+
+// MARK: - performance
+extension PrintingTests {
+    func testSwiftLayoutPrinterPerformance() {
+        measure {
+            let gont = Gont()
+            print(SwiftLayoutPrinter(gont, tags: [gont: "gont"], options: .automaticIdentifierAssignment))
+        }
+    }
 }
