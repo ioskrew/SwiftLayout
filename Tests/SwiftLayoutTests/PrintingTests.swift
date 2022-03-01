@@ -549,14 +549,14 @@ extension PrintingTests {
         let id = ID()
         IdentifierUpdater.nameOnly.update(id)
         XCTAssertEqual(id.name.accessibilityIdentifier, "name")
-        XCTAssertEqual(id.name.label.accessibilityIdentifier, "label")
+        XCTAssertNil(id.name.label.accessibilityIdentifier)
     }
     
     func testWithTypeOfView() {
         let id = ID()
         IdentifierUpdater.withTypeOfView.update(id)
         XCTAssertEqual(id.name.accessibilityIdentifier, "name:Name")
-        XCTAssertEqual(id.name.label.accessibilityIdentifier, "label:UILabel")
+        XCTAssertNil(id.name.label.accessibilityIdentifier)
     }
     
     func testReferenceAndName() {

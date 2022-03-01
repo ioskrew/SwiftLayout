@@ -97,7 +97,9 @@ public final class IdentifierUpdater {
                 let identified = Identified(prefix: enablePrefixChain ? prefix : "", identifier: label, view: view)
                 if self.identifieds.contains(identified) { continue }
                 self.identifieds.insert(identified)
-                digging(Mirror(reflecting: view), prefix: enablePrefixChain ? identifier(prefix: prefix, identifier: label) : label)
+                if enablePrefixChain {
+                    digging(Mirror(reflecting: view), prefix: identifier(prefix: prefix, identifier: label))
+                }
             }
         }
         
