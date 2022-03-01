@@ -12,8 +12,8 @@ extension Optional: Layout where Wrapped: Layout {
         self?.traverse(superview, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
     }
     
-    public func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: ConstraintHandler) {
-        self?.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: handler)
+    public func traverse(_ superview: UIView?, constraintHndler handler: ConstraintHandler) {
+        self?.traverse(superview, constraintHndler: handler)
     }
 }
 

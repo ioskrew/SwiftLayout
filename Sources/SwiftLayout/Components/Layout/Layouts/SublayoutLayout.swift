@@ -22,10 +22,10 @@ public extension SublayoutLayout {
             sublayout.traverse(information.view, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
         })
     }
-    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: ConstraintHandler) {
-        superlayout.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: { superview, subview, constraints, viewInfoSet in
-            handler(superview, subview, constraints, viewInfoSet)
-            sublayout.traverse(subview, viewInfoSet: viewInfoSet, constraintHndler: handler)
+    func traverse(_ superview: UIView?, constraintHndler handler: ConstraintHandler) {
+        superlayout.traverse(superview, constraintHndler: { superview, subview, constraints in
+            handler(superview, subview, constraints)
+            sublayout.traverse(subview, constraintHndler: handler)
         })
     }
 }

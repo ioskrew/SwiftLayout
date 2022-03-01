@@ -27,9 +27,9 @@ public extension TupleLayout {
         }
     }
     
-    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: ConstraintHandler) {
+    func traverse(_ superview: UIView?, constraintHndler handler: ConstraintHandler) {
         for traversal in traversals {
-            traversal.traverse(superview, viewInfoSet: viewInfoSet, constraintHndler: handler)
+            traversal.traverse(superview, constraintHndler: handler)
         }
     }
 }

@@ -52,11 +52,11 @@ public extension ViewLayout {
         guard continueAfterViewLayout else { return }
         sublayout.traverse(view, continueAfterViewLayout: continueAfterViewLayout, traverseHandler: handler)
     }
-    func traverse(_ superview: UIView?, viewInfoSet: ViewInformationSet, constraintHndler handler: ConstraintHandler) {
+    func traverse(_ superview: UIView?, constraintHndler handler: ConstraintHandler) {
         if sublayout is EmptyLayout {
-            handler(superview, view, [], viewInfoSet)
+            handler(superview, view, [])
         } else {
-            sublayout.traverse(view, viewInfoSet: viewInfoSet, constraintHndler: handler)
+            sublayout.traverse(view, constraintHndler: handler)
         }
     }
 }
