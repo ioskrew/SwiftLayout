@@ -68,10 +68,7 @@ extension Layout {
     func viewConstraints(_ viewInfoSet: ViewInformationSet) -> [NSLayoutConstraint] {
         var layoutConstraints: [NSLayoutConstraint] = []
         traverse(nil) { information, constraints in
-            guard
-                let subview = information?.view,
-                constraints.isEmpty == false
-            else {
+            guard let subview = information?.view else {
                 return
             }
 
