@@ -151,7 +151,7 @@ extension ImplementationTests {
         }
         
         let view = TestView()
-        IdentifierUpdater(view, enableViewType: true).update()
+        IdentifierUpdater.withTypeOfView.update(view)
         
         XCTAssertEqual(view.contentView.accessibilityIdentifier, "contentView:UIView")
         XCTAssertEqual(view.nameLabel.accessibilityIdentifier, "nameLabel:UILabel")
@@ -159,7 +159,7 @@ extension ImplementationTests {
         class Test2View: TestView {}
         
         let view2 = Test2View()
-        IdentifierUpdater(view2, enableViewType: true).update()
+        IdentifierUpdater.withTypeOfView.update(view2)
         
         XCTAssertEqual(view2.contentView.accessibilityIdentifier, "contentView:UIView")
         XCTAssertEqual(view2.nameLabel.accessibilityIdentifier, "nameLabel:UILabel")

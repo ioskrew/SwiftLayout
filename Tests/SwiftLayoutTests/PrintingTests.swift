@@ -284,7 +284,7 @@ extension PrintingTests {
         }
         """.tabbed
         
-        let result = SwiftLayoutPrinter(cell, tags: [cell: "contentView"]).print(identifierAssignment: true, enableViewType: true)
+        let result = SwiftLayoutPrinter(cell, tags: [cell: "contentView"]).print(.withTypeOfView)
         XCTAssertEqual(result, expect)
     }
     
@@ -399,9 +399,7 @@ extension PrintingTests {
     func testDeepAssignIdentifier() {
         let gont = Gont()
         
-        XCTAssertEqual(SwiftLayoutPrinter(gont, tags: [gont: "gont"]).print(identifierAssignment: true,
-                                                                            enablePrefixChain: true,
-                                                                            enableViewType: true),
+        XCTAssertEqual(SwiftLayoutPrinter(gont, tags: [gont: "gont"]).print(.referenceAndNameWithTypeOfView),
         """
         gont {
             sea:UILabel.anchors {
@@ -532,7 +530,7 @@ extension PrintingTests {
         layout().finalActive()
         label.setNeedsLayout()
         label.layoutIfNeeded()
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(includeSystems: true), """
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(systemConstraintsHidden: false), """
         root {
             label.anchors {
                 Anchors(.top, .bottom, .leading, .trailing)
@@ -545,12 +543,51 @@ extension PrintingTests {
     
 }
 
+// MARK: - options for IdentifierUpdater
+extension PrintingTests {
+    func testNameOnly() {
+        let id = ID()
+        IdentifierUpdater.nameOnly.update(id)
+        XCTAssertEqual(id.name.accessibilityIdentifier, "name")
+        XCTAssertEqual(id.name.label.accessibilityIdentifier, "label")
+    }
+    
+    func testWithTypeOfView() {
+        let id = ID()
+        IdentifierUpdater.withTypeOfView.update(id)
+        XCTAssertEqual(id.name.accessibilityIdentifier, "name:Name")
+        XCTAssertEqual(id.name.label.accessibilityIdentifier, "label:UILabel")
+    }
+    
+    func testReferenceAndName() {
+        let id = ID()
+        IdentifierUpdater.referenceAndName.update(id)
+        XCTAssertEqual(id.name.accessibilityIdentifier, "name")
+        XCTAssertEqual(id.name.label.accessibilityIdentifier, "name.label")
+    }
+    
+    func testReferenceAndNameWithTypeOfView() {
+        let id = ID()
+        IdentifierUpdater.referenceAndNameWithTypeOfView.update(id)
+        XCTAssertEqual(id.name.accessibilityIdentifier, "name:Name")
+        XCTAssertEqual(id.name.label.accessibilityIdentifier, "name.label:UILabel")
+    }
+
+    class Name: UIView {
+        let label = UILabel()
+    }
+    
+    class ID: UIView {
+        let name = Name()
+    }
+}
+
 // MARK: - performance
 extension PrintingTests {
     func testSwiftLayoutPrinterPerformance() {
         measure {
             let gont = Gont()
-            print(SwiftLayoutPrinter(gont, tags: [gont: "gont"]).print(identifierAssignment: true))
+            print(SwiftLayoutPrinter(gont, tags: [gont: "gont"]).print(.referenceAndNameWithTypeOfView))
         }
     }
 }
