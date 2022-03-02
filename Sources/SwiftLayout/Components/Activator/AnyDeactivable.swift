@@ -21,7 +21,7 @@ public final class AnyDeactivable: Deactivable, Hashable {
     var viewInfos: ViewInformationSet?
     var constraints: Constraints?
     
-    init<LB>(_ deactivation: Deactivation<LB>) {
+    init(_ deactivation: Deactivation) {
         deactivable = deactivation
         viewInfos = deactivation.viewInfos
         constraints = deactivation.constraints

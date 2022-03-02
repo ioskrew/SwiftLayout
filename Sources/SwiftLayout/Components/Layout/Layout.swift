@@ -44,6 +44,11 @@ extension Layout {
         firstViewInformation(nil)?.view?.accessibilityIdentifier = accessibilityIdentifier
         return self
     }
+    
+    public func updateIdentifiers(rootObject: AnyObject) -> some Layout {
+        IdentifierUpdater.nameOnly.update(rootObject)
+        return self
+    }
 }
 
 extension Layout {
