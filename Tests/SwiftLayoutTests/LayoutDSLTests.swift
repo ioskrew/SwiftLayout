@@ -105,6 +105,33 @@ extension LayoutDSLTests {
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
     }
     
+    func testDuplicateLayoutBuilder() {
+        root {
+            red {
+                button
+                label
+            }.sublayout {
+                blue {
+                    image
+                }
+            }
+        }.finalActive()
+        
+        let expect = """
+        root {
+            red {
+                button
+                label
+                blue {
+                    image
+                }
+            }
+        }
+        """.tabbed
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
+    }
+    
     func testAllSides() {
         root {
             red.anchors {
