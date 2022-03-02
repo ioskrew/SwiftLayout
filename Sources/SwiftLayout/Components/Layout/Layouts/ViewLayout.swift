@@ -32,18 +32,6 @@ public final class ViewLayout<V: UIView, SubLayout: Layout>: Layout {
     public var debugDescription: String {
         view.tagDescription + ": [\(sublayout.debugDescription)]"
     }
-    
-    public func anchors(@AnchorsBuilder _ build: () -> [Constraint]) -> some Layout {
-        AnchorsLayout(layout: self, anchors: build())
-    }
-    
-    public func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> some Layout {
-        ViewLayout<V, TupleLayout<(SubLayout, L)>>(view, sublayout: TupleLayout((self.sublayout, build())))
-    }
-    
-    public func subviews<L: Layout>(@LayoutBuilder _ build: () -> L) -> some Layout {
-        sublayout(build)
-    }
 }
 
 public extension ViewLayout {
