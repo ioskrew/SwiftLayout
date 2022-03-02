@@ -6,6 +6,7 @@ public struct ConditionalLayout<True: Layout, False: Layout>: Layout {
         case trueLayout(True)
         case falseLayout(False)
     }
+    
     let layout: Layout
     
     public var debugDescription: String {
@@ -22,6 +23,7 @@ public extension ConditionalLayout {
             layout.traverse(superview, traverseHandler: handler)
         }
     }
+    
     func traverse(_ superview: UIView?, constraintHndler handler: ConstraintHandler) {
         switch layout {
         case let .trueLayout(layout):

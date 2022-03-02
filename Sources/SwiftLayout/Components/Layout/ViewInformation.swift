@@ -10,10 +10,6 @@ import UIKit
 
 public final class ViewInformation: Hashable {
     
-    public static func == (lhs: ViewInformation, rhs: ViewInformation) -> Bool {
-        lhs.hashValue == rhs.hashValue
-    }
-    
     public init(superview: UIView?, view: UIView?, animationHandler: ViewInformation.AnimationHandler? = nil) {
         self.superview = superview
         self.view = view
@@ -27,12 +23,6 @@ public final class ViewInformation: Hashable {
     
     var capturedFrame: CGRect = .zero
     var isNewlyAdded: Bool = false
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(superview)
-        hasher.combine(view)
-        hasher.combine(identifier)
-    }
     
     func addSuperview() {
         guard let view = view else {
@@ -70,6 +60,21 @@ public final class ViewInformation: Hashable {
     }
 }
 
+// MARK: - Hashable
+extension ViewInformation {
+    
+    public static func == (lhs: ViewInformation, rhs: ViewInformation) -> Bool {
+        lhs.hashValue == rhs.hashValue
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(superview)
+        hasher.combine(view)
+        hasher.combine(identifier)
+    }
+}
+
+// MARK: - AnimationHandler
 extension ViewInformation {
     
     public final class AnimationHandler {

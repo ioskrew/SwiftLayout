@@ -12,10 +12,6 @@ public final class AnyDeactivable: Deactivable, Hashable {
     
     typealias Constraints = Set<WeakReference<NSLayoutConstraint>>
     
-    public static func == (lhs: AnyDeactivable, rhs: AnyDeactivable) -> Bool {
-        lhs.hashValue == rhs.hashValue
-    }
-    
     var deactivable: Deactivable
     
     var viewInfos: ViewInformationSet?
@@ -25,11 +21,6 @@ public final class AnyDeactivable: Deactivable, Hashable {
         deactivable = deactivation
         viewInfos = deactivation.viewInfos
         constraints = deactivation.constraints
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(viewInfos)
-        hasher.combine(constraints)
     }
     
     public func deactive() {
@@ -48,5 +39,18 @@ public final class AnyDeactivable: Deactivable, Hashable {
     
     public func store(_ store: inout Set<AnyDeactivable>) {
         store.insert(self)
+    }
+}
+
+
+// MARK: - Hashable
+extension AnyDeactivable {
+    public static func == (lhs: AnyDeactivable, rhs: AnyDeactivable) -> Bool {
+        lhs.hashValue == rhs.hashValue
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(viewInfos)
+        hasher.combine(constraints)
     }
 }

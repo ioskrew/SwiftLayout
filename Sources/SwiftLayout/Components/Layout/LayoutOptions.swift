@@ -15,7 +15,6 @@ public struct LayoutOptions: OptionSet {
         self.rawValue = rawValue
     }
     
-    ///
     /// may root view has properties of its subviews.
     /// This option assigns the property name of each view to the accessibility identifier of the view.
     @available(*, deprecated, message: "using updateIdentifiers(rootObject:) instead of this")

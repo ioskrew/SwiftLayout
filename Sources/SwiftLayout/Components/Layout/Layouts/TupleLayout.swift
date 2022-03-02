@@ -2,11 +2,11 @@ import Foundation
 import UIKit
 
 public struct TupleLayout<L>: Layout {
-    internal init(_ layout: L) {
+    let layout: L
+    
+    init(_ layout: L) {
         self.layout = layout
     }
-    
-    let layout: L
     
     public var debugDescription: String {
         "TupleLayout<\(L.self)>"
@@ -14,7 +14,6 @@ public struct TupleLayout<L>: Layout {
 }
 
 public extension TupleLayout {
-    
     var traversals: [Layout] {
         Mirror(reflecting: layout).children.compactMap { (_, value) in
             value as? Layout
