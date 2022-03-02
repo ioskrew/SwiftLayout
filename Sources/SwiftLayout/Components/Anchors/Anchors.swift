@@ -29,6 +29,7 @@ public final class Anchors: Constraint {
     public func constraints(item fromItem: NSObject, toItem: NSObject?) -> [NSLayoutConstraint] {
         constraints(item: fromItem, toItem: toItem, viewInfoSet: nil)
     }
+    
     public func constraints(item fromItem: NSObject, toItem: NSObject?, viewInfoSet: ViewInformationSet?) -> [NSLayoutConstraint] {
         var constraints: [NSLayoutConstraint] = []
         for item in items {
@@ -53,6 +54,7 @@ public final class Anchors: Constraint {
 }
 
 extension Anchors {
+    
     private func to(_ relation: NSLayoutConstraint.Relation, to: ConstraintTarget) -> Self {
         func update(_ updateItem: Constraint) -> Constraint {
             var updateItem = updateItem
@@ -257,6 +259,128 @@ extension Anchors {
 }
 
 extension Anchors {
+    
+    ///
+    /// Set constraint attributes of ``Anchors`` with `NSLayoutAnchor`
+    ///
+    /// - Parameter layoutAnchor: A layout anchor from a `UIView` or `UILayoutGuide` object.
+    /// - Returns: ``Anchors``
+    ///
+    public func equalTo(_ layoutAnchor: NSLayoutXAxisAnchor) -> Self {
+        let target = constraintTargetWithConstant(layoutAnchor)
+        return to(.equal, to: target)
+    }
+    
+    ///
+    /// Set constraint attributes of ``Anchors`` with `NSLayoutAnchor`
+    ///
+    /// - Parameter layoutAnchor: A layout anchor from a `UIView` or `UILayoutGuide` object.
+    /// - Returns: ``Anchors``
+    ///
+    public func equalTo(_ layoutAnchor: NSLayoutYAxisAnchor) -> Self {
+        let target = constraintTargetWithConstant(layoutAnchor)
+        return to(.equal, to: target)
+    }
+    
+    ///
+    /// Set constraint attributes of ``Anchors`` with `NSLayoutAnchor`
+    ///
+    /// - Parameter layoutAnchor: A layout anchor from a `UIView` or `UILayoutGuide` object.
+    /// - Returns: ``Anchors``
+    ///
+    public func equalTo(_ layoutAnchor: NSLayoutDimension) -> Self {
+        let target = constraintTargetWithConstant(layoutAnchor)
+        return to(.equal, to: target)
+    }
+    
+    ///
+    /// Set constraint attributes of ``Anchors`` with `NSLayoutAnchor`
+    ///
+    /// - Parameter layoutAnchor: A layout anchor from a `UIView` or `UILayoutGuide` object.
+    /// - Returns: ``Anchors``
+    ///
+    public func greaterThanOrEqualTo(_ layoutAnchor: NSLayoutXAxisAnchor) -> Self {
+        let target = constraintTargetWithConstant(layoutAnchor)
+        return to(.greaterThanOrEqual, to: target)
+    }
+    
+    ///
+    /// Set constraint attributes of ``Anchors`` with `NSLayoutAnchor`
+    ///
+    /// - Parameter layoutAnchor: A layout anchor from a `UIView` or `UILayoutGuide` object.
+    /// - Returns: ``Anchors``
+    ///
+    public func greaterThanOrEqualTo(_ layoutAnchor: NSLayoutYAxisAnchor) -> Self {
+        let target = constraintTargetWithConstant(layoutAnchor)
+        return to(.greaterThanOrEqual, to: target)
+    }
+    
+    ///
+    /// Set constraint attributes of ``Anchors`` with `NSLayoutAnchor`
+    ///
+    /// - Parameter layoutAnchor: A layout anchor from a `UIView` or `UILayoutGuide` object.
+    /// - Returns: ``Anchors``
+    ///
+    public func greaterThanOrEqualTo(_ layoutAnchor: NSLayoutDimension) -> Self {
+        let target = constraintTargetWithConstant(layoutAnchor)
+        return to(.greaterThanOrEqual, to: target)
+    }
+    
+    ///
+    /// Set constraint attributes of ``Anchors`` with `NSLayoutAnchor`
+    ///
+    /// - Parameter layoutAnchor: A layout anchor from a `UIView` or `UILayoutGuide` object.
+    /// - Returns: ``Anchors``
+    ///
+    public func lessThanOrEqualTo(_ layoutAnchor: NSLayoutXAxisAnchor) -> Self {
+        let target = constraintTargetWithConstant(layoutAnchor)
+        return to(.lessThanOrEqual, to: target)
+    }
+    
+    ///
+    /// Set constraint attributes of ``Anchors`` with `NSLayoutAnchor`
+    ///
+    /// - Parameter layoutAnchor: A layout anchor from a `UIView` or `UILayoutGuide` object.
+    /// - Returns: ``Anchors``
+    ///
+    public func lessThanOrEqualTo(_ layoutAnchor: NSLayoutYAxisAnchor) -> Self {
+        let target = constraintTargetWithConstant(layoutAnchor)
+        return to(.lessThanOrEqual, to: target)
+    }
+    
+    ///
+    /// Set constraint attributes of ``Anchors`` with `NSLayoutAnchor`
+    ///
+    /// - Parameter layoutAnchor: A layout anchor from a `UIView` or `UILayoutGuide` object.
+    /// - Returns: ``Anchors``
+    ///
+    public func lessThanOrEqualTo(_ layoutAnchor: NSLayoutDimension) -> Self {
+        let target = constraintTargetWithConstant(layoutAnchor)
+        return to(.lessThanOrEqual, to: target)
+    }
+    
+    private func constraintTargetWithConstant(_ layoutAnchor: NSLayoutXAxisAnchor) -> Anchors.ConstraintTarget {
+        targetFromConstraint(UIView().leadingAnchor.constraint(equalTo: layoutAnchor))
+    }
+    
+    private func constraintTargetWithConstant(_ layoutAnchor: NSLayoutYAxisAnchor) -> Anchors.ConstraintTarget {
+        targetFromConstraint(UIView().topAnchor.constraint(equalTo: layoutAnchor))
+    }
+    
+    private func constraintTargetWithConstant(_ layoutAnchor: NSLayoutDimension) -> Anchors.ConstraintTarget {
+        targetFromConstraint(UIView().widthAnchor.constraint(equalTo: layoutAnchor))
+    }
+    
+    private func targetFromConstraint(_ constraint: NSLayoutConstraint) -> Anchors.ConstraintTarget {
+        if let object = constraint.secondItem as? NSObject {
+            return .init(item: .object(object), attribute: constraint.secondAttribute, constant: .zero)
+        } else {
+            return .init(item: .transparent, attribute: constraint.secondAttribute, constant: .zero)
+        }
+    }
+}
+
+extension Anchors {
     struct ConstraintTarget {
         init<I>(item: I?, attribute: NSLayoutConstraint.Attribute?, constant: CGFloat) where I: ConstraintableItem {
             self.item = ItemFromView(item).item
@@ -332,73 +456,4 @@ extension Anchors {
             }
         }
     }
-}
-
-public extension Anchors {
-    
-    func equalTo(_ layoutAnchor: NSLayoutXAxisAnchor) -> Self {
-        let target = constraintTargetWithConstant(layoutAnchor)
-        return to(.equal, to: target)
-    }
-    
-    func equalTo(_ layoutAnchor: NSLayoutYAxisAnchor) -> Self {
-        let target = constraintTargetWithConstant(layoutAnchor)
-        return to(.equal, to: target)
-    }
-    
-    func equalTo(_ layoutAnchor: NSLayoutDimension) -> Self {
-        let target = constraintTargetWithConstant(layoutAnchor)
-        return to(.equal, to: target)
-    }
-    
-    func greaterThanOrEqualTo(_ layoutAnchor: NSLayoutXAxisAnchor) -> Self {
-        let target = constraintTargetWithConstant(layoutAnchor)
-        return to(.greaterThanOrEqual, to: target)
-    }
-    
-    func greaterThanOrEqualTo(_ layoutAnchor: NSLayoutYAxisAnchor) -> Self {
-        let target = constraintTargetWithConstant(layoutAnchor)
-        return to(.greaterThanOrEqual, to: target)
-    }
-    
-    func greaterThanOrEqualTo(_ layoutAnchor: NSLayoutDimension) -> Self {
-        let target = constraintTargetWithConstant(layoutAnchor)
-        return to(.greaterThanOrEqual, to: target)
-    }
-    
-    func lessThanOrEqualTo(_ layoutAnchor: NSLayoutXAxisAnchor) -> Self {
-        let target = constraintTargetWithConstant(layoutAnchor)
-        return to(.lessThanOrEqual, to: target)
-    }
-    
-    func lessThanOrEqualTo(_ layoutAnchor: NSLayoutYAxisAnchor) -> Self {
-        let target = constraintTargetWithConstant(layoutAnchor)
-        return to(.lessThanOrEqual, to: target)
-    }
-    
-    func lessThanOrEqualTo(_ layoutAnchor: NSLayoutDimension) -> Self {
-        let target = constraintTargetWithConstant(layoutAnchor)
-        return to(.lessThanOrEqual, to: target)
-    }
-    
-    private func constraintTargetWithConstant(_ layoutAnchor: NSLayoutXAxisAnchor) -> Anchors.ConstraintTarget {
-        targetFromConstraint(UIView().leadingAnchor.constraint(equalTo: layoutAnchor))
-    }
-    
-    private func constraintTargetWithConstant(_ layoutAnchor: NSLayoutYAxisAnchor) -> Anchors.ConstraintTarget {
-        targetFromConstraint(UIView().topAnchor.constraint(equalTo: layoutAnchor))
-    }
-    
-    private func constraintTargetWithConstant(_ layoutAnchor: NSLayoutDimension) -> Anchors.ConstraintTarget {
-        targetFromConstraint(UIView().widthAnchor.constraint(equalTo: layoutAnchor))
-    }
-    
-    private func targetFromConstraint(_ constraint: NSLayoutConstraint) -> Anchors.ConstraintTarget {
-        if let object = constraint.secondItem as? NSObject {
-            return .init(item: .object(object), attribute: constraint.secondAttribute, constant: .zero)
-        } else {
-            return .init(item: .transparent, attribute: constraint.secondAttribute, constant: .zero)
-        }
-    }
-    
 }
