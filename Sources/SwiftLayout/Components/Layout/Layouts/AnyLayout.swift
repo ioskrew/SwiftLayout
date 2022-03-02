@@ -5,15 +5,16 @@ protocol AnyLayoutBox: Layout {}
 struct _AnyLayoutBox<L: Layout>: AnyLayoutBox {
     let layout: L
     
+    var debugDescription: String {
+        "_AnyLayoutBox<\(L.self)>"
+    }
+    
     func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
         layout.traverse(superview, traverseHandler: handler)
     }
     
     func traverse(_ superview: UIView?, constraintHndler handler: ConstraintHandler) {
         layout.traverse(superview, constraintHndler: handler)
-    }
-    var debugDescription: String {
-        "_AnyLayoutBox<\(L.self)>"
     }
 }
 
@@ -33,6 +34,7 @@ public extension AnyLayout {
     func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
         box.traverse(superview, traverseHandler: handler)
     }
+    
     func traverse(_ superview: UIView?, constraintHndler handler: ConstraintHandler) {
         box.traverse(superview, constraintHndler: handler)
     }
