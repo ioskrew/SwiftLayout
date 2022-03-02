@@ -7,18 +7,17 @@
 
 import UIKit
 
-final class Deactivation<LB: LayoutBuilding>: Deactivable {
+final class Deactivation: Deactivable {
     
     typealias Constraints = Set<WeakReference<NSLayoutConstraint>>
     
-    convenience init(building: LB? = nil) {
-        self.init(viewInfos: .init(), constraints: .init(), building: building)
+    convenience init() {
+        self.init(viewInfos: .init(), constraints: .init())
     }
     
-    init(viewInfos: ViewInformationSet, constraints: Constraints, building: LB? = nil) {
+    init(viewInfos: ViewInformationSet, constraints: Constraints) {
         self.viewInfos = viewInfos
         self.constraints = constraints
-        self.building = building
     }
     
     deinit {
@@ -27,9 +26,6 @@ final class Deactivation<LB: LayoutBuilding>: Deactivable {
     
     var viewInfos: ViewInformationSet
     var constraints: Constraints
-    
-    /// injected on activating
-    private(set) weak var building: LB?
     
     func deactive() {
         deactiveViews()
