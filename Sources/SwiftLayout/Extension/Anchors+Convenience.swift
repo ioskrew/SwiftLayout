@@ -134,4 +134,30 @@ extension Anchors {
         let bottom = Anchors(.bottom).equalTo(constant: -offset)
         return horizontal.union(bottom)
     }
+    
+    /// ``Anchors`` for width, height toward toItem: ``ConstraintableItem``
+    ///
+    /// - Parameters:
+    ///  - toItem: constraint second item, ``ConstraintableItem``
+    ///  - offset: constant
+    ///
+    /// - Returns: ``Constraint``
+    public static func size<I: ConstraintableItem>(_ toItem: I, offset: CGFloat = .zero) -> Anchors {
+        let width = Anchors(.width).equalTo(toItem, constant: offset)
+        let height = Anchors(.height).equalTo(toItem, constant: offset)
+        return width.union(height)
+    }
+    
+    /// ``Anchors`` for width, height toward self
+    ///
+    /// - Parameters:
+    ///  - offset: constant
+    ///
+    /// - Returns: ``Constraint``
+    public static func size(offset: CGFloat = .zero) -> Anchors {
+        let width = Anchors(.width).equalTo(constant: offset)
+        let height = Anchors(.height).equalTo(constant: offset)
+        return width.union(height)
+    }
+    
 }
