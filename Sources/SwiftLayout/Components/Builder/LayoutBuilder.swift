@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 @resultBuilder
 public struct LayoutBuilder {
@@ -52,5 +53,22 @@ public struct LayoutBuilder {
     
     public static func buildLimitedAvailability<L: Layout>(_ component: L) -> AnyLayout {
         AnyLayout(component)
+    }
+    
+    public static func buildExpression<V: UIView>(_ expression: V) -> ViewLayout<V, EmptyLayout> {
+        ViewLayout(expression, sublayout: EmptyLayout())
+    }
+    
+    public static func buildExpression<V: UIView>(_ expression: V?) -> OptionalLayout<ViewLayout<V, EmptyLayout>> {
+        var viewLayout: ViewLayout<V, EmptyLayout>?
+        if let view = expression {
+            viewLayout = ViewLayout(view, sublayout: EmptyLayout())
+        }
+        
+        return OptionalLayout(layout: viewLayout)
+    }
+    
+    public static func buildExpression<L: Layout>(_ expression: L?) -> OptionalLayout<L> {
+        OptionalLayout(layout: expression)
     }
 }
