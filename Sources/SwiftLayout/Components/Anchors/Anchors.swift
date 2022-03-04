@@ -53,7 +53,7 @@ public final class Anchors: Constraint {
 }
 
 extension Anchors {
-    private func to(_ relation: NSLayoutConstraint.Relation, to: ConstraintTarget) -> Self {
+    func to(_ relation: NSLayoutConstraint.Relation, to: ConstraintTarget) -> Self {
         func update(_ updateItem: Constraint) -> Constraint {
             var updateItem = updateItem
             updateItem.relation = relation
