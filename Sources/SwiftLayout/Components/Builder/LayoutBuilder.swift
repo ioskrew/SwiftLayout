@@ -55,20 +55,24 @@ public struct LayoutBuilder {
         AnyLayout(component)
     }
     
-    public static func buildExpression<V: UIView>(_ expression: V) -> ViewLayout<V, EmptyLayout> {
-        ViewLayout(expression, sublayout: EmptyLayout())
+    public static func buildExpression<V: UIView>(_ uiView: V) -> ViewLayout<V, EmptyLayout> {
+        ViewLayout(uiView, sublayout: EmptyLayout())
     }
     
-    public static func buildExpression<V: UIView>(_ expression: V?) -> OptionalLayout<ViewLayout<V, EmptyLayout>> {
+    public static func buildExpression<V: UIView>(_ uiView: V?) -> OptionalLayout<ViewLayout<V, EmptyLayout>> {
         var viewLayout: ViewLayout<V, EmptyLayout>?
-        if let view = expression {
+        if let view = uiView {
             viewLayout = ViewLayout(view, sublayout: EmptyLayout())
         }
         
         return OptionalLayout(layout: viewLayout)
     }
     
-    public static func buildExpression<L: Layout>(_ expression: L?) -> OptionalLayout<L> {
-        OptionalLayout(layout: expression)
+    public static func buildExpression<L: Layout>(_ layout: L) -> L {
+        layout
+    }
+    
+    public static func buildExpression<L: Layout>(_ layout: L?) -> OptionalLayout<L> {
+        OptionalLayout(layout: layout)
     }
 }
