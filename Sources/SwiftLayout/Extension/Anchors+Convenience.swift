@@ -144,7 +144,7 @@ extension Anchors {
     ///
     /// - Returns: ``Constraint``
     public static func size<I: ConstraintableItem>(_ toItem: I, offset: CGFloat = .zero) -> Anchors {
-        size(toItem, size: .init(width: offset, height: offset))
+        size(toItem, offset: .init(width: offset, height: offset))
     }
     
     /// ``Anchors`` for width, height toward self
