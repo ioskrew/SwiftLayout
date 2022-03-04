@@ -303,11 +303,11 @@ extension ImplementationTests {
     }
     
     func testAnchorsBuilder() {
-        func build(@AnchorsBuilder _ build: () -> [Constraint]) -> [Constraint] {
+        func build(@AnchorsBuilder _ build: () -> Anchors) -> Anchors {
             build()
         }
         
-        let anchors: some Constraint = build {
+        let anchors: Anchors = build {
             Anchors(.top).equalTo(constant: 12.0)
             Anchors(.leading).equalTo(constant: 13.0)
             Anchors(.trailing).equalTo(constant: -13.0)

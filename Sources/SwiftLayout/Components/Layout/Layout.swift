@@ -8,7 +8,7 @@
 import UIKit
 
 public typealias TraverseHandler = (_ information: ViewInformation) -> Bool
-public typealias ConstraintHandler = (_ information: ViewInformation?, _ constraints: [Constraint]) -> Void
+public typealias ConstraintHandler = (_ information: ViewInformation?, _ constraints: Anchors) -> Void
 
 public protocol Layout: CustomDebugStringConvertible {
     func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler)
@@ -37,7 +37,7 @@ extension Layout {
         AnyLayout(self)
     }
     
-    public func anchors(@AnchorsBuilder _ build: () -> [Constraint]) -> AnchorsLayout<Self> {
+    public func anchors(@AnchorsBuilder _ build: () -> Anchors) -> AnchorsLayout<Self> {
         AnchorsLayout(layout: self, anchors: build())
     }
     

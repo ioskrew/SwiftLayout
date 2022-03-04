@@ -1,9 +1,13 @@
 import Foundation
 import UIKit
 
+func + (lhs: Anchors, rhs: Anchors) -> Anchors {
+    lhs.union(rhs)
+}
+
 extension Anchors {
     
-    private func union(_ anchors: Anchors) -> Anchors {
+    func union(_ anchors: Anchors) -> Anchors {
         items.append(contentsOf: anchors.items)
         return self
     }
