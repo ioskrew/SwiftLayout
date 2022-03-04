@@ -3,6 +3,31 @@ import UIKit
 
 @resultBuilder
 public struct LayoutBuilder {
+    
+    public static func buildExpression<L: Layout>(_ layout: L) -> L {
+        layout
+    }
+    
+    public static func buildExpression<L: Layout>(_ layout: L?) -> OptionalLayout<L> {
+        OptionalLayout(layout: layout)
+    }
+    
+    public static func buildExpression<V: UIView>(_ uiView: V) -> ViewLayout<V, EmptyLayout> {
+        ViewLayout(uiView, sublayout: EmptyLayout())
+    }
+    
+    public static func buildExpression<V: UIView>(_ uiView: V?) -> OptionalLayout<ViewLayout<V, EmptyLayout>> {
+        var viewLayout: ViewLayout<V, EmptyLayout>?
+        if let view = uiView {
+            viewLayout = ViewLayout(view, sublayout: EmptyLayout())
+        }
+        
+        return OptionalLayout(layout: viewLayout)
+    }
+}
+
+extension LayoutBuilder {
+    
     public static func buildBlock<L>(_ layout: L) -> L {
         layout
     }
@@ -53,26 +78,5 @@ public struct LayoutBuilder {
     
     public static func buildLimitedAvailability<L: Layout>(_ component: L) -> AnyLayout {
         AnyLayout(component)
-    }
-    
-    public static func buildExpression<V: UIView>(_ uiView: V) -> ViewLayout<V, EmptyLayout> {
-        ViewLayout(uiView, sublayout: EmptyLayout())
-    }
-    
-    public static func buildExpression<V: UIView>(_ uiView: V?) -> OptionalLayout<ViewLayout<V, EmptyLayout>> {
-        var viewLayout: ViewLayout<V, EmptyLayout>?
-        if let view = uiView {
-            viewLayout = ViewLayout(view, sublayout: EmptyLayout())
-        }
-        
-        return OptionalLayout(layout: viewLayout)
-    }
-    
-    public static func buildExpression<L: Layout>(_ layout: L) -> L {
-        layout
-    }
-    
-    public static func buildExpression<L: Layout>(_ layout: L?) -> OptionalLayout<L> {
-        OptionalLayout(layout: layout)
     }
 }
