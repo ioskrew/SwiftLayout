@@ -87,7 +87,11 @@ extension Layout {
                 return
             }
 
-            layoutConstraints.append(contentsOf: constraints.constraints(item: subview, toItem: information?.superview, viewInfoSet: viewInfoSet))
+            layoutConstraints.append(
+                contentsOf: constraints.flatMap {
+                    $0.constraints(item: subview, toItem: information?.superview, viewInfoSet: viewInfoSet)
+                }
+            )
         }
         return layoutConstraints
     }

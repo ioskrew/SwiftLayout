@@ -307,7 +307,7 @@ extension ImplementationTests {
             build()
         }
         
-        let anchors: some Constraint = build {
+        let anchors: [Constraint] = build {
             Anchors(.top).equalTo(constant: 12.0)
             Anchors(.leading).equalTo(constant: 13.0)
             Anchors(.trailing).equalTo(constant: -13.0)
@@ -317,7 +317,7 @@ extension ImplementationTests {
         child.translatesAutoresizingMaskIntoConstraints = false
         root.addSubview(child)
         
-        let constraint = anchors.constraints(item: child, toItem: root, viewInfoSet: nil)
+        let constraint = anchors.flatMap { $0.constraints(item: child, toItem: root, viewInfoSet: nil) }
         XCTAssertEqual(constraint.count, 4)
     }
     

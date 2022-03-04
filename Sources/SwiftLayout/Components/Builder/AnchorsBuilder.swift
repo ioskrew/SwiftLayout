@@ -9,11 +9,27 @@ import Foundation
 
 @resultBuilder
 public struct AnchorsBuilder {
-    public static func buildBlock(_ components: Constraint...) -> [Constraint] {
+    
+    public static func buildExpression(_ components: Constraint) -> [Constraint] {
+        [components]
+    }
+    
+    public static func buildExpression(_ components: [Constraint]) -> [Constraint] {
         components
     }
     
-    public static func buildIf(_ components: [Constraint]?) -> [Constraint] {
+    public static func buildExpression(_ components: Constraint?) -> [Constraint] {
+        [components].compactMap { $0 }
+    }
+}
+
+extension AnchorsBuilder {
+    
+    public static func buildBlock(_ components: [Constraint]...) -> [Constraint] {
+        components.flatMap { $0 }
+    }
+    
+    public static func buildIf(_ components: [Constraint]?) -> [Constraint] { 
         components ?? []
     }
     
@@ -26,7 +42,7 @@ public struct AnchorsBuilder {
     }
    
     public static func buildArray(_ components: [[Constraint]]) -> [Constraint] {
-        components.flatMap({ $0 })
+        components.flatMap { $0 }
     }
     
     public static func buildOptional(_ component: [Constraint]?) -> [Constraint] {
