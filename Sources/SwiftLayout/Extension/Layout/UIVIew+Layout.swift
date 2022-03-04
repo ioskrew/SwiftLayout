@@ -12,7 +12,7 @@ extension UIView {
         ViewLayout(self, sublayout: build())
     }
     
-    public func anchors(@AnchorsBuilder _ build: () -> [Constraint]) -> some Layout {
+    public func anchors(@AnchorsBuilder _ build: () -> Anchors) -> some Layout {
         AnchorsLayout(layout: ViewLayout(self, sublayout: EmptyLayout()), anchors: build())
     }
     

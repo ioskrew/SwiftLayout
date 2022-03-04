@@ -3,7 +3,7 @@ import UIKit
 
 public struct AnchorsLayout<L: Layout>: Layout {
     let layout: L
-    let anchors: [Constraint]
+    let anchors: Anchors
     
     public var debugDescription: String {
         "AnchorsLayout<\(L.self)>"

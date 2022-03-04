@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-public final class Anchors: Constraint {
+public final class Anchors {
     
     var items: [Constraint] = []
     
