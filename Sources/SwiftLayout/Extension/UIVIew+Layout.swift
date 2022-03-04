@@ -7,32 +7,44 @@
 
 import UIKit
 
-extension UIView: Layout {}
-
-public extension UIView {
-    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
-        _ = handler(.init(superview: superview, view: self))
+extension UIView {
+    public func callAsFunction<L: Layout>(@LayoutBuilder _ build: () -> L) -> some Layout {
+        ViewLayout(self, sublayout: build())
     }
-    func traverse(_ superview: UIView?, constraintHndler handler: ConstraintHandler) {
-        handler(.init(superview: superview, view: self), [])
+    
+    public func anchors(@AnchorsBuilder _ build: () -> [Constraint]) -> some Layout {
+        AnchorsLayout(layout: ViewLayout(self, sublayout: EmptyLayout()), anchors: build())
     }
-    func setAnimationHandler(_ handler: @escaping (UIView) -> Void) -> some Layout {
+    
+    public func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> some Layout {
+        SublayoutLayout(ViewLayout(self, sublayout: EmptyLayout()), build())
+    }
+    
+    @available(*, deprecated, message: "using sublayout instead of this")
+    public func subviews<L: Layout>(@LayoutBuilder _ build: () -> L) -> some Layout {
+        self.sublayout(build)
+    }
+    
+    public func setAnimationHandler(_ handler: @escaping (UIView) -> Void) -> some Layout {
         ViewLayout(self, sublayout: EmptyLayout()).setAnimationHandler(handler)
     }
 }
 
-public extension Layout where Self: UIView {
-    func callAsFunction<L: Layout>(@LayoutBuilder _ build: () -> L) -> some Layout {
-        ViewLayout(self, sublayout: build())
-    }
-    
-    func config(_ config: (Self) -> Void) -> ViewLayout<Self, EmptyLayout> {
+public protocol _ViewConfig {}
+extension UIView: _ViewConfig {}
+extension _ViewConfig where Self: UIView {
+    public func config(_ config: (Self) -> Void) -> Self {
         config(self)
-        return ViewLayout(self, sublayout: EmptyLayout())
+        return self
     }
     
-    func setAnimationHandler(_ handler: @escaping (UIView) -> Void) -> ViewLayout<Self, EmptyLayout> {
-        let layout = ViewLayout(self, sublayout: EmptyLayout())
-        return layout.setAnimationHandler(handler)
+    public func identifying(_ accessibilityIdentifier: String) -> Self {
+        self.accessibilityIdentifier = accessibilityIdentifier
+        return self
+    }
+    
+    public func updateIdentifiers(rootObject: AnyObject) -> Self {
+        IdentifierUpdater.nameOnly.update(rootObject)
+        return self
     }
 }

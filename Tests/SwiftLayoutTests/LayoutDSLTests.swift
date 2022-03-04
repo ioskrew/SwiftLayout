@@ -360,7 +360,7 @@ extension LayoutDSLTests {
         func layout(_ view: UIView?) -> some Layout {
             root {
                 red {
-                    view.identifying("optional")
+                    view?.identifying("optional")
                 }
             }
         }
