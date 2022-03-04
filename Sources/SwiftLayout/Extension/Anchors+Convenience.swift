@@ -137,27 +137,48 @@ extension Anchors {
     
     /// ``Anchors`` for width, height toward toItem: ``ConstraintableItem``
     ///
+    ///
     /// - Parameters:
     ///  - toItem: constraint second item, ``ConstraintableItem``
-    ///  - offset: constant
+    ///  - length: constant
     ///
     /// - Returns: ``Constraint``
-    public static func size<I: ConstraintableItem>(_ toItem: I, offset: CGFloat = .zero) -> Anchors {
-        let width = Anchors(.width).equalTo(toItem, constant: offset)
-        let height = Anchors(.height).equalTo(toItem, constant: offset)
-        return width.union(height)
+    public static func size<I: ConstraintableItem>(_ toItem: I, length: CGFloat = .zero) -> Anchors {
+        size(toItem, size: .init(width: length, height: length))
     }
     
     /// ``Anchors`` for width, height toward self
     ///
     /// - Parameters:
-    ///  - offset: constant
+    ///  - length: constant
     ///
     /// - Returns: ``Constraint``
-    public static func size(offset: CGFloat = .zero) -> Anchors {
-        let width = Anchors(.width).equalTo(constant: offset)
-        let height = Anchors(.height).equalTo(constant: offset)
+    public static func size(length: CGFloat = .zero) -> Anchors {
+        size(.init(width: length, height: length))
+    }
+    
+    /// ``Anchors`` for CGSize toward toItem: ``ConstraintableItem``
+    ///
+    /// - Parameters:
+    ///  - toItem: constraint second item, ``ConstraintableItem``
+    ///  - size: constants
+    ///
+    /// - Returns: ``Constraint``
+    public static func size<I: ConstraintableItem>(_ toItem: I, size: CGSize = .zero) -> Anchors {
+        let width = Anchors(.width).equalTo(toItem, constant: size.width)
+        let height = Anchors(.height).equalTo(toItem, constant: size.height)
         return width.union(height)
     }
     
+    /// ``Anchors`` for CGSize toward self
+    ///
+    /// - Parameters:
+    ///  - size: constant
+    ///
+    /// - Returns: ``Constraint``
+    public static func size(_ size: CGSize = .zero) -> Anchors {
+        let width = Anchors(.width).equalTo(constant: size.width)
+        let height = Anchors(.height).equalTo(constant: size.height)
+        return width.union(height)
+    }
 }

@@ -596,7 +596,7 @@ extension ImplementationTests {
     func testConveniencesOfAnchors() {
         let fixedView = UIView().viewTag.fixedView
         fixedView.anchors {
-            Anchors.size(offset: 32.0)
+            Anchors.size(length: 32.0)
         }.finalActive()
         
         let size = fixedView.systemLayoutSizeFitting(.zero)
