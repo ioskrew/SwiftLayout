@@ -143,8 +143,8 @@ extension Anchors {
     ///  - length: constant
     ///
     /// - Returns: ``Constraint``
-    public static func size<I: ConstraintableItem>(_ toItem: I, length: CGFloat = .zero) -> Anchors {
-        size(toItem, size: .init(width: length, height: length))
+    public static func size<I: ConstraintableItem>(_ toItem: I, offset: CGFloat = .zero) -> Anchors {
+        size(toItem, size: .init(width: offset, height: offset))
     }
     
     /// ``Anchors`` for width, height toward self
@@ -164,9 +164,9 @@ extension Anchors {
     ///  - size: constants
     ///
     /// - Returns: ``Constraint``
-    public static func size<I: ConstraintableItem>(_ toItem: I, size: CGSize = .zero) -> Anchors {
-        let width = Anchors(.width).equalTo(toItem, constant: size.width)
-        let height = Anchors(.height).equalTo(toItem, constant: size.height)
+    public static func size<I: ConstraintableItem>(_ toItem: I, offset: CGSize = .zero) -> Anchors {
+        let width = Anchors(.width).equalTo(toItem, constant: offset.width)
+        let height = Anchors(.height).equalTo(toItem, constant: offset.height)
         return width.union(height)
     }
     
