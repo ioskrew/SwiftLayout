@@ -59,36 +59,64 @@ extension ImplementationTests {
     
     func testViewStrongReferenceCycle() {
         class DeinitView: UIView {
-            static var deinitCount: Int = 0
+            static var deinitViews = Set<String>()
+            
+            let text: String
+            
+            init(_ _text: String) {
+                text = _text
+                super.init(frame: .zero)
+            }
+            
+            required init?(coder: NSCoder) {
+                fatalError()
+            }
             
             deinit {
-                Self.deinitCount += 1
+                Self.deinitViews.insert(text)
             }
         }
         
-        class SelfReferenceView: UIView, LayoutBuilding {
-            var layout: some Layout {
-                self {
-                    DeinitView().anchors {
-                        Anchors.allSides()
-                    }.sublayout {
-                        DeinitView()
-                    }
-                }
-            }
+        class SelfReferenceView: UIView {
             
             var deactivable: Deactivable?
+            
+            override init(frame: CGRect) {
+                super.init(frame: frame)
+                let first = DeinitView("first")
+                first.backgroundColor = .yellow
+                first.translatesAutoresizingMaskIntoConstraints = false
+                let second = DeinitView("second")
+                second.backgroundColor = .black
+                second.translatesAutoresizingMaskIntoConstraints = false
+                first.addSubview(second)
+                addSubview(first)
+                
+                NSLayoutConstraint.activate([
+                    topAnchor.constraint(equalTo: first.topAnchor),
+                    bottomAnchor.constraint(equalTo: first.bottomAnchor),
+                    leadingAnchor.constraint(equalTo: first.leadingAnchor),
+                    trailingAnchor.constraint(equalTo: first.trailingAnchor),
+                    
+                    second.topAnchor.constraint(equalTo: first.topAnchor, constant: 10),
+                    second.bottomAnchor.constraint(equalTo: first.bottomAnchor, constant: -10),
+                    second.leadingAnchor.constraint(equalTo: first.leadingAnchor, constant: 10),
+                    second.trailingAnchor.constraint(equalTo: first.trailingAnchor, constant: -10)
+                ])
+            }
+            
+            required init?(coder: NSCoder) {
+                fatalError()
+            }
         }
         
-        DeinitView.deinitCount = 0
+        DeinitView.deinitViews = []
         var view: SelfReferenceView? = SelfReferenceView()
         weak var weakView: UIView? = view
-        
-        view?.updateLayout()
         view = nil
         
         XCTAssertNil(weakView)
-        XCTAssertEqual(DeinitView.deinitCount, 2)
+        XCTAssertEqual(DeinitView.deinitViews, Set(["first", "second"]))
     }
     
     func testLayoutFlattening() {
