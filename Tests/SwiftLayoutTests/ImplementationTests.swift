@@ -56,40 +56,7 @@ extension ImplementationTests {
         
         XCTAssertEqual(expectedResult, result)
     }
-    
-    func testViewStrongReferenceCycle() {
-        class DeinitView: UIView {
-            static var deinitCount: Int = 0
-            
-            deinit {
-                Self.deinitCount += 1
-            }
-        }
-        
-        class SelfReferenceView: UIView, LayoutBuilding {
-            var layout: some Layout {
-                self {
-                    DeinitView().anchors {
-                        Anchors.allSides()
-                    }.sublayout {
-                        DeinitView()
-                    }
-                }
-            }
-            
-            var deactivable: Deactivable?
-        }
-        
-        DeinitView.deinitCount = 0
-        var view: SelfReferenceView? = SelfReferenceView()
-        weak var weakView: UIView? = view
-        
-        view?.updateLayout()
-        view = nil
-        
-        XCTAssertNil(weakView)
-        XCTAssertEqual(DeinitView.deinitCount, 2)
-    }
+   
     
     func testLayoutFlattening() {
         let layout = root {
