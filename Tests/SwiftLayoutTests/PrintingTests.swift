@@ -365,8 +365,6 @@ extension PrintingTests {
     
     class Cell: UIView, LayoutBuilding {
         
-        let options: LayoutOptions
-        
         var profileView: UIImageView = .init(image: nil)
         var nameLabel: UILabel = .init()
         
@@ -379,14 +377,12 @@ extension PrintingTests {
             }
         }
         
-        init(_ _options: LayoutOptions = []) {
-            options = _options
+        init() {
             super.init(frame: .zero)
-            updateLayout(options)
+            updateLayout()
         }
         
         required init?(coder: NSCoder) {
-            options = []
             super.init(coder: coder)
             updateLayout()
         }

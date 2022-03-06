@@ -10,7 +10,7 @@ import UIKit
 
 enum Activator {
     
-    static func active<L: Layout>(layout: L, options: LayoutOptions = []) -> Activation {
+    static func active<L: Layout>(layout: L) -> Activation {
         return update(layout: layout, fromActivation: Activation())
     }
     
@@ -48,7 +48,7 @@ enum Activator {
 }
 
 extension Activator {
-    public static func finalActive<L: Layout>(layout: L, options: LayoutOptions = []) {
+    public static func finalActive<L: Layout>(layout: L) {
         let viewInfos = layout.viewInformations
         let viewInfoSet = ViewInformationSet(infos: viewInfos)
         
