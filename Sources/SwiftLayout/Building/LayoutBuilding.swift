@@ -11,7 +11,7 @@ import UIKit
 public protocol LayoutBuilding: AnyObject {
     associatedtype LayoutBody: Layout
     var layout: LayoutBody { get }
-    var deactivable: Deactivable? { get set }
+    var activation: Activation? { get set }
 }
 
 public extension LayoutBuilding {
@@ -23,12 +23,6 @@ public extension LayoutBuilding {
     func updateLayout(_ options: LayoutOptions = []) {
         let layout = self.layout
         
-        if let deactivation = self.deactivable as? Deactivation {
-            Activator.update(layout: layout, fromDeactivation: deactivation)
-        } else {
-            let deactivation = Activator.active(layout: layout, options: options )
-            self.deactivable = deactivation
-        }
+        self.activation = Activator.update(layout: layout, fromActivation: activation ?? Activation())
     }
-    
 }

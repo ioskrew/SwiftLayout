@@ -9,7 +9,7 @@ final class AnchorsDSLTests: XCTestCase {
     var red: UIView = UIView().viewTag.red
     var blue: UIView = UIView().viewTag.blue
     
-    var deactivable: Deactivable?
+    var activation: Activation?
     
     override func setUp() {
         root = UIView().viewTag.root
@@ -18,13 +18,13 @@ final class AnchorsDSLTests: XCTestCase {
     }
     
     override func tearDown() {
-        deactivable = nil
+        activation = nil
     }
 }
 
 extension AnchorsDSLTests {
     func testAnchors() {
-        deactivable = root {
+        activation = root {
             red.anchors {
                 Anchors(.top, .leading, .bottom)
                 Anchors(.trailing).equalTo(blue, attribute: .leading)
@@ -51,7 +51,7 @@ extension AnchorsDSLTests {
     }
     
     func testLayoutAfterAnchors() {
-        deactivable = root {
+        activation = root {
             red.anchors {
                 Anchors.allSides()
             }.sublayout {
@@ -74,7 +74,7 @@ extension AnchorsDSLTests {
     func testAnchorsEitherTrue() {
         let toggle = true
         
-        deactivable = root {
+        activation = root {
             red.anchors {
                 if toggle {
                     Anchors.cap()
@@ -111,7 +111,7 @@ extension AnchorsDSLTests {
     func testAnchorsEitherFalse() {
         let toggle = false
         
-        deactivable = root {
+        activation = root {
             red.anchors {
                 if toggle {
                     Anchors.cap()
@@ -149,7 +149,7 @@ extension AnchorsDSLTests {
         let optionalAnchor: Anchors? = Anchors(.trailing).equalTo(blue, attribute: .leading)
         let nilAnchor: Anchors? = nil
 
-        deactivable = root {
+        activation = root {
             red.anchors {
                 Anchors(.top, .leading, .bottom)
                 optionalAnchor
@@ -184,7 +184,7 @@ extension AnchorsDSLTests {
             .trailing
         ]
 
-        deactivable = root.anchors {
+        activation = root.anchors {
             for attr in attributes {
                 Anchors(attr).equalTo(red)
             }
@@ -201,7 +201,7 @@ extension AnchorsDSLTests {
     }
     
     func testAnchorsFromSeperately() {
-        deactivable = root {
+        activation = root {
             red.anchors {
                 Anchors.cap()
             }
@@ -229,7 +229,7 @@ extension AnchorsDSLTests {
     }
     
     func testAnchorsFromLayoutGuide() {
-        deactivable = root.anchors {
+        activation = root.anchors {
             Anchors.allSides(red.safeAreaLayoutGuide)
         }.sublayout {
             red
@@ -244,13 +244,13 @@ extension AnchorsDSLTests {
     }
     
     func testAnchorsFromIdentifier() {
-        deactivable = root.anchors {
+        activation = root.anchors {
             Anchors.allSides("label")
         }.sublayout {
             UILabel().identifying("label")
         }.active()
         
-        let label = deactivable?.viewForIdentifier("label")
+        let label = activation?.viewForIdentifier("label")
         
         XCTAssertEqual(root.subviews, [label])
         XCTAssertEqual(label?.superview, root)
@@ -261,7 +261,7 @@ extension AnchorsDSLTests {
     }
     
     func testDuplicateAnchorBuilder() {
-        deactivable = root {
+        activation = root {
             red.anchors {
                 Anchors(.top, .leading, .bottom)
             }.anchors {
@@ -307,7 +307,7 @@ extension AnchorsDSLTests {
     }
     
     func testAnchorsOfDimensionToItem2() {
-        deactivable = root {
+        activation = root {
             red.anchors {
                 Anchors(.bottom, .trailing)
                 Anchors(.width, .height).equalTo(constant: 30)
@@ -325,7 +325,7 @@ extension AnchorsDSLTests {
     }
     
     func testConvenience() {
-        deactivable = root {
+        activation = root {
             red.anchors {
                 Anchors.allSides(root)
             }
@@ -347,7 +347,7 @@ extension AnchorsDSLTests {
 extension AnchorsDSLTests {
     
     func testAnchorsEqualToUILayoutAnchor() {
-        deactivable = root {
+        activation = root {
             red.anchors {
                 Anchors(.top).equalTo(root.topAnchor)
                 Anchors(.leading).equalTo(root.leadingAnchor)
@@ -374,7 +374,7 @@ extension AnchorsDSLTests {
     
     func testAnchorsGreaterThanOrEqualToUILayoutAnchor() {
         
-        deactivable = root {
+        activation = root {
             red.anchors {
                 Anchors(.top).greaterThanOrEqualTo(root.topAnchor)
                 Anchors(.leading).greaterThanOrEqualTo(root.leadingAnchor)
@@ -401,7 +401,7 @@ extension AnchorsDSLTests {
     
     func testAnchorsLessThanOrEqualToUILayoutAnchor() {
         
-        deactivable = root {
+        activation = root {
             red.anchors {
                 Anchors(.top).lessThanOrEqualTo(root.topAnchor)
                 Anchors(.leading).lessThanOrEqualTo(root.leadingAnchor)

@@ -4,14 +4,14 @@ import SwiftLayout
 
 class PrintingTests: XCTestCase {
     
-    var deactivable: Deactivable?
+    var activation: Activation? 
     
     override func setUpWithError() throws {
         continueAfterFailure = false
     }
 
     override func tearDownWithError() throws {
-        deactivable = nil
+        activation = nil
     }
 }
 
@@ -20,7 +20,7 @@ extension PrintingTests {
         let root = UIView().viewTag.root
         let child = UIView().viewTag.child
         
-        deactivable = root {
+        activation = root {
             child
         }.active()
         
@@ -39,7 +39,7 @@ extension PrintingTests {
         let a = UIView().viewTag.a
         let b = UIView().viewTag.b
         
-        deactivable = root {
+        activation = root {
             a
             b
         }.active()
@@ -60,7 +60,7 @@ extension PrintingTests {
         let child = UIView().viewTag.child
         let grandchild = UIView().viewTag.grandchild
         
-        deactivable = root {
+        activation = root {
             child {
                 grandchild
             }
@@ -84,7 +84,7 @@ extension PrintingTests {
         let friend = UIView().viewTag.friend
         let grandchild = UIView().viewTag.grandchild
         
-        deactivable = root {
+        activation = root {
             child {
                 grandchild
             }
@@ -105,7 +105,7 @@ extension PrintingTests {
     
     func testPrintWithSimpleAnchors() {
         let root = UIView().viewTag.root
-        deactivable = root.anchors {
+        activation = root.anchors {
             Anchors(.width, .height)
         }.active()
         
@@ -122,7 +122,7 @@ extension PrintingTests {
     func testPrintWithAnchorsWithOneDepth() {
         let root = UIView().viewTag.root
         let child = UIView().viewTag.child
-        deactivable = root {
+        activation = root {
             child.anchors {
                 Anchors(.top)
                 Anchors(.bottom).equalTo(constant: -10.0)
@@ -146,7 +146,7 @@ extension PrintingTests {
         let root = UIView().viewTag.root
         let child = UIView().viewTag.child
         let friend = UIView().viewTag.friend
-        deactivable = root {
+        activation = root {
             child.anchors {
                 Anchors(.top)
                 Anchors(.bottom).equalTo(constant: -10.0)
@@ -174,7 +174,7 @@ extension PrintingTests {
 
     func testPrintWithAnonymousTaggedView() {
         let root = UIView().viewTag.root
-        deactivable = root {
+        activation = root {
             UILabel().viewTag.label.anchors {
                 Anchors.allSides()
             }
@@ -198,7 +198,7 @@ extension PrintingTests {
         let child = UIView().viewTag.child
         let grandchild = UIView().viewTag.grandchild
         
-        deactivable = root {
+        activation = root {
             child.anchors{
                 Anchors.allSides()
             }.sublayout {
@@ -229,7 +229,7 @@ extension PrintingTests {
         let child = UILabel()
         let grand = UILabel().viewTag.grand
         
-        deactivable = root {
+        activation = root {
             child {
                 grand.anchors {
                     Anchors(.top)
@@ -254,7 +254,7 @@ extension PrintingTests {
     func testPrintWithSafeAreaLayoutGuide() {
         let root = UIView().viewTag.root
         let child = UIView().viewTag.child
-        deactivable = root {
+        activation = root {
             child.anchors {
                 Anchors(.top, .bottom).equalTo(root.safeAreaLayoutGuide)
                 Anchors(.leading)
@@ -293,7 +293,7 @@ extension PrintingTests {
         let child = UIView().viewTag.child
         let friend = UIView().viewTag.friend
         
-        deactivable = root {
+        activation = root {
             child.anchors {
                 Anchors.cap()
             }
@@ -324,7 +324,7 @@ extension PrintingTests {
         let root = UIView().viewTag.root
         let child = UIView().viewTag.child
         let friend = UIView().viewTag.friend
-        deactivable = root {
+        activation = root {
             child.anchors {
                 Anchors(.top).greaterThanOrEqualTo()
                 Anchors(.bottom).lessThanOrEqualTo()
@@ -370,7 +370,7 @@ extension PrintingTests {
         var profileView: UIImageView = .init(image: nil)
         var nameLabel: UILabel = .init()
         
-        var deactivable: Deactivable?
+        var activation: Activation?
         
         var layout: some Layout {
             self {
@@ -437,7 +437,7 @@ extension PrintingTests {
     class Gont: Earth, LayoutBuilding {
         lazy var duny = Duny(in: self)
         
-        var deactivable: Deactivable?
+        var activation: Activation?
         var layout: some Layout {
             self {
                 sea.anchors({
@@ -476,7 +476,7 @@ extension PrintingTests {
         weak var earth: Earth?
         let nickname = UILabel()
         
-        var deactivable: Deactivable?
+        var activation: Activation? 
         var layout: some Layout {
             self {
                 nickname.anchors({
