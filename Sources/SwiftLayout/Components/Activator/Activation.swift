@@ -15,8 +15,6 @@ public final class Activation: Hashable {
     var viewInfos: ViewInformationSet
     var constraints: Constraints
     
-    var cancellables: Set<AnyCancellable> = []
-    
     convenience init() {
         self.init(viewInfos: .init(), constraints: .init())
     }
@@ -75,11 +73,5 @@ extension Activation {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(viewInfos)
         hasher.combine(constraints)
-    }
-}
-
-extension Activation {
-    func store(_ cancellable: AnyCancellable) {
-        cancellable.store(in: &cancellables)
     }
 }

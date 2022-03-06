@@ -705,12 +705,12 @@ extension ImplementationTests {
         
         override init(frame: CGRect) {
             super.init(frame: frame)
-            initLayout()
+            updateLayout()
         }
         
         required init?(coder: NSCoder) {
             super.init(coder: coder)
-            initLayout()
+            updateLayout()
         }
     }
 }
