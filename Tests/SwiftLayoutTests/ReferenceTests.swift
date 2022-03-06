@@ -9,31 +9,29 @@ import XCTest
 import SwiftLayout
 
 class ReferenceTests: XCTestCase {
-
-    override func setUpWithError() throws {
-        
-    }
-
-    override func tearDownWithError() throws {
-    }
     
     var view: SelfReferenceView?
     weak var weakView: UIView?
     
-    func test1JustForPrepare() {
-        DeinitView.deinitCount = 0
-        view = SelfReferenceView()
-        weakView = view
-        
-        view?.updateLayout()
-        view?.layoutIfNeeded()
-        view = nil
+    func testReferenceReleasing() {
+        context("prepare") { [weak self] in
+            guard let self = self else { return }
+            DeinitView.deinitCount = 0
+            self.view = SelfReferenceView()
+            self.weakView = view
+            
+            self.view?.updateLayout()
+            self.view?.layoutIfNeeded()
+            self.view = nil
+        }
+        context("check release reference") {
+            XCTAssertNil(weakView)
+            XCTAssertEqual(DeinitView.deinitCount, 2)
+        }
     }
     
-    func test2ForReferenceReleasing() {
-        XCTAssertNil(weakView)
-        XCTAssertEqual(DeinitView.deinitCount, 2)
-    }
+    override func setUpWithError() throws {}
+    override func tearDownWithError() throws {}
     
     class DeinitView: UIView {
         static var deinitCount: Int = 0
