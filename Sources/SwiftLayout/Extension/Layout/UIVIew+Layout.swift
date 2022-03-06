@@ -24,10 +24,6 @@ extension UIView {
     public func subviews<L: Layout>(@LayoutBuilder _ build: () -> L) -> some Layout {
         self.sublayout(build)
     }
-    
-    public func setAnimationHandler(_ handler: @escaping (UIView) -> Void) -> some Layout {
-        ViewLayout(self, sublayout: EmptyLayout()).setAnimationHandler(handler)
-    }
 }
 
 public protocol _ViewConfig {}

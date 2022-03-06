@@ -77,7 +77,6 @@ private extension Activator {
                 viewInfo.view?.translatesAutoresizingMaskIntoConstraints = false
             }
             viewInfo.addSuperview()
-            viewInfo.animation()
         }
         
         deactivation.viewInfos = ViewInformationSet(infos: viewInfos)
