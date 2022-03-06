@@ -43,6 +43,7 @@ extension _ViewConfig where Self: UIView {
         return self
     }
     
+    @discardableResult
     public func updateIdentifiers(rootObject: AnyObject? = nil) -> Self {
         IdentifierUpdater.nameOnly.update(rootObject ?? self)
         return self

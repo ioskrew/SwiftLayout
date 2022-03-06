@@ -16,17 +16,32 @@ enum Activator {
     
     @discardableResult
     static func update<L: Layout>(layout: L, fromDeactivation deactivation: Deactivation) -> Deactivation {
+        
+        var prevInfos: [ViewInformation: Set<WeakReference<NSLayoutConstraint>>] = [:]
+        for viewInfo in deactivation.viewInfos.infos {
+            guard let view = viewInfo.view else { continue }
+            prevInfos[viewInfo] = Set(view.constraints.weakens)
+        }
+        
         let viewInfos = layout.viewInformations
         let viewInfoSet = ViewInformationSet(infos: viewInfos)
         
         updateViews(deactivation: deactivation, viewInfos: viewInfos)
-        for viewInfo in viewInfos {
-            viewInfo.captureCurrentFrame()
-        }
         
         let constraints = layout.viewConstraints(viewInfoSet)
-        
         updateConstraints(deactivation: deactivation, constraints: constraints)
+        
+        for viewInfo in viewInfos {
+            if let constraints = prevInfos[viewInfo] {
+                if constraints != viewInfo.view.map({ Set($0.constraints.weakens) }) {
+                    viewInfo.view?.layoutIfNeeded()
+                }
+            } else {
+                // for newly add to superview
+                viewInfo.view?.layer.removeAnimation(forKey: "bounds.size")
+                viewInfo.view?.layer.removeAnimation(forKey: "position")
+            }
+        }
         
         return deactivation
     }
@@ -62,6 +77,7 @@ private extension Activator {
                 viewInfo.view?.translatesAutoresizingMaskIntoConstraints = false
             }
             viewInfo.addSuperview()
+            viewInfo.animation()
         }
         
         deactivation.viewInfos = ViewInformationSet(infos: viewInfos)
@@ -93,10 +109,4 @@ private extension Activator {
         NSLayoutConstraint.activate(news.sorted().compactMap(\.origin))
     }
     
-    static func prepareAnimation(viewInfos: [ViewInformation]) {
-        let animationViewInfos = viewInfos.filter { view in
-            !view.isNewlyAdded
-        }
-        animationViewInfos.forEach({ $0.captureCurrentFrame() })
-    }
 }
