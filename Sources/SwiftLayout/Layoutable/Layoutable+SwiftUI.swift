@@ -14,7 +14,8 @@ public protocol LayoutableViewControllerRepresentable: UIViewControllerRepresent
 
 public extension LayoutableViewRepresentable where Self: UIView {
     func makeUIView(context: UIViewRepresentableContext<Self>) -> Self {
-        self
+        self.initLayout()
+        return self
     }
     func updateUIView(_ uiView: Self, context: UIViewRepresentableContext<Self>) {
         uiView.updateLayout()
@@ -23,7 +24,8 @@ public extension LayoutableViewRepresentable where Self: UIView {
 
 public extension LayoutableViewControllerRepresentable where Self: UIViewController {
     func makeUIViewController(context: UIViewControllerRepresentableContext<Self>) -> Self {
-        self
+        self.initLayout()
+        return self
     }
     func updateUIViewController(_ uiViewController: Self, context: UIViewControllerRepresentableContext<Self>) {
         uiViewController.updateLayout()
