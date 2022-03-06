@@ -144,7 +144,84 @@ contentView {
 
 ### animations
 
-- [animation sample](https://gist.github.com/oozoofrog/26e3864dd0a0adeb326ef5254b89768c)
+- with UIView animation feature
+
+```swift
+final class PreviewView: UIView, LayoutBuilding {
+    
+    var capTop = true {
+        didSet {
+          	// start animation for change constraints
+            UIView.animate(withDuration: 1.0) {
+                self.updateLayout()
+            }
+        }
+    }
+    
+    let cap = UIButton()
+    let shoe = UIButton()
+    let title = UILabel()
+    
+    var top: UIButton { capTop ? cap : shoe }
+    var bottom: UIButton { capTop ? shoe : cap }
+    
+    var deactivable: Deactivable?
+    
+    var layout: some Layout {
+        self {
+            top.anchors {
+                Anchors.cap()
+            }
+            bottom.anchors {
+                Anchors(.top).equalTo(top.bottomAnchor)
+                Anchors(.height).equalTo(top)
+                Anchors.shoe()
+            }
+            title.config { label in
+                label.text = "Top Title"
+                UIView.transition(with: label, duration: 1.0, options: [.beginFromCurrentState, .transitionCrossDissolve], animations: {
+                    label.textColor = self.capTop ? .black : .yellow
+                }, completion: nil)
+            }.anchors {
+                Anchors(.centerX, .centerY).equalTo(top)
+            }
+            UILabel().config { label in
+                label.text = "Bottom Title"
+                label.textColor = capTop ? .yellow : .black
+            }.identifying("title.bottom").anchors {
+                Anchors(.centerX, .centerY).equalTo(bottom)
+            }
+        }
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        initViews()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        initViews()
+    }
+    
+    func initViews() {
+        cap.backgroundColor = .yellow
+        shoe.backgroundColor = .black
+        cap.addAction(.init(handler: { [weak self] _ in
+            self?.capTop.toggle()
+        }), for: .touchUpInside)
+        shoe.addAction(.init(handler: { [weak self] _ in
+            self?.capTop.toggle()
+        }), for: .touchUpInside)
+        self.accessibilityIdentifier = "root"
+        updateIdentifiers(rootObject: self)
+        updateLayout()
+    }
+    
+}
+```
+
+
 
 [![animation in update layout](https://user-images.githubusercontent.com/3011832/156908073-d4089c26-928f-41d9-961b-8b04d7dcde37.png)](https://user-images.githubusercontent.com/3011832/156908065-8d6bcebd-553b-490b-903b-6e375d4c97a3.mp4)
 
