@@ -16,11 +16,6 @@ public final class ViewLayout<V: UIView, SubLayout: Layout>: Layout {
         self.view = view
         self.sublayout = sublayout
     }
-        
-    @available(*, deprecated, message: "do nothing")
-    public func animationDisable() -> Self {
-        return self
-    }
     
     public var debugDescription: String {
         view.tagDescription + ": [\(sublayout.debugDescription)]"

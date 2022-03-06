@@ -66,6 +66,18 @@ extension Anchors {
         items = items.map(update)
         return self
     }
+    
+    func union(_ anchors: Anchors) -> Anchors {
+        items.append(contentsOf: anchors.items)
+        return self
+    }
+    
+    static func + (lhs: Anchors, rhs: Anchors) -> Anchors {
+        lhs.union(rhs)
+    }
+}
+
+extension Anchors {
 
     ///
     /// Set constraint attributes of ``Anchors``
@@ -322,15 +334,6 @@ extension Anchors {
                 self = .transparent
             }
         }
-        
-        var object: NSObject? {
-            switch self {
-            case let .object(object):
-                return object
-            default:
-                return nil
-            }
-        }
     }
 }
 
@@ -400,5 +403,4 @@ public extension Anchors {
             return .init(item: .transparent, attribute: constraint.secondAttribute, constant: .zero)
         }
     }
-    
 }

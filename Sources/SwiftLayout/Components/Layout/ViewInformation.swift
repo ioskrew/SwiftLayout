@@ -33,10 +33,6 @@ public final class ViewInformation: Hashable, CustomDebugStringConvertible {
         view?.removeFromSuperview()
     }
     
-    func updatingSuperview(_ superview: UIView?) -> Self {
-        .init(superview: superview, view: view)
-    }
-    
     public var debugDescription: String {
         "\(superview?.tagDescription ?? "nil"):\(view?.tagDescription ?? "nil")"
     }
@@ -58,7 +54,6 @@ extension ViewInformation {
 public struct ViewInformationSet: Hashable {
     
     let infos: Set<ViewInformation>
-    var rootview: UIView? { infos.first(where: { $0.superview == nil })?.view }
     
     init(infos: [ViewInformation] = []) {
         self.infos = Set(infos)
