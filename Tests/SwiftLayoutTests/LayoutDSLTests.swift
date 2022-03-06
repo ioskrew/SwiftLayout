@@ -187,7 +187,7 @@ extension LayoutDSLTests {
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect.tabbed)
     }
     
-    private final class TestView: UIView, LayoutBuilding {
+    private final class TestView: UIView, Layoutable {
         lazy var red = UIView().viewTag.red
         lazy var blue = UIView().viewTag.blue
         lazy var green = UIView().viewTag.green

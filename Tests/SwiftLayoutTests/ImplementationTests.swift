@@ -156,7 +156,7 @@ extension ImplementationTests {
 }
 
 extension ImplementationTests {
-    final class IdentifiedView: UIView, LayoutBuilding {
+    final class IdentifiedView: UIView, Layoutable {
         
         lazy var contentView: UIView = UIView()
         lazy var nameLabel: UILabel = UILabel()
@@ -668,4 +668,49 @@ extension ImplementationTests {
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
     }
 
+}
+
+// MARK: - LayoutProperty
+extension ImplementationTests {
+    
+    func testLayoutProperty() {
+        let test = TestView().viewTag.test
+        
+        XCTAssertEqual(test.trueView.superview, test)
+        XCTAssertNil(test.falseView.superview)
+        
+        test.flag = false
+        XCTAssertEqual(test.falseView.superview, test)
+        XCTAssertNil(test.trueView.superview)
+    }
+    
+    private class TestView: UIView, Layoutable {
+        
+        @LayoutProperty var flag = true
+        
+        var trueView = UIView().viewTag.true
+        var falseView = UIView().viewTag.false
+        
+        var activation: Activation?
+        
+        var layout: some Layout {
+            self {
+                if flag {
+                    trueView
+                } else {
+                    falseView
+                }
+            }
+        }
+        
+        override init(frame: CGRect) {
+            super.init(frame: frame)
+            initLayout()
+        }
+        
+        required init?(coder: NSCoder) {
+            super.init(coder: coder)
+            initLayout()
+        }
+    }
 }
