@@ -165,7 +165,7 @@ final class PreviewView: UIView, LayoutBuilding {
     var top: UIButton { capTop ? cap : shoe }
     var bottom: UIButton { capTop ? shoe : cap }
     
-    var deactivable: Deactivable?
+    var activation: Activation?
     
     var layout: some Layout {
         self {

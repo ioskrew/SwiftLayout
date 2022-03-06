@@ -52,6 +52,6 @@ class ReferenceTests: XCTestCase {
             }
         }
         
-        var deactivable: Deactivable?
+        var activation: Activation? 
     }
 }
