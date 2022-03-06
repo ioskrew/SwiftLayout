@@ -22,7 +22,7 @@ extension Layout {
     
     public func update(fromDeactivable deactivable: Deactivable, _ options: LayoutOptions = []) -> AnyDeactivable {
         if let deactivation = deactivable.deactivation {
-            Activator.update(layout: self, fromDeactivation: deactivation, options: options)
+            Activator.update(layout: self, fromDeactivation: deactivation)
             return AnyDeactivable(deactivation)
         } else {
             return AnyDeactivable(Activator.active(layout: self, options: options))

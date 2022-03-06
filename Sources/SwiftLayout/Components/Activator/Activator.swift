@@ -11,35 +11,36 @@ import UIKit
 enum Activator {
     
     static func active<L: Layout>(layout: L, options: LayoutOptions = []) -> Deactivation {
-        return update(layout: layout, fromDeactivation: Deactivation(), options: options)
+        return update(layout: layout, fromDeactivation: Deactivation())
     }
     
     @discardableResult
-    static func update<L: Layout>(layout: L, fromDeactivation deactivation: Deactivation, options: LayoutOptions) -> Deactivation {
+    static func update<L: Layout>(layout: L, fromDeactivation deactivation: Deactivation) -> Deactivation {
+        
+        var prevInfos: [ViewInformation: Set<WeakReference<NSLayoutConstraint>>] = [:]
+        for viewInfo in deactivation.viewInfos.infos {
+            guard let view = viewInfo.view else { continue }
+            prevInfos[viewInfo] = Set(view.constraints.weakens)
+        }
+        
         let viewInfos = layout.viewInformations
         let viewInfoSet = ViewInformationSet(infos: viewInfos)
         
         updateViews(deactivation: deactivation, viewInfos: viewInfos)
-        for viewInfo in viewInfos {
-            viewInfo.captureCurrentFrame()
-        }
         
         let constraints = layout.viewConstraints(viewInfoSet)
+        updateConstraints(deactivation: deactivation, constraints: constraints)
         
-        if options.contains(.usingAnimation) {
-            prepareAnimation(viewInfos: viewInfos)
-        }
-        
-        if options.contains(.usingAnimation) {
-            UIView.animate(withDuration: 0.25, delay: 0.0, options: [.beginFromCurrentState, .curveEaseInOut], animations: {
-                self.updateConstraints(deactivation: deactivation, constraints: constraints)
-                viewInfoSet.rootview?.layoutIfNeeded()
-                for viewInfo in viewInfos {
-                    viewInfo.animation()
+        for viewInfo in viewInfos {
+            if let constraints = prevInfos[viewInfo] {
+                if constraints != viewInfo.view.map({ Set($0.constraints.weakens) }) {
+                    viewInfo.view?.layoutIfNeeded()
                 }
-            }, completion: nil)
-        } else {
-            updateConstraints(deactivation: deactivation, constraints: constraints)
+            } else {
+                // for newly add to superview
+                viewInfo.view?.layer.removeAnimation(forKey: "bounds.size")
+                viewInfo.view?.layer.removeAnimation(forKey: "position")
+            }
         }
         
         return deactivation
@@ -107,10 +108,4 @@ private extension Activator {
         NSLayoutConstraint.activate(news.sorted().compactMap(\.origin))
     }
     
-    static func prepareAnimation(viewInfos: [ViewInformation]) {
-        let animationViewInfos = viewInfos.filter { view in
-            !view.isNewlyAdded
-        }
-        animationViewInfos.forEach({ $0.captureCurrentFrame() })
-    }
 }

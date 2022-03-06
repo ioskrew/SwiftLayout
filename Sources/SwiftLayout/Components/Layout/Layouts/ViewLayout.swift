@@ -12,8 +12,6 @@ public final class ViewLayout<V: UIView, SubLayout: Layout>: Layout {
         set { view.accessibilityIdentifier = newValue }
     }
     
-    var animationHandler: ViewInformation.AnimationHandler?
-    
     init(_ view: V, sublayout: SubLayout) {
         self.view = view
         self.sublayout = sublayout
@@ -24,11 +22,6 @@ public final class ViewLayout<V: UIView, SubLayout: Layout>: Layout {
         return self
     }
     
-    public func setAnimationHandler(_ handler: @escaping (UIView) -> Void) -> Self {
-        self.animationHandler = .init(view, handler: handler)
-        return self
-    }
-    
     public var debugDescription: String {
         view.tagDescription + ": [\(sublayout.debugDescription)]"
     }
@@ -36,7 +29,7 @@ public final class ViewLayout<V: UIView, SubLayout: Layout>: Layout {
 
 public extension ViewLayout {
     func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
-        let continuation = handler(.init(superview: superview, view: view, animationHandler: animationHandler))
+        let continuation = handler(.init(superview: superview, view: view))
         guard continuation else { return }
         sublayout.traverse(view, traverseHandler: handler)
     }

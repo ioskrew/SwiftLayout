@@ -144,61 +144,52 @@ contentView {
 
 ### animations
 
-- updateLayout(animated: true) calling frame animations
-- in addition to - using **setAnimationHandler** for animation of each views
+- with UIView animation feature
 
 ```swift
-final class SampleView: UIView, LayoutBuilding {
-    enum Show {
-        case showYellow
-        case showBlack
-        case showAll
-    }
-    var deactivable: Deactivable?
-    lazy var yellow = UIView()
-    lazy var black = UIView()
-    var show: Show = .showAll {
+final class PreviewView: UIView, LayoutBuilding {
+    
+    var capTop = true {
         didSet {
-            updateLayout(animated: true) // call animations
+          	// start animation for change constraints
+            UIView.animate(withDuration: 1.0) {
+                self.updateLayout()
+            }
         }
     }
     
+    let cap = UIButton()
+    let shoe = UIButton()
+    let title = UILabel()
+    
+    var top: UIButton { capTop ? cap : shoe }
+    var bottom: UIButton { capTop ? shoe : cap }
+    
+    var deactivable: Deactivable?
+    
     var layout: some Layout {
         self {
-            switch show {
-            case .showYellow:
-                yellow.anchors {
-                    Anchors.allSides()
-                }
-                black.setAnimationHandler({ view in
-                    view.alpha = 0.0 // animation for black view in update layout
-                }).anchors {
-                    Anchors(.height).equalTo(constant: 0.0)
-                    Anchors.shoe()
-                }
-            case .showBlack:
-                yellow.setAnimationHandler({ view in
-                    view.alpha = 0.0
-                }).anchors {
-                    Anchors(.height).equalTo(constant: 0.0)
-                    Anchors.cap()
-                }
-                black.anchors {
-                    Anchors.allSides()
-                }
-            case .showAll:
-                yellow.setAnimationHandler({ view in
-                    view.alpha = 1.0
-                }).anchors {
-                    Anchors.cap()
-                    Anchors(.bottom).equalTo(black, attribute: .top)
-                    Anchors(.height).equalTo(black)
-                }
-                black.setAnimationHandler({ view in
-                    view.alpha = 1.0
-                }).anchors {
-                    Anchors.shoe()
-                }
+            top.anchors {
+                Anchors.cap()
+            }
+            bottom.anchors {
+                Anchors(.top).equalTo(top.bottomAnchor)
+                Anchors(.height).equalTo(top)
+                Anchors.shoe()
+            }
+            title.config { label in
+                label.text = "Top Title"
+                UIView.transition(with: label, duration: 1.0, options: [.beginFromCurrentState, .transitionCrossDissolve], animations: {
+                    label.textColor = self.capTop ? .black : .yellow
+                }, completion: nil)
+            }.anchors {
+                Anchors(.centerX, .centerY).equalTo(top)
+            }
+            UILabel().config { label in
+                label.text = "Bottom Title"
+                label.textColor = capTop ? .yellow : .black
+            }.identifying("title.bottom").anchors {
+                Anchors(.centerX, .centerY).equalTo(bottom)
             }
         }
     }
@@ -209,33 +200,30 @@ final class SampleView: UIView, LayoutBuilding {
     }
     
     required init?(coder: NSCoder) {
-        fatalError()
+        super.init(coder: coder)
+        initViews()
     }
     
     func initViews() {
-        yellow.backgroundColor = .yellow
-        black.backgroundColor = .darkGray
-        updateLayout(.automaticIdentifierAssignment)
-        isUserInteractionEnabled = true
-        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(toggle)))
-    }
-    
-    @objc
-    func toggle() {
-        switch show {
-        case .showYellow:
-            self.show = .showAll
-        case .showBlack:
-            self.show = .showAll
-        case .showAll:
-            self.show = Bool.random() ? .showYellow : .showBlack
-        }
+        cap.backgroundColor = .yellow
+        shoe.backgroundColor = .black
+        cap.addAction(.init(handler: { [weak self] _ in
+            self?.capTop.toggle()
+        }), for: .touchUpInside)
+        shoe.addAction(.init(handler: { [weak self] _ in
+            self?.capTop.toggle()
+        }), for: .touchUpInside)
+        self.accessibilityIdentifier = "root"
+        updateIdentifiers(rootObject: self)
+        updateLayout()
     }
     
 }
 ```
 
-[![animation in update layout](https://user-images.githubusercontent.com/3011832/155874823-e71cb9fb-8573-4241-9d30-d0bf28c0445a.png)](https://user-images.githubusercontent.com/3011832/155874757-f8ff8074-1f47-4c77-9f2a-d62358603457.mp4)
+
+
+[![animation in update layout](https://user-images.githubusercontent.com/3011832/156908073-d4089c26-928f-41d9-961b-8b04d7dcde37.png)](https://user-images.githubusercontent.com/3011832/156908065-8d6bcebd-553b-490b-903b-6e375d4c97a3.mp4)
 
 # utility
 
