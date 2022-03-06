@@ -9,13 +9,6 @@ import XCTest
 import SwiftLayout
 
 class ReferenceTests: XCTestCase {
-
-    override func setUpWithError() throws {
-        
-    }
-
-    override func tearDownWithError() throws {
-    }
     
     var view: SelfReferenceView?
     weak var weakView: UIView?
@@ -36,6 +29,9 @@ class ReferenceTests: XCTestCase {
             XCTAssertEqual(DeinitView.deinitCount, 2)
         }
     }
+    
+    override func setUpWithError() throws {}
+    override func tearDownWithError() throws {}
     
     class DeinitView: UIView {
         static var deinitCount: Int = 0
