@@ -146,7 +146,7 @@ contentView {
 
 - [animation sample](https://gist.github.com/oozoofrog/26e3864dd0a0adeb326ef5254b89768c)
 
-[![animation in update layout](https://user-images.githubusercontent.com/3011832/156907933-86f398c4-1c0b-4778-a5c6-61314dc9d92a.png)](https://user-images.githubusercontent.com/3011832/156907929-e286adb2-8c40-4223-b9d2-9d69a462aaee.mp4)
+[![animation in update layout](https://user-images.githubusercontent.com/3011832/156908073-d4089c26-928f-41d9-961b-8b04d7dcde37.png)](https://user-images.githubusercontent.com/3011832/156908065-8d6bcebd-553b-490b-903b-6e375d4c97a3.mp4)
 
 # utility
 
