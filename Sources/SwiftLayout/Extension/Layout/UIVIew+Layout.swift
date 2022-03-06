@@ -43,8 +43,8 @@ extension _ViewConfig where Self: UIView {
         return self
     }
     
-    public func updateIdentifiers(rootObject: AnyObject) -> Self {
-        IdentifierUpdater.nameOnly.update(rootObject)
+    public func updateIdentifiers(rootObject: AnyObject? = nil) -> Self {
+        IdentifierUpdater.nameOnly.update(rootObject ?? self)
         return self
     }
 }

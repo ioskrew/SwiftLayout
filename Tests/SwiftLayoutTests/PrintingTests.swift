@@ -357,7 +357,7 @@ extension PrintingTests {
 extension PrintingTests {
     
     func testautomaticIdentifierAssignmentOption() {
-        let cell = Cell(.automaticIdentifierAssignment)
+        let cell = Cell().updateIdentifiers()
         
         XCTAssertEqual(cell.profileView.accessibilityIdentifier, "profileView")
         XCTAssertEqual(cell.nameLabel.accessibilityIdentifier, "nameLabel")

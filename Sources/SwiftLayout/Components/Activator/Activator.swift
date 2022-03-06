@@ -11,11 +11,11 @@ import UIKit
 enum Activator {
     
     static func active<L: Layout>(layout: L, options: LayoutOptions = []) -> Deactivation {
-        return update(layout: layout, fromDeactivation: Deactivation(), options: options)
+        return update(layout: layout, fromDeactivation: Deactivation())
     }
     
     @discardableResult
-    static func update<L: Layout>(layout: L, fromDeactivation deactivation: Deactivation, options: LayoutOptions) -> Deactivation {
+    static func update<L: Layout>(layout: L, fromDeactivation deactivation: Deactivation) -> Deactivation {
         let viewInfos = layout.viewInformations
         let viewInfoSet = ViewInformationSet(infos: viewInfos)
         
@@ -26,21 +26,7 @@ enum Activator {
         
         let constraints = layout.viewConstraints(viewInfoSet)
         
-        if options.contains(.usingAnimation) {
-            prepareAnimation(viewInfos: viewInfos)
-        }
-        
-        if options.contains(.usingAnimation) {
-            UIView.animate(withDuration: 0.25, delay: 0.0, options: [.beginFromCurrentState, .curveEaseInOut], animations: {
-                self.updateConstraints(deactivation: deactivation, constraints: constraints)
-                viewInfoSet.rootview?.layoutIfNeeded()
-                for viewInfo in viewInfos {
-                    viewInfo.animation()
-                }
-            }, completion: nil)
-        } else {
-            updateConstraints(deactivation: deactivation, constraints: constraints)
-        }
+        updateConstraints(deactivation: deactivation, constraints: constraints)
         
         return deactivation
     }

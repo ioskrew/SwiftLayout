@@ -186,7 +186,7 @@ extension ImplementationTests {
     }
     
     func testAccessibilityIdentifierOption() {
-        let view = IdentifiedView(.automaticIdentifierAssignment)
+        let view = IdentifiedView().updateIdentifiers()
         XCTAssertEqual(view.contentView.accessibilityIdentifier, "contentView")
         XCTAssertEqual(view.nameLabel.accessibilityIdentifier, "nameLabel")
     }
