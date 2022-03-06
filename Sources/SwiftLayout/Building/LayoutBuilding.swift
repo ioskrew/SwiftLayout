@@ -15,12 +15,8 @@ public protocol LayoutBuilding: AnyObject {
 }
 
 public extension LayoutBuilding {
-    
-    func updateLayout(animated: Bool) {
-        self.updateLayout(animated ? .usingAnimation : [])
-    }
-    
-    func updateLayout(_ options: LayoutOptions = []) {
+        
+    func updateLayout() {
         let layout = self.layout
         
         self.activation = Activator.update(layout: layout, fromActivation: activation ?? Activation())

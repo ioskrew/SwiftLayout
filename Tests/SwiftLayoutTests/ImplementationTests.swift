@@ -169,9 +169,9 @@ extension ImplementationTests {
             }
         }
         
-        init(_ options: LayoutOptions = []) {
+        init() {
             super.init(frame: .zero)
-            updateLayout(options)
+            updateLayout()
         }
         
         required init?(coder: NSCoder) {
