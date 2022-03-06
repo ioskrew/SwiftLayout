@@ -40,11 +40,6 @@ extension Layout {
         SublayoutLayout(self, build())
     }
     
-    @available(*, deprecated, message: "using sublayout instead of this")
-    public func subviews<L: Layout>(@LayoutBuilder _ build: () -> L) -> some Layout {
-        sublayout(build)
-    }
-    
     public func identifying(_ accessibilityIdentifier: String) -> some Layout {
         firstViewInformation(nil)?.view?.accessibilityIdentifier = accessibilityIdentifier
         return self
