@@ -20,19 +20,21 @@ class ReferenceTests: XCTestCase {
     var view: SelfReferenceView?
     weak var weakView: UIView?
     
-    func test1JustForPrepare() {
-        DeinitView.deinitCount = 0
-        view = SelfReferenceView()
-        weakView = view
-        
-        view?.updateLayout()
-        view?.layoutIfNeeded()
-        view = nil
-    }
-    
-    func test2ForReferenceReleasing() {
-        XCTAssertNil(weakView)
-        XCTAssertEqual(DeinitView.deinitCount, 2)
+    func testReferenceReleasing() {
+        context("prepare") { [weak self] in
+            guard let self = self else { return }
+            DeinitView.deinitCount = 0
+            self.view = SelfReferenceView()
+            self.weakView = view
+            
+            self.view?.updateLayout()
+            self.view?.layoutIfNeeded()
+            self.view = nil
+        }
+        context("check release reference") {
+            XCTAssertNil(weakView)
+            XCTAssertEqual(DeinitView.deinitCount, 2)
+        }
     }
     
     class DeinitView: UIView {
