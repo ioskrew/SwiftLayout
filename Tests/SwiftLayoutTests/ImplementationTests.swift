@@ -571,41 +571,6 @@ extension ImplementationTests {
     }
 }
 
-// MARK: - Animation
-extension ImplementationTests {
-    func testSetAnimationHandler() {
-        deactivable = root {
-            child.config({ view in
-                view.backgroundColor = .white
-            }).setAnimationHandler { view in
-                view.alpha = 0.0
-            }.anchors {
-                Anchors.allSides()
-            }.sublayout {
-                friend.setAnimationHandler { view in
-                    view.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
-                }.anchors {
-                    Anchors.allSides()
-                }
-            }
-        }.active()
-        
-        let expect = """
-        root {
-            child.anchors {
-                Anchors(.top, .bottom, .leading, .trailing)
-            }.sublayout {
-                friend.anchors {
-                    Anchors(.top, .bottom, .leading, .trailing)
-                }
-            }
-        }
-        """.tabbed
-        
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
-    }
-}
-
 // MARK: - Decorations
 extension ImplementationTests {
     
