@@ -7,6 +7,29 @@
 
 import Foundation
 
+/**
+ 
+ a property wrapper that can update states of layout in Layoutable.
+ 
+ update layout in Layoutable always needs call `updateLayout` function of `Layoutable`.
+ ``LayoutProperty`` can hide calling it directly:
+ 
+ ```swift
+ class FlagView: UIView, Layoutable {
+     @LayoutProperty var showName = true // changing value do updates layout
+     
+     var layout: some Layout {
+         self {
+             if showName {
+                 nameLabel
+             }
+         }
+     }
+ }
+ ```
+  
+ > ``LayoutProperty`` must using only in Layoutable, otherwise, cause of crash.
+ */
 @propertyWrapper
 public final class LayoutProperty<Value> {
 
