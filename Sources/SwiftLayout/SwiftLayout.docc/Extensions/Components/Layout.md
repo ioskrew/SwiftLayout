@@ -18,3 +18,16 @@
 ### Performing Type-Erasure
 
 - ``anyLayout``
+
+### Provided layout structure
+
+- ``AnchorsLayout``
+- ``AnyLayout``
+- ``ArrayLayout``
+- ``ConditionalLayout``
+- ``EmptyLayout``
+- ``GroupLayout``
+- ``OptionalLayout``
+- ``SublayoutLayout``
+- ``TupleLayout``
+- ``ViewLayout``
