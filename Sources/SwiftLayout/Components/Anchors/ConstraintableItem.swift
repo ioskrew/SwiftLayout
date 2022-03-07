@@ -27,3 +27,4 @@ public protocol ConstraintableItem {}
 extension UIView: ConstraintableItem {}
 extension UILayoutGuide: ConstraintableItem {}
 extension String: ConstraintableItem {}
+extension Never: ConstraintableItem {}
