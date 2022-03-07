@@ -8,6 +8,7 @@
 import UIKit
 
 extension UIView {
+    
     ///
     /// Create a ``ViewLayout`` containing this view and the sublayouts.
     ///
@@ -20,7 +21,7 @@ extension UIView {
         ViewLayout(self, sublayout: build())
     }
     
-    //
+    ///
     /// Create an ``AnchorsLayout`` containing the  ``Anchors`` of this view.
     ///
     /// ``Anchors`` express **NSLayoutConstraint** and can be applied through this method.
