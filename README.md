@@ -19,11 +19,73 @@
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "1.7.0"),
+  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "2.0.0"),
 ],
 ```
 
-# simple usage
+# 2.0
+
+## changes
+
+- ~~`LayoutBuilding`~~ become `Layoutable`
+
+```swift
+class LayoutView: UIView, Layoutable {
+  var activation: Activation?
+  var layout: some Layout {
+    ... // layout DSL
+  }
+}
+```
+
+- ~~`Deactivation`~~ become `Activation`
+
+- change value of property representing with `LayoutProperty` annotation  can update layout automatically
+
+```swift
+class YouView: UIView, Layoutable {
+  
+  let nameLabel = UILabel
+  let ageLabel = UILabel
+  /// age == 0 is hide ageLabel
+  /// age > 0 is show ageLabel
+  @LayoutProperty var age = 0 
+  
+  var activation: Activation?
+  var layout: some Layout {
+		self {
+      nameLabel
+      if age > 0 {
+	      ageLabel	
+      }
+    }
+  } 
+}
+```
+
+- ~~`LayoutOptions`~~ removed
+
+  - `updateIdentifiers(rootObject: AnyObject)` now assign identifier 
+
+  - animation enable from UIView animation features
+
+    ```swift
+    class MovingView: UIView, Layoutable {
+      func someUpdate() {
+        UIView.animation(...) {
+          self.updateLayout()
+        }
+      }
+    }
+    ```
+
+    
+
+
+
+# 1.0
+
+## simple usage
 
 - for pure **UIKit**
 
@@ -71,9 +133,9 @@ contentView {
 
 *That easy* (thanx bob)
 
-# details
+## details
 
-### addSubview
+#### addSubview
 
 ```swift
 contentView {
@@ -90,7 +152,7 @@ contentView.addSubview(firstNameLabel)
 - contentView is superview
 - firstNameLabel in parenthesis is subview
 
-### addSubview one more
+#### addSubview one more
 
 ```swift
 contentView {
@@ -102,7 +164,7 @@ contentView {
 
 - subviews in parenthesis currently max to 7 is possible
 
-### autolayout constraint to superview
+#### autolayout constraint to superview
 
 ```swift
 contentView {
@@ -126,7 +188,7 @@ NSLayoutConstraint(item: firstNameLabel,
                    constant: 0.0)
 ```
 
-### subview in subview and anchors
+#### subview in subview and anchors
 
 ```swift
 contentView {
@@ -142,7 +204,7 @@ contentView {
 
 - using **sublayout** function after **anchors**
 
-### animations
+#### animations
 
 - with UIView animation feature
 
@@ -225,9 +287,9 @@ final class PreviewView: UIView, LayoutBuilding {
 
 [![animation in update layout](https://user-images.githubusercontent.com/3011832/156908073-d4089c26-928f-41d9-961b-8b04d7dcde37.png)](https://user-images.githubusercontent.com/3011832/156908065-8d6bcebd-553b-490b-903b-6e375d4c97a3.mp4)
 
-# utility
+## utility
 
-**SwiftLayoutPrinter**
+#### **SwiftLayoutPrinter**
 
 - printing UIView hierarchy and autolayout constraint relationship to SwiftLayout syntax
 
