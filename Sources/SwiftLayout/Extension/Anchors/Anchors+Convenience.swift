@@ -10,7 +10,7 @@ extension Anchors {
     ///  - item: ``ConstraintableItem``
     ///  - offset: CGFloat. leading constant is `offset`, trailing constant is `-offset`
     ///
-    /// - Returns: ``Constraint``
+    /// - Returns: ``Anchors``
     public static func horizontal<I: ConstraintableItem>(_ item: I, offset: CGFloat = .zero) -> Anchors {
         let leading = Anchors(.leading).equalTo(item, constant: offset)
         let trailing = Anchors(.trailing).equalTo(item, constant: -offset)
@@ -23,7 +23,7 @@ extension Anchors {
     ///  - item: ``ConstraintableItem``
     ///  - offset: CGFloat. top constant is `offset`, bottom constant is `-offset`
     ///
-    /// - Returns: ``Constraint``
+    /// - Returns: ``Anchors``
     public static func vertical<I: ConstraintableItem>(_ item: I, offset: CGFloat = .zero) -> Anchors {
         let top = Anchors(.top).equalTo(item, constant: offset)
         let bottom = Anchors(.bottom).equalTo(item, constant: -offset)
@@ -36,7 +36,7 @@ extension Anchors {
     /// - Parameters:
     ///  - offset: CGFloat. leading constant is `offset`, trailing constant is `-offset`
     ///
-    /// - Returns: ``Constraint``
+    /// - Returns: ``Anchors``
     public static func horizontal(offset: CGFloat = .zero) -> Anchors {
         let leading = Anchors(.leading).equalTo(constant: offset)
         let trailing = Anchors(.trailing).equalTo(constant: -offset)
@@ -48,7 +48,7 @@ extension Anchors {
     /// - Parameters:
     ///  - offset: CGFloat. top constant is `offset`, bottom constant is `-offset`
     ///
-    /// - Returns: ``Constraint``
+    /// - Returns: ``Anchors``
     public static func vertical(offset: CGFloat = .zero) -> Anchors {
         let top = Anchors(.top).equalTo(constant: offset)
         let bottom = Anchors(.bottom).equalTo(constant: -offset)
@@ -61,7 +61,7 @@ extension Anchors {
     ///  - item: ``ConstraintableItem``
     ///  - offset: CGFloat. top constant is `offset`, bottom constant is `-offset`, leading constant is `offset`, trailing constant is `-offset`
     ///
-    /// - Returns: ``Constraint``
+    /// - Returns: ``Anchors``
     public static func allSides<I: ConstraintableItem>(_ item: I, offset: CGFloat = .zero) -> Anchors {
         let horizontal = horizontal(item, offset: offset)
         let vertical = vertical(item, offset: offset)
@@ -73,7 +73,7 @@ extension Anchors {
     /// - Parameters:
     ///  - offset: CGFloat. top constant is `offset`, bottom constant is `-offset`, leading constant is `offset`, trailing constant is `-offset`
     ///
-    /// - Returns: ``Constraint``
+    /// - Returns: ``Anchors``
     public static func allSides(offset: CGFloat = .zero) -> Anchors {
         let horizontal = horizontal(offset: offset)
         let vertical = vertical(offset: offset)
@@ -86,7 +86,7 @@ extension Anchors {
     ///  - item: ``ConstraintableItem``
     ///  - offset: CGFloat. top constant is `offset`, bottom constant is `-offset`, leading constant is `offset`
     ///
-    /// - Returns: ``Constraint``
+    /// - Returns: ``Anchors``
     public static func cap<I: ConstraintableItem>(_ item: I, offset: CGFloat = .zero) -> Anchors {
         let horizontal = horizontal(item, offset: offset)
         let top = Anchors(.top).equalTo(item, constant: offset)
@@ -99,7 +99,7 @@ extension Anchors {
     ///  - item: ``ConstraintableItem``
     ///  - offset: CGFloat. top constant is `offset`, bottom constant is `-offset`, trailing constant is `-offset`
     ///
-    /// - Returns: ``Constraint``
+    /// - Returns: ``Anchors``
     public static func shoe<I: ConstraintableItem>(_ item: I, offset: CGFloat = .zero) -> Anchors {
         let horizontal = horizontal(item, offset: offset)
         let bottom = Anchors(.bottom).equalTo(item, constant: -offset)
@@ -111,7 +111,7 @@ extension Anchors {
     /// - Parameters:
     ///  - offset: CGFloat. top constant is `offset`, bottom constant is `-offset`, leading constant is `offset`
     ///
-    /// - Returns: ``Constraint``
+    /// - Returns: ``Anchors``
     public static func cap(offset: CGFloat = .zero) -> Anchors {
         let horizontal = horizontal(offset: offset)
         let top = Anchors(.top).equalTo(constant: offset)
@@ -123,7 +123,7 @@ extension Anchors {
     /// - Parameters:
     ///  - offset: CGFloat. top constant is `offset`, bottom constant is `-offset`, trailing constant is `-offset`
     ///
-    /// - Returns: ``Constraint``
+    /// - Returns: ``Anchors``
     public static func shoe(offset: CGFloat = .zero) -> Anchors {
         let horizontal = horizontal(offset: offset)
         let bottom = Anchors(.bottom).equalTo(constant: -offset)
@@ -137,7 +137,7 @@ extension Anchors {
     ///  - toItem: constraint second item, ``ConstraintableItem``
     ///  - length: constant
     ///
-    /// - Returns: ``Constraint``
+    /// - Returns: ``Anchors``
     public static func size<I: ConstraintableItem>(_ toItem: I, offset: CGFloat = .zero) -> Anchors {
         size(toItem, offset: .init(width: offset, height: offset))
     }
@@ -147,7 +147,7 @@ extension Anchors {
     /// - Parameters:
     ///  - length: constant
     ///
-    /// - Returns: ``Constraint``
+    /// - Returns: ``Anchors``
     public static func size(length: CGFloat = .zero) -> Anchors {
         size(.init(width: length, height: length))
     }
@@ -158,7 +158,7 @@ extension Anchors {
     ///  - toItem: constraint second item, ``ConstraintableItem``
     ///  - size: constants
     ///
-    /// - Returns: ``Constraint``
+    /// - Returns: ``Anchors``
     public static func size<I: ConstraintableItem>(_ toItem: I, offset: CGSize = .zero) -> Anchors {
         let width = Anchors(.width).equalTo(toItem, constant: offset.width)
         let height = Anchors(.height).equalTo(toItem, constant: offset.height)
@@ -170,7 +170,7 @@ extension Anchors {
     /// - Parameters:
     ///  - size: constant
     ///
-    /// - Returns: ``Constraint``
+    /// - Returns: ``Anchors``
     public static func size(_ size: CGSize = .zero) -> Anchors {
         let width = Anchors(.width).equalTo(constant: size.width)
         let height = Anchors(.height).equalTo(constant: size.height)

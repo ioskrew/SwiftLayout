@@ -14,8 +14,7 @@ let package = Package(
     targets: [
         .target(
             name: "SwiftLayout",
-            dependencies: [],
-            resources: [.process("Resources/")]),
+            dependencies: []),
         .testTarget(
             name: "SwiftLayoutTests",
             dependencies: ["SwiftLayout"]),
