@@ -31,7 +31,7 @@ NSLayoutConstraint.activate([
 ### Essentials
 
 - <doc:GettingStarted>
-- <doc:tutorial-table>
+<!--- <doc:tutorial-table>-->
 
 ### Layout Elements
 
