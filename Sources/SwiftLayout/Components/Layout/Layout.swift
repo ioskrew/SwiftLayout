@@ -104,7 +104,7 @@ extension Layout {
     }
     
     ///
-    /// Finds the view object for this layout and sets its **accessibilityIdentifier**.
+    /// Find the view object for this layout and set its **accessibilityIdentifier**.
     ///
     /// - Parameter accessibilityIdentifier: A string containing the identifier of the element.
     /// - Returns: The layout itself with the accessibilityIdentifier applied

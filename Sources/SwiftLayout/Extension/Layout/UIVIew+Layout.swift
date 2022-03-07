@@ -75,16 +75,47 @@ extension UIView {
 public protocol _ViewConfig {}
 extension UIView: _ViewConfig {}
 extension _ViewConfig where Self: UIView {
+    
+    ///
+    /// Provides a block that can change the properties of the view within the layout block.
+    ///
+    /// ```swift
+    /// // Create an instant view within the layout block
+    /// // and modify the properties of the view as follows
+    ///
+    /// var layout: some Layout {
+    ///     UILabel().config { view in
+    ///         view.backgroundColor = .blue
+    ///         view.text = "hello"
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// - Parameter config: A configuration block for this view.
+    /// - Returns: The view itself with the configuration applied
+    ///
     public func config(_ config: (Self) -> Void) -> Self {
         config(self)
         return self
     }
     
+    ///
+    /// Set its **accessibilityIdentifier**.
+    ///
+    /// - Parameter accessibilityIdentifier: A string containing the identifier of the element.
+    /// - Returns: The view itself with the accessibilityIdentifier applied
+    ///
     public func identifying(_ accessibilityIdentifier: String) -> Self {
         self.accessibilityIdentifier = accessibilityIdentifier
         return self
     }
     
+    ///
+    /// Set the **accessibilityIdentifier** of all view objects included in the layout hierarchy to the property name of the object that has each views.
+    ///
+    /// - Parameter rootObject: root object for referencing property names
+    /// - Returns: The view itself with the **accessibilityIdentifier** applied
+    ///
     @discardableResult
     public func updateIdentifiers(rootObject: AnyObject? = nil) -> Self {
         IdentifierUpdater.nameOnly.update(rootObject ?? self)
