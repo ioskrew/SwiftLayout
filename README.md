@@ -40,7 +40,7 @@ class LayoutView: UIView, Layoutable {
 
 - ~~`Deactivation`~~ become `Activation`
 
-- change value of property with `LayoutProperty` annotation  can update layout automatically
+- change value of property representing with `LayoutProperty` annotation  can update layout automatically
 
 ```swift
 class YouView: UIView, Layoutable {
