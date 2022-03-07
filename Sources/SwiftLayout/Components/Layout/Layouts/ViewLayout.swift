@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 
-public final class ViewLayout<V: UIView, SubLayout: Layout>: Layout {
+public struct ViewLayout<V: UIView, SubLayout: Layout>: Layout {
     
     let view: V
     

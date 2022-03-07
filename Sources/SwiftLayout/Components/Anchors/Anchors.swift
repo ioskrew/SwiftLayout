@@ -22,14 +22,18 @@ public final class Anchors {
         self.init(items: items)
     }
     
-    internal init(items: [Anchors.Constraint] = []) {
+    init(items: [Anchors.Constraint] = []) {
         self.items = items
     }
+}
+
+extension Anchors {
     
-    public func constraints(item fromItem: NSObject, toItem: NSObject?) -> [NSLayoutConstraint] {
+    func constraints(item fromItem: NSObject, toItem: NSObject?) -> [NSLayoutConstraint] {
         constraints(item: fromItem, toItem: toItem, viewInfoSet: nil)
     }
-    public func constraints(item fromItem: NSObject, toItem: NSObject?, viewInfoSet: ViewInformationSet?) -> [NSLayoutConstraint] {
+    
+    func constraints(item fromItem: NSObject, toItem: NSObject?, viewInfoSet: ViewInformationSet?) -> [NSLayoutConstraint] {
         var constraints: [NSLayoutConstraint] = []
         for item in items {
             let from = fromItem
@@ -40,19 +44,22 @@ public final class Anchors {
             let multiplier = item.multiplier
             let constant = item.constant
             assert(to is UIView || to is UILayoutGuide || to == nil, "to: \(to.debugDescription) is not item")
-            constraints.append(NSLayoutConstraint(item: from,
-                                                  attribute: attribute,
-                                                  relatedBy: relation,
-                                                  toItem: to,
-                                                  attribute: toAttribute,
-                                                  multiplier: multiplier,
-                                                  constant: constant))
+            
+            constraints.append(
+                NSLayoutConstraint(
+                    item: from,
+                    attribute: attribute,
+                    relatedBy: relation,
+                    toItem: to,
+                    attribute: toAttribute,
+                    multiplier: multiplier,
+                    constant: constant
+                )
+            )
         }
         return constraints
     }
-}
-
-extension Anchors {
+    
     func to(_ relation: NSLayoutConstraint.Relation, to: ConstraintTarget) -> Self {
         func update(_ updateItem: Constraint) -> Constraint {
             var updateItem = updateItem
