@@ -363,7 +363,7 @@ extension PrintingTests {
         XCTAssertEqual(cell.nameLabel.accessibilityIdentifier, "nameLabel")
     }
     
-    class Cell: UIView, LayoutBuilding {
+    class Cell: UIView, Layoutable {
         
         var profileView: UIImageView = .init(image: nil)
         var nameLabel: UILabel = .init()
@@ -430,7 +430,7 @@ extension PrintingTests {
         let sea = UILabel()
     }
     
-    class Gont: Earth, LayoutBuilding {
+    class Gont: Earth, Layoutable {
         lazy var duny = Duny(in: self)
         
         var activation: Activation?
@@ -461,7 +461,7 @@ extension PrintingTests {
         let truename = UILabel()
     }
     
-    class Duny: Wizard, LayoutBuilding {
+    class Duny: Wizard, Layoutable {
         
         init(in earth: Earth) {
             super.init(frame: .zero)

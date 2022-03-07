@@ -83,7 +83,7 @@ extension LayoutBuildingTests {
         }
     }
     
-    class LayoutView: UIView, LayoutBuilding {
+    class LayoutView: UIView, Layoutable {
         var flag = true {
             didSet {
                 updateLayout()
