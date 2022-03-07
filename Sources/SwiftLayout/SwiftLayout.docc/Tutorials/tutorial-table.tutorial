@@ -1,15 +1,15 @@
-@Tutorials(name: "Documents") {
-    @Intro(title: "Capture you document and write memo") {
-        Description
-        
-        @Image(source: document-capture.png, alt: "capture document")
-    }
-    
-    @Chapter(name: "Documents Essentials") {
-        Documents Essentials
-        
-        @Image(source: document-capture.png, alt: "capture document")
-        
-        @TutorialReference(tutorial: "doc:tutorial-create-project")
-    }
-}
+<!--@Tutorials(name: "Documents") {-->
+<!--    @Intro(title: "Capture you document and write memo") {-->
+<!--        Description-->
+<!--        -->
+<!--        @Image(source: document-capture.png, alt: "capture document")-->
+<!--    }-->
+<!--    -->
+<!--    @Chapter(name: "Documents Essentials") {-->
+<!--        Documents Essentials-->
+<!--        -->
+<!--        @Image(source: document-capture.png, alt: "capture document")-->
+<!--        -->
+<!--        @TutorialReference(tutorial: "doc:tutorial-create-project")-->
+<!--    }-->
+<!--}-->
