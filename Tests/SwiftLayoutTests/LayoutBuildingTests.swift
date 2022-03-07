@@ -83,7 +83,7 @@ extension LayoutBuildingTests {
         }
     }
     
-    class LayoutView: UIView, LayoutBuilding {
+    class LayoutView: UIView, Layoutable {
         var flag = true {
             didSet {
                 updateLayout()
@@ -94,7 +94,7 @@ extension LayoutBuildingTests {
         let child = UIView().viewTag.child
         let friend = UILabel().viewTag.friend
         
-        var deactivable: Deactivable?
+        var activation: Activation? 
         
         var layout: some Layout {
             self {

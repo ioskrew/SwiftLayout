@@ -14,7 +14,7 @@ final class LayoutDSLTests: XCTestCase {
     var green: UIView = UIView().viewTag.green
     var image: UIImageView = UIImageView().viewTag.image
     
-    var deactivable: Set<AnyDeactivable> = []
+    var activation: Set<Activation> = []
     
     override func setUp() {
         root = UIView().viewTag.root
@@ -27,7 +27,7 @@ final class LayoutDSLTests: XCTestCase {
     }
     
     override func tearDown() {
-        deactivable = []
+        activation = []
     }
 }
 
@@ -42,7 +42,7 @@ extension LayoutDSLTests {
                     image
                 }
             }
-        }.active().store(&deactivable)
+        }.active().store(&activation)
         
         let expect = """
         root {
@@ -68,9 +68,9 @@ extension LayoutDSLTests {
                     image
                 }
             }
-        }.active().store(&deactivable)
+        }.active().store(&activation)
         
-        deactivable = []
+        activation = []
         
         let expect = """
         root
@@ -141,7 +141,7 @@ extension LayoutDSLTests {
                     Anchors.allSides()
                 }
             }
-        }.active().store(&deactivable)
+        }.active().store(&activation)
         
         let expect = """
         root {
@@ -187,12 +187,12 @@ extension LayoutDSLTests {
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect.tabbed)
     }
     
-    private final class TestView: UIView, LayoutBuilding {
+    private final class TestView: UIView, Layoutable {
         lazy var red = UIView().viewTag.red
         lazy var blue = UIView().viewTag.blue
         lazy var green = UIView().viewTag.green
         
-        var deactivable: Deactivable?
+        var activation: Activation? 
         @LayoutBuilder
         var layout: some Layout {
             self {
@@ -236,7 +236,7 @@ extension LayoutDSLTests {
         }
         .updateIdentifiers(rootObject: container)
         .active()
-        .store(&deactivable)
+        .store(&activation)
         
         let expect = """
         root {
@@ -341,8 +341,8 @@ extension LayoutDSLTests {
         
         for test in Test.allCases {
             context("enum Test.\(test)") {
-                deactivable = []
-                layout(test).active().store(&deactivable)
+                activation = []
+                layout(test).active().store(&activation)
                 XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
                 root {
                     child {
@@ -360,14 +360,14 @@ extension LayoutDSLTests {
         func layout(_ view: UIView?) -> some Layout {
             root {
                 red {
-                    view.identifying("optional")
+                    view?.identifying("optional")
                 }
             }
         }
         
         context("view is nil") {
-            deactivable = []
-            layout(nil).active().store(&deactivable)
+            activation = []
+            layout(nil).active().store(&activation)
             XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
             root {
                 red
@@ -376,8 +376,8 @@ extension LayoutDSLTests {
         }
         
         context("view is optional") {
-            deactivable = []
-            layout(UIView()).active().store(&deactivable)
+            activation = []
+            layout(UIView()).active().store(&activation)
             XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
             root {
                 red {
@@ -399,7 +399,7 @@ extension LayoutDSLTests {
             }
         }
         
-        layout().active().store(&deactivable)
+        layout().active().store(&activation)
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
         root {
             view_0
@@ -409,6 +409,113 @@ extension LayoutDSLTests {
         """.tabbed)
     }
     
+}
+
+extension LayoutDSLTests {
+    func testUpdateLayout() {
+        let view = LayoutView().viewTag.view
+        view.frame = .init(x: 0, y: 0, width: 90, height: 90)
+        
+        var activation = view.layout.active()
+        view.layoutIfNeeded()
+        
+        XCTAssertEqual(view.child.bounds.size, CGSize(width: 90, height: 90))
+        XCTAssertEqual(SwiftLayoutPrinter(view).print(), """
+        view {
+            root.anchors {
+                Anchors(.top, .bottom, .leading, .trailing)
+            }.sublayout {
+                child.anchors {
+                    Anchors(.top, .bottom, .leading, .trailing)
+                }
+            }
+        }
+        """.tabbed)
+        
+        activation = view.layout.update(fromActivation: activation)
+
+        XCTAssertEqual(view.root.count(view.child), 1)
+        XCTAssertEqual(view.root.count(view.friend), 0)
+        XCTAssertEqual(SwiftLayoutPrinter(view).print(), """
+        view {
+            root.anchors {
+                Anchors(.top, .bottom, .leading, .trailing)
+            }.sublayout {
+                child.anchors {
+                    Anchors(.top, .bottom, .leading, .trailing)
+                }
+            }
+        }
+        """.tabbed)
+
+        view.flag.toggle()
+        activation = view.layout.update(fromActivation: activation)
+        
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
+
+        XCTAssertEqual(view.root.count(view.child), 1)
+        XCTAssertEqual(view.root.count(view.friend), 1)
+        XCTAssertEqual(view.friend.superview, view.root)
+        XCTAssertEqual(view.root.bounds.size, .init(width: 90, height: 90))
+        XCTAssertEqual(view.friend.bounds.size, .init(width: 90, height: 90))
+        XCTAssertEqual(SwiftLayoutPrinter(view).print(), """
+        view {
+            root.anchors {
+                Anchors(.top, .bottom, .leading, .trailing)
+            }.sublayout {
+                friend.anchors {
+                    Anchors(.top, .bottom, .leading, .trailing)
+                }
+            }
+        }
+        """.tabbed)
+    }
+    
+    class MockView: UIView {
+        var addSubviewCounts: [UIView: Int] = [:]
+        
+        func count(_ view: UIView) -> Int {
+            addSubviewCounts[view] ?? 0
+        }
+        
+        override func addSubview(_ view: UIView) {
+            if let count = addSubviewCounts[view] {
+                addSubviewCounts[view] = count + 1
+            } else {
+                addSubviewCounts[view] = 1
+            }
+            super.addSubview(view)
+        }
+    }
+    
+    class LayoutView: UIView {
+        var flag = true
+        
+        let root = MockView().viewTag.root
+        let child = UIView().viewTag.child
+        let friend = UILabel().viewTag.friend
+        
+        var activation: Activation?
+        
+        var layout: some Layout {
+            self {
+                root.anchors({
+                    Anchors.allSides()
+                }).sublayout {
+                    if flag {
+                        child.anchors {
+                            Anchors.allSides()
+                        }
+                    } else {
+                        friend.anchors {
+                            Anchors.allSides()
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 // MARK: GroupLayout

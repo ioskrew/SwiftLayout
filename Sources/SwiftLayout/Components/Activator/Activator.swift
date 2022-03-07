@@ -10,44 +10,45 @@ import UIKit
 
 enum Activator {
     
-    static func active<L: Layout>(layout: L, options: LayoutOptions = []) -> Deactivation {
-        return update(layout: layout, fromDeactivation: Deactivation(), options: options)
+    static func active<L: Layout>(layout: L) -> Activation {
+        return update(layout: layout, fromActivation: Activation())
     }
     
     @discardableResult
-    static func update<L: Layout>(layout: L, fromDeactivation deactivation: Deactivation, options: LayoutOptions) -> Deactivation {
+    static func update<L: Layout>(layout: L, fromActivation activation: Activation) -> Activation {
+        
+        var prevInfos: [ViewInformation: Set<WeakReference<NSLayoutConstraint>>] = [:]
+        for viewInfo in activation.viewInfos.infos {
+            guard let view = viewInfo.view else { continue }
+            prevInfos[viewInfo] = Set(view.constraints.weakens)
+        }
+        
         let viewInfos = layout.viewInformations
         let viewInfoSet = ViewInformationSet(infos: viewInfos)
         
-        updateViews(deactivation: deactivation, viewInfos: viewInfos)
-        for viewInfo in viewInfos {
-            viewInfo.captureCurrentFrame()
-        }
+        updateViews(activation: activation, viewInfos: viewInfos)
         
         let constraints = layout.viewConstraints(viewInfoSet)
+        updateConstraints(activation: activation, constraints: constraints)
         
-        if options.contains(.usingAnimation) {
-            prepareAnimation(viewInfos: viewInfos)
-        }
-        
-        if options.contains(.usingAnimation) {
-            UIView.animate(withDuration: 0.25, delay: 0.0, options: [.beginFromCurrentState, .curveEaseInOut], animations: {
-                self.updateConstraints(deactivation: deactivation, constraints: constraints)
-                viewInfoSet.rootview?.layoutIfNeeded()
-                for viewInfo in viewInfos {
-                    viewInfo.animation()
+        for viewInfo in viewInfos {
+            if let constraints = prevInfos[viewInfo] {
+                if constraints != viewInfo.view.map({ Set($0.constraints.weakens) }) {
+                    viewInfo.view?.layoutIfNeeded()
                 }
-            }, completion: nil)
-        } else {
-            updateConstraints(deactivation: deactivation, constraints: constraints)
+            } else {
+                // for newly add to superview
+                viewInfo.view?.layer.removeAnimation(forKey: "bounds.size")
+                viewInfo.view?.layer.removeAnimation(forKey: "position")
+            }
         }
         
-        return deactivation
+        return activation
     }
 }
 
 extension Activator {
-    public static func finalActive<L: Layout>(layout: L, options: LayoutOptions = []) {
+    public static func finalActive<L: Layout>(layout: L) {
         let viewInfos = layout.viewInformations
         let viewInfoSet = ViewInformationSet(infos: viewInfos)
         
@@ -60,10 +61,10 @@ extension Activator {
 }
 
 private extension Activator {
-    static func updateViews(deactivation: Deactivation, viewInfos: [ViewInformation]) {
+    static func updateViews(activation: Activation, viewInfos: [ViewInformation]) {
         let newInfos = viewInfos
         let newInfosSet = Set(newInfos)
-        let oldInfos = deactivation.viewInfos.infos
+        let oldInfos = activation.viewInfos.infos
         
         // remove old views
         for viewInfo in oldInfos where !newInfosSet.contains(viewInfo) {
@@ -78,7 +79,7 @@ private extension Activator {
             viewInfo.addSuperview()
         }
         
-        deactivation.viewInfos = ViewInformationSet(infos: viewInfos)
+        activation.viewInfos = ViewInformationSet(infos: viewInfos)
     }
     
     static func updateViews(viewInfos: [ViewInformation]) {
@@ -93,13 +94,13 @@ private extension Activator {
         }
     }
     
-    static func updateConstraints(deactivation: Deactivation, constraints: [NSLayoutConstraint]) {
+    static func updateConstraints(activation: Activation, constraints: [NSLayoutConstraint]) {
         let news = Set(constraints.weakens)
-        let olds = Set(deactivation.constraints)
+        let olds = Set(activation.constraints)
         
         NSLayoutConstraint.deactivate(olds.compactMap(\.origin).filter(\.isActive))
         NSLayoutConstraint.activate(news.sorted().compactMap(\.origin))
-        deactivation.constraints = news
+        activation.constraints = news
     }
     
     static func updateConstraints(constraints: [NSLayoutConstraint]) {
@@ -107,10 +108,4 @@ private extension Activator {
         NSLayoutConstraint.activate(news.sorted().compactMap(\.origin))
     }
     
-    static func prepareAnimation(viewInfos: [ViewInformation]) {
-        let animationViewInfos = viewInfos.filter { view in
-            !view.isNewlyAdded
-        }
-        animationViewInfos.forEach({ $0.captureCurrentFrame() })
-    }
 }

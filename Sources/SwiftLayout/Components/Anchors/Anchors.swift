@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-public final class Anchors: Constraint {
+public final class Anchors {
     
     var items: [Constraint] = []
     
@@ -54,8 +54,7 @@ public final class Anchors: Constraint {
 }
 
 extension Anchors {
-    
-    private func to(_ relation: NSLayoutConstraint.Relation, to: ConstraintTarget) -> Self {
+    func to(_ relation: NSLayoutConstraint.Relation, to: ConstraintTarget) -> Self {
         func update(_ updateItem: Constraint) -> Constraint {
             var updateItem = updateItem
             updateItem.relation = relation
@@ -68,6 +67,18 @@ extension Anchors {
         items = items.map(update)
         return self
     }
+    
+    func union(_ anchors: Anchors) -> Anchors {
+        items.append(contentsOf: anchors.items)
+        return self
+    }
+    
+    static func + (lhs: Anchors, rhs: Anchors) -> Anchors {
+        lhs.union(rhs)
+    }
+}
+
+extension Anchors {
 
     ///
     /// Set constraint attributes of ``Anchors``
@@ -444,15 +455,6 @@ extension Anchors {
                 self = .object(object)
             } else {
                 self = .transparent
-            }
-        }
-        
-        var object: NSObject? {
-            switch self {
-            case let .object(object):
-                return object
-            default:
-                return nil
             }
         }
     }

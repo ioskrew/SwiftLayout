@@ -8,7 +8,7 @@
 import UIKit
 
 public typealias TraverseHandler = (_ information: ViewInformation) -> Bool
-public typealias ConstraintHandler = (_ information: ViewInformation?, _ constraints: [Constraint]) -> Void
+public typealias ConstraintHandler = (_ information: ViewInformation?, _ constraints: Anchors) -> Void
 
 public protocol Layout: CustomDebugStringConvertible {
     func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler)
@@ -16,29 +16,28 @@ public protocol Layout: CustomDebugStringConvertible {
 }
 
 extension Layout {
-    public func active(_ options: LayoutOptions = []) -> AnyDeactivable {
-        AnyDeactivable(Activator.active(layout: self, options: options))
+    public func active() -> Activation {
+        Activator.active(layout: self)
     }
     
-    public func finalActive(_ options: LayoutOptions = []) {
-        Activator.finalActive(layout: self, options: options)
+    public func update(fromActivation activation: Activation) -> Activation {
+        Activator.update(layout: self, fromActivation: activation)
+    }
+    
+    public func finalActive() {
+        Activator.finalActive(layout: self)
     }
     
     public var anyLayout: AnyLayout {
         AnyLayout(self)
     }
     
-    public func anchors(@AnchorsBuilder _ build: () -> [Constraint]) -> AnchorsLayout<Self> {
+    public func anchors(@AnchorsBuilder _ build: () -> Anchors) -> AnchorsLayout<Self> {
         AnchorsLayout(layout: self, anchors: build())
     }
     
     public func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> SublayoutLayout<Self, L> {
         SublayoutLayout(self, build())
-    }
-    
-    @available(*, deprecated, message: "using sublayout instead of this")
-    public func subviews<L: Layout>(@LayoutBuilder _ build: () -> L) -> some Layout {
-        sublayout(build)
     }
     
     public func identifying(_ accessibilityIdentifier: String) -> some Layout {
