@@ -213,7 +213,7 @@ now you can combine LayoutBuilder and AnchorsBuilder for add subview and make co
 `LayoutBuilder`, `AnchorsBuilder` only contain contexts for actual works. so, for do addSubview and active constraints needs following works:
 
 - you can call `finalActive` of `Layout` for instantly do all stuff in case of no needs to updates.
-- `finalActive` return nothing
+- `finalActive` return nothing after addSubview and active constraints instantly.
   
   ```swift
   @LayoutBuilder func layout() -> some Layout {
