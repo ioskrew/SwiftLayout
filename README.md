@@ -48,13 +48,20 @@
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "2.0.0"),
+  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "1.7.0"),
 ],
 ```
 
+# features
 
+- DSL features for `addSubview` and `removeFromSuperview`
+- DSL features for `NSLayoutConstraint`, `NSLayoutAnchor` and activation
+- can updates only required in view states.
+- using conditional and loop statements like `if else`, `swift case`, `for` in view hierarhcy and autolayout constraints.
+- offer propertyWrapper for automatically updating of layout
+- offering varierty features for relations of constraints. 
 
-# usages
+# usage
 
 ## `LayoutBuilder`
 
