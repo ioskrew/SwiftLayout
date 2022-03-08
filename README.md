@@ -407,7 +407,38 @@ final class PreviewView: UIView, LayoutBuilding {
 
 [![animation in update layout](https://user-images.githubusercontent.com/3011832/156908073-d4089c26-928f-41d9-961b-8b04d7dcde37.png)](https://user-images.githubusercontent.com/3011832/156908065-8d6bcebd-553b-490b-903b-6e375d4c97a3.mp4)
 
-### **SwiftLayoutPrinter**
+## other useful features
+
+### `config(_:)` of UIView
+
+you can decorate view in Layout with config function (*and using outside freely*)
+
+```swift
+contentView {
+  nameLabel.config { label in 
+		label.text = "Hello"
+    label.textColor = .black
+ 	}.anchors {
+    Anchors.allSides()
+  }
+}
+```
+
+### `identifying` of `UIView` and `Layout`
+
+set `accessibilityIdentifier` of view for (mostly) debugging pupose.
+
+```swift
+contentView {
+  nameLabel.identifying("name").anchors {
+    Anchors.allSides()
+  }
+}
+```
+
+- nameLabel in description of constraints show **name**
+
+### SwiftLayoutPrinter
 
 for several reasons, you want current view state migration to SwiftLayout. 
 
@@ -450,7 +481,6 @@ for several reasons, you want current view state migration to SwiftLayout.
     }
   }
   ```
-  
   
 
 <img src="https://user-images.githubusercontent.com/3011832/157275626-c5f5672f-0a4a-4f45-8800-5ea3871c9dac.png" alt="thateasy" style="zoom:25%;" />
