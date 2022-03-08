@@ -19,70 +19,9 @@
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "2.0.0"),
+  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "1.7.0"),
 ],
 ```
-
-# 2.0
-
-## changes
-
-- ~~`LayoutBuilding`~~ become `Layoutable`
-
-```swift
-class LayoutView: UIView, Layoutable {
-  var activation: Activation?
-  var layout: some Layout {
-    ... // layout DSL
-  }
-}
-```
-
-- ~~`Deactivation`~~ become `Activation`
-
-- change value of property representing with `LayoutProperty` annotation  can update layout automatically
-
-```swift
-class YouView: UIView, Layoutable {
-  
-  let nameLabel = UILabel
-  let ageLabel = UILabel
-  /// age == 0 is hide ageLabel
-  /// age > 0 is show ageLabel
-  @LayoutProperty var age = 0 
-  
-  var activation: Activation?
-  var layout: some Layout {
-		self {
-      nameLabel
-      if age > 0 {
-	      ageLabel	
-      }
-    }
-  } 
-}
-```
-
-- ~~`LayoutOptions`~~ removed
-
-  - `updateIdentifiers(rootObject: AnyObject)` now assign identifier 
-
-  - animation enable from UIView animation features
-
-    ```swift
-    class MovingView: UIView, Layoutable {
-      func someUpdate() {
-        UIView.animation(...) {
-          self.updateLayout()
-        }
-      }
-    }
-    ```
-
-    
-
-
-
 # 1.0
 
 ## simple usage
