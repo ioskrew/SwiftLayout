@@ -117,7 +117,7 @@ you can read details [here](https://developer.apple.com/documentation/uikit/nsla
   ```swift
   superview {
     selfview.anchors {
-  		Anchors(.top).equalTo(superview, attribute: .top, constant: 10)
+      Anchors(.top).equalTo(superview, attribute: .top, constant: 10)
     }
   }
   ```
@@ -247,11 +247,11 @@ now you can combine LayoutBuilder and AnchorsBuilder for add subview and make co
   var activation: Activation
   
   init() {
-  	activation = layout().active()
+    activation = layout().active()
   }
   
   func someUpdate() {
-  	activation = layout().update(fromActivation: activation)
+    activation = layout().update(fromActivation: activation)
   }
 
 ### `Layoutable`
@@ -330,75 +330,74 @@ you can start animation by updating constraint in `Layoutable`, And the method i
 
 ```swift
 final class PreviewView: UIView, LayoutBuilding {
-    
-    var capTop = true {
-        didSet {
-          	// start animation for change constraints
-            UIView.animate(withDuration: 1.0) {
-                self.updateLayout()
-            }
-        }
+  var capTop = true {
+    didSet {
+      // start animation for change constraints
+      UIView.animate(withDuration: 1.0) {
+        self.updateLayout()
+      }
     }
+  }
     
-    let cap = UIButton()
-    let shoe = UIButton()
-    let title = UILabel()
+  let cap = UIButton()
+  let shoe = UIButton()
+  let title = UILabel()
     
-    var top: UIButton { capTop ? cap : shoe }
-    var bottom: UIButton { capTop ? shoe : cap }
+  var top: UIButton { capTop ? cap : shoe }
+  var bottom: UIButton { capTop ? shoe : cap }
     
-    var activation: Activation?
+  var activation: Activation?
     
-    var layout: some Layout {
-        self {
-            top.anchors {
-                Anchors.cap()
-            }
-            bottom.anchors {
-                Anchors(.top).equalTo(top.bottomAnchor)
-                Anchors(.height).equalTo(top)
-                Anchors.shoe()
-            }
-            title.config { label in
-                label.text = "Top Title"
-                UIView.transition(with: label, duration: 1.0, options: [.beginFromCurrentState, .transitionCrossDissolve], animations: {
-                    label.textColor = self.capTop ? .black : .yellow
-                }, completion: nil)
-            }.anchors {
-                Anchors(.centerX, .centerY).equalTo(top)
-            }
-            UILabel().config { label in
-                label.text = "Bottom Title"
-                label.textColor = capTop ? .yellow : .black
-            }.identifying("title.bottom").anchors {
-                Anchors(.centerX, .centerY).equalTo(bottom)
-            }
-        }
+  var layout: some Layout {
+    self {
+      top.anchors {
+        Anchors.cap()
+      }
+      bottom.anchors {
+        Anchors(.top).equalTo(top.bottomAnchor)
+        Anchors(.height).equalTo(top)
+        Anchors.shoe()
+      }
+      title.config { label in
+        label.text = "Top Title"
+        UIView.transition(with: label, duration: 1.0, options: [.beginFromCurrentState, .transitionCrossDissolve], animations: {
+          label.textColor = self.capTop ? .black : .yellow
+        }, completion: nil)
+      }.anchors {
+        Anchors(.centerX, .centerY).equalTo(top)
+      }
+      UILabel().config { label in
+        label.text = "Bottom Title"
+        label.textColor = capTop ? .yellow : .black
+      }.identifying("title.bottom").anchors {
+        Anchors(.centerX, .centerY).equalTo(bottom)
+      }
     }
+  }
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        initViews()
-    }
+  override init(frame: CGRect) {
+    super.init(frame: frame)
+    initViews()
+  }
     
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        initViews()
-    }
+  required init?(coder: NSCoder) {
+    super.init(coder: coder)
+    initViews()
+  }
     
-    func initViews() {
-        cap.backgroundColor = .yellow
-        shoe.backgroundColor = .black
-        cap.addAction(.init(handler: { [weak self] _ in
-            self?.capTop.toggle()
-        }), for: .touchUpInside)
-        shoe.addAction(.init(handler: { [weak self] _ in
-            self?.capTop.toggle()
-        }), for: .touchUpInside)
-        self.accessibilityIdentifier = "root"
-        updateIdentifiers(rootObject: self)
-        updateLayout()
-    }
+  func initViews() {
+    cap.backgroundColor = .yellow
+    shoe.backgroundColor = .black
+    cap.addAction(.init(handler: { [weak self] _ in
+      self?.capTop.toggle()
+    }), for: .touchUpInside)
+    shoe.addAction(.init(handler: { [weak self] _ in
+      self?.capTop.toggle()
+    }), for: .touchUpInside)
+    self.accessibilityIdentifier = "root"
+    updateIdentifiers(rootObject: self)
+    updateLayout()
+  }
     
 }
 ```
@@ -416,9 +415,9 @@ you can decorate view in Layout with config function (*and using outside freely*
 ```swift
 contentView {
   nameLabel.config { label in 
-		label.text = "Hello"
+    label.text = "Hello"
     label.textColor = .black
- 	}.anchors {
+  }.anchors {
     Anchors.allSides()
   }
 }
