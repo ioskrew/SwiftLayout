@@ -14,7 +14,7 @@ final class AnchorsDSLTests: XCTestCase {
     override func setUp() {
         root = UIView().viewTag.root
         red = UIView().viewTag.red
-        blue = UIView().viewTag.red
+        blue = UIView().viewTag.blue
     }
     
     override func tearDown() {
