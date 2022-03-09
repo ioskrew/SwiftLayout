@@ -3,22 +3,20 @@ import UIKit
 
 protocol AnyLayoutBox: Layout {}
 struct _AnyLayoutBox<L: Layout>: AnyLayoutBox {
+    
     let layout: L
     
     var debugDescription: String {
         "_AnyLayoutBox<\(L.self)>"
     }
     
-    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
-        layout.traverse(superview, traverseHandler: handler)
-    }
-    
-    func traverse(_ superview: UIView?, constraintHndler handler: ConstraintHandler) {
-        layout.traverse(superview, constraintHndler: handler)
+    var sublayouts: [Layout] {
+        [layout]
     }
 }
 
 public struct AnyLayout: Layout {
+    
     let box: AnyLayoutBox
     
     init<L: Layout>(_ layout: L) {
@@ -28,14 +26,8 @@ public struct AnyLayout: Layout {
     public var debugDescription: String {
         "AnyLayout:\(box)"
     }
-}
-
-public extension AnyLayout {
-    func traverse(_ superview: UIView?, traverseHandler handler: TraverseHandler) {
-        box.traverse(superview, traverseHandler: handler)
-    }
     
-    func traverse(_ superview: UIView?, constraintHndler handler: ConstraintHandler) {
-        box.traverse(superview, constraintHndler: handler)
+    public var sublayouts: [Layout] {
+        box.sublayouts
     }
 }

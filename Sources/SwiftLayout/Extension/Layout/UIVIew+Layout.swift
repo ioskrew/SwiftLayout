@@ -7,23 +7,21 @@
 
 import UIKit
 
-extension UIView {
-    public func callAsFunction<L: Layout>(@LayoutBuilder _ build: () -> L) -> some Layout {
+public protocol _UIViewExtension {}
+extension UIView: _UIViewExtension {}
+extension _UIViewExtension where Self: UIView {
+    public func callAsFunction<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<Self, L> {
         ViewLayout(self, sublayout: build())
     }
     
-    public func anchors(@AnchorsBuilder _ build: () -> Anchors) -> some Layout {
-        AnchorsLayout(layout: ViewLayout(self, sublayout: EmptyLayout()), anchors: build())
+    public func anchors(@AnchorsBuilder _ build: () -> Anchors) -> ViewLayout<Self, EmptyLayout> {
+        ViewLayout(self, sublayout: EmptyLayout()).anchors(build)
     }
     
-    public func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> some Layout {
-        SublayoutLayout(ViewLayout(self, sublayout: EmptyLayout()), build())
+    public func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<Self, EmptyLayout> {
+        ViewLayout(self, sublayout: EmptyLayout()).sublayout(build)
     }
-}
-
-public protocol _ViewConfig {}
-extension UIView: _ViewConfig {}
-extension _ViewConfig where Self: UIView {
+    
     public func config(_ config: (Self) -> Void) -> Self {
         config(self)
         return self
