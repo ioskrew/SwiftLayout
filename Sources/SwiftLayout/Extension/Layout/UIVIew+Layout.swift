@@ -7,8 +7,10 @@
 
 import UIKit
 
-extension UIView {
-    
+public protocol _UIViewExtension {}
+extension UIView: _UIViewExtension {}
+extension _UIViewExtension where Self: UIView {
+
     ///
     /// Create a ``ViewLayout`` containing this view and the sublayouts.
     ///
@@ -17,7 +19,7 @@ extension UIView {
     /// - Parameter build: A ``LayoutBuilder`` that  create sublayouts of this view.
     /// - Returns: An ``ViewLayout`` that wraps this view and contains sublayouts .
     ///
-    public func callAsFunction<L: Layout>(@LayoutBuilder _ build: () -> L) -> some Layout {
+    public func callAsFunction<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<Self, L> {
         ViewLayout(self, sublayout: build())
     }
     
@@ -47,8 +49,8 @@ extension UIView {
     /// - Parameter build: A ``AnchorsBuilder`` that  create ``Anchors`` to be applied to this layout
     /// - Returns: An ``AnchorsLayout`` that wraps this view and contains the anchors .
     ///
-    public func anchors(@AnchorsBuilder _ build: () -> Anchors) -> some Layout {
-        AnchorsLayout(layout: ViewLayout(self, sublayout: EmptyLayout()), anchors: build())
+    public func anchors(@AnchorsBuilder _ build: () -> Anchors) -> ViewLayout<Self, EmptyLayout> {
+        ViewLayout(self, sublayout: EmptyLayout()).anchors(build)
     }
     
     ///
@@ -67,14 +69,9 @@ extension UIView {
     /// - Parameter build: A ``LayoutBuilder`` that  create sublayouts of this view.
     /// - Returns: An ``SublayoutLayout`` that wraps this view and contains sublayouts .
     ///
-    public func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> some Layout {
-        SublayoutLayout(ViewLayout(self, sublayout: EmptyLayout()), build())
+    public func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<Self, EmptyLayout> {
+        ViewLayout(self, sublayout: EmptyLayout()).sublayout(build)
     }
-}
-
-public protocol _ViewConfig {}
-extension UIView: _ViewConfig {}
-extension _ViewConfig where Self: UIView {
     
     ///
     /// Provides a block that can change the properties of the view within the layout block.
