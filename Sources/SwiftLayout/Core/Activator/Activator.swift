@@ -22,12 +22,12 @@ enum Activator {
             prevInfos[viewInfo] = Set(view.constraints.weakens)
         }
 
-        let explorer = LayoutElements(layout: layout)
+        let elements = LayoutElements(layout: layout)
         
-        let viewInfos = explorer.viewInformations
+        let viewInfos = elements.viewInformations
         updateViews(activation: activation, viewInfos: viewInfos)
 
-        let constraints = explorer.viewConstraints
+        let constraints = elements.viewConstraints
         updateConstraints(activation: activation, constraints: constraints)
 
         for viewInfo in viewInfos {
@@ -48,12 +48,12 @@ enum Activator {
 
 extension Activator {
     public static func finalActive<L: Layout>(layout: L) {
-        let explorer = LayoutElements(layout: layout)
+        let elements = LayoutElements(layout: layout)
         
-        let viewInfos = explorer.viewInformations
+        let viewInfos = elements.viewInformations
         updateViews(viewInfos: viewInfos)
         
-        let constraints = explorer.viewConstraints
+        let constraints = elements.viewConstraints
         updateConstraints(constraints: constraints)
     }
 }
