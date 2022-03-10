@@ -27,17 +27,17 @@ public final class Anchors {
     
     var items: [Constraint] = []
     
-    /// initialize and return new Anchors with array of ``NSLayoutConstraint.Attribute``
+    /// initialize and return new Anchors with array of **NSLayoutConstraint.Attribute**
     ///
-    /// - Parameter attributes: variadic of ``NSLayoutConstraint.Attribute``
+    /// - Parameter attributes: variadic of **NSLayoutConstraint.Attribute**
     public convenience init(_ attributes: NSLayoutConstraint.Attribute...) {
         let items = attributes.map { Anchors.Constraint(attribute: $0) }
         self.init(items: items)
     }
     
-    /// initialize and return new Anchors with array of ``NSLayoutConstraint.Attribute``
+    /// initialize and return new Anchors with array of **NSLayoutConstraint.Attribute**
     ///
-    /// - Parameter attributes: array of ``NSLayoutConstraint.Attribute``
+    /// - Parameter attributes: array of **NSLayoutConstraint.Attribute**
     public convenience init(_ attributes: [NSLayoutConstraint.Attribute]) {
         let items = attributes.map { Anchors.Constraint(attribute: $0) }
         self.init(items: items)

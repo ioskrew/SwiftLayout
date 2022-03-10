@@ -10,9 +10,6 @@
 
 ### Configuring
 
-- ``sublayout(_:)``
-- ``anchors(_:)``
-- ``identifying(_:)``
 - ``updateIdentifiers(rootObject:)``
 
 ### Performing Type-Erasure
@@ -21,13 +18,11 @@
 
 ### Provided layout structure
 
-- ``AnchorsLayout``
 - ``AnyLayout``
 - ``ArrayLayout``
 - ``ConditionalLayout``
 - ``EmptyLayout``
 - ``GroupLayout``
 - ``OptionalLayout``
-- ``SublayoutLayout``
 - ``TupleLayout``
 - ``ViewLayout``

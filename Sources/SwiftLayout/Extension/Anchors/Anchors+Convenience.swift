@@ -179,8 +179,8 @@ extension Anchors {
     
     /// ``Anchors`` for center to superview
     /// - Parameters:
-    ///   - offsetX: ``CGFloat`` type. == superview.center.x += offsetX
-    ///   - offsetY: ``CGFloat`` type. == superview.center.y += offsetY
+    ///   - offsetX: **CGFloat** type. == superview.center.x += offsetX
+    ///   - offsetY: **CGFloat** type. == superview.center.y += offsetY
     /// - Returns: ``Anchors``
     public static func center(offsetX: CGFloat = .zero, offsetY: CGFloat = .zero) -> Anchors {
         let x = Anchors(.centerX).equalTo(constant: offsetX)
@@ -191,8 +191,8 @@ extension Anchors {
     /// ``Anchors`` for center to item
     /// - Parameters:
     ///   - toItem: ``ConstraintableItem`` type,  second item for constraint
-    ///   - offsetX: ``CGFloat`` type. == item.center.x += offsetX
-    ///   - offsetY: ``CGFloat`` type. == item.center.y += offsetY
+    ///   - offsetX: **CGFloat** type. == item.center.x += offsetX
+    ///   - offsetY: **CGFloat** type. == item.center.y += offsetY
     /// - Returns: ``Anchors``
     public static func center<I: ConstraintableItem>(_ toItem:I, offsetX: CGFloat = .zero, offsetY: CGFloat = .zero) -> Anchors {
         let x = Anchors(.centerX).equalTo(toItem, constant: offsetX)
