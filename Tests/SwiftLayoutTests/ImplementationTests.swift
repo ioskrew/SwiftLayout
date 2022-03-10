@@ -39,7 +39,7 @@ extension ImplementationTests {
         }
         
         var result: [String] = []
-        for viewInformation in layout.viewInformations {
+        for viewInformation in LayoutElements(layout: layout).viewInformations {
             let superDescription = viewInformation.superview?.accessibilityIdentifier ?? "nil"
             let currentDescription = viewInformation.view?.accessibilityIdentifier ?? "nil"
             let description = "\(superDescription), \(currentDescription)"
@@ -70,45 +70,51 @@ extension ImplementationTests {
         }
         
         XCTAssertNotNil(layout)
-        XCTAssertEqual(layout.viewInformations.map(\.view), [root, child, friend])
+        XCTAssertEqual(LayoutElements(layout: layout).viewInformations.map(\.view), [root, child, friend])
     }
     
     func testLayoutCompare() {
         let f1 = root {
             child
         }
+        let e1 = LayoutElements(layout: f1)
 
         let f2 = root {
            child
         }
+        let e2 = LayoutElements(layout: f2)
 
         let f3 = root {
             child.anchors { Anchors.allSides() }
         }
+        let e3 = LayoutElements(layout: f3)
 
         let f4 = root {
             child.anchors { Anchors.allSides() }
         }
+        let e4 = LayoutElements(layout: f4)
 
         let f5 = root {
             child.anchors { Anchors.cap() }
         }
+        let e5 = LayoutElements(layout: f5)
 
         let f6 = root {
             friend.anchors { Anchors.allSides() }
         }
+        let e6 = LayoutElements(layout: f6)
 
-        XCTAssertEqual(f1.viewInformations, f2.viewInformations)
-        XCTAssertEqual(f1.viewConstraints().weakens, f2.viewConstraints().weakens)
+        XCTAssertEqual(e1.viewInformations, e2.viewInformations)
+        XCTAssertEqual(e1.viewConstraints.weakens, e2.viewConstraints.weakens)
 
-        XCTAssertEqual(f3.viewInformations, f4.viewInformations)
-        XCTAssertEqual(f3.viewConstraints().weakens, f4.viewConstraints().weakens)
+        XCTAssertEqual(e3.viewInformations, e4.viewInformations)
+        XCTAssertEqual(e3.viewConstraints.weakens, e4.viewConstraints.weakens)
 
-        XCTAssertEqual(f4.viewInformations, f5.viewInformations)
-        XCTAssertNotEqual(f4.viewConstraints().weakens, f5.viewConstraints().weakens)
+        XCTAssertEqual(e4.viewInformations, e5.viewInformations)
+        XCTAssertNotEqual(e4.viewConstraints.weakens, e5.viewConstraints.weakens)
 
-        XCTAssertNotEqual(f5.viewInformations, f6.viewInformations)
-        XCTAssertNotEqual(f5.viewConstraints().weakens, f6.viewConstraints().weakens)
+        XCTAssertNotEqual(e5.viewInformations, e6.viewInformations)
+        XCTAssertNotEqual(e5.viewConstraints.weakens, e6.viewConstraints.weakens)
     }
     
     func testSetAccessibilityIdentifier() {
