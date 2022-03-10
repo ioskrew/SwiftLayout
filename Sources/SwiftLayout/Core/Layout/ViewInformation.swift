@@ -8,16 +8,16 @@
 import Foundation
 import UIKit
 
-public final class ViewInformation: Hashable, CustomDebugStringConvertible {
+final class ViewInformation: Hashable, CustomDebugStringConvertible {
     
-    public init(superview: UIView?, view: UIView?) {
+    init(superview: UIView?, view: UIView?) {
         self.superview = superview
         self.view = view
     }
     
     private(set) public weak var superview: UIView?
     private(set) public weak var view: UIView?
-    public var identifier: String? { view?.accessibilityIdentifier }
+    var identifier: String? { view?.accessibilityIdentifier }
     
     func addSuperview() {
         guard let view = view else {
@@ -33,7 +33,7 @@ public final class ViewInformation: Hashable, CustomDebugStringConvertible {
         view?.removeFromSuperview()
     }
     
-    public var debugDescription: String {
+    var debugDescription: String {
         "\(superview?.tagDescription ?? "nil"):\(view?.tagDescription ?? "nil")"
     }
 }
@@ -41,17 +41,17 @@ public final class ViewInformation: Hashable, CustomDebugStringConvertible {
 // MARK: - Hashable
 extension ViewInformation {
     
-    public static func == (lhs: ViewInformation, rhs: ViewInformation) -> Bool {
+    static func == (lhs: ViewInformation, rhs: ViewInformation) -> Bool {
         lhs.hashValue == rhs.hashValue
     }
     
-    public func hash(into hasher: inout Hasher) {
+    func hash(into hasher: inout Hasher) {
         hasher.combine(superview)
         hasher.combine(view)
     }
 }
 
-public struct ViewInformationSet: Hashable {
+struct ViewInformationSet: Hashable {
     
     let infos: Set<ViewInformation>
     

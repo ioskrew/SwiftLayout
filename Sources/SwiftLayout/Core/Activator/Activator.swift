@@ -16,21 +16,20 @@ enum Activator {
     
     @discardableResult
     static func update<L: Layout>(layout: L, fromActivation activation: Activation) -> Activation {
-        
         var prevInfos: [ViewInformation: Set<WeakReference<NSLayoutConstraint>>] = [:]
         for viewInfo in activation.viewInfos.infos {
             guard let view = viewInfo.view else { continue }
             prevInfos[viewInfo] = Set(view.constraints.weakens)
         }
+
+        let elements = LayoutElements(layout: layout)
         
-        let viewInfos = layout.viewInformations
-        let viewInfoSet = ViewInformationSet(infos: viewInfos)
-        
+        let viewInfos = elements.viewInformations
         updateViews(activation: activation, viewInfos: viewInfos)
-        
-        let constraints = layout.viewConstraints(viewInfoSet)
+
+        let constraints = elements.viewConstraints
         updateConstraints(activation: activation, constraints: constraints)
-        
+
         for viewInfo in viewInfos {
             if let constraints = prevInfos[viewInfo] {
                 if constraints != viewInfo.view.map({ Set($0.constraints.weakens) }) {
@@ -49,13 +48,12 @@ enum Activator {
 
 extension Activator {
     public static func finalActive<L: Layout>(layout: L) {
-        let viewInfos = layout.viewInformations
-        let viewInfoSet = ViewInformationSet(infos: viewInfos)
+        let elements = LayoutElements(layout: layout)
         
+        let viewInfos = elements.viewInformations
         updateViews(viewInfos: viewInfos)
         
-        let constraints = layout.viewConstraints(viewInfoSet)
-        
+        let constraints = elements.viewConstraints
         updateConstraints(constraints: constraints)
     }
 }
