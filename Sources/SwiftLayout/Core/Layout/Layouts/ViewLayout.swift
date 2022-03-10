@@ -33,7 +33,7 @@ public struct ViewLayout<V: UIView, SubLayout: Layout>: Layout {
 extension ViewLayout {
     
     ///
-    /// Create an ``AnchorsLayout`` containing the  ``Anchors`` of this layout.
+    /// Add anchors coordinator to this layout
     ///
     /// ``Anchors`` express **NSLayoutConstraint** and can be applied through this method.
     /// ```swift
@@ -56,7 +56,7 @@ extension ViewLayout {
     /// ```
     ///
     /// - Parameter build: A ``AnchorsBuilder`` that  create ``Anchors`` to be applied to this layout
-    /// - Returns: An ``AnchorsLayout`` that wraps this layout and contains the anchors .
+    /// - Returns: The layout itself  with anchors coordinator added
     ///
     public func anchors(@AnchorsBuilder _ build: () -> Anchors) -> Self {
         var viewLayout = self
@@ -65,7 +65,7 @@ extension ViewLayout {
     }
     
     ///
-    /// Create a ``SublayoutLayout`` containing the sublayouts of this layout.
+    /// Add sublayout coordinator to this layout
     ///
     /// Sublayouts contained within the builder block are added to the view hierarchy through **addSubview(_:)** to the view object of the current layout.
     /// ```swift
@@ -78,7 +78,7 @@ extension ViewLayout {
     /// ```
     ///
     /// - Parameter build: A ``LayoutBuilder`` that  create sublayouts of this layout.
-    /// - Returns: An ``SublayoutLayout`` that wraps this layout and contains sublayouts .
+    /// - Returns: The layout itself with sublayout coordinator added
     ///
     public func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> Self {
         var viewLayout = self
@@ -87,7 +87,7 @@ extension ViewLayout {
     }
     
     ///
-    /// Find the view object for this layout and set its **accessibilityIdentifier**.
+    /// Set  **accessibilityIdentifier** of view.
     ///
     /// - Parameter accessibilityIdentifier: A string containing the identifier of the element.
     /// - Returns: The layout itself with the accessibilityIdentifier applied

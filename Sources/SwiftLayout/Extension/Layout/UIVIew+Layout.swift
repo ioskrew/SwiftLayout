@@ -24,7 +24,7 @@ extension _UIViewExtension where Self: UIView {
     }
     
     ///
-    /// Create an ``AnchorsLayout`` containing the  ``Anchors`` of this view.
+    /// Create a ``ViewLayout`` containing this view and the sublayouts and add anchors coordinator to this layout
     ///
     /// ``Anchors`` express **NSLayoutConstraint** and can be applied through this method.
     /// ```swift
@@ -47,14 +47,14 @@ extension _UIViewExtension where Self: UIView {
     /// ```
     ///
     /// - Parameter build: A ``AnchorsBuilder`` that  create ``Anchors`` to be applied to this layout
-    /// - Returns: An ``AnchorsLayout`` that wraps this view and contains the anchors .
+    /// - Returns: An ``ViewLayout`` that wraps this view and contains the anchors  coordinator.
     ///
     public func anchors(@AnchorsBuilder _ build: () -> Anchors) -> ViewLayout<Self, EmptyLayout> {
         ViewLayout(self, sublayout: EmptyLayout()).anchors(build)
     }
     
     ///
-    /// Create a ``SublayoutLayout`` containing the sublayouts of this view.
+    /// Create a ``ViewLayout`` containing the sublayouts of this view.
     ///
     /// Sublayouts contained within the builder block are added to the view hierarchy through **addSubview(_:)** to the view.
     /// ```swift
@@ -67,7 +67,7 @@ extension _UIViewExtension where Self: UIView {
     /// ```
     ///
     /// - Parameter build: A ``LayoutBuilder`` that  create sublayouts of this view.
-    /// - Returns: An ``SublayoutLayout`` that wraps this view and contains sublayouts .
+    /// - Returns: An ``ViewLayout`` that wraps this view and contains sublayouts .
     ///
     public func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<Self, EmptyLayout> {
         ViewLayout(self, sublayout: EmptyLayout()).sublayout(build)
