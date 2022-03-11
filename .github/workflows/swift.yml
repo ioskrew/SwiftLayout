@@ -2,12 +2,12 @@ name: SwiftLayout
 
 on:
   push:
-    branches: [ main ]
+    branches: [ develop ]
   pull_request:
-    branches: [ main ]
+    branches: [ develop ]
 
 jobs:
-  test:
+  test-ios:
 
     runs-on: macos-latest
 
@@ -15,4 +15,12 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run tests
       run: xcodebuild test -scheme SwiftLayout -sdk iphonesimulator15.2 -destination 'name=iPhone 13 Pro'
+  
+  test-macos:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run tests
       run: xcodebuild test -scheme SwiftLayout -sdk macosx -destination 'name=macOS'
