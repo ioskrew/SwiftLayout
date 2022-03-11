@@ -6,7 +6,11 @@
 //
 
 import Foundation
+#if canImport(UIKit)
 import UIKit
+#elseif canImport(AppKit)
+import AppKit
+#endif
 
 extension NSLayoutConstraint.Attribute: CustomStringConvertible, CustomDebugStringConvertible {
     public var description: String {

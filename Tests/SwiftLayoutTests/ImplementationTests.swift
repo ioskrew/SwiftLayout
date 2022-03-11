@@ -1,5 +1,9 @@
 import XCTest
+#if canImport(UIKit)
 import UIKit
+#elseif canImport(AppKit)
+import AppKit
+#endif
 @testable import SwiftLayout
 
 /// test cases for api rules except DSL syntax

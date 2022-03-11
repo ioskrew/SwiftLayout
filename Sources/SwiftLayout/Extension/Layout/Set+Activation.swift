@@ -6,7 +6,11 @@
 //
 
 import Foundation
+#if canImport(UIKit)
 import UIKit
+#elseif canImport(AppKit)
+import AppKit
+#endif
 
 public extension Collection where Element: Activation {
     func viewForIdentifier(_ identifier: String) -> UIView? {

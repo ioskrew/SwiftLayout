@@ -5,7 +5,11 @@
 //  Created by aiden_h on 2022/03/09.
 //
 
+#if canImport(UIKit)
 import UIKit
+#elseif canImport(AppKit)
+import AppKit
+#endif
 
 class LayoutElements {
     let viewInformations: [ViewInformation]

@@ -5,7 +5,11 @@
 //  Created by aiden_h on 2022/02/16.
 //
 
+#if canImport(UIKit)
 import UIKit
+#elseif canImport(AppKit)
+import AppKit
+#endif
 
 public final class Activation: Hashable {
     
