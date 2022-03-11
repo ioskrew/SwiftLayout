@@ -39,6 +39,7 @@ extension NSLayoutConstraint.Attribute: CustomStringConvertible, CustomDebugStri
             return "lastBaseline"
         case .firstBaseline:
             return "firstBaseline"
+            #if canImport(UIKit)
         case .leftMargin:
             return "leftMargin"
         case .rightMargin:
@@ -55,6 +56,7 @@ extension NSLayoutConstraint.Attribute: CustomStringConvertible, CustomDebugStri
             return "centerXWithinMargins"
         case .centerYWithinMargins:
             return "centerYWithinMargins"
+            #endif
         case .notAnAttribute:
             return "notAnAttribute"
         @unknown default:
@@ -87,6 +89,7 @@ extension NSLayoutConstraint.Attribute: CustomStringConvertible, CustomDebugStri
             return "NSLayoutConstraint.Attribute.lastBaseline"
         case .firstBaseline:
             return "NSLayoutConstraint.Attribute.firstBaseline"
+            #if canImport(UIKit)
         case .leftMargin:
             return "NSLayoutConstraint.Attribute.leftMargin"
         case .rightMargin:
@@ -103,6 +106,7 @@ extension NSLayoutConstraint.Attribute: CustomStringConvertible, CustomDebugStri
             return "NSLayoutConstraint.Attribute.centerXWithinMargins"
         case .centerYWithinMargins:
             return "NSLayoutConstraint.Attribute.centerYWithinMargins"
+            #endif
         case .notAnAttribute:
             return "NSLayoutConstraint.Attribute.notAnAttribute"
         @unknown default:

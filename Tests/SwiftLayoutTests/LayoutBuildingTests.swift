@@ -47,7 +47,6 @@ final class LayoutBuildingTests: XCTestCase {
         """.tabbed)
 
         view.flag.toggle()
-        view.setNeedsLayout()
         view.layoutIfNeeded()
 
         XCTAssertEqual(view.root.count(view.child), 1)

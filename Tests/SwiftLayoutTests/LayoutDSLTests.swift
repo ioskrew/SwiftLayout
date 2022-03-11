@@ -455,7 +455,6 @@ extension LayoutDSLTests {
         view.flag.toggle()
         activation = view.layout.update(fromActivation: activation)
         
-        view.setNeedsLayout()
         view.layoutIfNeeded()
 
         XCTAssertEqual(view.root.count(view.child), 1)

@@ -41,8 +41,13 @@ enum Activator {
                 }
             } else {
                 // for newly add to superview
+                #if canImport(AppKit)
+                viewInfo.view?.layer?.removeAnimation(forKey: "bounds.size")
+                viewInfo.view?.layer?.removeAnimation(forKey: "position")
+                #else
                 viewInfo.view?.layer.removeAnimation(forKey: "bounds.size")
                 viewInfo.view?.layer.removeAnimation(forKey: "position")
+                #endif
             }
         }
         

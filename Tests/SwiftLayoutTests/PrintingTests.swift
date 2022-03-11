@@ -281,12 +281,24 @@ extension PrintingTests {
     
     func testPrintWithFindingViewIdentifiers() {
         let cell = Cell()
+        #if canImport(AppKit)
+        cell.profileView.subviews.first?.setAccessibilityIdentifier("profileViewCell")
         let expect = """
         contentView {
-            profileView:UIImageView
-            nameLabel:UILabel
+            profileView:\(UIImageView.self) {
+                profileViewCell
+            }
+            nameLabel:\(UILabel.self)
         }
         """.tabbed
+        #else
+        let expect = """
+        contentView {
+            profileView:\(UIImageView.self)
+            nameLabel:\(UILabel.self)
+        }
+        """.tabbed
+        #endif
         
         let result = SwiftLayoutPrinter(cell, tags: [cell: "contentView"]).print(.withTypeOfView)
         XCTAssertEqual(result, expect)
@@ -369,7 +381,7 @@ extension PrintingTests {
     
     class Cell: UIView, Layoutable {
         
-        var profileView: UIImageView = .init(image: nil)
+        var profileView: UIImageView = .init(image: .init())
         var nameLabel: UILabel = .init()
         
         var activation: Activation?
@@ -396,28 +408,32 @@ extension PrintingTests {
 // MARK: - identifier assignment deeply
 extension PrintingTests {
     
+    class One: UIView {}
+    class Two: One {}
+    class Three: Two {}
+   
     func testDeepAssignIdentifier() {
         let gont = Gont()
         
         XCTAssertEqual(SwiftLayoutPrinter(gont, tags: [gont: "gont"]).print(.referenceAndNameWithTypeOfView),
         """
         gont {
-            sea:UILabel.anchors {
+            sea:\(UILabel.self).anchors {
                 Anchors(.top, .bottom, .leading, .trailing)
             }.sublayout {
                 duny:Duny.anchors {
                     Anchors(.centerX).setMultiplier(1.2000000476837158)
                     Anchors(.centerY).setMultiplier(0.800000011920929)
                 }.sublayout {
-                    duny.nickname:UILabel.anchors {
+                    duny.nickname:\(UILabel.self).anchors {
                         Anchors(.top, .leading, .trailing)
                     }.sublayout {
                         sparrowhawk.anchors {
                             Anchors(.top, .bottom, .leading, .trailing)
                         }
                     }
-                    duny.truename:UILabel.anchors {
-                        Anchors(.top).equalTo(duny.nickname:UILabel, attribute: .bottom)
+                    duny.truename:\(UILabel.self).anchors {
+                        Anchors(.top).equalTo(duny.nickname:\(UILabel.self), attribute: .bottom)
                         Anchors(.bottom, .leading, .trailing)
                     }.sublayout {
                         ged.anchors {
@@ -528,8 +544,8 @@ extension PrintingTests {
         }
         
         layout().finalActive()
-        label.setNeedsLayout()
         label.layoutIfNeeded()
+        #if canImport(UIKit)
         XCTAssertEqual(SwiftLayoutPrinter(root).print(systemConstraintsHidden: false), """
         root {
             label.anchors {
@@ -539,6 +555,15 @@ extension PrintingTests {
             }
         }
         """.tabbed)
+        #else
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(systemConstraintsHidden: false), """
+        root {
+            label.anchors {
+                Anchors(.top, .bottom, .leading, .trailing)
+            }
+        }
+        """.tabbed)
+        #endif
     }
     
 }
@@ -570,7 +595,7 @@ extension PrintingTests {
         let id = ID()
         IdentifierUpdater.referenceAndNameWithTypeOfView.update(id)
         XCTAssertEqual(id.name.accessibilityIdentifier, "name:Name")
-        XCTAssertEqual(id.name.label.accessibilityIdentifier, "name.label:UILabel")
+        XCTAssertEqual(id.name.label.accessibilityIdentifier, "name.label:\(UILabel.self)")
     }
 
     class Name: UIView {
@@ -587,7 +612,7 @@ extension PrintingTests {
     func testSwiftLayoutPrinterPerformance() {
         measure {
             let gont = Gont()
-            print(SwiftLayoutPrinter(gont, tags: [gont: "gont"]).print(.referenceAndNameWithTypeOfView))
+            _ = SwiftLayoutPrinter(gont, tags: [gont: "gont"]).print(.referenceAndNameWithTypeOfView)
         }
     }
 }

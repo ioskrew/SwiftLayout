@@ -5,10 +5,18 @@
 //  Created by aiden_h on 2022/02/18.
 //
 
+import SwiftLayout
 #if canImport(UIKit)
 import UIKit
 #elseif canImport(AppKit)
 import AppKit
+typealias UIAccessibilityIdentification = NSAccessibilityProtocol
+extension NSAccessibilityProtocol {
+    var accessibilityIdentifier: String? {
+        get { accessibilityIdentifier() }
+        set { setAccessibilityIdentifier(newValue) }
+    }
+}
 #endif
 
 @dynamicMemberLookup

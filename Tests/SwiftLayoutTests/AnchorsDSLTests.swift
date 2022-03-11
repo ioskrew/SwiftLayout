@@ -304,7 +304,6 @@ extension AnchorsDSLTests {
         XCTAssertEqual(root.constraints.count, 4)
         
         root.frame = .init(origin: .zero, size: .init(width: 100, height: 100))
-        root.setNeedsLayout()
         root.layoutIfNeeded()
         
         XCTAssertEqual(red.bounds.size, .init(width: 100, height: 100))
@@ -313,7 +312,11 @@ extension AnchorsDSLTests {
     func testAnchorsOfDimensionToItem2() {
         activation = root {
             red.anchors {
+                #if canImport(UIKit)
                 Anchors(.bottom, .trailing)
+                #elseif canImport(AppKit)
+                Anchors(.top, .trailing)
+                #endif
                 Anchors(.width, .height).equalTo(constant: 30)
             }
         }.active()
@@ -322,7 +325,6 @@ extension AnchorsDSLTests {
         XCTAssertEqual(red.constraints.count, 2)
         
         root.frame = .init(origin: .zero, size: .init(width: 100, height: 100))
-        root.setNeedsLayout()
         root.layoutIfNeeded()
         
         XCTAssertEqual(red.frame, .init(x: 70, y: 70, width: 30, height: 30))

@@ -195,7 +195,11 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
             let description = constraint.debugDescription
             if systemConstraintsHidden {
                 guard description.contains("NSLayoutConstraint") else { return false }
+                #if canImport(AppKit)
+                guard let range = description.range(of: "'NSViewSafeAreaLayoutGuide-[:alpha:]*'", options: [.regularExpression], range: description.startIndex..<description.endIndex) else { return true }
+                #else
                 guard let range = description.range(of: "'UIViewSafeAreaLayoutGuide-[:alpha:]*'", options: [.regularExpression], range: description.startIndex..<description.endIndex) else { return true }
+                #endif
                 return range.isEmpty
             } else {
                 return true

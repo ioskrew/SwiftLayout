@@ -24,7 +24,7 @@ struct TagDescriptor<Value>: CustomDebugStringConvertible where Value: TagDescri
     }
     
     var identifier: String {
-        if let identifier = value.accessibilityIdentifier {
+        if let identifier = value.accessibilityIdentifier, !identifier.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return identifier
         } else {
             return objectDescription
@@ -49,6 +49,12 @@ extension TagDescriptable where Self: UIView {
     var tagDescription: String {
         TagDescriptor(self).debugDescription
     }
+    #if canImport(AppKit)
+    var accessibilityIdentifier: String? {
+        get { accessibilityIdentifier() }
+        set { setAccessibilityIdentifier(newValue) }
+    }
+    #endif
 }
 
 extension TagDescriptable where Self: UILayoutGuide {
