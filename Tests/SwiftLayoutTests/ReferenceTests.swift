@@ -2,7 +2,7 @@
 //  ReferenceTests.swift
 //  
 //
-//  Created by maylee on 2022/03/05.
+//  Created by oozoofrog on 2022/03/05.
 //
 
 import XCTest
@@ -11,7 +11,7 @@ import SwiftLayout
 class ReferenceTests: XCTestCase {
     
     var view: SelfReferenceView?
-    weak var weakView: UIView?
+    weak var weakView: SLView?
     
     func testReferenceReleasing() {
         context("prepare") { [weak self] in
@@ -21,7 +21,7 @@ class ReferenceTests: XCTestCase {
             self.weakView = view
             
             self.view?.updateLayout()
-            self.view?.layoutIfNeeded()
+            self.view?.slLayout()
             self.view = nil
         }
         context("check release reference") {
@@ -33,7 +33,7 @@ class ReferenceTests: XCTestCase {
     override func setUpWithError() throws {}
     override func tearDownWithError() throws {}
     
-    class DeinitView: UIView {
+    class DeinitView: SLView {
         static var deinitCount: Int = 0
         
         deinit {
@@ -41,7 +41,7 @@ class ReferenceTests: XCTestCase {
         }
     }
     
-    class SelfReferenceView: UIView, Layoutable {
+    class SelfReferenceView: SLView, Layoutable {
         var layout: some Layout {
             self {
                 DeinitView().anchors {

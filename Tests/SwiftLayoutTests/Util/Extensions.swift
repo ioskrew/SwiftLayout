@@ -8,8 +8,8 @@ typealias UIImageView = NSImageView
 typealias UIButton = NSButton
 #endif
 
-extension UIView {
-    func findConstraints(items: (NSObject?, NSObject?), attributes: (NSLayoutConstraint.Attribute, NSLayoutConstraint.Attribute)? = nil, relation: NSLayoutConstraint.Relation = .equal, constant: CGFloat = .zero, multiplier: CGFloat = 1.0) -> [NSLayoutConstraint] {
+extension SLView {
+    func findConstraints(items: (NSObject?, NSObject?), attributes: (SLLayoutConstraint.Attribute, SLLayoutConstraint.Attribute)? = nil, relation: SLLayoutConstraint.Relation = .equal, constant: CGFloat = .zero, multiplier: CGFloat = 1.0) -> [SLLayoutConstraint] {
         var constraints = self.constraints.filter { constraint in
             constraint.isFit(items: items, attributes: attributes, relation: relation, constant: constant, multiplier: multiplier)
         }
@@ -20,8 +20,8 @@ extension UIView {
     }
 }
 
-extension NSLayoutConstraint {
-    func isFit(items: (NSObject?, NSObject?), attributes: (NSLayoutConstraint.Attribute, NSLayoutConstraint.Attribute)? = nil, relation: NSLayoutConstraint.Relation = .equal, constant: CGFloat = .zero, multiplier: CGFloat = 1.0) -> Bool {
+extension SLLayoutConstraint {
+    func isFit(items: (NSObject?, NSObject?), attributes: (SLLayoutConstraint.Attribute, SLLayoutConstraint.Attribute)? = nil, relation: SLLayoutConstraint.Relation = .equal, constant: CGFloat = .zero, multiplier: CGFloat = 1.0) -> Bool {
         let item = firstItem as? NSObject
         let toItem = secondItem as? NSObject
         return (item, toItem) == items

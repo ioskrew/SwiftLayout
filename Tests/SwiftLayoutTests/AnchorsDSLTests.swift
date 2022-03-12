@@ -1,24 +1,19 @@
 import XCTest
-#if canImport(UIKit)
-import UIKit
-#elseif canImport(AppKit)
-import AppKit
-#endif
 import SwiftLayout
 
 /// test cases for constraint DSL syntax
 final class AnchorsDSLTests: XCTestCase {
         
-    var root: UIView = UIView().viewTag.root
-    var red: UIView = UIView().viewTag.red
-    var blue: UIView = UIView().viewTag.blue
+    var root: SLView = SLView().viewTag.root
+    var red: SLView = SLView().viewTag.red
+    var blue: SLView = SLView().viewTag.blue
     
     var activation: Activation?
     
     override func setUp() {
-        root = UIView().viewTag.root
-        red = UIView().viewTag.red
-        blue = UIView().viewTag.blue
+        root = SLView().viewTag.root
+        red = SLView().viewTag.red
+        blue = SLView().viewTag.blue
     }
     
     override func tearDown() {
@@ -295,6 +290,7 @@ extension AnchorsDSLTests {
 
 extension AnchorsDSLTests {
     func testAnchorsOfDimensionToItem1() {
+        root.frame = .init(origin: .zero, size: .init(width: 100, height: 100))
         root {
             red.anchors {
                 Anchors.allSides()
@@ -302,14 +298,11 @@ extension AnchorsDSLTests {
         }.finalActive()
         
         XCTAssertEqual(root.constraints.count, 4)
-        
-        root.frame = .init(origin: .zero, size: .init(width: 100, height: 100))
-        root.layoutIfNeeded()
-        
         XCTAssertEqual(red.bounds.size, .init(width: 100, height: 100))
     }
     
     func testAnchorsOfDimensionToItem2() {
+        root.frame = .init(origin: .zero, size: .init(width: 100, height: 100))
         activation = root {
             red.anchors {
                 #if canImport(UIKit)
@@ -323,10 +316,6 @@ extension AnchorsDSLTests {
         
         XCTAssertEqual(root.constraints.count, 2)
         XCTAssertEqual(red.constraints.count, 2)
-        
-        root.frame = .init(origin: .zero, size: .init(width: 100, height: 100))
-        root.layoutIfNeeded()
-        
         XCTAssertEqual(red.frame, .init(x: 70, y: 70, width: 30, height: 30))
     }
     

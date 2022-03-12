@@ -1,24 +1,19 @@
 import XCTest
-#if canImport(UIKit)
-import UIKit
-#elseif canImport(AppKit)
-import AppKit
-#endif
 @testable import SwiftLayout
 
 /// test cases for api rules except DSL syntax
 final class ImplementationTests: XCTestCase {
-    var root = UIView().viewTag.root
-    var child = UIView().viewTag.child
-    var friend = UIView().viewTag.friend
+    var root = SLView().viewTag.root
+    var child = SLView().viewTag.child
+    var friend = SLView().viewTag.friend
     
     var activation: Activation?
    
     override func setUpWithError() throws {
         continueAfterFailure = false
-        root = UIView().viewTag.root
-        child = UIView().viewTag.child
-        friend = UIView().viewTag.friend
+        root = SLView().viewTag.root
+        child = SLView().viewTag.child
+        friend = SLView().viewTag.friend
     }
     
     override func tearDownWithError() throws {
@@ -28,10 +23,10 @@ final class ImplementationTests: XCTestCase {
 
 extension ImplementationTests {
     func testLayoutTraversal() {
-        let root: UIView = UIView().viewTag.root
+        let root: SLView = SLView().viewTag.root
         let button: UIButton = UIButton().viewTag.button
         let label: UILabel = UILabel().viewTag.label
-        let redView: UIView = UIView().viewTag.redView
+        let redView: SLView = SLView().viewTag.redView
         let image: UIImageView = UIImageView().viewTag.image
         
         let layout = root {
@@ -122,15 +117,15 @@ extension ImplementationTests {
     }
     
     func testSetAccessibilityIdentifier() {
-        class TestView: UIView {
-            let contentView = UIView()
+        class TestView: SLView {
+            let contentView = SLView()
             let nameLabel = UILabel()
         }
         
         let view = TestView()
         IdentifierUpdater.withTypeOfView.update(view)
         
-        XCTAssertEqual(view.contentView.accessibilityIdentifier, "contentView:\(UIView.self)")
+        XCTAssertEqual(view.contentView.accessibilityIdentifier, "contentView:\(SLView.self)")
         XCTAssertEqual(view.nameLabel.accessibilityIdentifier, "nameLabel:\(UILabel.self)")
         
         class Test2View: TestView {}
@@ -138,14 +133,14 @@ extension ImplementationTests {
         let view2 = Test2View()
         IdentifierUpdater.withTypeOfView.update(view2)
         
-        XCTAssertEqual(view2.contentView.accessibilityIdentifier, "contentView:\(UIView.self)")
+        XCTAssertEqual(view2.contentView.accessibilityIdentifier, "contentView:\(SLView.self)")
         XCTAssertEqual(view2.nameLabel.accessibilityIdentifier, "nameLabel:\(UILabel.self)")
     }
     
     func testDontTouchRootViewByDeactive() {
-        let root = UIView().viewTag.root
-        let red = UIView().viewTag.red
-        let old = UIView().viewTag.old
+        let root = SLView().viewTag.root
+        let red = SLView().viewTag.red
+        let old = SLView().viewTag.old
         old.addSubview(root)
         root.translatesAutoresizingMaskIntoConstraints = true
         
@@ -166,9 +161,9 @@ extension ImplementationTests {
 }
 
 extension ImplementationTests {
-    final class IdentifiedView: UIView, Layoutable {
+    final class IdentifiedView: SLView, Layoutable {
         
-        lazy var contentView: UIView = UIView()
+        lazy var contentView: SLView = SLView()
         lazy var nameLabel: UILabel = UILabel()
         
         var activation: Activation? 
@@ -208,7 +203,7 @@ extension ImplementationTests {
             UILabel().identifying("label").anchors {
                 Anchors.cap()
             }
-            UIView().identifying("secondView").anchors {
+            SLView().identifying("secondView").anchors {
                 Anchors(.top).equalTo("label", attribute: .bottom)
                 Anchors.shoe()
             }
@@ -243,7 +238,7 @@ extension ImplementationTests {
         NSLayoutConstraint.activate(constraints)
         
         root.frame = CGRect(origin: .zero, size: .init(width: 200, height: 200))
-        root.layoutIfNeeded()
+        root.slLayout()
         XCTAssertEqual(child.frame.size, .init(width: 200, height: 200))
         root.removeConstraints(constraints)
         
@@ -253,14 +248,13 @@ extension ImplementationTests {
         NSLayoutConstraint.activate(constraints1)
         NSLayoutConstraint.activate(constraints2)
         
-        root.setNeedsLayout()
-        root.layoutIfNeeded()
+        root.slLayout()
         XCTAssertEqual(child.frame.size, .init(width: 98, height: 98))
     }
     
     func testSelfContraint() {
-        let superview = UIView().viewTag.superview
-        let subview = UIView().viewTag.subview
+        let superview = SLView().viewTag.superview
+        let subview = SLView().viewTag.subview
         
         let constraint = subview.widthAnchor.constraint(equalToConstant: 24)
         
@@ -323,9 +317,9 @@ extension ImplementationTests {
     }
     
     func testRules() {
-        let root = UIView().viewTag.root
-        let child = UIView().viewTag.child
-        let friend = UIView().viewTag.friend
+        let root = SLView().viewTag.root
+        let child = SLView().viewTag.child
+        let friend = SLView().viewTag.friend
         
         enum TestCase {
             case topEqualToNameless
@@ -527,9 +521,9 @@ extension ImplementationTests {
 
 extension ImplementationTests {
     func testFinalActive() {
-        let root = UIView().viewTag.root
-        let cap = UIView().viewTag.cap
-        let shoe = UIView().viewTag.shoe
+        let root = SLView().viewTag.root
+        let cap = SLView().viewTag.cap
+        let shoe = SLView().viewTag.shoe
         
         root {
             cap.anchors {
@@ -558,7 +552,7 @@ extension ImplementationTests {
 // MARK: - Anchors only
 extension ImplementationTests {
     func testAnchorsOnly() {
-        let fixedView = UIView()
+        let fixedView = SLView()
         fixedView.anchors {
             Anchors(.width, .height).equalTo(constant: 24.0)
         }.finalActive()
@@ -571,7 +565,7 @@ extension ImplementationTests {
     }
     
     func testConveniencesOfAnchors() {
-        let fixedView = UIView().viewTag.fixedView
+        let fixedView = SLView().viewTag.fixedView
         fixedView.anchors {
             Anchors.size(length: 32.0)
         }.finalActive()
@@ -615,7 +609,7 @@ extension ImplementationTests {
             }.identifying("hellolabel").anchors {
                 Anchors.cap()
             }.sublayout {
-                UIView().identifying("lastview").anchors {
+                SLView().identifying("lastview").anchors {
                     Anchors.allSides()
                 }
             }
@@ -651,7 +645,7 @@ extension ImplementationTests {
             }.identifying("hellolabel").anchors {
                 Anchors.cap()
             }.sublayout {
-                UIView().identifying("lastview").anchors {
+                SLView().identifying("lastview").anchors {
                     Anchors.allSides()
                 }
             }
@@ -694,12 +688,12 @@ extension ImplementationTests {
         XCTAssertNil(test.trueView.superview)
     }
     
-    private class TestView: UIView, Layoutable {
+    private class TestView: SLView, Layoutable {
         
         @LayoutProperty var flag = true
         
-        var trueView = UIView().viewTag.true
-        var falseView = UIView().viewTag.false
+        var trueView = SLView().viewTag.true
+        var falseView = SLView().viewTag.false
         
         var activation: Activation?
         
