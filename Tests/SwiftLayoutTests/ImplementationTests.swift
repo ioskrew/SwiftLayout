@@ -39,8 +39,8 @@ extension ImplementationTests {
         
         var result: [String] = []
         for viewInformation in LayoutElements(layout: layout).viewInformations {
-            let superDescription = viewInformation.superview?.accessibilityIdentifier ?? "nil"
-            let currentDescription = viewInformation.view?.accessibilityIdentifier ?? "nil"
+            let superDescription = viewInformation.superview?.slIdentifier ?? "nil"
+            let currentDescription = viewInformation.view?.slIdentifier ?? "nil"
             let description = "\(superDescription), \(currentDescription)"
             result.append(description)
         }
@@ -125,16 +125,16 @@ extension ImplementationTests {
         let view = TestView()
         IdentifierUpdater.withTypeOfView.update(view)
         
-        XCTAssertEqual(view.contentView.accessibilityIdentifier, "contentView:\(SLView.self)")
-        XCTAssertEqual(view.nameLabel.accessibilityIdentifier, "nameLabel:\(UILabel.self)")
+        XCTAssertEqual(view.contentView.slIdentifier, "contentView:\(SLView.self)")
+        XCTAssertEqual(view.nameLabel.slIdentifier, "nameLabel:\(UILabel.self)")
         
         class Test2View: TestView {}
         
         let view2 = Test2View()
         IdentifierUpdater.withTypeOfView.update(view2)
         
-        XCTAssertEqual(view2.contentView.accessibilityIdentifier, "contentView:\(SLView.self)")
-        XCTAssertEqual(view2.nameLabel.accessibilityIdentifier, "nameLabel:\(UILabel.self)")
+        XCTAssertEqual(view2.contentView.slIdentifier, "contentView:\(SLView.self)")
+        XCTAssertEqual(view2.nameLabel.slIdentifier, "nameLabel:\(UILabel.self)")
     }
     
     func testDontTouchRootViewByDeactive() {
@@ -186,14 +186,14 @@ extension ImplementationTests {
     
     func testNoAccessibilityIdentifierOption() {
         let view = IdentifiedView()
-        XCTAssertEqual(view.contentView.accessibilityIdentifier ?? "", "")
-        XCTAssertEqual(view.nameLabel.accessibilityIdentifier ?? "", "")
+        XCTAssertEqual(view.contentView.slIdentifier ?? "", "")
+        XCTAssertEqual(view.nameLabel.slIdentifier ?? "", "")
     }
     
     func testAccessibilityIdentifierOption() {
         let view = IdentifiedView().updateIdentifiers()
-        XCTAssertEqual(view.contentView.accessibilityIdentifier, "contentView")
-        XCTAssertEqual(view.nameLabel.accessibilityIdentifier, "nameLabel")
+        XCTAssertEqual(view.contentView.slIdentifier, "contentView")
+        XCTAssertEqual(view.nameLabel.slIdentifier, "nameLabel")
     }
 }
 
@@ -211,10 +211,10 @@ extension ImplementationTests {
         
         let label = activation.viewForIdentifier("label")
         XCTAssertNotNil(label)
-        XCTAssertEqual(label?.accessibilityIdentifier, "label")
+        XCTAssertEqual(label?.slIdentifier, "label")
         
         let secondView = activation.viewForIdentifier("secondView")
-        XCTAssertEqual(secondView?.accessibilityIdentifier, "secondView")
+        XCTAssertEqual(secondView?.slIdentifier, "secondView")
         
         let currents = activation.constraints
         let labelConstraints = Set(Anchors.cap().constraints(item: label!, toItem: root).weakens)
@@ -617,7 +617,7 @@ extension ImplementationTests {
         }
         """.tabbed
         
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(printOnlyIdentifier: true), expect)
     }
     
     func testFeatureComposeComplexWithAnimationHandling() {
@@ -653,7 +653,7 @@ extension ImplementationTests {
         }
         """.tabbed
         
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(printOnlyIdentifier: true), expect)
     }
 
 }

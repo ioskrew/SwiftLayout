@@ -370,8 +370,8 @@ extension PrintingTests {
     func testautomaticIdentifierAssignmentOption() {
         let cell = Cell().updateIdentifiers()
         
-        XCTAssertEqual(cell.profileView.accessibilityIdentifier, "profileView")
-        XCTAssertEqual(cell.nameLabel.accessibilityIdentifier, "nameLabel")
+        XCTAssertEqual(cell.profileView.slIdentifier, "profileView")
+        XCTAssertEqual(cell.nameLabel.slIdentifier, "nameLabel")
     }
     
     class Cell: SLView, Layoutable {
@@ -567,29 +567,29 @@ extension PrintingTests {
     func testNameOnly() {
         let id = ID()
         IdentifierUpdater.nameOnly.update(id)
-        XCTAssertEqual(id.name.accessibilityIdentifier, "name")
-        XCTAssertNil(id.name.label.accessibilityIdentifier)
+        XCTAssertEqual(id.name.slIdentifier, "name")
+        XCTAssertEqual(id.name.label.slIdentifier ?? "", "")
     }
     
     func testWithTypeOfView() {
         let id = ID()
         IdentifierUpdater.withTypeOfView.update(id)
-        XCTAssertEqual(id.name.accessibilityIdentifier, "name:Name")
-        XCTAssertNil(id.name.label.accessibilityIdentifier)
+        XCTAssertEqual(id.name.slIdentifier, "name:Name")
+        XCTAssertEqual(id.name.label.slIdentifier ?? "", "")
     }
     
     func testReferenceAndName() {
         let id = ID()
         IdentifierUpdater.referenceAndName.update(id)
-        XCTAssertEqual(id.name.accessibilityIdentifier, "name")
-        XCTAssertEqual(id.name.label.accessibilityIdentifier, "name.label")
+        XCTAssertEqual(id.name.slIdentifier, "name")
+        XCTAssertEqual(id.name.label.slIdentifier, "name.label")
     }
     
     func testReferenceAndNameWithTypeOfView() {
         let id = ID()
         IdentifierUpdater.referenceAndNameWithTypeOfView.update(id)
-        XCTAssertEqual(id.name.accessibilityIdentifier, "name:Name")
-        XCTAssertEqual(id.name.label.accessibilityIdentifier, "name.label:\(UILabel.self)")
+        XCTAssertEqual(id.name.slIdentifier, "name:Name")
+        XCTAssertEqual(id.name.label.slIdentifier, "name.label:\(UILabel.self)")
     }
 
     class Name: SLView {

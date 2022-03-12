@@ -92,7 +92,7 @@ extension ViewLayout {
     /// - Returns: The layout itself with the accessibilityIdentifier applied
     ///
     public func identifying(_ accessibilityIdentifier: String) -> Self {
-        innerView.slAccessibilityIdentifier = accessibilityIdentifier
+        innerView.slIdentifier = accessibilityIdentifier
         return self
     }
 }

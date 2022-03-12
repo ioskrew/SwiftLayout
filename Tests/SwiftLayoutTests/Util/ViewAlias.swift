@@ -47,7 +47,7 @@ extension SLView {
         setNeedsLayout()
         layoutIfNeeded()
     }
-    var slAccessibilityIdentifier: String? {
+    var slIdentifier: String? {
         get { accessibilityIdentifier }
         set { accessibilityIdentifier = newValue }
     }
@@ -57,7 +57,7 @@ extension SLView {
     func slLayout() {
         layoutSubtreeIfNeeded()
     }
-    var slAccessibilityIdentifier: String? {
+    var slIdentifier: String? {
         get { accessibilityIdentifier() }
         set { setAccessibilityIdentifier(newValue) }
     }

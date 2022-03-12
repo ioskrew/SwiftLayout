@@ -101,7 +101,7 @@ extension _SLViewExtension where Self: SLView {
     /// - Returns: The view itself with the accessibilityIdentifier applied
     ///
     public func identifying(_ accessibilityIdentifier: String) -> Self {
-        self.slAccessibilityIdentifier = accessibilityIdentifier
+        self.slIdentifier = accessibilityIdentifier
         return self
     }
     

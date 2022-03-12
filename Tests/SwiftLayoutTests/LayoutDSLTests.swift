@@ -251,12 +251,12 @@ extension LayoutDSLTests {
         
         XCTAssertEqual(SwiftLayoutPrinter(container.root).print(printOnlyIdentifier: true), expect)
         
-        XCTAssertEqual(container.root.accessibilityIdentifier, "root")
-        XCTAssertEqual(container.red.accessibilityIdentifier, "red")
-        XCTAssertEqual(container.button.accessibilityIdentifier, "button")
-        XCTAssertEqual(container.label.accessibilityIdentifier, "label")
-        XCTAssertEqual(container.blue.accessibilityIdentifier, "blue")
-        XCTAssertEqual(container.image.accessibilityIdentifier, "image")
+        XCTAssertEqual(container.root.slIdentifier, "root")
+        XCTAssertEqual(container.red.slIdentifier, "red")
+        XCTAssertEqual(container.button.slIdentifier, "button")
+        XCTAssertEqual(container.label.slIdentifier, "label")
+        XCTAssertEqual(container.blue.slIdentifier, "blue")
+        XCTAssertEqual(container.image.slIdentifier, "image")
     }
     
     // This can be a SLViewController or a SLView.

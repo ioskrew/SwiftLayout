@@ -6,30 +6,24 @@
 //
 
 import SwiftLayout
-#if canImport(UIKit)
-import UIKit
-#elseif canImport(AppKit)
-import AppKit
-typealias UIAccessibilityIdentification = NSAccessibilityProtocol
-extension NSAccessibilityProtocol {
-    var accessibilityIdentifier: String? {
-        get { accessibilityIdentifier() }
-        set { setAccessibilityIdentifier(newValue) }
-    }
+
+protocol SLViewTaggable: AnyObject {
+    var slIdentifier: String? { get set }
 }
-#endif
 
 @dynamicMemberLookup
-struct Tag<Taggable> where Taggable: UIAccessibilityIdentification {
+struct Tag<Taggable: SLViewTaggable> {
     let taggable: Taggable
     
     subscript(dynamicMember tag: String) -> Taggable {
-        taggable.accessibilityIdentifier = tag
+        taggable.slIdentifier = tag
         return taggable
     }
 }
 
-extension UIAccessibilityIdentification {
+extension SLView: SLViewTaggable {}
+
+extension SLViewTaggable {
     var viewTag: Tag<Self> {
         Tag(taggable: self)
     }

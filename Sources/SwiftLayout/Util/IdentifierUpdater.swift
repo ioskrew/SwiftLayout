@@ -49,16 +49,16 @@ public final class IdentifierUpdater {
         func prepare(enableViewType: Bool = false) {
             if enableViewType {
                 if prefix.isEmpty {
-                    view.slAccessibilityIdentifier = "\(identifier):\(type(of: view))"
+                    view.slIdentifier = "\(identifier):\(type(of: view))"
                 } else {
-                    view.slAccessibilityIdentifier = "\(prefix).\(identifier):\(type(of: view))"
+                    view.slIdentifier = "\(prefix).\(identifier):\(type(of: view))"
                 }
             } else {
                 
                 if prefix.isEmpty {
-                    view.slAccessibilityIdentifier = identifier
+                    view.slIdentifier = identifier
                 } else {
-                    view.slAccessibilityIdentifier = "\(prefix).\(identifier)"
+                    view.slIdentifier = "\(prefix).\(identifier)"
                 }
             }
         }

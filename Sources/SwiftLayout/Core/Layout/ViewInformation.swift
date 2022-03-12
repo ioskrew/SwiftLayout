@@ -16,7 +16,7 @@ final class ViewInformation: Hashable, CustomDebugStringConvertible {
     
     private(set) public weak var superview: SLView?
     private(set) public weak var view: SLView?
-    var identifier: String? { view?.slAccessibilityIdentifier }
+    var identifier: String? { view?.slIdentifier }
     
     func addSuperview() {
         guard let view = view else {

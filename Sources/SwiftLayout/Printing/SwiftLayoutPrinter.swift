@@ -115,7 +115,7 @@ private struct ViewToken {
                 return ViewToken(identifier: identifier, views: view.subviews.compactMap({ from($0, tags: tags, printOnlyIdentifier: printOnlyIdentifier) }))
             } else {
                 if printOnlyIdentifier {
-                    if let identifier = view.slAccessibilityIdentifier, !identifier.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    if let identifier = view.slIdentifier, !identifier.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                         return ViewToken(identifier: identifier, views: view.subviews.compactMap({ from($0, tags: tags, printOnlyIdentifier: printOnlyIdentifier) }))
                     } else {
                         return nil

@@ -15,11 +15,11 @@ struct TagDescriptor<Value>: CustomDebugStringConvertible where Value: TagDescri
     let value: Value
     
     var valueHasIdentifier: Bool {
-        value.slAccessibilityIdentifier != nil
+        value.slIdentifier != nil
     }
     
     var identifier: String {
-        if let identifier = value.slAccessibilityIdentifier, !identifier.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+        if let identifier = value.slIdentifier, !identifier.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return identifier
         } else {
             return objectDescription
@@ -37,7 +37,7 @@ struct TagDescriptor<Value>: CustomDebugStringConvertible where Value: TagDescri
 }
 
 protocol TagDescriptable {
-    var slAccessibilityIdentifier: String? { get }
+    var slIdentifier: String? { get }
 }
 
 extension TagDescriptable where Self: SLView {
@@ -51,7 +51,7 @@ extension TagDescriptable where Self: SLLayoutGuide {
         TagDescriptor(self).debugDescription
     }
     
-    var slAccessibilityIdentifier: String? { owningView?.slAccessibilityIdentifier }
+    var slIdentifier: String? { owningView?.slIdentifier }
 }
 
 extension SLView: TagDescriptable {}
