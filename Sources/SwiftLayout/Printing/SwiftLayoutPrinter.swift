@@ -6,19 +6,14 @@
 //
 
 import Foundation
-#if canImport(UIKit)
-import UIKit
-#elseif canImport(AppKit)
-import AppKit
-#endif
 
 public struct SwiftLayoutPrinter: CustomStringConvertible {
-    public init(_ view: UIView, tags: [UIView: String] = [:]) {
+    public init(_ view: SLView, tags: [SLView: String] = [:]) {
         self.view = view
         self.tags = Dictionary(uniqueKeysWithValues: tags.map({ ($0.key.tagDescription, $0.value) }))
     }
     
-    weak var view: UIView?
+    weak var view: SLView?
     let tags: [String: String]
     
     public var description: String {
@@ -110,7 +105,7 @@ private struct ViewToken {
     let views: [ViewToken]
     
     struct Parser {
-        static func from(_ view: UIView, tags: [String: String]) -> ViewToken {
+        static func from(_ view: SLView, tags: [String: String]) -> ViewToken {
             if let identifier = tags[view.tagDescription] {
                 return ViewToken(identifier: identifier, views: view.subviews.map({ from($0, tags: tags) }))
             } else {
@@ -126,7 +121,7 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
         lhs.hashValue == rhs.hashValue
     }
     
-    private init(constraint: NSLayoutConstraint, tags: [String: String]) {
+    private init(constraint: SLLayoutConstraint, tags: [String: String]) {
         let tagger = Tagger(tags: tags)
         superTag = tagger.superTagFromItem(constraint.firstItem)
         firstTag = tagger.tagFromItem(constraint.firstItem)
@@ -155,7 +150,7 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
         if !secondTag.isEmpty && superTag != secondTag {
             arguments.append(secondTag)
         }
-        if firstAttribute != secondAttribute && secondAttribute != NSLayoutConstraint.Attribute.notAnAttribute.description {
+        if firstAttribute != secondAttribute && secondAttribute != SLLayoutConstraint.Attribute.notAnAttribute.description {
             arguments.append("attribute: .\(secondAttribute)")
         }
         if constant != "0.0" {
@@ -176,12 +171,12 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
         return token
     }
     
-    private func functionNameByRelation(_ relation: NSLayoutConstraint.Relation) -> String {
+    private func functionNameByRelation(_ relation: SLLayoutConstraint.Relation) -> String {
         relation.description
     }
     
     struct Parser {
-        static func from(_ view: UIView, tags: [String: String], systemConstraintsHidden: Bool = true) -> [ConstraintToken] {
+        static func from(_ view: SLView, tags: [String: String], systemConstraintsHidden: Bool = true) -> [ConstraintToken] {
             let constraints = view.constraints
                 .filter({ Validator.isUserCreation($0, systemConstraintsHidden: systemConstraintsHidden) })
             var tokens = constraints.map({ ConstraintToken(constraint: $0, tags: tags) })
@@ -191,7 +186,7 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
     }
     
     struct Validator {
-        static func isUserCreation(_ constraint: NSLayoutConstraint, systemConstraintsHidden: Bool = true) -> Bool {
+        static func isUserCreation(_ constraint: SLLayoutConstraint, systemConstraintsHidden: Bool = true) -> Bool {
             let description = constraint.debugDescription
             if systemConstraintsHidden {
                 guard description.contains("NSLayoutConstraint") else { return false }
@@ -210,9 +205,9 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
     struct Tagger {
         let tags: [String: String]
         func tagFromItem(_ item: AnyObject?) -> String {
-            if let view = item as? UIView {
+            if let view = item as? SLView {
                 return tags[view.tagDescription] ?? view.tagDescription
-            } else if let view = (item as? UILayoutGuide)?.owningView {
+            } else if let view = (item as? SLLayoutGuide)?.owningView {
                 return tags[view.tagDescription].flatMap({ $0 + ".safeAreaLayoutGuide" }) ?? (view.tagDescription + ".safeAreaLayoutGuide")
             } else {
                 return ""
@@ -220,9 +215,9 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
         }
         
         func superTagFromItem(_ item: AnyObject?) -> String {
-            if let view = (item as? UIView)?.superview {
+            if let view = (item as? SLView)?.superview {
                 return tagFromItem(view)
-            } else if let view = (item as? UILayoutGuide)?.owningView?.superview {
+            } else if let view = (item as? SLLayoutGuide)?.owningView?.superview {
                 return tagFromItem(view)
             } else {
                 return tagFromItem(item)

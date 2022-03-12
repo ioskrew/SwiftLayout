@@ -5,15 +5,9 @@
 //  Created by aiden_h on 2022/02/21.
 //
 
-#if canImport(UIKit)
-import UIKit
-#elseif canImport(AppKit)
-import AppKit
-#endif
-
-public protocol _UIViewExtension {}
-extension UIView: _UIViewExtension {}
-extension _UIViewExtension where Self: UIView {
+public protocol _SLViewExtension {}
+extension SLView: _SLViewExtension {}
+extension _SLViewExtension where Self: SLView {
 
     ///
     /// Create a ``ViewLayout`` containing this view and the sublayouts.
@@ -107,7 +101,7 @@ extension _UIViewExtension where Self: UIView {
     /// - Returns: The view itself with the accessibilityIdentifier applied
     ///
     public func identifying(_ accessibilityIdentifier: String) -> Self {
-        self.accessibilityIdentifier = accessibilityIdentifier
+        self.slAccessibilityIdentifier = accessibilityIdentifier
         return self
     }
     

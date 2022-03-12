@@ -6,11 +6,6 @@
 //
 
 import Foundation
-#if canImport(UIKit)
-import UIKit
-#elseif canImport(AppKit)
-import AppKit
-#endif
 
 public final class IdentifierUpdater {
     /// update identifiers with property name
@@ -41,7 +36,7 @@ public final class IdentifierUpdater {
             lhs.hashValue == rhs.hashValue
         }
         
-        internal init(prefix: String = "", identifier: String, view: UIView) {
+        internal init(prefix: String = "", identifier: String, view: SLView) {
             self.prefix = prefix
             self.identifier = identifier
             self.view = view
@@ -49,21 +44,21 @@ public final class IdentifierUpdater {
         
         let prefix: String
         let identifier: String
-        let view: UIView
+        let view: SLView
         
         func prepare(enableViewType: Bool = false) {
             if enableViewType {
                 if prefix.isEmpty {
-                    view.accessibilityIdentifier = "\(identifier):\(type(of: view))"
+                    view.slAccessibilityIdentifier = "\(identifier):\(type(of: view))"
                 } else {
-                    view.accessibilityIdentifier = "\(prefix).\(identifier):\(type(of: view))"
+                    view.slAccessibilityIdentifier = "\(prefix).\(identifier):\(type(of: view))"
                 }
             } else {
                 
                 if prefix.isEmpty {
-                    view.accessibilityIdentifier = identifier
+                    view.slAccessibilityIdentifier = identifier
                 } else {
-                    view.accessibilityIdentifier = "\(prefix).\(identifier)"
+                    view.slAccessibilityIdentifier = "\(prefix).\(identifier)"
                 }
             }
         }
@@ -97,7 +92,7 @@ public final class IdentifierUpdater {
             }
             for child in mirror.children {
                 guard let label = child.label?.replacingOccurrences(of: "$__lazy_storage_$_", with: "") else { continue }
-                guard let view = child.value as? UIView else { continue }
+                guard let view = child.value as? SLView else { continue }
                 let identified = Identified(prefix: enablePrefixChain ? prefix : "", identifier: label, view: view)
                 if self.identifieds.contains(identified) { continue }
                 self.identifieds.insert(identified)

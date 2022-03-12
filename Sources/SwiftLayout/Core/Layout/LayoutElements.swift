@@ -5,15 +5,9 @@
 //  Created by aiden_h on 2022/03/09.
 //
 
-#if canImport(UIKit)
-import UIKit
-#elseif canImport(AppKit)
-import AppKit
-#endif
-
 class LayoutElements {
     let viewInformations: [ViewInformation]
-    let viewConstraints: [NSLayoutConstraint]
+    let viewConstraints: [SLLayoutConstraint]
     
     init(layout: Layout) {
         let components = LayoutExplorer.components(layout: layout)
@@ -35,12 +29,12 @@ class LayoutElements {
 
 private enum LayoutExplorer {
     struct Component {
-        var superView: UIView? = nil
-        var view: UIView
+        var superView: SLView? = nil
+        var view: SLView
         var anchors: Anchors? = nil
     }
     
-    typealias TraversalHandler = (_ layout: Layout, _ superview: UIView?) -> Void
+    typealias TraversalHandler = (_ layout: Layout, _ superview: SLView?) -> Void
     
     static func components(layout: Layout) -> [Component] {
         var elements: [Component] = []
@@ -54,7 +48,7 @@ private enum LayoutExplorer {
         return elements
     }
     
-    static func traversal(layout: Layout, superview: UIView?, handler: TraversalHandler) {
+    static func traversal(layout: Layout, superview: SLView?, handler: TraversalHandler) {
         handler(layout, superview)
         
         let nextSuperview = layout.view ?? superview

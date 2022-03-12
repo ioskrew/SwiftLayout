@@ -6,11 +6,6 @@
 //
 
 import Foundation
-#if canImport(UIKit)
-import UIKit
-#elseif canImport(AppKit)
-import AppKit
-#endif
 
 struct TagDescriptor<Value>: CustomDebugStringConvertible where Value: TagDescriptable, Value: AnyObject {
     internal init(_ value: Value) {
@@ -20,11 +15,11 @@ struct TagDescriptor<Value>: CustomDebugStringConvertible where Value: TagDescri
     let value: Value
     
     var valueHasIdentifier: Bool {
-        value.accessibilityIdentifier != nil
+        value.slAccessibilityIdentifier != nil
     }
     
     var identifier: String {
-        if let identifier = value.accessibilityIdentifier, !identifier.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+        if let identifier = value.slAccessibilityIdentifier, !identifier.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return identifier
         } else {
             return objectDescription
@@ -42,28 +37,22 @@ struct TagDescriptor<Value>: CustomDebugStringConvertible where Value: TagDescri
 }
 
 protocol TagDescriptable {
-    var accessibilityIdentifier: String? { get }
+    var slAccessibilityIdentifier: String? { get }
 }
 
-extension TagDescriptable where Self: UIView {
+extension TagDescriptable where Self: SLView {
     var tagDescription: String {
         TagDescriptor(self).debugDescription
     }
-    #if canImport(AppKit)
-    var accessibilityIdentifier: String? {
-        get { accessibilityIdentifier() }
-        set { setAccessibilityIdentifier(newValue) }
-    }
-    #endif
 }
 
-extension TagDescriptable where Self: UILayoutGuide {
+extension TagDescriptable where Self: SLLayoutGuide {
     var tagDescription: String {
         TagDescriptor(self).debugDescription
     }
     
-    var accessibilityIdentifier: String? { owningView?.accessibilityIdentifier }
+    var slAccessibilityIdentifier: String? { owningView?.slAccessibilityIdentifier }
 }
 
-extension UIView: TagDescriptable {}
-extension UILayoutGuide: TagDescriptable {}
+extension SLView: TagDescriptable {}
+extension SLLayoutGuide: TagDescriptable {}

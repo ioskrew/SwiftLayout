@@ -39,12 +39,27 @@ public typealias SLViewRepresentableContext = NSViewRepresentableContext
 public typealias SLViewControllerRepresentable = NSViewControllerRepresentable
 public typealias SLViewControllerRepresentableContext = NSViewControllerRepresentableContext
 #endif
+#endif
 
+#if canImport(UIKit)
 extension SLView {
-    public func setNeedsLayout() {}
-    public func layoutIfNeeded() {
-        layoutSubtreeIfNeeded()
+    func slLayout() {
+        setNeedsLayout()
+        layoutIfNeeded()
+    }
+    var slAccessibilityIdentifier: String? {
+        get { accessibilityIdentifier }
+        set { accessibilityIdentifier = newValue }
     }
 }
-
+#elseif canImport(AppKit)
+extension SLView {
+    func slLayout() {
+        layoutSubtreeIfNeeded()
+    }
+    var slAccessibilityIdentifier: String? {
+        get { accessibilityIdentifier() }
+        set { setAccessibilityIdentifier(newValue) }
+    }
+}
 #endif

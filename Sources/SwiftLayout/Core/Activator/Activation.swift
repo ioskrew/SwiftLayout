@@ -5,15 +5,9 @@
 //  Created by aiden_h on 2022/02/16.
 //
 
-#if canImport(UIKit)
-import UIKit
-#elseif canImport(AppKit)
-import AppKit
-#endif
-
 public final class Activation: Hashable {
     
-    typealias Constraints = Set<WeakReference<NSLayoutConstraint>>
+    typealias Constraints = Set<WeakReference<SLLayoutConstraint>>
     
     var viewInfos: ViewInformationSet
     var constraints: Constraints
@@ -33,7 +27,7 @@ public final class Activation: Hashable {
     
     func deactiveConstraints() {
         let constraints = constraints.compactMap(\.origin).filter(\.isActive)
-        NSLayoutConstraint.deactivate(constraints)
+        SLLayoutConstraint.deactivate(constraints)
         self.constraints = .init()
     }
     
@@ -54,7 +48,7 @@ extension Activation {
         deactiveConstraints()
     }
     
-    public func viewForIdentifier(_ identifier: String) -> UIView? {
+    public func viewForIdentifier(_ identifier: String) -> SLView? {
         viewInfos.infos.first(where: { $0.identifier == identifier })?.view
     }
 

@@ -6,30 +6,24 @@
 //
 
 import Foundation
-#if canImport(UIKit)
-import UIKit
-#elseif canImport(AppKit)
-import AppKit
-#endif
-import SwiftUI
 
-public protocol LayoutableViewRepresentable: UIViewRepresentable, Layoutable {}
-public protocol LayoutableViewControllerRepresentable: UIViewControllerRepresentable, Layoutable {}
+public protocol LayoutableViewRepresentable: SLViewRepresentable, Layoutable {}
+public protocol LayoutableViewControllerRepresentable: SLViewControllerRepresentable, Layoutable {}
 
-public extension LayoutableViewRepresentable where Self: UIView {
-    func makeUIView(context: UIViewRepresentableContext<Self>) -> Self {
+public extension LayoutableViewRepresentable where Self: SLView {
+    func makeUIView(context: SLViewRepresentableContext<Self>) -> Self {
         return self
     }
-    func updateUIView(_ uiView: Self, context: UIViewRepresentableContext<Self>) {
-        uiView.updateLayout()
+    func updateUIView(_ view: Self, context: SLViewRepresentableContext<Self>) {
+        view.updateLayout()
     }
 }
 
-public extension LayoutableViewControllerRepresentable where Self: UIViewController {
-    func makeUIViewController(context: UIViewControllerRepresentableContext<Self>) -> Self {
+public extension LayoutableViewControllerRepresentable where Self: SLViewController {
+    func makeUIViewController(context: SLViewControllerRepresentableContext<Self>) -> Self {
         return self
     }
-    func updateUIViewController(_ uiViewController: Self, context: UIViewControllerRepresentableContext<Self>) {
-        uiViewController.updateLayout()
+    func updateUIViewController(_ viewController: Self, context: SLViewControllerRepresentableContext<Self>) {
+        viewController.updateLayout()
     }
 }
