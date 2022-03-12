@@ -11,7 +11,7 @@ final class AnchorsDSLTests: XCTestCase {
     var activation: Activation?
     
     override func setUp() {
-        root = SLView().viewTag.root
+        root = SLView(frame: .init(x: 0, y: 0, width: 120, height: 120)).viewTag.root
         red = SLView().viewTag.red
         blue = SLView().viewTag.blue
     }
@@ -348,9 +348,7 @@ extension AnchorsDSLTests {
                 Anchors(.leading).equalTo(root.leadingAnchor)
                 Anchors(.trailing).equalTo(root.trailingAnchor).setConstant(-14.0)
                 Anchors(.bottom).equalTo(root.bottomAnchor)
-                Anchors(.width).equalTo(root.widthAnchor)
                 Anchors(.height).equalTo(root.heightAnchor)
-                Anchors(.centerX).equalTo(root.centerXAnchor)
                 Anchors(.centerY).equalTo(root.centerYAnchor)
             }
         }.active()
@@ -358,7 +356,7 @@ extension AnchorsDSLTests {
         let expect = """
         root {
             red.anchors {
-                Anchors(.top, .bottom, .leading, .width, .height, .centerX, .centerY)
+                Anchors(.top, .bottom, .leading, .height, .centerY)
                 Anchors(.trailing).equalTo(constant: -14.0)
             }
         }

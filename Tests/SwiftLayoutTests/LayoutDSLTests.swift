@@ -4,6 +4,8 @@ import SwiftLayout
 /// test cases for DSL syntax
 final class LayoutDSLTests: XCTestCase {
     
+    var window: SLView!
+    
     var root: SLView = SLView().viewTag.root
     var child: SLView = SLView().viewTag.child
     var button: UIButton = UIButton().viewTag.button
@@ -16,7 +18,10 @@ final class LayoutDSLTests: XCTestCase {
     var activation: Set<Activation> = []
     
     override func setUp() {
+        window = SLView(frame: .init(x: 0, y: 0, width: 150, height: 150))
         root = SLView().viewTag.root
+        root.translatesAutoresizingMaskIntoConstraints = false
+        window.addSubview(root)
         child = SLView().viewTag.child
         button = UIButton().viewTag.button
         label = UILabel().viewTag.label
@@ -164,6 +169,8 @@ extension LayoutDSLTests {
     
     func testLayoutsSameFirstLevel() {
         let root = TestView().viewTag.root
+        root.translatesAutoresizingMaskIntoConstraints = false
+        window.addSubview(root)
         root.updateLayout()
         
         let expect = """
@@ -222,7 +229,10 @@ extension LayoutDSLTests {
 extension LayoutDSLTests {
     
     func testUpdateIdentifiers() {
+        let rootView = SLView(frame: .init(x: 0, y: 0, width: 150, height: 150))
         let container = TestViewContainer()
+        container.root.translatesAutoresizingMaskIntoConstraints = false
+        rootView.addSubview(container.root)
         
         container.root {
             container.red {

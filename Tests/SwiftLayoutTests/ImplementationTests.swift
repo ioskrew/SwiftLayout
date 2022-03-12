@@ -3,6 +3,9 @@ import XCTest
 
 /// test cases for api rules except DSL syntax
 final class ImplementationTests: XCTestCase {
+    
+    var window: SLView!
+    
     var root = SLView().viewTag.root
     var child = SLView().viewTag.child
     var friend = SLView().viewTag.friend
@@ -11,9 +14,11 @@ final class ImplementationTests: XCTestCase {
    
     override func setUpWithError() throws {
         continueAfterFailure = false
+        window = SLView(frame: .init(x: 0, y: 0, width: 150, height: 150))
         root = SLView().viewTag.root
         child = SLView().viewTag.child
         friend = SLView().viewTag.friend
+        window.addSubview(root)
     }
     
     override func tearDownWithError() throws {
@@ -299,16 +304,36 @@ extension ImplementationTests {
                 Anchors.cap()
                 Anchors.shoe()
                 Anchors(.height)
-                Anchors(.width).equalTo(constant: 44.0)
-                Anchors(.width).equalTo(constant: 44.0)
+                Anchors(.width)
+                Anchors(.width)
             }
         }.finalActive()
         
         let expect = """
         root {
             child.anchors {
-                Anchors(.top, .bottom, .leading, .trailing, .height)
-                Anchors(.width).equalTo(constant: 44.0)
+                Anchors(.top, .bottom, .leading, .trailing, .width, .height)
+            }
+        }
+        """
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect.tabbed)
+    }
+    
+    func testIgnoreAnchorsDuplication2() {
+        root {
+            child.anchors {
+                Anchors.cap()
+                Anchors(.height).equalTo(constant: 44)
+                Anchors(.height).equalTo(constant: 44)
+            }
+        }.finalActive()
+        
+        let expect = """
+        root {
+            child.anchors {
+                Anchors(.top, .leading, .trailing)
+                Anchors(.height).equalTo(constant: 44.0)
             }
         }
         """
@@ -318,6 +343,8 @@ extension ImplementationTests {
     
     func testRules() {
         let root = SLView().viewTag.root
+        root.translatesAutoresizingMaskIntoConstraints = false
+        window.addSubview(root)
         let child = SLView().viewTag.child
         let friend = SLView().viewTag.friend
         
@@ -536,7 +563,9 @@ extension ImplementationTests {
 // MARK: - Anchors only
 extension ImplementationTests {
     func testAnchorsOnly() {
-        let fixedView = SLView()
+        let fixedView = SLView(frame: .init(x: 0, y: 0, width: 120, height: 120))
+        fixedView.translatesAutoresizingMaskIntoConstraints = false
+        window.addSubview(fixedView)
         fixedView.anchors {
             Anchors(.width, .height).equalTo(constant: 24.0)
         }.finalActive()
@@ -550,6 +579,8 @@ extension ImplementationTests {
     
     func testConveniencesOfAnchors() {
         let fixedView = SLView().viewTag.fixedView
+        fixedView.translatesAutoresizingMaskIntoConstraints = false
+        window.addSubview(fixedView)
         fixedView.anchors {
             Anchors.size(length: 32.0)
         }.finalActive()

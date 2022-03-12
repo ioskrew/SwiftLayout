@@ -9,35 +9,37 @@ import Foundation
 
 #if canImport(UIKit)
 import UIKit
-public typealias SLView = UIView
-public typealias SLLayoutGuide = UILayoutGuide
-public typealias SLViewController = UIViewController
-public typealias SLLayoutConstraint = NSLayoutConstraint
-public typealias SLLayoutXAxisAnchor = NSLayoutXAxisAnchor
-public typealias SLLayoutYAxisAnchor = NSLayoutYAxisAnchor
-public typealias SLLayoutDimension = NSLayoutDimension
+typealias SLWindow = UIWindow
+typealias SLView = UIView
+typealias SLLayoutGuide = UILayoutGuide
+typealias SLViewController = UIViewController
+typealias SLLayoutConstraint = NSLayoutConstraint
+typealias SLLayoutXAxisAnchor = NSLayoutXAxisAnchor
+typealias SLLayoutYAxisAnchor = NSLayoutYAxisAnchor
+typealias SLLayoutDimension = NSLayoutDimension
 #if canImport(SwiftUI)
 import SwiftUI
-public typealias SLViewRepresentable = UIViewRepresentable
-public typealias SLViewRepresentableContext = UIViewRepresentableContext
-public typealias SLViewControllerRepresentable = UIViewControllerRepresentable
-public typealias SLViewControllerRepresentableContext = UIViewControllerRepresentableContext
+typealias SLViewRepresentable = UIViewRepresentable
+typealias SLViewRepresentableContext = UIViewRepresentableContext
+typealias SLViewControllerRepresentable = UIViewControllerRepresentable
+typealias SLViewControllerRepresentableContext = UIViewControllerRepresentableContext
 #endif
 #elseif canImport(AppKit)
 import AppKit
-public typealias SLView = NSView
-public typealias SLLayoutGuide = NSLayoutGuide
-public typealias SLViewController = NSViewController
-public typealias SLLayoutConstraint = NSLayoutConstraint
-public typealias SLLayoutXAxisAnchor = NSLayoutXAxisAnchor
-public typealias SLLayoutYAxisAnchor = NSLayoutYAxisAnchor
-public typealias SLLayoutDimension = NSLayoutDimension
+typealias SLWindow = NSWindow
+typealias SLView = NSView
+typealias SLLayoutGuide = NSLayoutGuide
+typealias SLViewController = NSViewController
+typealias SLLayoutConstraint = NSLayoutConstraint
+typealias SLLayoutXAxisAnchor = NSLayoutXAxisAnchor
+typealias SLLayoutYAxisAnchor = NSLayoutYAxisAnchor
+typealias SLLayoutDimension = NSLayoutDimension
 #if canImport(SwiftUI)
 import SwiftUI
-public typealias SLViewRepresentable = NSViewRepresentable
-public typealias SLViewRepresentableContext = NSViewRepresentableContext
-public typealias SLViewControllerRepresentable = NSViewControllerRepresentable
-public typealias SLViewControllerRepresentableContext = NSViewControllerRepresentableContext
+typealias SLViewRepresentable = NSViewRepresentable
+typealias SLViewRepresentableContext = NSViewRepresentableContext
+typealias SLViewControllerRepresentable = NSViewControllerRepresentable
+typealias SLViewControllerRepresentableContext = NSViewControllerRepresentableContext
 #endif
 #endif
 

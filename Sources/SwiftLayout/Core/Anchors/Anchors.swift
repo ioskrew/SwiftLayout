@@ -65,18 +65,17 @@ extension Anchors {
             let multiplier = item.multiplier
             let constant = item.constant
             assert(to is SLView || to is SLLayoutGuide || to == nil, "to: \(to.debugDescription) is not item")
-            
-            constraints.append(
-                SLLayoutConstraint(
-                    item: from,
-                    attribute: attribute,
-                    relatedBy: relation,
-                    toItem: to,
-                    attribute: toAttribute,
-                    multiplier: multiplier,
-                    constant: constant
-                )
+            let constraint = SLLayoutConstraint(
+                item: from,
+                attribute: attribute,
+                relatedBy: relation,
+                toItem: to,
+                attribute: toAttribute,
+                multiplier: multiplier,
+                constant: constant
             )
+            constraint.priority = .required
+            constraints.append(constraint)
         }
         return constraints
     }

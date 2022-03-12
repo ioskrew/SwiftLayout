@@ -3,10 +3,13 @@ import SwiftLayout
 
 class PrintingTests: XCTestCase {
     
+    var window: SLView!
+    
     var activation: Activation? 
     
     override func setUpWithError() throws {
         continueAfterFailure = false
+        window = SLView(frame: .init(x: 0, y: 0, width: 150, height: 150))
     }
 
     override func tearDownWithError() throws {
@@ -120,6 +123,8 @@ extension PrintingTests {
     
     func testPrintWithAnchorsWithOneDepth() {
         let root = SLView().viewTag.root
+        root.translatesAutoresizingMaskIntoConstraints = false
+        window.addSubview(root)
         let child = SLView().viewTag.child
         activation = root {
             child.anchors {
@@ -143,6 +148,8 @@ extension PrintingTests {
     
     func testPrintWithAnchorsOfTwoViewWithOneDepth() {
         let root = SLView().viewTag.root
+        root.translatesAutoresizingMaskIntoConstraints = false
+        window.addSubview(root)
         let child = SLView().viewTag.child
         let friend = SLView().viewTag.friend
         activation = root {
@@ -301,6 +308,8 @@ extension PrintingTests {
     
     func testPrintMoreEfficiently() {
         let root = SLView().viewTag.root
+        root.translatesAutoresizingMaskIntoConstraints = false
+        window.addSubview(root)
         let child = SLView().viewTag.child
         let friend = SLView().viewTag.friend
         
@@ -333,6 +342,8 @@ extension PrintingTests {
     
     func testGreaterThanAndLessThan() {
         let root = SLView().viewTag.root
+        root.translatesAutoresizingMaskIntoConstraints = false
+        window.addSubview(root)
         let child = SLView().viewTag.child
         let friend = SLView().viewTag.friend
         activation = root {
