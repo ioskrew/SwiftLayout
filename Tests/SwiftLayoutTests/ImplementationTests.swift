@@ -405,112 +405,96 @@ extension ImplementationTests {
         }
 
         context("top equal to super") {
-            activation?.deactive()
             test = .topEqualToSuper
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .equal).count, 1)
         }
 
         context("top equal to super with constant of 78.0") {
-            activation?.deactive()
             test = .topEqualToSuperWithConstant
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .equal, constant: 78.0).count, 1)
         }
         
         context("top greater than or equal to nameless") {
-            activation?.deactive()
             test = .topGreaterThanOrEqualToNameless
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .greaterThanOrEqual).count, 1)
         }
         
         context("top greater than or equal to nameless with constant of 78.0") {
-            activation?.deactive()
             test = .topGreaterThanOrEqualToSuperWithConstant
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .greaterThanOrEqual, constant: 78.0).count, 1)
         }
 
         context("top greater than or equal to super") {
-            activation?.deactive()
             test = .topGreaterThanOrEqualToSuper
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .greaterThanOrEqual).count, 1)
         }
 
         context("top less than or equal to nameless") {
-            activation?.deactive()
             test = .topLessThanOrEqualToNameless
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .lessThanOrEqual).count, 1)
         }
 
         context("top less than or equal to super") {
-            activation?.deactive()
             test = .topLessThanOrEqualToSuper
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .lessThanOrEqual).count, 1)
         }
         
         context("top less than or equal to super with constant of 78.0") {
-            activation?.deactive()
             test = .topLessThanOrEqualToSuperWithConstant
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .lessThanOrEqual, constant: 78.0).count, 1)
         }
         
         context("top of friend equal to bottom of child") {
-            activation?.deactive()
             test = .topOfFriendEqualToBottomOfChild
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (friend, child), attributes: (.top, .bottom), relation: .equal).count, 1)
         }
         
         context("top of friend equal to bottom of child") {
-            activation?.deactive()
             test = .topOfFriendEqualToBottomOfChild
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (friend, child), attributes: (.top, .bottom), relation: .equal).count, 1)
         }
         
         context("width of friend equal to width of nameless") {
-            activation?.deactive()
             test = .widthOfFriendEqualToNameless
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (friend, root), attributes: (.width, .width), relation: .equal).count, 1)
         }
         
         context("width of friend equal to width of super") {
-            activation?.deactive()
             test = .widthOfFriendEqualToSuper
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (friend, root), attributes: (.width, .width), relation: .equal).count, 1)
         }
         
         context("width of friend equal to width of child") {
-            activation?.deactive()
             test = .widthOfFriendEqualToChild
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (friend, child), attributes: (.width, .width), relation: .equal).count, 1)
         }
         
         context("width of friend equal to height of child") {
-            activation?.deactive()
             test = .widthOfFriendEqualToHeightOfChild
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (friend, child), attributes: (.width, .height), relation: .equal).count, 1)
         }
         
         context("width of friend equal to constant of 78.0") {
-            activation?.deactive()
             test = .widthOfFriendEqualToConstant
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (friend, nil), attributes: (.width, .notAnAttribute), relation: .equal, constant: 78.0).count, 1)
         }
         
         context("width of friend equal to child with constant of 78.0") {
-            activation?.deactive()
             test = .widthOfFriendEqualToChildWithConstant
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (friend, child), attributes: (.width, .width), relation: .equal, constant: 78.0).count, 1)
