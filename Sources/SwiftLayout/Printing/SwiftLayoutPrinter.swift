@@ -21,9 +21,14 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
     }
     
     /// print ``SwiftLayout`` syntax from view structures
-    /// - Parameter includeSystems: print all constraints include system creations(safe layout guide, label size, etc...)
+    /// - Parameters:
+    ///  - updater: ``IdentifierUpdater``
+    ///  - systemConstraintsHidden: automatically assigned constraints from system hidden, default value is `true`
+    ///  - printOnlyIdentifier: print view only having accessibility identifier
     /// - Returns: String of SwiftLayout syntax
-    public func print(_ updater: IdentifierUpdater? = nil, systemConstraintsHidden: Bool = true) -> String {
+    public func print(_ updater: IdentifierUpdater? = nil,
+                      systemConstraintsHidden: Bool = true,
+                      printOnlyIdentifier: Bool = false) -> String {
         guard let view = view else {
             return ""
         }
@@ -32,7 +37,7 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
             updater.update(view, fixedTags: Set(tags.keys))
         }
         
-        let viewToken = ViewToken.Parser.from(view, tags: tags)
+        guard let viewToken = ViewToken.Parser.from(view, tags: tags, printOnlyIdentifier: printOnlyIdentifier) else { return "" }
         let constraints = ConstraintToken.Parser.from(view, tags: tags, systemConstraintsHidden: systemConstraintsHidden)
         return Describer(viewToken, constraints).description
     }
@@ -105,11 +110,19 @@ private struct ViewToken {
     let views: [ViewToken]
     
     struct Parser {
-        static func from(_ view: SLView, tags: [String: String]) -> ViewToken {
+        static func from(_ view: SLView, tags: [String: String], printOnlyIdentifier: Bool = false) -> ViewToken? {
             if let identifier = tags[view.tagDescription] {
-                return ViewToken(identifier: identifier, views: view.subviews.map({ from($0, tags: tags) }))
+                return ViewToken(identifier: identifier, views: view.subviews.compactMap({ from($0, tags: tags, printOnlyIdentifier: printOnlyIdentifier) }))
             } else {
-                return ViewToken(identifier: view.tagDescription, views: view.subviews.map({ from($0, tags: tags) }))
+                if printOnlyIdentifier {
+                    if let identifier = view.slAccessibilityIdentifier, !identifier.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        return ViewToken(identifier: identifier, views: view.subviews.compactMap({ from($0, tags: tags, printOnlyIdentifier: printOnlyIdentifier) }))
+                    } else {
+                        return nil
+                    }
+                } else {
+                    return ViewToken(identifier: view.tagDescription, views: view.subviews.compactMap({ from($0, tags: tags, printOnlyIdentifier: printOnlyIdentifier) }))
+                }
             }
         }
     }

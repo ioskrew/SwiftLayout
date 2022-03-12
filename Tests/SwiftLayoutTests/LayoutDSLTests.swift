@@ -55,7 +55,7 @@ extension LayoutDSLTests {
         }
         """.tabbed
         
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(printOnlyIdentifier: true), expect)
     }
     
     func testDeactive() {
@@ -101,7 +101,7 @@ extension LayoutDSLTests {
         }
         """.tabbed
         
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(printOnlyIdentifier: true), expect)
     }
     
     func testDuplicateLayoutBuilder() {
@@ -128,7 +128,7 @@ extension LayoutDSLTests {
         }
         """.tabbed
         
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(printOnlyIdentifier: true), expect)
     }
     
     func testAllSides() {
@@ -249,7 +249,7 @@ extension LayoutDSLTests {
         }
         """.tabbed
         
-        XCTAssertEqual(SwiftLayoutPrinter(container.root).print(), expect)
+        XCTAssertEqual(SwiftLayoutPrinter(container.root).print(printOnlyIdentifier: true), expect)
         
         XCTAssertEqual(container.root.accessibilityIdentifier, "root")
         XCTAssertEqual(container.red.accessibilityIdentifier, "red")
