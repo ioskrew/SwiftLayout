@@ -59,7 +59,12 @@ extension SLView {
     }
     var slIdentifier: String? {
         get { accessibilityIdentifier() }
-        set { setAccessibilityIdentifier(newValue) }
+        set {
+            if let identifier = newValue {
+                self.identifier = .init(identifier)
+            }
+            setAccessibilityIdentifier(newValue)
+        }
     }
 }
 #endif
