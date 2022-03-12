@@ -1,7 +1,6 @@
 import Foundation
-import UIKit
 
-public struct ViewLayout<V: UIView, SubLayout: Layout>: Layout {
+public struct ViewLayout<V: SLView, SubLayout: Layout>: Layout {
     
     let innerView: V
     var sublayout: SubLayout
@@ -13,7 +12,7 @@ public struct ViewLayout<V: UIView, SubLayout: Layout>: Layout {
         self.coordinators = []
     }
     
-    public var view: UIView? {
+    public var view: SLView? {
         self.innerView
     }
     
@@ -93,7 +92,7 @@ extension ViewLayout {
     /// - Returns: The layout itself with the accessibilityIdentifier applied
     ///
     public func identifying(_ accessibilityIdentifier: String) -> Self {
-        innerView.accessibilityIdentifier = accessibilityIdentifier
+        innerView.slIdentifier = accessibilityIdentifier
         return self
     }
 }

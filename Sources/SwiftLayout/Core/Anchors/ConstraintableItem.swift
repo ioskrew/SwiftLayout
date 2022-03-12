@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import UIKit
 
 final class ItemFromView<View> where View: ConstraintableItem {
     internal init(_ view: View?) {
@@ -24,6 +23,6 @@ final class ItemFromView<View> where View: ConstraintableItem {
 }
 
 public protocol ConstraintableItem {}
-extension UIView: ConstraintableItem {}
-extension UILayoutGuide: ConstraintableItem {}
+extension SLView: ConstraintableItem {}
+extension SLLayoutGuide: ConstraintableItem {}
 extension String: ConstraintableItem {}

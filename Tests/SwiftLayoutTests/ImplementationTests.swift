@@ -1,20 +1,24 @@
 import XCTest
-import UIKit
 @testable import SwiftLayout
 
 /// test cases for api rules except DSL syntax
 final class ImplementationTests: XCTestCase {
-    var root = UIView().viewTag.root
-    var child = UIView().viewTag.child
-    var friend = UIView().viewTag.friend
+    
+    var window: SLView!
+    
+    var root = SLView().viewTag.root
+    var child = SLView().viewTag.child
+    var friend = SLView().viewTag.friend
     
     var activation: Activation?
    
     override func setUpWithError() throws {
         continueAfterFailure = false
-        root = UIView().viewTag.root
-        child = UIView().viewTag.child
-        friend = UIView().viewTag.friend
+        window = SLView(frame: .init(x: 0, y: 0, width: 150, height: 150))
+        root = SLView().viewTag.root
+        child = SLView().viewTag.child
+        friend = SLView().viewTag.friend
+        window.addSubview(root)
     }
     
     override func tearDownWithError() throws {
@@ -24,10 +28,10 @@ final class ImplementationTests: XCTestCase {
 
 extension ImplementationTests {
     func testLayoutTraversal() {
-        let root: UIView = UIView().viewTag.root
+        let root: SLView = SLView().viewTag.root
         let button: UIButton = UIButton().viewTag.button
         let label: UILabel = UILabel().viewTag.label
-        let redView: UIView = UIView().viewTag.redView
+        let redView: SLView = SLView().viewTag.redView
         let image: UIImageView = UIImageView().viewTag.image
         
         let layout = root {
@@ -40,8 +44,8 @@ extension ImplementationTests {
         
         var result: [String] = []
         for viewInformation in LayoutElements(layout: layout).viewInformations {
-            let superDescription = viewInformation.superview?.accessibilityIdentifier ?? "nil"
-            let currentDescription = viewInformation.view?.accessibilityIdentifier ?? "nil"
+            let superDescription = viewInformation.superview?.slIdentifier ?? "nil"
+            let currentDescription = viewInformation.view?.slIdentifier ?? "nil"
             let description = "\(superDescription), \(currentDescription)"
             result.append(description)
         }
@@ -118,30 +122,30 @@ extension ImplementationTests {
     }
     
     func testSetAccessibilityIdentifier() {
-        class TestView: UIView {
-            let contentView = UIView()
+        class TestView: SLView {
+            let contentView = SLView()
             let nameLabel = UILabel()
         }
         
         let view = TestView()
         IdentifierUpdater.withTypeOfView.update(view)
         
-        XCTAssertEqual(view.contentView.accessibilityIdentifier, "contentView:UIView")
-        XCTAssertEqual(view.nameLabel.accessibilityIdentifier, "nameLabel:UILabel")
+        XCTAssertEqual(view.contentView.slIdentifier, "contentView:\(SLView.self)")
+        XCTAssertEqual(view.nameLabel.slIdentifier, "nameLabel:\(UILabel.self)")
         
         class Test2View: TestView {}
         
         let view2 = Test2View()
         IdentifierUpdater.withTypeOfView.update(view2)
         
-        XCTAssertEqual(view2.contentView.accessibilityIdentifier, "contentView:UIView")
-        XCTAssertEqual(view2.nameLabel.accessibilityIdentifier, "nameLabel:UILabel")
+        XCTAssertEqual(view2.contentView.slIdentifier, "contentView:\(SLView.self)")
+        XCTAssertEqual(view2.nameLabel.slIdentifier, "nameLabel:\(UILabel.self)")
     }
     
     func testDontTouchRootViewByDeactive() {
-        let root = UIView().viewTag.root
-        let red = UIView().viewTag.red
-        let old = UIView().viewTag.old
+        let root = SLView().viewTag.root
+        let red = SLView().viewTag.red
+        let old = SLView().viewTag.old
         old.addSubview(root)
         root.translatesAutoresizingMaskIntoConstraints = true
         
@@ -162,9 +166,9 @@ extension ImplementationTests {
 }
 
 extension ImplementationTests {
-    final class IdentifiedView: UIView, Layoutable {
+    final class IdentifiedView: SLView, Layoutable {
         
-        lazy var contentView: UIView = UIView()
+        lazy var contentView: SLView = SLView()
         lazy var nameLabel: UILabel = UILabel()
         
         var activation: Activation? 
@@ -187,14 +191,14 @@ extension ImplementationTests {
     
     func testNoAccessibilityIdentifierOption() {
         let view = IdentifiedView()
-        XCTAssertNil(view.contentView.accessibilityIdentifier)
-        XCTAssertNil(view.nameLabel.accessibilityIdentifier)
+        XCTAssertEqual(view.contentView.slIdentifier ?? "", "")
+        XCTAssertEqual(view.nameLabel.slIdentifier ?? "", "")
     }
     
     func testAccessibilityIdentifierOption() {
         let view = IdentifiedView().updateIdentifiers()
-        XCTAssertEqual(view.contentView.accessibilityIdentifier, "contentView")
-        XCTAssertEqual(view.nameLabel.accessibilityIdentifier, "nameLabel")
+        XCTAssertEqual(view.contentView.slIdentifier, "contentView")
+        XCTAssertEqual(view.nameLabel.slIdentifier, "nameLabel")
     }
 }
 
@@ -204,7 +208,7 @@ extension ImplementationTests {
             UILabel().identifying("label").anchors {
                 Anchors.cap()
             }
-            UIView().identifying("secondView").anchors {
+            SLView().identifying("secondView").anchors {
                 Anchors(.top).equalTo("label", attribute: .bottom)
                 Anchors.shoe()
             }
@@ -212,10 +216,10 @@ extension ImplementationTests {
         
         let label = activation.viewForIdentifier("label")
         XCTAssertNotNil(label)
-        XCTAssertEqual(label?.accessibilityIdentifier, "label")
+        XCTAssertEqual(label?.slIdentifier, "label")
         
         let secondView = activation.viewForIdentifier("secondView")
-        XCTAssertEqual(secondView?.accessibilityIdentifier, "secondView")
+        XCTAssertEqual(secondView?.slIdentifier, "secondView")
         
         let currents = activation.constraints
         let labelConstraints = Set(Anchors.cap().constraints(item: label!, toItem: root).weakens)
@@ -239,7 +243,7 @@ extension ImplementationTests {
         NSLayoutConstraint.activate(constraints)
         
         root.frame = CGRect(origin: .zero, size: .init(width: 200, height: 200))
-        root.layoutIfNeeded()
+        root.slLayout()
         XCTAssertEqual(child.frame.size, .init(width: 200, height: 200))
         root.removeConstraints(constraints)
         
@@ -249,14 +253,13 @@ extension ImplementationTests {
         NSLayoutConstraint.activate(constraints1)
         NSLayoutConstraint.activate(constraints2)
         
-        root.setNeedsLayout()
-        root.layoutIfNeeded()
+        root.slLayout()
         XCTAssertEqual(child.frame.size, .init(width: 98, height: 98))
     }
     
     func testSelfContraint() {
-        let superview = UIView().viewTag.superview
-        let subview = UIView().viewTag.subview
+        let superview = SLView().viewTag.superview
+        let subview = SLView().viewTag.subview
         
         let constraint = subview.widthAnchor.constraint(equalToConstant: 24)
         
@@ -301,16 +304,36 @@ extension ImplementationTests {
                 Anchors.cap()
                 Anchors.shoe()
                 Anchors(.height)
-                Anchors(.width).equalTo(constant: 44.0)
-                Anchors(.width).equalTo(constant: 44.0)
+                Anchors(.width)
+                Anchors(.width)
             }
         }.finalActive()
         
         let expect = """
         root {
             child.anchors {
-                Anchors(.top, .bottom, .leading, .trailing, .height)
-                Anchors(.width).equalTo(constant: 44.0)
+                Anchors(.top, .bottom, .leading, .trailing, .width, .height)
+            }
+        }
+        """
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect.tabbed)
+    }
+    
+    func testIgnoreAnchorsDuplication2() {
+        root {
+            child.anchors {
+                Anchors.cap()
+                Anchors(.height).equalTo(constant: 44)
+                Anchors(.height).equalTo(constant: 44)
+            }
+        }.finalActive()
+        
+        let expect = """
+        root {
+            child.anchors {
+                Anchors(.top, .leading, .trailing)
+                Anchors(.height).equalTo(constant: 44.0)
             }
         }
         """
@@ -319,9 +342,11 @@ extension ImplementationTests {
     }
     
     func testRules() {
-        let root = UIView().viewTag.root
-        let child = UIView().viewTag.child
-        let friend = UIView().viewTag.friend
+        let root = SLView().viewTag.root
+        root.translatesAutoresizingMaskIntoConstraints = false
+        window.addSubview(root)
+        let child = SLView().viewTag.child
+        let friend = SLView().viewTag.friend
         
         enum TestCase {
             case topEqualToNameless
@@ -393,7 +418,7 @@ extension ImplementationTests {
                         Anchors.shoe()
                     case .widthOfFriendEqualToChildWithConstant:
                         Anchors(.width).equalTo(child, constant: 78.0)
-                        Anchors.shoe()
+                        Anchors(.leading, .bottom)
                     default:
                         Anchors.shoe()
                     }
@@ -407,112 +432,96 @@ extension ImplementationTests {
         }
 
         context("top equal to super") {
-            activation?.deactive()
             test = .topEqualToSuper
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .equal).count, 1)
         }
 
         context("top equal to super with constant of 78.0") {
-            activation?.deactive()
             test = .topEqualToSuperWithConstant
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .equal, constant: 78.0).count, 1)
         }
         
         context("top greater than or equal to nameless") {
-            activation?.deactive()
             test = .topGreaterThanOrEqualToNameless
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .greaterThanOrEqual).count, 1)
         }
         
         context("top greater than or equal to nameless with constant of 78.0") {
-            activation?.deactive()
             test = .topGreaterThanOrEqualToSuperWithConstant
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .greaterThanOrEqual, constant: 78.0).count, 1)
         }
 
         context("top greater than or equal to super") {
-            activation?.deactive()
             test = .topGreaterThanOrEqualToSuper
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .greaterThanOrEqual).count, 1)
         }
 
         context("top less than or equal to nameless") {
-            activation?.deactive()
             test = .topLessThanOrEqualToNameless
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .lessThanOrEqual).count, 1)
         }
 
         context("top less than or equal to super") {
-            activation?.deactive()
             test = .topLessThanOrEqualToSuper
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .lessThanOrEqual).count, 1)
         }
         
         context("top less than or equal to super with constant of 78.0") {
-            activation?.deactive()
             test = .topLessThanOrEqualToSuperWithConstant
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .lessThanOrEqual, constant: 78.0).count, 1)
         }
         
         context("top of friend equal to bottom of child") {
-            activation?.deactive()
             test = .topOfFriendEqualToBottomOfChild
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (friend, child), attributes: (.top, .bottom), relation: .equal).count, 1)
         }
         
         context("top of friend equal to bottom of child") {
-            activation?.deactive()
             test = .topOfFriendEqualToBottomOfChild
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (friend, child), attributes: (.top, .bottom), relation: .equal).count, 1)
         }
         
         context("width of friend equal to width of nameless") {
-            activation?.deactive()
             test = .widthOfFriendEqualToNameless
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (friend, root), attributes: (.width, .width), relation: .equal).count, 1)
         }
         
         context("width of friend equal to width of super") {
-            activation?.deactive()
             test = .widthOfFriendEqualToSuper
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (friend, root), attributes: (.width, .width), relation: .equal).count, 1)
         }
         
         context("width of friend equal to width of child") {
-            activation?.deactive()
             test = .widthOfFriendEqualToChild
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (friend, child), attributes: (.width, .width), relation: .equal).count, 1)
         }
         
         context("width of friend equal to height of child") {
-            activation?.deactive()
             test = .widthOfFriendEqualToHeightOfChild
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (friend, child), attributes: (.width, .height), relation: .equal).count, 1)
         }
         
         context("width of friend equal to constant of 78.0") {
-            activation?.deactive()
             test = .widthOfFriendEqualToConstant
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (friend, nil), attributes: (.width, .notAnAttribute), relation: .equal, constant: 78.0).count, 1)
         }
         
         context("width of friend equal to child with constant of 78.0") {
-            activation?.deactive()
             test = .widthOfFriendEqualToChildWithConstant
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (friend, child), attributes: (.width, .width), relation: .equal, constant: 78.0).count, 1)
@@ -523,9 +532,9 @@ extension ImplementationTests {
 
 extension ImplementationTests {
     func testFinalActive() {
-        let root = UIView().viewTag.root
-        let cap = UIView().viewTag.cap
-        let shoe = UIView().viewTag.shoe
+        let root = SLView().viewTag.root
+        let cap = SLView().viewTag.cap
+        let shoe = SLView().viewTag.shoe
         
         root {
             cap.anchors {
@@ -554,7 +563,9 @@ extension ImplementationTests {
 // MARK: - Anchors only
 extension ImplementationTests {
     func testAnchorsOnly() {
-        let fixedView = UIView()
+        let fixedView = SLView(frame: .init(x: 0, y: 0, width: 120, height: 120))
+        fixedView.translatesAutoresizingMaskIntoConstraints = false
+        window.addSubview(fixedView)
         fixedView.anchors {
             Anchors(.width, .height).equalTo(constant: 24.0)
         }.finalActive()
@@ -567,7 +578,9 @@ extension ImplementationTests {
     }
     
     func testConveniencesOfAnchors() {
-        let fixedView = UIView().viewTag.fixedView
+        let fixedView = SLView().viewTag.fixedView
+        fixedView.translatesAutoresizingMaskIntoConstraints = false
+        window.addSubview(fixedView)
         fixedView.anchors {
             Anchors.size(length: 32.0)
         }.finalActive()
@@ -611,7 +624,7 @@ extension ImplementationTests {
             }.identifying("hellolabel").anchors {
                 Anchors.cap()
             }.sublayout {
-                UIView().identifying("lastview").anchors {
+                SLView().identifying("lastview").anchors {
                     Anchors.allSides()
                 }
             }
@@ -635,7 +648,7 @@ extension ImplementationTests {
         }
         """.tabbed
         
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(printOnlyIdentifier: true), expect)
     }
     
     func testFeatureComposeComplexWithAnimationHandling() {
@@ -647,7 +660,7 @@ extension ImplementationTests {
             }.identifying("hellolabel").anchors {
                 Anchors.cap()
             }.sublayout {
-                UIView().identifying("lastview").anchors {
+                SLView().identifying("lastview").anchors {
                     Anchors.allSides()
                 }
             }
@@ -671,7 +684,7 @@ extension ImplementationTests {
         }
         """.tabbed
         
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(printOnlyIdentifier: true), expect)
     }
 
 }
@@ -690,12 +703,12 @@ extension ImplementationTests {
         XCTAssertNil(test.trueView.superview)
     }
     
-    private class TestView: UIView, Layoutable {
+    private class TestView: SLView, Layoutable {
         
         @LayoutProperty var flag = true
         
-        var trueView = UIView().viewTag.true
-        var falseView = UIView().viewTag.false
+        var trueView = SLView().viewTag.true
+        var falseView = SLView().viewTag.false
         
         var activation: Activation?
         

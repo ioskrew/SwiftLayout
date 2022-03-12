@@ -1,20 +1,19 @@
 import XCTest
-import UIKit
 import SwiftLayout
 
 /// test cases for constraint DSL syntax
 final class AnchorsDSLTests: XCTestCase {
         
-    var root: UIView = UIView().viewTag.root
-    var red: UIView = UIView().viewTag.red
-    var blue: UIView = UIView().viewTag.blue
+    var root: SLView = SLView().viewTag.root
+    var red: SLView = SLView().viewTag.red
+    var blue: SLView = SLView().viewTag.blue
     
     var activation: Activation?
     
     override func setUp() {
-        root = UIView().viewTag.root
-        red = UIView().viewTag.red
-        blue = UIView().viewTag.blue
+        root = SLView(frame: .init(x: 0, y: 0, width: 120, height: 120)).viewTag.root
+        red = SLView().viewTag.red
+        blue = SLView().viewTag.blue
     }
     
     override func tearDown() {
@@ -291,6 +290,7 @@ extension AnchorsDSLTests {
 
 extension AnchorsDSLTests {
     func testAnchorsOfDimensionToItem1() {
+        root.frame = .init(origin: .zero, size: .init(width: 100, height: 100))
         root {
             red.anchors {
                 Anchors.allSides()
@@ -298,29 +298,24 @@ extension AnchorsDSLTests {
         }.finalActive()
         
         XCTAssertEqual(root.constraints.count, 4)
-        
-        root.frame = .init(origin: .zero, size: .init(width: 100, height: 100))
-        root.setNeedsLayout()
-        root.layoutIfNeeded()
-        
         XCTAssertEqual(red.bounds.size, .init(width: 100, height: 100))
     }
     
     func testAnchorsOfDimensionToItem2() {
+        root.frame = .init(origin: .zero, size: .init(width: 100, height: 100))
         activation = root {
             red.anchors {
+                #if canImport(UIKit)
                 Anchors(.bottom, .trailing)
+                #elseif canImport(AppKit)
+                Anchors(.top, .trailing)
+                #endif
                 Anchors(.width, .height).equalTo(constant: 30)
             }
         }.active()
         
         XCTAssertEqual(root.constraints.count, 2)
         XCTAssertEqual(red.constraints.count, 2)
-        
-        root.frame = .init(origin: .zero, size: .init(width: 100, height: 100))
-        root.setNeedsLayout()
-        root.layoutIfNeeded()
-        
         XCTAssertEqual(red.frame, .init(x: 70, y: 70, width: 30, height: 30))
     }
     
@@ -353,9 +348,7 @@ extension AnchorsDSLTests {
                 Anchors(.leading).equalTo(root.leadingAnchor)
                 Anchors(.trailing).equalTo(root.trailingAnchor).setConstant(-14.0)
                 Anchors(.bottom).equalTo(root.bottomAnchor)
-                Anchors(.width).equalTo(root.widthAnchor)
                 Anchors(.height).equalTo(root.heightAnchor)
-                Anchors(.centerX).equalTo(root.centerXAnchor)
                 Anchors(.centerY).equalTo(root.centerYAnchor)
             }
         }.active()
@@ -363,7 +356,7 @@ extension AnchorsDSLTests {
         let expect = """
         root {
             red.anchors {
-                Anchors(.top, .bottom, .leading, .width, .height, .centerX, .centerY)
+                Anchors(.top, .bottom, .leading, .height, .centerY)
                 Anchors(.trailing).equalTo(constant: -14.0)
             }
         }

@@ -6,10 +6,9 @@
 //
 
 import Foundation
-import UIKit
 
 public extension Collection where Element: Activation {
-    func viewForIdentifier(_ identifier: String) -> UIView? {
+    func viewForIdentifier(_ identifier: String) -> SLView? {
         for activation in self {
             guard let view = activation.viewForIdentifier(identifier) else { continue }
             return view

@@ -1,5 +1,4 @@
 import XCTest
-import UIKit
 import SwiftLayout
 
 final class LayoutBuildingTests: XCTestCase {
@@ -11,7 +10,7 @@ final class LayoutBuildingTests: XCTestCase {
     func testUpdateLayout() {
         let view = LayoutView().viewTag.view
         view.frame = .init(x: 0, y: 0, width: 90, height: 90)
-        view.layoutIfNeeded()
+        view.slLayout()
 
         XCTAssertEqual(view.child.bounds.size, CGSize(width: 90, height: 90))
         XCTAssertEqual(SwiftLayoutPrinter(view).print(), """
@@ -43,8 +42,6 @@ final class LayoutBuildingTests: XCTestCase {
         """.tabbed)
 
         view.flag.toggle()
-        view.setNeedsLayout()
-        view.layoutIfNeeded()
 
         XCTAssertEqual(view.root.count(view.child), 1)
         XCTAssertEqual(view.root.count(view.friend), 1)
@@ -66,14 +63,14 @@ final class LayoutBuildingTests: XCTestCase {
 }
 
 extension LayoutBuildingTests {
-    class MockView: UIView {
-        var addSubviewCounts: [UIView: Int] = [:]
+    class MockView: SLView {
+        var addSubviewCounts: [SLView: Int] = [:]
         
-        func count(_ view: UIView) -> Int {
+        func count(_ view: SLView) -> Int {
             addSubviewCounts[view] ?? 0
         }
         
-        override func addSubview(_ view: UIView) {
+        override func addSubview(_ view: SLView) {
             if let count = addSubviewCounts[view] {
                 addSubviewCounts[view] = count + 1
             } else {
@@ -83,7 +80,7 @@ extension LayoutBuildingTests {
         }
     }
     
-    class LayoutView: UIView, Layoutable {
+    class LayoutView: SLView, Layoutable {
         var flag = true {
             didSet {
                 updateLayout()
@@ -91,7 +88,7 @@ extension LayoutBuildingTests {
         }
         
         let root = MockView().viewTag.root
-        let child = UIView().viewTag.child
+        let child = SLView().viewTag.child
         let friend = UILabel().viewTag.friend
         
         var activation: Activation? 

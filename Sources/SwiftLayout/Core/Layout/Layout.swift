@@ -5,16 +5,14 @@
 //  Created by oozoofrog on 2022/01/26.
 //
 
-import UIKit
-
 public protocol Layout: CustomDebugStringConvertible {
-    var view: UIView? { get }
+    var view: SLView? { get }
     var anchors: Anchors? { get }
     var sublayouts: [Layout] { get }
 }
 
 extension Layout {
-    public var view: UIView? { nil }
+    public var view: SLView? { nil }
     public var anchors: Anchors? { nil }
 }
 

@@ -6,7 +6,11 @@
 //
 
 import Foundation
+#if canImport(UIKit)
 import UIKit
+#elseif canImport(AppKit)
+import AppKit
+#endif
 
 enum Activator {
     
@@ -30,17 +34,7 @@ enum Activator {
         let constraints = elements.viewConstraints
         updateConstraints(activation: activation, constraints: constraints)
 
-        for viewInfo in viewInfos {
-            if let constraints = prevInfos[viewInfo] {
-                if constraints != viewInfo.view.map({ Set($0.constraints.weakens) }) {
-                    viewInfo.view?.layoutIfNeeded()
-                }
-            } else {
-                // for newly add to superview
-                viewInfo.view?.layer.removeAnimation(forKey: "bounds.size")
-                viewInfo.view?.layer.removeAnimation(forKey: "position")
-            }
-        }
+        layoutIfNeeded(viewInfos, prevInfos)
         
         return activation
     }
@@ -55,6 +49,8 @@ extension Activator {
         
         let constraints = elements.viewConstraints
         updateConstraints(constraints: constraints)
+        
+        layoutIfNeeded(viewInfos)
     }
 }
 
@@ -105,5 +101,26 @@ private extension Activator {
         let news = Set(constraints.weakens)
         NSLayoutConstraint.activate(news.sorted().compactMap(\.origin))
     }
+    
+    static func layoutIfNeeded(_ viewInfos: [ViewInformation], _ prevInfos: [ViewInformation: Set<WeakReference<NSLayoutConstraint>>] = [:]) {
+        for viewInfo in viewInfos {
+            if let constraints = prevInfos[viewInfo] {
+                if constraints != viewInfo.view.map({ Set($0.constraints.weakens) }) {
+                    viewInfo.view?.slLayout()
+                }
+            } else {
+                // for newly add to superview
+                viewInfo.view?.slLayout()
+#if canImport(AppKit)
+                viewInfo.view?.layer?.removeAnimation(forKey: "bounds.size")
+                viewInfo.view?.layer?.removeAnimation(forKey: "position")
+#else
+                viewInfo.view?.layer.removeAnimation(forKey: "bounds.size")
+                viewInfo.view?.layer.removeAnimation(forKey: "position")
+#endif
+            }
+        }
+    }
+    
     
 }

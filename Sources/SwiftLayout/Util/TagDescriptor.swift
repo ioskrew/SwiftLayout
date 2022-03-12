@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import UIKit
 
 struct TagDescriptor<Value>: CustomDebugStringConvertible where Value: TagDescriptable, Value: AnyObject {
     internal init(_ value: Value) {
@@ -16,11 +15,11 @@ struct TagDescriptor<Value>: CustomDebugStringConvertible where Value: TagDescri
     let value: Value
     
     var valueHasIdentifier: Bool {
-        value.accessibilityIdentifier != nil
+        value.slIdentifier != nil
     }
     
     var identifier: String {
-        if let identifier = value.accessibilityIdentifier {
+        if let identifier = value.slIdentifier, !identifier.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return identifier
         } else {
             return objectDescription
@@ -38,22 +37,22 @@ struct TagDescriptor<Value>: CustomDebugStringConvertible where Value: TagDescri
 }
 
 protocol TagDescriptable {
-    var accessibilityIdentifier: String? { get }
+    var slIdentifier: String? { get }
 }
 
-extension TagDescriptable where Self: UIView {
+extension TagDescriptable where Self: SLView {
     var tagDescription: String {
         TagDescriptor(self).debugDescription
     }
 }
 
-extension TagDescriptable where Self: UILayoutGuide {
+extension TagDescriptable where Self: SLLayoutGuide {
     var tagDescription: String {
         TagDescriptor(self).debugDescription
     }
     
-    var accessibilityIdentifier: String? { owningView?.accessibilityIdentifier }
+    var slIdentifier: String? { owningView?.slIdentifier }
 }
 
-extension UIView: TagDescriptable {}
-extension UILayoutGuide: TagDescriptable {}
+extension SLView: TagDescriptable {}
+extension SLLayoutGuide: TagDescriptable {}
