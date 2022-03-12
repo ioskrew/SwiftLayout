@@ -391,7 +391,7 @@ extension ImplementationTests {
                         Anchors.shoe()
                     case .widthOfFriendEqualToChildWithConstant:
                         Anchors(.width).equalTo(child, constant: 78.0)
-                        Anchors.shoe()
+                        Anchors(.leading, .bottom)
                     default:
                         Anchors.shoe()
                     }
