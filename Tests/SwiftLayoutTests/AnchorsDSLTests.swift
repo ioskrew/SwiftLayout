@@ -77,15 +77,15 @@ extension AnchorsDSLTests {
     func testAnchorsGreaterThanOrEqualToSuperview() {
         let attributes: [NSLayoutConstraint.Attribute] = [.top, .bottom, .leading, .trailing, .left, .right, .centerX, .centerY, .firstBaseline, .lastBaseline]
         for attribute in attributes {
-            context("anchor for \(attribute.description)") {
+            context("anchor for \(attribute.description) \(constantDescription)") {
                 root {
                     red.anchors {
-                        Anchors(attribute).greaterThanOrEqualTo()
+                        Anchors(attribute).greaterThanOrEqualTo(constant: constant)
                     }
                 }.finalActive()
                 
                 XCTAssertEqual(root.constraints.shortDescription, """
-                red.\(attribute.description) >= root.\(attribute.description)
+                red.\(attribute.description) >= root.\(attribute.description) \(constantDescription)
                 """)
             }
         }
@@ -93,13 +93,13 @@ extension AnchorsDSLTests {
         context("anchor for width and height") {
             root {
                 red.anchors {
-                    Anchors(.width, .height).greaterThanOrEqualTo(root)
+                    Anchors(.width, .height).greaterThanOrEqualTo(root, constant: constant)
                 }
             }.finalActive()
             
             XCTAssertEqual(root.constraints.shortDescription, """
-            red.width >= root.width
-            red.height >= root.height
+            red.width >= root.width \(constantDescription)
+            red.height >= root.height \(constantDescription)
             """)
         }
         
@@ -109,11 +109,11 @@ extension AnchorsDSLTests {
                 context(attribute.description) {
                     root {
                         red.anchors {
-                            Anchors(attribute).greaterThanOrEqualTo()
+                            Anchors(attribute).greaterThanOrEqualTo().setConstant(constant)
                         }
                     }.finalActive()
                     XCTAssertEqual(root.constraints.shortDescription, """
-                    red.\(attribute) >= root.\(attribute)
+                    red.\(attribute) >= root.\(attribute) \(constantDescription)
                     root.bottom == root.layoutMarginsGuide.bottom + 8.0
                     root.layoutMarginsGuide.left == root.left + 8.0
                     root.right == root.layoutMarginsGuide.right + 8.0
@@ -130,12 +130,12 @@ extension AnchorsDSLTests {
             context("anchor for \(attribute.description)") {
                 root {
                     red.anchors {
-                        Anchors(attribute).lessThanOrEqualTo()
+                        Anchors(attribute).lessThanOrEqualTo().setConstant(constant)
                     }
                 }.finalActive()
                 
                 XCTAssertEqual(root.constraints.shortDescription, """
-                red.\(attribute.description) <= root.\(attribute.description)
+                red.\(attribute.description) <= root.\(attribute.description) \(constantDescription)
                 """)
             }
         }
@@ -143,13 +143,13 @@ extension AnchorsDSLTests {
         context("anchor for width and height") {
             root {
                 red.anchors {
-                    Anchors(.width, .height).lessThanOrEqualTo(root)
+                    Anchors(.width, .height).lessThanOrEqualTo(root, constant: constant)
                 }
             }.finalActive()
             
             XCTAssertEqual(root.constraints.shortDescription, """
-            red.width <= root.width
-            red.height <= root.height
+            red.width <= root.width \(constantDescription)
+            red.height <= root.height \(constantDescription)
             """)
         }
         
@@ -159,11 +159,11 @@ extension AnchorsDSLTests {
                 context(attribute.description) {
                     root {
                         red.anchors {
-                            Anchors(attribute).lessThanOrEqualTo()
+                            Anchors(attribute).lessThanOrEqualTo().setConstant(constant)
                         }
                     }.finalActive()
                     XCTAssertEqual(root.constraints.shortDescription, """
-                    red.\(attribute) <= root.\(attribute)
+                    red.\(attribute) <= root.\(attribute) \(constantDescription)
                     root.bottom == root.layoutMarginsGuide.bottom + 8.0
                     root.layoutMarginsGuide.left == root.left + 8.0
                     root.right == root.layoutMarginsGuide.right + 8.0
