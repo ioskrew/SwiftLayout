@@ -6,7 +6,9 @@ extension XCTestCase {
         print("[TEST] start \(description)")
         try! XCTContext.runActivity(named: description, block: { _ in
             try setUpWithError()
+            setUp()
             block()
+            tearDown()
             try tearDownWithError()
         })
     }

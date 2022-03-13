@@ -14,6 +14,7 @@ final class AnchorsDSLTests: XCTestCase {
         root = SLView(frame: .init(x: 0, y: 0, width: 120, height: 120)).viewTag.root
         red = SLView().viewTag.red
         blue = SLView().viewTag.blue
+        continueAfterFailure = false
     }
     
     override func tearDown() {
@@ -22,30 +23,40 @@ final class AnchorsDSLTests: XCTestCase {
 }
 
 extension AnchorsDSLTests {
-    func testAnchors() {
-        activation = root {
-            red.anchors {
-                Anchors(.top, .leading, .bottom)
-                Anchors(.trailing).equalTo(blue, attribute: .leading)
+    func testAnchorsEqualToSuperview() {
+        let attributes: [NSLayoutConstraint.Attribute] = [.top, .bottom, .leading, .trailing, .left, .right, .centerX, .centerY, .width, .height, .firstBaseline, .lastBaseline]
+        for attribute in attributes {
+            context("anchor for \(attribute.description)") {
+                root {
+                    red.anchors {
+                        Anchors(attribute)
+                    }
+                }.finalActive()
+                
+                XCTAssertEqual(root.constraints.shortDescription, """
+                red.\(attribute.description) == root.\(attribute.description)
+                """)
             }
-            blue.anchors {
-                Anchors(.top, .trailing, .bottom)
-            }
-        }.active()
-        
-        XCTAssertEqual(root.subviews, [red, blue])
-        XCTAssertEqual(red.superview, root)
-        XCTAssertEqual(blue.superview, root)
-        
-        // root takes all constraints
-        XCTAssertEqual(root.constraints.count, 7)
-        
-        for attr in [NSLayoutConstraint.Attribute.top, .leading, .bottom] {
-            XCTAssertNotNil(root.findConstraints(items: (red, root), attributes: (attr, attr)).first)
         }
-        XCTAssertNotNil(root.findConstraints(items: (red, blue), attributes: (.trailing, .leading)).first)
-        for attr in [NSLayoutConstraint.Attribute.top, .trailing, .bottom] {
-            XCTAssertNotNil(root.findConstraints(items: (blue, root), attributes: (attr, attr)).first)
+        
+        context("anchor for ") {
+            let attributes: [NSLayoutConstraint.Attribute] = [.topMargin, .bottomMargin, .leadingMargin, .trailingMargin, .leftMargin, .rightMargin, .centerXWithinMargins, .centerYWithinMargins]
+            for attribute in attributes {
+                context(attribute.description) {
+                    root {
+                        red.anchors {
+                            Anchors(attribute)
+                        }
+                    }.finalActive()
+                    XCTAssertEqual(root.constraints.shortDescription, """
+                    red.\(attribute) == root.\(attribute)
+                    root.bottom == root.layoutMarginsGuide.bottom + 8.0
+                    root.layoutMarginsGuide.left == root.left + 8.0
+                    root.right == root.layoutMarginsGuide.right + 8.0
+                    root.layoutMarginsGuide.top == root.top + 8.0
+                    """)
+                }
+            }
         }
     }
     

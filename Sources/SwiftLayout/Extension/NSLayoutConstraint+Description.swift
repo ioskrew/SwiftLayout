@@ -17,8 +17,8 @@ extension NSLayoutConstraint {
     var firstShort: String? {
         if let view = self.firstItem as? SLView {
             return view.tagDescription
-        } else if let guide = self.firstItem as? SLLayoutGuide, let view = guide.owningView {
-            return view.tagDescription + ".safeAreaLayoutGuide"
+        } else if let guide = self.firstItem as? SLLayoutGuide {
+            return guide.detailDescription
         } else {
             return nil
         }
@@ -27,8 +27,8 @@ extension NSLayoutConstraint {
     var secondShort: String? {
         if let view = self.secondItem as? SLView {
             return view.tagDescription
-        } else if let guide = self.secondItem as? SLLayoutGuide, let view = guide.owningView {
-            return view.tagDescription + ".safeAreaLayoutGuide"
+        } else if let guide = self.secondItem as? SLLayoutGuide {
+            return guide.detailDescription
         } else {
             return nil
         }
@@ -210,5 +210,11 @@ extension NSLayoutConstraint.Relation: CustomStringConvertible, CustomDebugStrin
         @unknown default:
             return "?"
         }
+    }
+}
+
+extension Array where Element: NSLayoutConstraint {
+    public var shortDescription: String {
+        map(\.shortDescription).joined(separator: "\n")
     }
 }
