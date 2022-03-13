@@ -174,8 +174,8 @@ extension AnchorsDSLTests {
         }
     }
     
-    func testLayoutAfterAnchors() {
-        activation = root {
+    func testAnchorsInSublayout() {
+        root {
             red.anchors {
                 Anchors.allSides()
             }.sublayout {
@@ -183,16 +183,18 @@ extension AnchorsDSLTests {
                     Anchors(.centerX, .centerY)
                 }
             }
-        }.active()
+        }.finalActive()
         
-        XCTAssertEqual(blue.superview, red)
-        XCTAssertEqual(red.superview, root)
-        
-        for attr in [NSLayoutConstraint.Attribute.top, .leading, .trailing, .bottom] {
-            XCTAssertNotNil(root.findConstraints(items: (red, root), attributes: (attr, attr)).first)
-        }
-        XCTAssertNotNil(root.findConstraints(items: (blue, red), attributes: (.centerX, .centerX)).first)
-        XCTAssertNotNil(root.findConstraints(items: (blue, red), attributes: (.centerY, .centerY)).first)
+        XCTAssertEqual(root.constraints.shortDescription, """
+        red.top == root.top
+        red.bottom == root.bottom
+        red.leading == root.leading
+        red.trailing == root.trailing
+        """)
+        XCTAssertEqual(red.constraints.shortDescription, """
+        blue.centerX == red.centerX
+        blue.centerY == red.centerY
+        """)
     }
     
     func testAnchorsEitherTrue() {
