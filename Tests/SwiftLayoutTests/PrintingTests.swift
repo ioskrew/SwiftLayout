@@ -401,12 +401,12 @@ extension PrintingTests {
         
         init() {
             super.init(frame: .zero)
-            updateLayout()
+            sl.layout()
         }
         
         required init?(coder: NSCoder) {
             super.init(coder: coder)
-            updateLayout()
+            sl.layout()
         }
     }
 }
@@ -475,7 +475,7 @@ extension PrintingTests {
         
         override init(frame: CGRect) {
             super.init(frame: frame)
-            updateLayout()
+            sl.layout()
         }
         
         required init?(coder: NSCoder) {
@@ -492,7 +492,7 @@ extension PrintingTests {
         init(in earth: Earth) {
             super.init(frame: .zero)
             self.earth = earth
-            updateLayout()
+            sl.layout()
         }
         
         weak var earth: Earth?
@@ -525,7 +525,7 @@ extension PrintingTests {
         
         override init(frame: CGRect) {
             super.init(frame: frame)
-            updateLayout()
+            sl.layout()
         }
     }
     

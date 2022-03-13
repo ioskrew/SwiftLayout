@@ -15,7 +15,7 @@ public extension LayoutableViewRepresentable where Self: SLView {
         return self
     }
     func updateUIView(_ view: Self, context: SLViewRepresentableContext<Self>) {
-        view.updateLayout()
+        view.sl.layout()
     }
 }
 
@@ -24,6 +24,6 @@ public extension LayoutableViewControllerRepresentable where Self: SLViewControl
         return self
     }
     func updateUIViewController(_ viewController: Self, context: SLViewControllerRepresentableContext<Self>) {
-        viewController.updateLayout()
+        viewController.sl.layout()
     }
 }

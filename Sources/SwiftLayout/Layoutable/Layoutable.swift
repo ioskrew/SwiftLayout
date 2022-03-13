@@ -20,6 +20,7 @@ public protocol Layoutable: AnyObject {
 
 public extension Layoutable {
     
+    @available(*, deprecated, renamed: "self.sl.layout()", message: "updateLayout of Layoutable moved to sl wrapper type")
     func updateLayout() {
         self.activation = Activator.update(layout: layout, fromActivation: activation ?? Activation())
     }

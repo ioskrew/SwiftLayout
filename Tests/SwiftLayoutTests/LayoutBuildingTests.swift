@@ -25,7 +25,7 @@ final class LayoutBuildingTests: XCTestCase {
         }
         """.tabbed)
 
-        view.updateLayout()
+        view.sl.layout()
 
         XCTAssertEqual(view.root.count(view.child), 1)
         XCTAssertEqual(view.root.count(view.friend), 0)
@@ -83,7 +83,7 @@ extension LayoutBuildingTests {
     class LayoutView: SLView, Layoutable {
         var flag = true {
             didSet {
-                updateLayout()
+                sl.layout()
             }
         }
         
@@ -118,7 +118,7 @@ extension LayoutBuildingTests {
         
         override init(frame: CGRect) {
             super.init(frame: frame)
-            updateLayout()
+            sl.layout()
         }
         
         required init?(coder: NSCoder) {

@@ -181,7 +181,7 @@ extension ImplementationTests {
         
         init() {
             super.init(frame: .zero)
-            updateLayout()
+            sl.layout()
         }
         
         required init?(coder: NSCoder) {
@@ -724,12 +724,12 @@ extension ImplementationTests {
         
         override init(frame: CGRect) {
             super.init(frame: frame)
-            updateLayout()
+            sl.layout()
         }
         
         required init?(coder: NSCoder) {
             super.init(coder: coder)
-            updateLayout()
+            sl.layout()
         }
     }
 }

@@ -49,7 +49,7 @@ public final class LayoutProperty<Value> {
         }
         set {
             instance[keyPath: storageKeyPath].stored = newValue
-            instance.updateLayout()
+            instance.sl.layout()
         }
     }
     
