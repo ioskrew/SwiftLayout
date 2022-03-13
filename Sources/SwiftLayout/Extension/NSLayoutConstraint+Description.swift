@@ -36,7 +36,7 @@ extension NSLayoutConstraint {
     
     var constantShort: String? {
         if constant < 0 {
-            return constant.description
+            return "- \(abs(constant).description)"
         } else if constant > 0 {
             return "+ \(constant.description)"
         } else {

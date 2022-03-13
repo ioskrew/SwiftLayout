@@ -8,33 +8,47 @@ final class AnchorsDSLTests: XCTestCase {
     var red: SLView = SLView().viewTag.red
     var blue: SLView = SLView().viewTag.blue
     
+    var constant: CGFloat = 0.0
+    
     var activation: Activation?
     
     override func setUp() {
         root = SLView(frame: .init(x: 0, y: 0, width: 120, height: 120)).viewTag.root
         red = SLView().viewTag.red
         blue = SLView().viewTag.blue
+        constant = CGFloat.random(in: -5...5)
         continueAfterFailure = false
     }
     
     override func tearDown() {
         activation = nil
     }
+    
+    var constantDescription: String {
+        if constant < 0 {
+            return "- \(abs(constant).description)"
+        } else if constant > 0 {
+            return "+ \(abs(constant).description)"
+        } else {
+            return ""
+        }
+    }
+    
 }
 
 extension AnchorsDSLTests {
     func testAnchorsEqualToSuperview() {
         let attributes: [NSLayoutConstraint.Attribute] = [.top, .bottom, .leading, .trailing, .left, .right, .centerX, .centerY, .width, .height, .firstBaseline, .lastBaseline]
         for attribute in attributes {
-            context("anchor for \(attribute.description)") {
+            context("anchor for \(attribute.description) \(constantDescription)") {
                 root {
                     red.anchors {
-                        Anchors(attribute)
+                        Anchors(attribute).setConstant(constant)
                     }
                 }.finalActive()
                 
                 XCTAssertEqual(root.constraints.shortDescription, """
-                red.\(attribute.description) == root.\(attribute.description)
+                red.\(attribute.description) == root.\(attribute.description) \(constantDescription)
                 """)
             }
         }
@@ -42,14 +56,14 @@ extension AnchorsDSLTests {
         context("anchor for ") {
             let attributes: [NSLayoutConstraint.Attribute] = [.topMargin, .bottomMargin, .leadingMargin, .trailingMargin, .leftMargin, .rightMargin, .centerXWithinMargins, .centerYWithinMargins]
             for attribute in attributes {
-                context(attribute.description) {
+                context("\(attribute.description)  \(constantDescription)") {
                     root {
                         red.anchors {
-                            Anchors(attribute)
+                            Anchors(attribute).setConstant(constant)
                         }
                     }.finalActive()
                     XCTAssertEqual(root.constraints.shortDescription, """
-                    red.\(attribute) == root.\(attribute)
+                    red.\(attribute) == root.\(attribute) \(constantDescription)
                     root.bottom == root.layoutMarginsGuide.bottom + 8.0
                     root.layoutMarginsGuide.left == root.left + 8.0
                     root.right == root.layoutMarginsGuide.right + 8.0
