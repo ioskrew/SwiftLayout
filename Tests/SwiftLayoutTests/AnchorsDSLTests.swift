@@ -95,11 +95,61 @@ extension AnchorsDSLTests {
                 context(attribute.description) {
                     root {
                         red.anchors {
-                            Anchors(attribute)
+                            Anchors(attribute).greaterThanOrEqualTo()
                         }
                     }.finalActive()
                     XCTAssertEqual(root.constraints.shortDescription, """
-                    red.\(attribute) == root.\(attribute)
+                    red.\(attribute) >= root.\(attribute)
+                    root.bottom == root.layoutMarginsGuide.bottom + 8.0
+                    root.layoutMarginsGuide.left == root.left + 8.0
+                    root.right == root.layoutMarginsGuide.right + 8.0
+                    root.layoutMarginsGuide.top == root.top + 8.0
+                    """)
+                }
+            }
+        }
+    }
+    
+    func testAnchorsLessThanOrEqualToSuperview() {
+        let attributes: [NSLayoutConstraint.Attribute] = [.top, .bottom, .leading, .trailing, .left, .right, .centerX, .centerY, .firstBaseline, .lastBaseline]
+        for attribute in attributes {
+            context("anchor for \(attribute.description)") {
+                root {
+                    red.anchors {
+                        Anchors(attribute).lessThanOrEqualTo()
+                    }
+                }.finalActive()
+                
+                XCTAssertEqual(root.constraints.shortDescription, """
+                red.\(attribute.description) <= root.\(attribute.description)
+                """)
+            }
+        }
+        
+        context("anchor for width and height") {
+            root {
+                red.anchors {
+                    Anchors(.width, .height).lessThanOrEqualTo(root)
+                }
+            }.finalActive()
+            
+            XCTAssertEqual(root.constraints.shortDescription, """
+            red.width <= root.width
+            red.height <= root.height
+            """)
+        }
+        
+        context("anchor for ") {
+            let attributes: [NSLayoutConstraint.Attribute] = [.topMargin, .bottomMargin, .leadingMargin, .trailingMargin, .leftMargin, .rightMargin, .centerXWithinMargins, .centerYWithinMargins]
+            for attribute in attributes {
+                context(attribute.description) {
+                    root {
+                        red.anchors {
+                            Anchors(attribute).lessThanOrEqualTo()
+                        }
+                    }.finalActive()
+                    XCTAssertEqual(root.constraints.shortDescription, """
+                    red.\(attribute) <= root.\(attribute)
                     root.bottom == root.layoutMarginsGuide.bottom + 8.0
                     root.layoutMarginsGuide.left == root.left + 8.0
                     root.right == root.layoutMarginsGuide.right + 8.0
