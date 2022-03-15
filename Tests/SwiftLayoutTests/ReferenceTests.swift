@@ -20,7 +20,7 @@ class ReferenceTests: XCTestCase {
             self.view = SelfReferenceView()
             self.weakView = view
             
-            self.view?.sl.layout()
+            self.view?.sl.updateLayout()
             self.view = nil
         }
         context("check release reference") {

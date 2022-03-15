@@ -171,7 +171,7 @@ extension LayoutDSLTests {
         let root = TestView().viewTag.root
         root.translatesAutoresizingMaskIntoConstraints = false
         window.addSubview(root)
-        root.sl.layout()
+        root.sl.updateLayout()
         
         let expect = """
         root {

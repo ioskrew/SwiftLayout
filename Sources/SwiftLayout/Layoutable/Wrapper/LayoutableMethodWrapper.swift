@@ -14,7 +14,7 @@ public final class LayoutableMethodWrapper<L: Layoutable> {
         self.layoutable = layoutable
     }
     
-    public func layout() {
+    public func updateLayout() {
         guard let layoutable = layoutable else {
             return
         }
