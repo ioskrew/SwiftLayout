@@ -1,5 +1,5 @@
 //
-//  SL.swift
+//  LayoutableMethodWrapper.swift
 //  
 //
 //  Created by oozoofrog on 2022/03/13.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-public final class SL<L: Layoutable> {
+public final class LayoutableMethodWrapper<L: Layoutable> {
     private weak var layoutable: L?
     
     init(_ layoutable: L) {
@@ -24,5 +24,5 @@ public final class SL<L: Layoutable> {
 }
 
 extension Layoutable {
-    public var sl: SL<Self> { .init(self) }
+    public var sl: LayoutableMethodWrapper<Self> { .init(self) }
 }
