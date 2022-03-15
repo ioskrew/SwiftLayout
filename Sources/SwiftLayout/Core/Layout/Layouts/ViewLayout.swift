@@ -4,12 +4,12 @@ public struct ViewLayout<V: SLView, SubLayout: Layout>: Layout {
     
     let innerView: V
     var sublayout: SubLayout
-    var coordinators: [Coordinator]
+    var attachments: [Attachment]
     
     init(_ view: V, sublayout: SubLayout) {
         self.innerView = view
         self.sublayout = sublayout
-        self.coordinators = []
+        self.attachments = []
     }
     
     public var view: SLView? {
@@ -17,11 +17,11 @@ public struct ViewLayout<V: SLView, SubLayout: Layout>: Layout {
     }
     
     public var sublayouts: [Layout] {
-        [sublayout] + coordinators.compactMap(\.sublayout)
+        [sublayout] + attachments.compactMap(\.sublayout)
     }
     
     public var anchors: Anchors? {
-        coordinators.compactMap(\.anchors).reduce(Anchors(), +)
+        attachments.compactMap(\.anchors).reduce(Anchors(), +)
     }
 
     public var debugDescription: String {
@@ -59,7 +59,7 @@ extension ViewLayout {
     ///
     public func anchors(@AnchorsBuilder _ build: () -> Anchors) -> Self {
         var viewLayout = self
-        viewLayout.coordinators.append(.anchors(build()))
+        viewLayout.attachments.append(.anchors(build()))
         return viewLayout
     }
     
@@ -81,7 +81,7 @@ extension ViewLayout {
     ///
     public func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> Self {
         var viewLayout = self
-        viewLayout.coordinators.append(.sublayout(build()))
+        viewLayout.attachments.append(.sublayout(build()))
         return viewLayout
     }
     
@@ -99,7 +99,7 @@ extension ViewLayout {
 
 extension ViewLayout {
     
-    enum Coordinator {
+    enum Attachment {
         case sublayout(_ layout: Layout)
         case anchors(_ anchors: Anchors)
         
