@@ -67,8 +67,8 @@ extension _SLViewExtension where Self: SLView {
     /// - Parameter build: A ``LayoutBuilder`` that  create sublayouts of this view.
     /// - Returns: An ``ViewLayout`` that wraps this view and contains sublayouts .
     ///
-    public func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<Self, EmptyLayout> {
-        ViewLayout(self, sublayout: EmptyLayout()).sublayout(build)
+    public func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<Self, L> {
+        ViewLayout(self, sublayout: build())
     }
     
     ///
