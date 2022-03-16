@@ -208,41 +208,57 @@ extension AnchorsDSLTests {
         """)
     }
     
-    func testAnchorsEitherTrue() {
-        let toggle = true
-        
-        activation = root {
-            red.anchors {
-                if toggle {
-                    Anchors.cap()
-                    Anchors(.bottom).equalTo(blue, attribute: .top)
-                } else {
-                    Anchors.shoe()
-                    Anchors(.top).equalTo(blue, attribute: .bottom)
+    func testAnchorsTrueOnly() {
+        @LayoutBuilder func layout() -> some Layout {
+            root {
+                red.anchors {
+                    if true {
+                        Anchors.allSides()
+                    }
                 }
             }
-            blue.anchors {
-                if toggle {
-                    Anchors.shoe()
-                } else {
-                    Anchors.cap()
+        }
+        
+        layout().finalActive()
+        
+        XCTAssertEqual(root.constraints.shortDescription, """
+        red.top == root.top
+        red.bottom == root.bottom
+        red.leading == root.leading
+        red.trailing == root.trailing
+        """)
+    }
+    
+    func testAnchorsIF() {
+        @LayoutBuilder func layout(_ flag: Bool) -> some Layout {
+            root {
+                red.anchors {
+                    if flag {
+                        Anchors.cap()
+                    } else {
+                        Anchors.shoe()
+                    }
                 }
             }
-        }.active()
+        }
         
-        XCTAssertEqual(root.subviews, [red, blue])
-        XCTAssertEqual(red.superview, root)
-        XCTAssertEqual(blue.superview, root)
-
-        XCTAssertEqual(root.constraints.count, 7)
-
-        XCTAssertEqual(root.findConstraints(items: (red, root), attributes: (.top, .top)).count, 1)
-        XCTAssertEqual(root.findConstraints(items: (red, root), attributes: (.leading, .leading)).count, 1)
-        XCTAssertEqual(root.findConstraints(items: (red, root), attributes: (.trailing, .trailing)).count, 1)
-
-        XCTAssertEqual(root.findConstraints(items: (blue, root), attributes: (.bottom, .bottom)).count, 1)
-        XCTAssertEqual(root.findConstraints(items: (blue, root), attributes: (.leading, .leading)).count, 1)
-        XCTAssertEqual(root.findConstraints(items: (blue, root), attributes: (.trailing, .trailing)).count, 1)
+        context("true") {
+            layout(true).finalActive()
+            XCTAssertEqual(root.constraints.shortDescription, """
+            red.top == root.top
+            red.leading == root.leading
+            red.trailing == root.trailing
+            """)
+        }
+        
+        context("false") {
+            layout(false).finalActive()
+            XCTAssertEqual(root.constraints.shortDescription, """
+            red.bottom == root.bottom
+            red.leading == root.leading
+            red.trailing == root.trailing
+            """)
+        }
     }
     
     func testAnchorsEitherFalse() {
