@@ -648,7 +648,7 @@ extension ImplementationTests {
         }
         """.tabbed
         
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(printOnlyIdentifier: true), expect)
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(options: .onlyIdentifier), expect)
     }
     
     func testFeatureComposeComplexWithAnimationHandling() {
@@ -684,7 +684,7 @@ extension ImplementationTests {
         }
         """.tabbed
         
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(printOnlyIdentifier: true), expect)
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(options: .onlyIdentifier), expect)
     }
 
 }
