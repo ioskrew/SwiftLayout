@@ -1,5 +1,10 @@
 import XCTest
 import SwiftLayout
+#if canImport(UIKit)
+import UIKit
+#elseif canImport(AppKit)
+import AppKit
+#endif
 
 /// test cases for constraint DSL syntax
 final class AnchorsDSLTests: XCTestCase {
@@ -8,49 +13,180 @@ final class AnchorsDSLTests: XCTestCase {
     var red: SLView = SLView().viewTag.red
     var blue: SLView = SLView().viewTag.blue
     
+    var constant: CGFloat = 0.0
+    
     var activation: Activation?
     
     override func setUp() {
         root = SLView(frame: .init(x: 0, y: 0, width: 120, height: 120)).viewTag.root
         red = SLView().viewTag.red
         blue = SLView().viewTag.blue
+        constant = CGFloat.random(in: -5...5)
+        continueAfterFailure = false
     }
     
     override func tearDown() {
         activation = nil
     }
-}
-
-extension AnchorsDSLTests {
-    func testAnchors() {
-        activation = root {
-            red.anchors {
-                Anchors(.top, .leading, .bottom)
-                Anchors(.trailing).equalTo(blue, attribute: .leading)
-            }
-            blue.anchors {
-                Anchors(.top, .trailing, .bottom)
-            }
-        }.active()
-        
-        XCTAssertEqual(root.subviews, [red, blue])
-        XCTAssertEqual(red.superview, root)
-        XCTAssertEqual(blue.superview, root)
-        
-        // root takes all constraints
-        XCTAssertEqual(root.constraints.count, 7)
-        
-        for attr in [NSLayoutConstraint.Attribute.top, .leading, .bottom] {
-            XCTAssertNotNil(root.findConstraints(items: (red, root), attributes: (attr, attr)).first)
-        }
-        XCTAssertNotNil(root.findConstraints(items: (red, blue), attributes: (.trailing, .leading)).first)
-        for attr in [NSLayoutConstraint.Attribute.top, .trailing, .bottom] {
-            XCTAssertNotNil(root.findConstraints(items: (blue, root), attributes: (attr, attr)).first)
+    
+    var constantDescription: String {
+        if constant < 0 {
+            return "- \(abs(constant).description)"
+        } else if constant > 0 {
+            return "+ \(abs(constant).description)"
+        } else {
+            return ""
         }
     }
     
-    func testLayoutAfterAnchors() {
-        activation = root {
+}
+
+extension AnchorsDSLTests {
+    func testAnchorsEqualToSuperview() {
+        let attributes: [NSLayoutConstraint.Attribute] = [.top, .bottom, .leading, .trailing, .left, .right, .centerX, .centerY, .width, .height, .firstBaseline, .lastBaseline]
+        for attribute in attributes {
+            context("anchor for \(attribute.description) \(constantDescription)") {
+                root {
+                    red.anchors {
+                        Anchors(attribute).setConstant(constant)
+                    }
+                }.finalActive()
+                
+                XCTAssertEqual(root.constraints.shortDescription, """
+                red.\(attribute.description) == root.\(attribute.description) \(constantDescription)
+                """)
+            }
+        }
+        
+        #if canImport(UIKit)
+        context("anchor for ") {
+            let attributes: [NSLayoutConstraint.Attribute] = [.topMargin, .bottomMargin, .leadingMargin, .trailingMargin, .leftMargin, .rightMargin, .centerXWithinMargins, .centerYWithinMargins]
+            for attribute in attributes {
+                context("\(attribute.description)  \(constantDescription)") {
+                    root {
+                        red.anchors {
+                            Anchors(attribute).setConstant(constant)
+                        }
+                    }.finalActive()
+                    XCTAssertEqual(root.constraints.shortDescription, """
+                    red.\(attribute) == root.\(attribute) \(constantDescription)
+                    root.bottom == root.layoutMarginsGuide.bottom + 8.0
+                    root.layoutMarginsGuide.left == root.left + 8.0
+                    root.right == root.layoutMarginsGuide.right + 8.0
+                    root.layoutMarginsGuide.top == root.top + 8.0
+                    """)
+                }
+            }
+        }
+        #endif
+    }
+    
+    func testAnchorsGreaterThanOrEqualToSuperview() {
+        let attributes: [NSLayoutConstraint.Attribute] = [.top, .bottom, .leading, .trailing, .left, .right, .centerX, .centerY, .firstBaseline, .lastBaseline]
+        for attribute in attributes {
+            context("anchor for \(attribute.description) \(constantDescription)") {
+                root {
+                    red.anchors {
+                        Anchors(attribute).greaterThanOrEqualTo(constant: constant)
+                    }
+                }.finalActive()
+                
+                XCTAssertEqual(root.constraints.shortDescription, """
+                red.\(attribute.description) >= root.\(attribute.description) \(constantDescription)
+                """)
+            }
+        }
+        
+        context("anchor for width and height") {
+            root {
+                red.anchors {
+                    Anchors(.width, .height).greaterThanOrEqualTo(root, constant: constant)
+                }
+            }.finalActive()
+            
+            XCTAssertEqual(root.constraints.shortDescription, """
+            red.width >= root.width \(constantDescription)
+            red.height >= root.height \(constantDescription)
+            """)
+        }
+        
+        #if canImport(UIKit)
+        context("anchor for ") {
+            let attributes: [NSLayoutConstraint.Attribute] = [.topMargin, .bottomMargin, .leadingMargin, .trailingMargin, .leftMargin, .rightMargin, .centerXWithinMargins, .centerYWithinMargins]
+            for attribute in attributes {
+                context(attribute.description) {
+                    root {
+                        red.anchors {
+                            Anchors(attribute).greaterThanOrEqualTo().setConstant(constant)
+                        }
+                    }.finalActive()
+                    XCTAssertEqual(root.constraints.shortDescription, """
+                    red.\(attribute) >= root.\(attribute) \(constantDescription)
+                    root.bottom == root.layoutMarginsGuide.bottom + 8.0
+                    root.layoutMarginsGuide.left == root.left + 8.0
+                    root.right == root.layoutMarginsGuide.right + 8.0
+                    root.layoutMarginsGuide.top == root.top + 8.0
+                    """)
+                }
+            }
+        }
+        #endif
+    }
+    
+    func testAnchorsLessThanOrEqualToSuperview() {
+        let attributes: [NSLayoutConstraint.Attribute] = [.top, .bottom, .leading, .trailing, .left, .right, .centerX, .centerY, .firstBaseline, .lastBaseline]
+        for attribute in attributes {
+            context("anchor for \(attribute.description)") {
+                root {
+                    red.anchors {
+                        Anchors(attribute).lessThanOrEqualTo().setConstant(constant)
+                    }
+                }.finalActive()
+                
+                XCTAssertEqual(root.constraints.shortDescription, """
+                red.\(attribute.description) <= root.\(attribute.description) \(constantDescription)
+                """)
+            }
+        }
+        
+        context("anchor for width and height") {
+            root {
+                red.anchors {
+                    Anchors(.width, .height).lessThanOrEqualTo(root, constant: constant)
+                }
+            }.finalActive()
+            
+            XCTAssertEqual(root.constraints.shortDescription, """
+            red.width <= root.width \(constantDescription)
+            red.height <= root.height \(constantDescription)
+            """)
+        }
+        
+        #if canImport(UIKit)
+        context("anchor for ") {
+            let attributes: [NSLayoutConstraint.Attribute] = [.topMargin, .bottomMargin, .leadingMargin, .trailingMargin, .leftMargin, .rightMargin, .centerXWithinMargins, .centerYWithinMargins]
+            for attribute in attributes {
+                context(attribute.description) {
+                    root {
+                        red.anchors {
+                            Anchors(attribute).lessThanOrEqualTo().setConstant(constant)
+                        }
+                    }.finalActive()
+                    XCTAssertEqual(root.constraints.shortDescription, """
+                    red.\(attribute) <= root.\(attribute) \(constantDescription)
+                    root.bottom == root.layoutMarginsGuide.bottom + 8.0
+                    root.layoutMarginsGuide.left == root.left + 8.0
+                    root.right == root.layoutMarginsGuide.right + 8.0
+                    root.layoutMarginsGuide.top == root.top + 8.0
+                    """)
+                }
+            }
+        }
+        #endif
+    }
+    
+    func testAnchorsInSublayout() {
+        root {
             red.anchors {
                 Anchors.allSides()
             }.sublayout {
@@ -58,120 +194,112 @@ extension AnchorsDSLTests {
                     Anchors(.centerX, .centerY)
                 }
             }
-        }.active()
+        }.finalActive()
         
-        XCTAssertEqual(blue.superview, red)
-        XCTAssertEqual(red.superview, root)
-        
-        for attr in [NSLayoutConstraint.Attribute.top, .leading, .trailing, .bottom] {
-            XCTAssertNotNil(root.findConstraints(items: (red, root), attributes: (attr, attr)).first)
+        XCTAssertEqual(root.constraints.shortDescription, """
+        red.top == root.top
+        red.bottom == root.bottom
+        red.leading == root.leading
+        red.trailing == root.trailing
+        """)
+        XCTAssertEqual(red.constraints.shortDescription, """
+        blue.centerX == red.centerX
+        blue.centerY == red.centerY
+        """)
+    }
+    
+    func testAnchorsTrueOnly() {
+        @LayoutBuilder func layout() -> some Layout {
+            root {
+                red.anchors {
+                    if true {
+                        Anchors.allSides()
+                    }
+                }
+            }
         }
-        XCTAssertNotNil(root.findConstraints(items: (blue, red), attributes: (.centerX, .centerX)).first)
-        XCTAssertNotNil(root.findConstraints(items: (blue, red), attributes: (.centerY, .centerY)).first)
+        
+        layout().finalActive()
+        
+        XCTAssertEqual(root.constraints.shortDescription, """
+        red.top == root.top
+        red.bottom == root.bottom
+        red.leading == root.leading
+        red.trailing == root.trailing
+        """)
     }
     
-    func testAnchorsEitherTrue() {
-        let toggle = true
-        
-        activation = root {
-            red.anchors {
-                if toggle {
-                    Anchors.cap()
-                    Anchors(.bottom).equalTo(blue, attribute: .top)
-                } else {
-                    Anchors.shoe()
-                    Anchors(.top).equalTo(blue, attribute: .bottom)
+    func testAnchorsIF() {
+        @LayoutBuilder func layout(_ flag: Bool) -> some Layout {
+            root {
+                red.anchors {
+                    if flag {
+                        Anchors.cap()
+                    } else {
+                        Anchors.shoe()
+                    }
                 }
             }
-            blue.anchors {
-                if toggle {
-                    Anchors.shoe()
-                } else {
-                    Anchors.cap()
-                }
-            }
-        }.active()
+        }
         
-        XCTAssertEqual(root.subviews, [red, blue])
-        XCTAssertEqual(red.superview, root)
-        XCTAssertEqual(blue.superview, root)
-
-        XCTAssertEqual(root.constraints.count, 7)
-
-        XCTAssertEqual(root.findConstraints(items: (red, root), attributes: (.top, .top)).count, 1)
-        XCTAssertEqual(root.findConstraints(items: (red, root), attributes: (.leading, .leading)).count, 1)
-        XCTAssertEqual(root.findConstraints(items: (red, root), attributes: (.trailing, .trailing)).count, 1)
-
-        XCTAssertEqual(root.findConstraints(items: (blue, root), attributes: (.bottom, .bottom)).count, 1)
-        XCTAssertEqual(root.findConstraints(items: (blue, root), attributes: (.leading, .leading)).count, 1)
-        XCTAssertEqual(root.findConstraints(items: (blue, root), attributes: (.trailing, .trailing)).count, 1)
-    }
-    
-    func testAnchorsEitherFalse() {
-        let toggle = false
+        context("true") {
+            layout(true).finalActive()
+            XCTAssertEqual(root.constraints.shortDescription, """
+            red.top == root.top
+            red.leading == root.leading
+            red.trailing == root.trailing
+            """)
+        }
         
-        activation = root {
-            red.anchors {
-                if toggle {
-                    Anchors.cap()
-                    Anchors(.bottom).equalTo(blue, attribute: .top)
-                } else {
-                    Anchors.shoe()
-                    Anchors(.top).equalTo(blue, attribute: .bottom)
-                }
-            }
-            blue.anchors {
-                if toggle {
-                    Anchors.shoe()
-                } else {
-                    Anchors.cap()
-                }
-            }
-        }.active()
-        
-        XCTAssertEqual(root.subviews, [red, blue])
-        XCTAssertEqual(red.superview, root)
-        XCTAssertEqual(blue.superview, root)
-
-        XCTAssertEqual(root.constraints.count, 7)
-
-        XCTAssertEqual(root.findConstraints(items: (blue, root), attributes: (.top, .top)).count, 1)
-        XCTAssertEqual(root.findConstraints(items: (blue, root), attributes: (.leading, .leading)).count, 1)
-        XCTAssertEqual(root.findConstraints(items: (blue, root), attributes: (.trailing, .trailing)).count, 1)
-
-        XCTAssertEqual(root.findConstraints(items: (red, root), attributes: (.bottom, .bottom)).count, 1)
-        XCTAssertEqual(root.findConstraints(items: (red, root), attributes: (.leading, .leading)).count, 1)
-        XCTAssertEqual(root.findConstraints(items: (red, root), attributes: (.trailing, .trailing)).count, 1)
+        context("false") {
+            layout(false).finalActive()
+            XCTAssertEqual(root.constraints.shortDescription, """
+            red.bottom == root.bottom
+            red.leading == root.leading
+            red.trailing == root.trailing
+            """)
+        }
     }
     
     func testOptionalAnchors() {
-        let optionalAnchor: Anchors? = Anchors(.trailing).equalTo(blue, attribute: .leading)
-        let nilAnchor: Anchors? = nil
-
-        activation = root {
-            red.anchors {
-                Anchors(.top, .leading, .bottom)
-                optionalAnchor
+        @LayoutBuilder func layout(_ anchors: Anchors?) -> some Layout {
+            root {
+                red.anchors {
+                    anchors
+                }
             }
-            blue.anchors {
-                Anchors(.top, .trailing, .bottom)
-                nilAnchor
-            }
-        }.active()
-
-        XCTAssertEqual(root.subviews, [red, blue])
-        XCTAssertEqual(red.superview, root)
-        XCTAssertEqual(blue.superview, root)
-
-        // root takes all constraints
-        XCTAssertEqual(root.constraints.count, 7)
-
-        for attr in [NSLayoutConstraint.Attribute.top, .leading, .bottom] {
-            XCTAssertNotNil(root.findConstraints(items: (red, root), attributes: (attr, attr)).first)
         }
-        XCTAssertNotNil(root.findConstraints(items: (red, blue), attributes: (.trailing, .leading)).first)
-        for attr in [NSLayoutConstraint.Attribute.top, .trailing, .bottom] {
-            XCTAssertNotNil(root.findConstraints(items: (blue, root), attributes: (attr, attr)).first)
+        
+        context("nil anchors") {
+            layout(nil).finalActive()
+            XCTAssertEqual(root.constraints.shortDescription, "")
+        }
+        
+        context("leading anchors") {
+            layout(Anchors(.leading)).finalActive()
+            XCTAssertEqual(root.constraints.shortDescription, "red.leading == root.leading")
+        }
+    }
+    
+    func testOptionalBindingAnchors() {
+        @LayoutBuilder func layout(_ anchors: Anchors?) -> some Layout {
+            root {
+                red.anchors {
+                    if let anchors = anchors {
+                        anchors
+                    }
+                }
+            }
+        }
+        
+        context("nil anchors") {
+            layout(nil).finalActive()
+            XCTAssertEqual(root.constraints.shortDescription, "")
+        }
+        
+        context("leading anchors") {
+            layout(Anchors(.leading)).finalActive()
+            XCTAssertEqual(root.constraints.shortDescription, "red.leading == root.leading")
         }
     }
     
@@ -183,24 +311,24 @@ extension AnchorsDSLTests {
             .trailing
         ]
 
-        activation = root.anchors {
-            for attr in attributes {
-                Anchors(attr).equalTo(red)
+        root {
+            red.anchors {
+                for attr in attributes {
+                    Anchors(attr)
+                }
             }
-        }.sublayout {
-            red
-        }.active()
+        }.finalActive()
         
-        XCTAssertEqual(root.subviews, [red])
-        XCTAssertEqual(red.superview, root)
-        
-        for attr in attributes {
-            XCTAssertNotNil(root.findConstraints(items: (root, red), attributes: (attr, attr)).first)
-        }
+        XCTAssertEqual(root.constraints.shortDescription, """
+        red.top == root.top
+        red.bottom == root.bottom
+        red.leading == root.leading
+        red.trailing == root.trailing
+        """)
     }
     
     func testAnchorsFromSeperately() {
-        activation = root {
+        root {
             red.anchors {
                 Anchors.cap()
             }
@@ -210,81 +338,79 @@ extension AnchorsDSLTests {
             red.anchors {
                 Anchors(.bottom).equalTo(blue, attribute: .top)
             }
-        }.active()
+        }.finalActive()
         
-        XCTAssertEqual(root.subviews, [red, blue])
-        XCTAssertEqual(red.superview, root)
-        XCTAssertEqual(blue.superview, root)
-        
-        XCTAssertEqual(root.constraints.count, 7)
-        
-        for attr in [NSLayoutConstraint.Attribute.top, .leading, .trailing] {
-            XCTAssertNotNil(root.findConstraints(items: (red, root), attributes: (attr, attr)).first)
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+        root {
+            red.anchors {
+                Anchors(.top, .leading, .trailing)
+                Anchors(.bottom).equalTo(blue, attribute: .top)
+            }
+            blue.anchors {
+                Anchors(.bottom, .leading, .trailing)
+            }
         }
-        XCTAssertNotNil(root.findConstraints(items: (red, blue), attributes: (.bottom, .top)).first)
-        for attr in [NSLayoutConstraint.Attribute.leading, .trailing, .bottom] {
-            XCTAssertNotNil(root.findConstraints(items: (blue, root), attributes: (attr, attr)).first)
-        }
+        """.tabbed)
     }
     
     func testAnchorsFromLayoutGuide() {
-        activation = root.anchors {
+        root.anchors {
             Anchors.allSides(red.safeAreaLayoutGuide)
         }.sublayout {
             red
-        }.active()
+        }.finalActive()
         
-        XCTAssertEqual(root.subviews, [red])
-        XCTAssertEqual(red.superview, root)
-        
-        for attr in [NSLayoutConstraint.Attribute.top, .leading, .trailing] {
-            XCTAssertNotNil(root.findConstraints(items: (root, red.safeAreaLayoutGuide), attributes: (attr, attr)).first)
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+        root.anchors {
+            Anchors(.top, .bottom, .leading, .trailing).equalTo(red.safeAreaLayoutGuide)
+        }.sublayout {
+            red
         }
+        """.tabbed)
     }
     
     func testAnchorsFromIdentifier() {
-        activation = root.anchors {
+        root.anchors {
             Anchors.allSides("label")
         }.sublayout {
             UILabel().identifying("label")
-        }.active()
+        }.finalActive()
         
-        let label = activation?.viewForIdentifier("label")
-        
-        XCTAssertEqual(root.subviews, [label])
-        XCTAssertEqual(label?.superview, root)
-        
-        for attr in [NSLayoutConstraint.Attribute.top, .leading, .trailing] {
-            XCTAssertNotNil(root.findConstraints(items: (root, label), attributes: (attr, attr)).first)
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+        root.anchors {
+            Anchors(.top, .bottom, .leading, .trailing).equalTo(label)
+        }.sublayout {
+            label
         }
+        """.tabbed)
     }
     
     func testDuplicateAnchorBuilder() {
-        activation = root {
+        root {
             red.anchors {
                 Anchors(.top, .leading, .bottom)
+                Anchors(.top, .leading, .bottom)
             }.anchors {
+                Anchors(.trailing).equalTo(blue, attribute: .leading)
                 Anchors(.trailing).equalTo(blue, attribute: .leading)
             }
             blue.anchors {
                 Anchors(.top, .trailing, .bottom)
+                Anchors(.top, .trailing, .bottom)
             }
-        }.active()
+        }.finalActive()
         
-        XCTAssertEqual(root.subviews, [red, blue])
-        XCTAssertEqual(red.superview, root)
-        XCTAssertEqual(blue.superview, root)
-        
-        // root takes all constraints
-        XCTAssertEqual(root.constraints.count, 7)
-        
-        for attr in [NSLayoutConstraint.Attribute.top, .leading, .bottom] {
-            XCTAssertNotNil(root.findConstraints(items: (red, root), attributes: (attr, attr)).first)
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+        root {
+            red.anchors {
+                Anchors(.top, .bottom, .leading)
+                Anchors(.trailing).equalTo(blue, attribute: .leading)
+            }
+            blue.anchors {
+                Anchors(.top, .bottom, .trailing)
+            }
         }
-        XCTAssertNotNil(root.findConstraints(items: (red, blue), attributes: (.trailing, .leading)).first)
-        for attr in [NSLayoutConstraint.Attribute.top, .trailing, .bottom] {
-            XCTAssertNotNil(root.findConstraints(items: (blue, root), attributes: (attr, attr)).first)
-        }
+        """.tabbed)
     }
 }
 
@@ -297,7 +423,12 @@ extension AnchorsDSLTests {
             }
         }.finalActive()
         
-        XCTAssertEqual(root.constraints.count, 4)
+        XCTAssertEqual(root.constraints.shortDescription, """
+        red.top == root.top
+        red.bottom == root.bottom
+        red.leading == root.leading
+        red.trailing == root.trailing
+        """)
         XCTAssertEqual(red.bounds.size, .init(width: 100, height: 100))
     }
     
@@ -314,8 +445,21 @@ extension AnchorsDSLTests {
             }
         }.active()
         
-        XCTAssertEqual(root.constraints.count, 2)
-        XCTAssertEqual(red.constraints.count, 2)
+        #if canImport(UIKit)
+        XCTAssertEqual(root.constraints.shortDescription, """
+        red.bottom == root.bottom
+        red.trailing == root.trailing
+        """)
+        #else
+        XCTAssertEqual(root.constraints.shortDescription, """
+        red.top == root.top
+        red.trailing == root.trailing
+        """)
+        #endif
+        XCTAssertEqual(red.constraints.shortDescription, """
+        red.width == + 30.0
+        red.height == + 30.0
+        """)
         XCTAssertEqual(red.frame, .init(x: 70, y: 70, width: 30, height: 30))
     }
     
