@@ -42,7 +42,7 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
     ///  - systemConstraintsHidden: automatically assigned constraints from system hidden, default value is `true`
     ///  - printOnlyIdentifier: print view only having accessibility identifier
     /// - Returns: String of SwiftLayout syntax
-    @available(*, deprecated, message: "use ``print(_ updater: IdentifierUpdater? = nil, options: PrintOptions = [])``")
+    @available(*, deprecated, message: "use PrintOptions")
     public func print(_ updater: IdentifierUpdater? = nil,
                       systemConstraintsHidden: Bool = true,
                       printOnlyIdentifier: Bool = false) -> String {

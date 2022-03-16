@@ -551,17 +551,15 @@ extension PrintingTests {
         
         layout().finalActive()
         #if canImport(UIKit)
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(systemConstraintsHidden: false), """
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(options: .onlyIdentifier), """
         root {
             label.anchors {
                 Anchors(.top, .bottom, .leading, .trailing)
-                Anchors(.width).equalTo(constant: 38.666666666666664)
-                Anchors(.height).equalTo(constant: 14.333333333333334)
             }
         }
         """.tabbed)
         #else
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(systemConstraintsHidden: false), """
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
         root {
             label.anchors {
                 Anchors(.top, .bottom, .leading, .trailing)
