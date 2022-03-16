@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 public struct SwiftLayoutPrinter: CustomStringConvertible {
     
@@ -80,10 +81,16 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
 // MARK: - Describer
 private struct Describer: CustomStringConvertible {
     
+    private let views: [ViewToken]
+    private let constraints: [ConstraintToken]
+    private let identifier: ViewToken.Identifier
+    private let properties: [String]
+    
     init(_ token: ViewToken, _ constraints: [ConstraintToken]) {
         self.views = token.views
         self.constraints = constraints
         self.identifier = token.identifier
+        self.properties = token.properties
     }
     
     var description: String {
@@ -95,33 +102,36 @@ private struct Describer: CustomStringConvertible {
     }
     
     private var constraintsOfIdentifier: [ConstraintToken]? {
-        let constraints = constraints.filter({ $0.firstTag == identifier })
+        let constraints = constraints.filter({ $0.firstTag == identifier.tag })
         if constraints.isEmpty { return nil }
         return constraints
     }
     
-    private let views: [ViewToken]
-    private let constraints: [ConstraintToken]
-    private let identifier: String
-    
-    private func fromConstraints(_ constraints: [ConstraintToken]?, identifier: String) -> [String] {
-        guard  let constraintTokens = constraints else { return [identifier] }
-        var identifiers = [identifier + ".anchors {"]
+    private func fromConstraints(_ constraints: [ConstraintToken]?, identifier: ViewToken.Identifier) -> [String] {
+        guard  let constraintTokens = constraints else { return [identifier.identifier] }
+        var identifiers: [String] = []
+        if properties.isEmpty {
+            identifiers = [identifier.identifier + ".anchors {"]
+        } else {
+            identifiers = [identifier.identifier + ".config {"]
+            identifiers.append(contentsOf: properties.map { "\t\($0)" })
+            identifiers.append("}.anchors {")
+        }
         identifiers.append(ConstraintToken.Group(constraintTokens).description)
         identifiers.append("}")
         return identifiers
     }
     
-    private func fromViews(_ constraints: [ConstraintToken]?, views: [ViewToken], identifier: String) -> [String] {
+    private func fromViews(_ constraints: [ConstraintToken]?, views: [ViewToken], identifier: ViewToken.Identifier) -> [String] {
         var identifiers: [String] = []
         if constraints == nil {
-            identifiers = [identifier + " {"]
+            identifiers = [identifier.identifier + " {"]
         } else if let selfConstraints = constraints {
-            identifiers = [identifier + ".anchors {"]
+            identifiers = [identifier.identifier + ".anchors {"]
             identifiers.append(ConstraintToken.Group(selfConstraints).description)
             identifiers.append("}.sublayout {")
         } else {
-            identifiers = [identifier + " {"]
+            identifiers = [identifier.identifier + " {"]
         }
         identifiers.append(contentsOf: views.map({ view in
             let description = Describer(view, self.constraints).description
@@ -134,28 +144,112 @@ private struct Describer: CustomStringConvertible {
 
 // MARK: - ViewToken
 private struct ViewToken {
-    private init(identifier: String, views: [ViewToken]) {
-        self.identifier = identifier
-        self.views = views
+    
+    enum Identifier {
+        case id(String)
+        case object(address: String, type: String)
+        
+        var tag: String {
+            switch self {
+            case .id(let string):
+                return string
+            case .object(let address, let type):
+                return "\(address):\(type)"
+            }
+        }
+        var identifier: String {
+            switch self {
+            case .id(let string):
+                return string
+            case .object(let address, let type):
+                return "\(type)().identifying(\"\(address):\(type)\")"
+            }
+        }
     }
     
-    let identifier: String
+    let identifier: Identifier
+    let properties: [String]
     let views: [ViewToken]
+    
+    private init(identifier: Identifier, properties: [String], views: [ViewToken]) {
+        self.identifier = identifier
+        self.properties = properties
+        self.views = views
+    }
     
     struct Parser {
         static func from(_ view: SLView, tags: [String: String], options: SwiftLayoutPrinter.PrintOptions) -> ViewToken? {
             if let identifier = tags[view.tagDescription] {
-                return ViewToken(identifier: identifier, views: view.subviews.compactMap({ from($0, tags: tags, options: options) }))
+                return ViewToken(identifier: .id(identifier),
+                                 properties: options.contains(.withViewConfig) ? propertiesFrom(view) : [],
+                                 views: view.subviews.compactMap({ from($0, tags: tags, options: options) }))
             } else {
                 if options.contains(.onlyIdentifier) {
                     if let identifier = view.slIdentifier, !identifier.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                        return ViewToken(identifier: identifier, views: view.subviews.compactMap({ from($0, tags: tags, options: options) }))
+                        return ViewToken(identifier: .id(identifier),
+                                         properties: options.contains(.withViewConfig) ? propertiesFrom(view) : [],
+                                         views: view.subviews.compactMap({ from($0, tags: tags, options: options) }))
                     } else {
                         return nil
                     }
                 } else {
-                    return ViewToken(identifier: view.tagDescription, views: view.subviews.compactMap({ from($0, tags: tags, options: options) }))
+                    let identifier: Identifier
+                    if let id = view.slIdentifier {
+                        identifier = .id(id)
+                    } else {
+                        let descriptor = AddressDescriptor(view)
+                        identifier = .object(address: descriptor.address, type: descriptor.type)
+                    }
+                    return ViewToken(identifier: identifier,
+                                     properties: options.contains(.withViewConfig) ? propertiesFrom(view) : [],
+                                     views: view.subviews.compactMap({ from($0, tags: tags, options: options) }))
                 }
+            }
+        }
+        
+        static func propertiesFrom(_ view: SLView) -> [String] {
+            #if canImport(UIKit)
+            if let label = view as? UILabel {
+                return propertiesFromLabel(label).map { "$0.\($0)" }
+            } else {
+                return []
+            }
+            #elseif canImport(AppKit)
+            return []
+            #else
+            return []
+            #endif
+        }
+        
+        static func propertiesFromLabel(_ label: UILabel) -> [String] {
+            var properties: [String: Any] = [:]
+            if let text = label.text {
+                properties["text"] = "\"\(text)\""
+            }
+            if let font = label.font {
+                properties["font"] = propertyFromFont(font)
+            }
+            if label.textAlignment != .natural {
+                properties["textAlignment"] = ".\(label.textAlignment)"
+            }
+            if label.lineBreakMode != .byTruncatingTail {
+                properties["lineBreakMode"] = ".\(label.lineBreakMode)"
+            }
+            if label.numberOfLines != 1 {
+                properties["numberOfLines"] = label.numberOfLines.description
+            }
+            return properties.map({ "\($0.0) = \($0.1)" }).sorted()
+        }
+        
+        static func propertyFromFont(_ font: UIFont) -> String {
+            if font.fontName == UIFont.systemFont(ofSize: 1).fontName {
+                return "UIFont.systemFont(ofSize: \(font.pointSize))"
+            } else if font.fontName == UIFont.boldSystemFont(ofSize: 1).fontName {
+                return "UIFont.boldSystemFont(ofSize: \(font.pointSize))"
+            } else if font.fontName == UIFont.italicSystemFont(ofSize: 1).fontName {
+                return "UIFont.italicSystemFont(ofSize: \(font.pointSize))"
+            } else {
+                return "UIFont(name: \"\(font.fontName)\", size: \(font.pointSize))"
             }
         }
     }
@@ -307,5 +401,32 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
         && self.constant == token.constant
         && self.multiplier == token.multiplier
         && self.relation == token.relation
+    }
+}
+
+extension NSTextAlignment: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .center:       return "center"
+        case .justified:    return "justified"
+        case .left:         return "left"
+        case .natural:      return "natural"
+        case .right:        return "right"
+        default:            return "unknown"
+        }
+    }
+}
+
+extension NSLineBreakMode: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .byTruncatingHead:     return "byTruncatingHead"
+        case .byCharWrapping:       return "byCharWrapping"
+        case .byClipping:           return "byClipping"
+        case .byTruncatingMiddle:   return "byTruncatingMiddle"
+        case .byTruncatingTail:     return "byTruncatingTail"
+        case .byWordWrapping:       return "byWordWrapping"
+        @unknown default:           return "unknown"
+        }
     }
 }

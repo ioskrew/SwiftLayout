@@ -8,9 +8,13 @@
 import Foundation
 
 struct AddressDescriptor<Object>: CustomStringConvertible where Object: AnyObject {
-    let description: String
+    let address: String
+    let type: String
+    
+    var description: String { "\(address):\(type)" }
     
     init(_ object: Object) {
-        self.description = Unmanaged<Object>.passUnretained(object).toOpaque().debugDescription + ":\(type(of: object))"
+        self.address = Unmanaged<Object>.passUnretained(object).toOpaque().debugDescription
+        self.type = "\(Swift.type(of: object))"
     }
 }
