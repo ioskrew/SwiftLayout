@@ -619,3 +619,109 @@ extension PrintingTests {
         }
     }
 }
+
+// MARK: - view config
+extension PrintingTests {
+    func testConfigPrinting() {
+        let root = UIView().viewTag.root
+        let capLabel = UILabel()
+        let shoeLabel = UILabel()
+                
+        root.frame = .init(x: 0, y: 0, width: 120, height: 120)
+        root {
+            capLabel.config { label in
+                label.font = .systemFont(ofSize: 12.0)
+                label.text = "HELLO"
+                label.textAlignment = .center
+                label.numberOfLines = 0
+                label.lineBreakMode = .byTruncatingHead
+            }.anchors {
+                Anchors.cap()
+            }
+            shoeLabel.anchors {
+                Anchors(.top).equalTo(capLabel.bottomAnchor)
+                Anchors.shoe()
+            }
+        }.finalActive()
+        
+        let capIdentifier = capLabel.tagDescription
+        let shoeIdentifier = shoeLabel.tagDescription
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(options: .withViewConfig), """
+        root {
+            UILabel().identifying("\(capIdentifier)").config {
+                $0.font = UIFont.systemFont(ofSize: 12.0)
+                $0.lineBreakMode = .byTruncatingHead
+                $0.numberOfLines = 0
+                $0.text = "HELLO"
+                $0.textAlignment = .center
+            }.anchors {
+                Anchors(.top, .leading, .trailing)
+            }
+            UILabel().identifying("\(shoeIdentifier)").config {
+                $0.font = UIFont.systemFont(ofSize: 17.0)
+            }.anchors {
+                Anchors(.top).equalTo("\(capIdentifier)", attribute: .bottom)
+                Anchors(.bottom, .leading, .trailing)
+            }
+        }
+        """.tabbed)
+    }
+}
+
+private struct TagDescriptor<Value>: CustomDebugStringConvertible where Value: TagDescriptable, Value: AnyObject {
+    internal init(_ value: Value) {
+        self.value = value
+    }
+    
+    let value: Value
+    
+    var valueHasIdentifier: Bool {
+        value.slIdentifier != nil
+    }
+    
+    var identifier: String {
+        if let identifier = value.slIdentifier, !identifier.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return identifier
+        } else {
+            return objectDescription
+        }
+    }
+    
+    var debugDescription: String {
+        identifier
+    }
+    
+    var objectDescription: String {
+        AddressDescriptor(value).description
+    }
+    
+}
+
+private protocol TagDescriptable {
+    var slIdentifier: String? { get }
+}
+
+private extension TagDescriptable where Self: SLView {
+    var tagDescription: String {
+        TagDescriptor(self).debugDescription
+    }
+}
+
+private extension TagDescriptable where Self: SLLayoutGuide {
+    var tagDescription: String {
+        TagDescriptor(self).debugDescription
+    }
+    
+    var slIdentifier: String? { owningView?.slIdentifier }
+}
+
+extension SLView: TagDescriptable {}
+extension SLLayoutGuide: TagDescriptable {}
+
+private struct AddressDescriptor<Object>: CustomStringConvertible where Object: AnyObject {
+    let description: String
+    
+    init(_ object: Object) {
+        self.description = Unmanaged<Object>.passUnretained(object).toOpaque().debugDescription + ":\(type(of: object))"
+    }
+}
