@@ -268,6 +268,7 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
         firstAttribute = constraint.firstAttribute.description
         firstAttributes = [firstAttribute]
         secondTag = tagger.tagFromItem(constraint.secondItem)
+        secondIdentifier = tagger.slIdentifierFromItem(constraint.secondItem)
         secondAttribute = constraint.secondAttribute.description
         relation = constraint.relation.description
         constant = constraint.constant.description
@@ -279,6 +280,7 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
     let firstAttribute: String
     var firstAttributes: [String]
     let secondTag: String
+    let secondIdentifier: String?
     let secondAttribute: String
     let relation: String
     let constant: String
@@ -288,7 +290,11 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
         var descriptions: [String] = ["Anchors(\(firstAttributes.map({ "." + $0 }).joined(separator: ", ")))"]
         var arguments: [String] = []
         if !secondTag.isEmpty && superTag != secondTag {
-            arguments.append(secondTag)
+            if secondIdentifier != nil {
+                arguments.append(secondTag)
+            } else {
+                arguments.append("\"\(secondTag)\"")
+            }
         }
         if firstAttribute != secondAttribute && secondAttribute != SLLayoutConstraint.Attribute.notAnAttribute.description {
             arguments.append("attribute: .\(secondAttribute)")
@@ -346,11 +352,33 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
         let tags: [String: String]
         func tagFromItem(_ item: AnyObject?) -> String {
             if let view = item as? SLView {
-                return tags[view.tagDescription] ?? view.tagDescription
-            } else if let view = (item as? SLLayoutGuide)?.owningView {
-                return tags[view.tagDescription].flatMap({ $0 + ".safeAreaLayoutGuide" }) ?? (view.tagDescription + ".safeAreaLayoutGuide")
+                return identifierFromView(view)
+            } else if let guide = item as? SLLayoutGuide, let view = guide.owningView {
+                if let propertyDescription = guide.propertyDescription {
+                    return identifierFromView(view) + ".\(propertyDescription)"
+                } else {
+                    return identifierFromView(view) + ":\(guide.identifier)"
+                }
             } else {
                 return ""
+            }
+        }
+        
+        func identifierFromView(_ view: SLView) -> String {
+            if let tag = tags[view.tagDescription] {
+                return tag
+            } else {
+                return view.tagDescription
+            }
+        }
+        
+        func slIdentifierFromItem(_ item: AnyObject?) -> String? {
+            if let view = item as? SLView {
+                return view.slIdentifier
+            } else if let guide = item as? SLLayoutGuide, let view = guide.owningView {
+                return view.slIdentifier
+            } else {
+                return nil
             }
         }
         

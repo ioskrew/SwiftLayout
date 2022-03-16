@@ -8,31 +8,38 @@
 import Foundation
 
 extension SLLayoutGuide {
-    var detailDescription: String? {
-        guard let view = owningView else { return nil }
-        let description = view.tagDescription
+    var propertyDescription: String? {
         #if canImport(UIKit)
         switch identifier {
         case "UIViewLayoutMarginsGuide":
-            return description + ".layoutMarginsGuide"
-        case "UIViewLayoutSafeAreaGuide":
-            return description + ".safeAreaLayoutGuide"
+            return "layoutMarginsGuide"
+        case "UIViewSafeAreaLayoutGuide":
+            return "safeAreaLayoutGuide"
         case "UIViewKeyboardLayoutGuide":
-            return description + ".keyboardLayoutGuide"
+            return "keyboardLayoutGuide"
         case "UIViewReadableContentGuide":
-            return description + ".readableContentGuide"
+            return "readableContentGuide"
         default:
-            return description + ":\(identifier)"
+            return nil
         }
         #elseif canImport(AppKit)
         switch identifier.rawValue {
         case "NSViewSafeAreaLayoutGuide":
-            return description + ".safeAreaLayoutGuide"
+            return "safeAreaLayoutGuide"
         case "NSViewLayoutMarginsGuide":
-            return description + ".layoutMarginsGuide"
+            return "layoutMarginsGuide"
         default:
-            return description + ":\(identifier.rawValue)"
+            return nil
         }
         #endif
+    }
+    var detailDescription: String? {
+        guard let view = owningView else { return nil }
+        let description = view.tagDescription
+        if let propertyDescription = propertyDescription {
+            return description + ".\(propertyDescription)"
+        } else {
+            return description + ":\(identifier)"
+        }
     }
 }
