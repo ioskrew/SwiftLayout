@@ -1,5 +1,10 @@
 import XCTest
 import SwiftLayout
+#if canImport(UIKit)
+import UIKit
+#elseif canImport(AppKit)
+import AppKit
+#endif
 
 /// test cases for constraint DSL syntax
 final class AnchorsDSLTests: XCTestCase {
@@ -53,6 +58,7 @@ extension AnchorsDSLTests {
             }
         }
         
+        #if canImport(UIKit)
         context("anchor for ") {
             let attributes: [NSLayoutConstraint.Attribute] = [.topMargin, .bottomMargin, .leadingMargin, .trailingMargin, .leftMargin, .rightMargin, .centerXWithinMargins, .centerYWithinMargins]
             for attribute in attributes {
@@ -72,6 +78,7 @@ extension AnchorsDSLTests {
                 }
             }
         }
+        #endif
     }
     
     func testAnchorsGreaterThanOrEqualToSuperview() {
@@ -103,6 +110,7 @@ extension AnchorsDSLTests {
             """)
         }
         
+        #if canImport(UIKit)
         context("anchor for ") {
             let attributes: [NSLayoutConstraint.Attribute] = [.topMargin, .bottomMargin, .leadingMargin, .trailingMargin, .leftMargin, .rightMargin, .centerXWithinMargins, .centerYWithinMargins]
             for attribute in attributes {
@@ -122,6 +130,7 @@ extension AnchorsDSLTests {
                 }
             }
         }
+        #endif
     }
     
     func testAnchorsLessThanOrEqualToSuperview() {
@@ -153,6 +162,7 @@ extension AnchorsDSLTests {
             """)
         }
         
+        #if canImport(UIKit)
         context("anchor for ") {
             let attributes: [NSLayoutConstraint.Attribute] = [.topMargin, .bottomMargin, .leadingMargin, .trailingMargin, .leftMargin, .rightMargin, .centerXWithinMargins, .centerYWithinMargins]
             for attribute in attributes {
@@ -172,6 +182,7 @@ extension AnchorsDSLTests {
                 }
             }
         }
+        #endif
     }
     
     func testAnchorsInSublayout() {
