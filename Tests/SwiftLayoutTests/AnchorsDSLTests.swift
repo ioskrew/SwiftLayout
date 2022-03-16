@@ -445,10 +445,17 @@ extension AnchorsDSLTests {
             }
         }.active()
         
+        #if canImport(UIKit)
         XCTAssertEqual(root.constraints.shortDescription, """
         red.bottom == root.bottom
         red.trailing == root.trailing
         """)
+        #else
+        XCTAssertEqual(root.constraints.shortDescription, """
+        red.top == root.top
+        red.trailing == root.trailing
+        """)
+        #endif
         XCTAssertEqual(red.constraints.shortDescription, """
         red.width == + 30.0
         red.height == + 30.0

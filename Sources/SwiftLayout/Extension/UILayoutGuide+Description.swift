@@ -33,7 +33,6 @@ extension SLLayoutGuide {
         default:
             return description + ":\(identifier.rawValue)"
         }
-        return ""
         #endif
     }
 }
