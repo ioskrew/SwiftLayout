@@ -24,5 +24,8 @@ let package = Package(
         .testTarget(
             name: "SwiftLayoutTests",
             dependencies: ["SwiftLayout", "SwiftLayoutPrinter"]),
+        .testTarget(
+            name: "SwiftLayoutPrinterTests",
+            dependencies: ["SwiftLayoutPrinter"]),
     ]
 )
