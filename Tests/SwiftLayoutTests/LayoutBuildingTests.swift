@@ -1,5 +1,6 @@
 import XCTest
 import SwiftLayout
+import SwiftLayoutPrinter
 
 final class LayoutBuildingTests: XCTestCase {
     

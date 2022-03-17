@@ -1,5 +1,6 @@
 import XCTest
 import SwiftLayout
+import SwiftLayoutPrinter
 
 /// test cases for DSL syntax
 final class LayoutDSLTests: XCTestCase {

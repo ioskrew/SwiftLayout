@@ -1,5 +1,6 @@
 import XCTest
 import SwiftLayout
+import SwiftLayoutPrinter
 #if canImport(UIKit)
 import UIKit
 #elseif canImport(AppKit)

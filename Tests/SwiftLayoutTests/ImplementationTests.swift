@@ -1,5 +1,6 @@
 import XCTest
 @testable import SwiftLayout
+@testable import SwiftLayoutPrinter
 
 /// test cases for api rules except DSL syntax
 final class ImplementationTests: XCTestCase {
