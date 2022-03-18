@@ -35,7 +35,7 @@ extension Layout {
     /// - Returns: A ``Activation`` instance, which you use when you update or deactivate layout. Deallocation of the result will deactivate layout.
     ///
     public func update(fromActivation activation: Activation) -> Activation {
-        Activator.update(layout: self, fromActivation: activation)
+        Activator.update(layout: self, fromActivation: activation, needsLayoutForcefully: false)
     }
     
     ///
@@ -43,7 +43,7 @@ extension Layout {
     /// Until the view is released according to the lifecycle of the app
     ///
     public func finalActive() {
-        Activator.finalActive(layout: self)
+        Activator.finalActive(layout: self, needsLayoutForcefully: false)
     }
     
     ///

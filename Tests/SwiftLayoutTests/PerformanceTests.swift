@@ -58,9 +58,6 @@ class PerformanceTests: XCTestCase {
         self.measure(metrics: metrics) {
             let nib = UINib(nibName: "TestView", bundle: .module)
             let view = nib.instantiate(withOwner: nil, options: nil)[0] as! TestView
-            view.frame = .init(x: 0, y: 0, width: 375, height: 667)
-            view.setNeedsLayout()
-            view.layoutIfNeeded()
         }
     }
     

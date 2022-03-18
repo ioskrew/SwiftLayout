@@ -10,12 +10,12 @@ import UIKit
 
 enum Activator {
     
-    static func active<L: Layout>(layout: L) -> Activation {
-        return update(layout: layout, fromActivation: Activation())
+    static func active<L: Layout>(layout: L, needsLayoutForcefully: Bool = false) -> Activation {
+        return update(layout: layout, fromActivation: Activation(), needsLayoutForcefully: needsLayoutForcefully)
     }
     
     @discardableResult
-    static func update<L: Layout>(layout: L, fromActivation activation: Activation) -> Activation {
+    static func update<L: Layout>(layout: L, fromActivation activation: Activation, needsLayoutForcefully: Bool) -> Activation {
         var prevInfos: [ViewInformation: Set<WeakReference<NSLayoutConstraint>>] = [:]
         for viewInfo in activation.viewInfos.infos {
             guard let view = viewInfo.view else { continue }
@@ -30,14 +30,16 @@ enum Activator {
         let constraints = elements.viewConstraints
         updateConstraints(activation: activation, constraints: constraints)
 
-        layoutIfNeeded(viewInfos, prevInfos)
+        if needsLayoutForcefully {
+            layoutIfNeeded(viewInfos, prevInfos)
+        }
         
         return activation
     }
 }
 
 extension Activator {
-    public static func finalActive<L: Layout>(layout: L) {
+    public static func finalActive<L: Layout>(layout: L, needsLayoutForcefully: Bool) {
         let elements = LayoutElements(layout: layout)
         
         let viewInfos = elements.viewInformations
@@ -46,7 +48,9 @@ extension Activator {
         let constraints = elements.viewConstraints
         updateConstraints(constraints: constraints)
         
-        layoutIfNeeded(viewInfos)
+        if needsLayoutForcefully {
+            layoutIfNeeded(viewInfos)
+        }
     }
 }
 
