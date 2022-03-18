@@ -5,9 +5,11 @@
 //  Created by aiden_h on 2022/02/21.
 //
 
-public protocol _SLViewExtension {}
-extension SLView: _SLViewExtension {}
-extension _SLViewExtension where Self: SLView {
+import UIKit
+
+public protocol _UIViewExtension {}
+extension UIView: _UIViewExtension {}
+extension _UIViewExtension where Self: UIView {
 
     ///
     /// Create a ``ViewLayout`` containing this view and the sublayouts.
@@ -101,7 +103,7 @@ extension _SLViewExtension where Self: SLView {
     /// - Returns: The view itself with the accessibilityIdentifier applied
     ///
     public func identifying(_ accessibilityIdentifier: String) -> Self {
-        self.slIdentifier = accessibilityIdentifier
+        self.accessibilityIdentifier = accessibilityIdentifier
         return self
     }
     

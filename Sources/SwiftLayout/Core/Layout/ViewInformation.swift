@@ -6,17 +6,18 @@
 //
 
 import Foundation
+import UIKit
 
 final class ViewInformation: Hashable, CustomDebugStringConvertible {
     
-    init(superview: SLView?, view: SLView?) {
+    init(superview: UIView?, view: UIView?) {
         self.superview = superview
         self.view = view
     }
     
-    private(set) public weak var superview: SLView?
-    private(set) public weak var view: SLView?
-    var identifier: String? { view?.slIdentifier }
+    private(set) public weak var superview: UIView?
+    private(set) public weak var view: UIView?
+    var identifier: String? { view?.accessibilityIdentifier }
     
     func addSuperview() {
         guard let view = view else {
@@ -58,7 +59,7 @@ struct ViewInformationSet: Hashable {
         self.infos = Set(infos)
     }
     
-    subscript(_ identifier: String) -> SLView? {
+    subscript(_ identifier: String) -> UIView? {
         infos.first(where: { $0.identifier == identifier })?.view
     }
 }

@@ -6,11 +6,7 @@
 //
 
 import Foundation
-#if canImport(UIKit)
 import UIKit
-#elseif canImport(AppKit)
-import AppKit
-#endif
 
 struct Weakens<O>: Hashable where O: Hashable {
     let hashable: AnyHashable
