@@ -24,8 +24,8 @@ extension Layout {
     ///
     /// - Returns: A ``Activation`` instance, which you use when you update or deactivate layout. Deallocation of the result will deactivate layout.
     ///
-    public func active() -> Activation {
-        Activator.active(layout: self)
+    public func active(layoutIfNeededForcefully: Bool = false) -> Activation {
+        Activator.active(layout: self, layoutIfNeededForcefully: layoutIfNeededForcefully)
     }
     
     ///
@@ -34,16 +34,16 @@ extension Layout {
     /// - Parameter activation: The activation of the previously activated layout. It is used to identify changes in layout.
     /// - Returns: A ``Activation`` instance, which you use when you update or deactivate layout. Deallocation of the result will deactivate layout.
     ///
-    public func update(fromActivation activation: Activation) -> Activation {
-        Activator.update(layout: self, fromActivation: activation)
+    public func update(fromActivation activation: Activation, layoutIfNeededForcefully: Bool = false) -> Activation {
+        Activator.update(layout: self, fromActivation: activation, layoutIfNeededForcefully: layoutIfNeededForcefully)
     }
     
     ///
     /// Activate this layout permanently.
     /// Until the view is released according to the lifecycle of the app
     ///
-    public func finalActive() {
-        Activator.finalActive(layout: self)
+    public func finalActive(layoutIfNeededForcefully: Bool = false) {
+        Activator.finalActive(layout: self, layoutIfNeededForcefully: layoutIfNeededForcefully)
     }
     
     ///

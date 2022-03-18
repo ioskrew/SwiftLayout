@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  Weakens.swift
 //  
 //
 //  Created by oozoofrog on 2022/02/21.

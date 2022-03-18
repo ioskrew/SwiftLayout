@@ -411,7 +411,7 @@ extension AnchorsDSLTests {
             red.anchors {
                 Anchors.allSides()
             }
-        }.finalActive()
+        }.finalActive(layoutIfNeededForcefully: true)
         
         XCTAssertEqual(root.constraints.shortDescription, """
         red.top == root.top
@@ -429,7 +429,7 @@ extension AnchorsDSLTests {
                 Anchors(.bottom, .trailing)
                 Anchors(.width, .height).equalTo(constant: 30)
             }
-        }.active()
+        }.active(layoutIfNeededForcefully: true)
         
         XCTAssertEqual(root.constraints.shortDescription, """
         red.bottom == root.bottom
