@@ -14,6 +14,8 @@ class TestView: UIView {
     @IBOutlet weak var doneButton: UIButton!
     @IBOutlet weak var switchLabel: UILabel!
     @IBOutlet weak var switchControl: UISwitch!
+    @IBOutlet weak var descriptionContainer: UIView!
+    @IBOutlet weak var descriptionLabel: UILabel!
     
 }
 
@@ -23,6 +25,8 @@ class TestView2: UIView, Layoutable {
     var doneButton = UIButton()
     var switchLabel = UILabel()
     var switchControl = UISwitch()
+    var descriptionContainer = UIView()
+    var descriptionLabel = UILabel()
     
     var activation: Activation?
     
@@ -41,6 +45,15 @@ class TestView2: UIView, Layoutable {
             switchLabel.anchors {
                 Anchors(.top).equalTo(titleLabel, attribute: .bottom, constant: 61.0)
                 Anchors(.leading).equalTo(self.safeAreaLayoutGuide, constant: 20.0)
+            }
+            descriptionContainer.anchors {
+                Anchors(.leading).equalTo(self.safeAreaLayoutGuide, constant: 16.0)
+                Anchors(.top).equalTo(switchLabel, attribute: .bottom, constant: 16.0)
+            }.sublayout {
+                descriptionLabel.anchors {
+                    Anchors(.centerX, .centerY).equalTo(descriptionContainer.safeAreaLayoutGuide)
+                    Anchors(.width, .height).equalTo(constant: -32.0)
+                }
             }
         }
     }
