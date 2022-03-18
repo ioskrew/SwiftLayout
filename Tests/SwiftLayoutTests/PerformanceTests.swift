@@ -33,7 +33,7 @@ class PerformanceTests: XCTestCase {
     }
     
     func testPerformanceInterfaceBuilder() throws {
-        let metrics: [XCTMetric] = [XCTCPUMetric(), XCTMemoryMetric(), XCTClockMetric(), XCTStorageMetric()]
+        let metrics: [XCTMetric] = [XCTCPUMetric(), XCTMemoryMetric()]
         self.measure(metrics: metrics) {
             let nib = UINib(nibName: "XibView", bundle: .module)
             _ = nib.instantiate(withOwner: nil, options: nil)[0] as! XibView
@@ -41,7 +41,7 @@ class PerformanceTests: XCTestCase {
     }
     
     func testPerformanceLayoutable() throws {
-        let metrics: [XCTMetric] = [XCTCPUMetric(), XCTMemoryMetric(), XCTClockMetric(), XCTStorageMetric()]
+        let metrics: [XCTMetric] = [XCTCPUMetric(), XCTMemoryMetric()]
 
         self.measure(metrics: metrics) {
             _ = SwiftLayoutView(frame: .init(x: 0, y: 0, width: 375, height: 667))
