@@ -7,7 +7,6 @@
 
 import UIKit
 
-@objcMembers
 class XibView: UIView {
    
     @IBOutlet var navigationView: UIView!
@@ -20,7 +19,8 @@ class XibView: UIView {
     
     @IBOutlet var navigationTitleLabel: UILabel!
     
-    
+    @IBOutlet var quButton: UIButton!
+    @IBOutlet var searchButton: UIButton!
     @IBOutlet var musicButton: UIButton!
     @IBOutlet var settingButton: UIButton!
     

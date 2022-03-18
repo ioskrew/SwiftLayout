@@ -912,6 +912,8 @@
                 <outlet property="newsView" destination="3MW-g7-ozw" id="cqi-Xw-fxf"/>
                 <outlet property="optionsView" destination="IQd-m0-655" id="kKR-Hh-zgi"/>
                 <outlet property="payView" destination="JIN-NI-5BF" id="tJ0-KN-lvt"/>
+                <outlet property="quButton" destination="8lO-NX-L5R" id="CPT-oa-zeI"/>
+                <outlet property="searchButton" destination="dZj-V1-gTr" id="cFs-jS-Fsx"/>
                 <outlet property="settingButton" destination="MxD-gK-Oln" id="fVs-ES-td8"/>
             </connections>
             <point key="canvasLocation" x="131.8840579710145" y="130.58035714285714"/>
