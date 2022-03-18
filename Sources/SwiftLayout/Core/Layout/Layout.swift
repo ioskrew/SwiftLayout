@@ -24,8 +24,8 @@ extension Layout {
     ///
     /// - Returns: A ``Activation`` instance, which you use when you update or deactivate layout. Deallocation of the result will deactivate layout.
     ///
-    public func active() -> Activation {
-        Activator.active(layout: self)
+    public func active(layoutIfNeededForcefully: Bool = false) -> Activation {
+        Activator.active(layout: self, layoutIfNeededForcefully: layoutIfNeededForcefully)
     }
     
     ///
