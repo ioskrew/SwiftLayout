@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 public struct SwiftLayoutPrinter: CustomStringConvertible {
     
@@ -24,12 +25,12 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
         public static let withViewConfig: PrintOptions = .init(rawValue: 1 << 2)
     }
     
-    public init(_ view: SLView, tags: [SLView: String] = [:]) {
+    public init(_ view: UIView, tags: [UIView: String] = [:]) {
         self.view = view
         self.tags = Dictionary(uniqueKeysWithValues: tags.map({ ($0.key.tagDescription, $0.value) }))
     }
     
-    weak var view: SLView?
+    weak var view: UIView?
     let tags: [String: String]
     
     public var description: String {
@@ -143,12 +144,12 @@ private struct ViewToken {
     let views: [ViewToken]
     
     struct Parser {
-        static func from(_ view: SLView, tags: [String: String], options: SwiftLayoutPrinter.PrintOptions) -> ViewToken? {
+        static func from(_ view: UIView, tags: [String: String], options: SwiftLayoutPrinter.PrintOptions) -> ViewToken? {
             if let identifier = tags[view.tagDescription] {
                 return ViewToken(identifier: identifier, views: view.subviews.compactMap({ from($0, tags: tags, options: options) }))
             } else {
                 if options.contains(.onlyIdentifier) {
-                    if let identifier = view.slIdentifier, !identifier.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    if let identifier = view.accessibilityIdentifier, !identifier.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                         return ViewToken(identifier: identifier, views: view.subviews.compactMap({ from($0, tags: tags, options: options) }))
                     } else {
                         return nil
@@ -167,7 +168,7 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
         lhs.hashValue == rhs.hashValue
     }
     
-    private init(constraint: SLLayoutConstraint, tags: [String: String]) {
+    private init(constraint: NSLayoutConstraint, tags: [String: String]) {
         let tagger = Tagger(tags: tags)
         superTag = tagger.superTagFromItem(constraint.firstItem)
         firstTag = tagger.tagFromItem(constraint.firstItem)
@@ -196,7 +197,7 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
         if !secondTag.isEmpty && superTag != secondTag {
             arguments.append(secondTag)
         }
-        if firstAttribute != secondAttribute && secondAttribute != SLLayoutConstraint.Attribute.notAnAttribute.description {
+        if firstAttribute != secondAttribute && secondAttribute != NSLayoutConstraint.Attribute.notAnAttribute.description {
             arguments.append("attribute: .\(secondAttribute)")
         }
         if constant != "0.0" {
@@ -217,12 +218,12 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
         return token
     }
     
-    private func functionNameByRelation(_ relation: SLLayoutConstraint.Relation) -> String {
+    private func functionNameByRelation(_ relation: NSLayoutConstraint.Relation) -> String {
         relation.description
     }
     
     struct Parser {
-        static func from(_ view: SLView, tags: [String: String], options: SwiftLayoutPrinter.PrintOptions) -> [ConstraintToken] {
+        static func from(_ view: UIView, tags: [String: String], options: SwiftLayoutPrinter.PrintOptions) -> [ConstraintToken] {
             let constraints = view.constraints
                 .filter({ Validator.isUserCreation($0, options: options) })
             var tokens = constraints.map({ ConstraintToken(constraint: $0, tags: tags) })
@@ -232,17 +233,13 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
     }
     
     struct Validator {
-        static func isUserCreation(_ constraint: SLLayoutConstraint, options: SwiftLayoutPrinter.PrintOptions) -> Bool {
+        static func isUserCreation(_ constraint: NSLayoutConstraint, options: SwiftLayoutPrinter.PrintOptions) -> Bool {
             let description = constraint.debugDescription
             if options.contains(.withSystemConstraints) {
                 return true
             } else {
                 guard description.contains("NSLayoutConstraint") else { return false }
-                #if canImport(AppKit)
-                guard let range = description.range(of: "'NSViewSafeAreaLayoutGuide-[:alpha:]*'", options: [.regularExpression], range: description.startIndex..<description.endIndex) else { return true }
-                #else
                 guard let range = description.range(of: "'UIViewSafeAreaLayoutGuide-[:alpha:]*'", options: [.regularExpression], range: description.startIndex..<description.endIndex) else { return true }
-                #endif
                 return range.isEmpty
             }
         }
@@ -251,9 +248,9 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
     struct Tagger {
         let tags: [String: String]
         func tagFromItem(_ item: AnyObject?) -> String {
-            if let view = item as? SLView {
+            if let view = item as? UIView {
                 return tags[view.tagDescription] ?? view.tagDescription
-            } else if let view = (item as? SLLayoutGuide)?.owningView {
+            } else if let view = (item as? UILayoutGuide)?.owningView {
                 return tags[view.tagDescription].flatMap({ $0 + ".safeAreaLayoutGuide" }) ?? (view.tagDescription + ".safeAreaLayoutGuide")
             } else {
                 return ""
@@ -261,9 +258,9 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
         }
         
         func superTagFromItem(_ item: AnyObject?) -> String {
-            if let view = (item as? SLView)?.superview {
+            if let view = (item as? UIView)?.superview {
                 return tagFromItem(view)
-            } else if let view = (item as? SLLayoutGuide)?.owningView?.superview {
+            } else if let view = (item as? UILayoutGuide)?.owningView?.superview {
                 return tagFromItem(view)
             } else {
                 return tagFromItem(item)

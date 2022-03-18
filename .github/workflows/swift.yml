@@ -16,11 +16,11 @@ jobs:
     - name: Run tests
       run: xcodebuild test -scheme SwiftLayout -sdk iphonesimulator15.2 -destination 'name=iPhone 13 Pro'
   
-  test-macos:
-
-    runs-on: macos-latest
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Run tests
-      run: xcodebuild test -scheme SwiftLayout -sdk macosx -destination 'platform=macOS,arch=x86_64,id=4203018E-580F-C1B5-9525-B745CECA79EB'
+# test-macos:
+#
+#   runs-on: macos-latest
+#
+#   steps:
+#   - uses: actions/checkout@v2
+#   - name: Run tests
+#     run: xcodebuild test -scheme SwiftLayout -sdk macosx -destination 'platform=macOS,arch=x86_64,id=4203018E-580F-C1B5-9525-B745CECA79EB'

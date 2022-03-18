@@ -1,26 +1,22 @@
 import XCTest
 import SwiftLayout
-#if canImport(UIKit)
 import UIKit
-#elseif canImport(AppKit)
-import AppKit
-#endif
 
 /// test cases for constraint DSL syntax
 final class AnchorsDSLTests: XCTestCase {
         
-    var root: SLView = SLView().viewTag.root
-    var red: SLView = SLView().viewTag.red
-    var blue: SLView = SLView().viewTag.blue
+    var root: UIView = UIView().viewTag.root
+    var red: UIView = UIView().viewTag.red
+    var blue: UIView = UIView().viewTag.blue
     
     var constant: CGFloat = 0.0
     
     var activation: Activation?
     
     override func setUp() {
-        root = SLView(frame: .init(x: 0, y: 0, width: 120, height: 120)).viewTag.root
-        red = SLView().viewTag.red
-        blue = SLView().viewTag.blue
+        root = UIView(frame: .init(x: 0, y: 0, width: 120, height: 120)).viewTag.root
+        red = UIView().viewTag.red
+        blue = UIView().viewTag.blue
         constant = CGFloat.random(in: -5...5)
         continueAfterFailure = false
     }
@@ -58,7 +54,6 @@ extension AnchorsDSLTests {
             }
         }
         
-        #if canImport(UIKit)
         context("anchor for ") {
             let attributes: [NSLayoutConstraint.Attribute] = [.topMargin, .bottomMargin, .leadingMargin, .trailingMargin, .leftMargin, .rightMargin, .centerXWithinMargins, .centerYWithinMargins]
             for attribute in attributes {
@@ -78,7 +73,6 @@ extension AnchorsDSLTests {
                 }
             }
         }
-        #endif
     }
     
     func testAnchorsGreaterThanOrEqualToSuperview() {
@@ -110,7 +104,6 @@ extension AnchorsDSLTests {
             """)
         }
         
-        #if canImport(UIKit)
         context("anchor for ") {
             let attributes: [NSLayoutConstraint.Attribute] = [.topMargin, .bottomMargin, .leadingMargin, .trailingMargin, .leftMargin, .rightMargin, .centerXWithinMargins, .centerYWithinMargins]
             for attribute in attributes {
@@ -130,7 +123,6 @@ extension AnchorsDSLTests {
                 }
             }
         }
-        #endif
     }
     
     func testAnchorsLessThanOrEqualToSuperview() {
@@ -162,7 +154,6 @@ extension AnchorsDSLTests {
             """)
         }
         
-        #if canImport(UIKit)
         context("anchor for ") {
             let attributes: [NSLayoutConstraint.Attribute] = [.topMargin, .bottomMargin, .leadingMargin, .trailingMargin, .leftMargin, .rightMargin, .centerXWithinMargins, .centerYWithinMargins]
             for attribute in attributes {
@@ -182,7 +173,6 @@ extension AnchorsDSLTests {
                 }
             }
         }
-        #endif
     }
     
     func testAnchorsInSublayout() {
@@ -436,26 +426,15 @@ extension AnchorsDSLTests {
         root.frame = .init(origin: .zero, size: .init(width: 100, height: 100))
         activation = root {
             red.anchors {
-                #if canImport(UIKit)
                 Anchors(.bottom, .trailing)
-                #elseif canImport(AppKit)
-                Anchors(.top, .trailing)
-                #endif
                 Anchors(.width, .height).equalTo(constant: 30)
             }
         }.active()
         
-        #if canImport(UIKit)
         XCTAssertEqual(root.constraints.shortDescription, """
         red.bottom == root.bottom
         red.trailing == root.trailing
         """)
-        #else
-        XCTAssertEqual(root.constraints.shortDescription, """
-        red.top == root.top
-        red.trailing == root.trailing
-        """)
-        #endif
         XCTAssertEqual(red.constraints.shortDescription, """
         red.width == + 30.0
         red.height == + 30.0

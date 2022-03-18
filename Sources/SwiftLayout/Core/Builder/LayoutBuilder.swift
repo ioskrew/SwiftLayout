@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 @resultBuilder
 public struct LayoutBuilder {
@@ -11,11 +12,11 @@ public struct LayoutBuilder {
         OptionalLayout(layout: layout)
     }
     
-    public static func buildExpression<V: SLView>(_ uiView: V) -> ViewLayout<V, EmptyLayout> {
+    public static func buildExpression<V: UIView>(_ uiView: V) -> ViewLayout<V, EmptyLayout> {
         ViewLayout(uiView, sublayout: EmptyLayout())
     }
     
-    public static func buildExpression<V: SLView>(_ uiView: V?) -> OptionalLayout<ViewLayout<V, EmptyLayout>> {
+    public static func buildExpression<V: UIView>(_ uiView: V?) -> OptionalLayout<ViewLayout<V, EmptyLayout>> {
         var viewLayout: ViewLayout<V, EmptyLayout>?
         if let view = uiView {
             viewLayout = ViewLayout(view, sublayout: EmptyLayout())

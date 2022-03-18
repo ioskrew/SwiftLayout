@@ -6,24 +6,25 @@
 //
 
 import SwiftLayout
+import UIKit
 
-protocol SLViewTaggable: AnyObject {
-    var slIdentifier: String? { get set }
+protocol UIViewTaggable: AnyObject {
+    var accessibilityIdentifier: String? { get set }
 }
 
 @dynamicMemberLookup
-struct Tag<Taggable: SLViewTaggable> {
+struct Tag<Taggable: UIViewTaggable> {
     let taggable: Taggable
     
     subscript(dynamicMember tag: String) -> Taggable {
-        taggable.slIdentifier = tag
+        taggable.accessibilityIdentifier = tag
         return taggable
     }
 }
 
-extension SLView: SLViewTaggable {}
+extension UIView: UIViewTaggable {}
 
-extension SLViewTaggable {
+extension UIViewTaggable {
     var viewTag: Tag<Self> {
         Tag(taggable: self)
     }

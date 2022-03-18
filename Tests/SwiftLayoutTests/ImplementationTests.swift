@@ -4,20 +4,20 @@ import XCTest
 /// test cases for api rules except DSL syntax
 final class ImplementationTests: XCTestCase {
     
-    var window: SLView!
+    var window: UIView!
     
-    var root = SLView().viewTag.root
-    var child = SLView().viewTag.child
-    var friend = SLView().viewTag.friend
+    var root = UIView().viewTag.root
+    var child = UIView().viewTag.child
+    var friend = UIView().viewTag.friend
     
     var activation: Activation?
    
     override func setUpWithError() throws {
         continueAfterFailure = false
-        window = SLView(frame: .init(x: 0, y: 0, width: 150, height: 150))
-        root = SLView().viewTag.root
-        child = SLView().viewTag.child
-        friend = SLView().viewTag.friend
+        window = UIView(frame: .init(x: 0, y: 0, width: 150, height: 150))
+        root = UIView().viewTag.root
+        child = UIView().viewTag.child
+        friend = UIView().viewTag.friend
         window.addSubview(root)
     }
     
@@ -28,10 +28,10 @@ final class ImplementationTests: XCTestCase {
 
 extension ImplementationTests {
     func testLayoutTraversal() {
-        let root: SLView = SLView().viewTag.root
+        let root: UIView = UIView().viewTag.root
         let button: UIButton = UIButton().viewTag.button
         let label: UILabel = UILabel().viewTag.label
-        let redView: SLView = SLView().viewTag.redView
+        let redView: UIView = UIView().viewTag.redView
         let image: UIImageView = UIImageView().viewTag.image
         
         let layout = root {
@@ -44,8 +44,8 @@ extension ImplementationTests {
         
         var result: [String] = []
         for viewInformation in LayoutElements(layout: layout).viewInformations {
-            let superDescription = viewInformation.superview?.slIdentifier ?? "nil"
-            let currentDescription = viewInformation.view?.slIdentifier ?? "nil"
+            let superDescription = viewInformation.superview?.accessibilityIdentifier ?? "nil"
+            let currentDescription = viewInformation.view?.accessibilityIdentifier ?? "nil"
             let description = "\(superDescription), \(currentDescription)"
             result.append(description)
         }
@@ -122,30 +122,30 @@ extension ImplementationTests {
     }
     
     func testSetAccessibilityIdentifier() {
-        class TestView: SLView {
-            let contentView = SLView()
+        class TestView: UIView {
+            let contentView = UIView()
             let nameLabel = UILabel()
         }
         
         let view = TestView()
         IdentifierUpdater.withTypeOfView.update(view)
         
-        XCTAssertEqual(view.contentView.slIdentifier, "contentView:\(SLView.self)")
-        XCTAssertEqual(view.nameLabel.slIdentifier, "nameLabel:\(UILabel.self)")
+        XCTAssertEqual(view.contentView.accessibilityIdentifier, "contentView:\(UIView.self)")
+        XCTAssertEqual(view.nameLabel.accessibilityIdentifier, "nameLabel:\(UILabel.self)")
         
         class Test2View: TestView {}
         
         let view2 = Test2View()
         IdentifierUpdater.withTypeOfView.update(view2)
         
-        XCTAssertEqual(view2.contentView.slIdentifier, "contentView:\(SLView.self)")
-        XCTAssertEqual(view2.nameLabel.slIdentifier, "nameLabel:\(UILabel.self)")
+        XCTAssertEqual(view2.contentView.accessibilityIdentifier, "contentView:\(UIView.self)")
+        XCTAssertEqual(view2.nameLabel.accessibilityIdentifier, "nameLabel:\(UILabel.self)")
     }
     
     func testDontTouchRootViewByDeactive() {
-        let root = SLView().viewTag.root
-        let red = SLView().viewTag.red
-        let old = SLView().viewTag.old
+        let root = UIView().viewTag.root
+        let red = UIView().viewTag.red
+        let old = UIView().viewTag.old
         old.addSubview(root)
         root.translatesAutoresizingMaskIntoConstraints = true
         
@@ -166,9 +166,9 @@ extension ImplementationTests {
 }
 
 extension ImplementationTests {
-    final class IdentifiedView: SLView, Layoutable {
+    final class IdentifiedView: UIView, Layoutable {
         
-        lazy var contentView: SLView = SLView()
+        lazy var contentView: UIView = UIView()
         lazy var nameLabel: UILabel = UILabel()
         
         var activation: Activation? 
@@ -191,14 +191,14 @@ extension ImplementationTests {
     
     func testNoAccessibilityIdentifierOption() {
         let view = IdentifiedView()
-        XCTAssertEqual(view.contentView.slIdentifier ?? "", "")
-        XCTAssertEqual(view.nameLabel.slIdentifier ?? "", "")
+        XCTAssertEqual(view.contentView.accessibilityIdentifier ?? "", "")
+        XCTAssertEqual(view.nameLabel.accessibilityIdentifier ?? "", "")
     }
     
     func testAccessibilityIdentifierOption() {
         let view = IdentifiedView().updateIdentifiers()
-        XCTAssertEqual(view.contentView.slIdentifier, "contentView")
-        XCTAssertEqual(view.nameLabel.slIdentifier, "nameLabel")
+        XCTAssertEqual(view.contentView.accessibilityIdentifier, "contentView")
+        XCTAssertEqual(view.nameLabel.accessibilityIdentifier, "nameLabel")
     }
 }
 
@@ -208,7 +208,7 @@ extension ImplementationTests {
             UILabel().identifying("label").anchors {
                 Anchors.cap()
             }
-            SLView().identifying("secondView").anchors {
+            UIView().identifying("secondView").anchors {
                 Anchors(.top).equalTo("label", attribute: .bottom)
                 Anchors.shoe()
             }
@@ -216,10 +216,10 @@ extension ImplementationTests {
         
         let label = activation.viewForIdentifier("label")
         XCTAssertNotNil(label)
-        XCTAssertEqual(label?.slIdentifier, "label")
+        XCTAssertEqual(label?.accessibilityIdentifier, "label")
         
         let secondView = activation.viewForIdentifier("secondView")
-        XCTAssertEqual(secondView?.slIdentifier, "secondView")
+        XCTAssertEqual(secondView?.accessibilityIdentifier, "secondView")
         
         let currents = activation.constraints
         let labelConstraints = Set(Anchors.cap().constraints(item: label!, toItem: root).weakens)
@@ -243,23 +243,25 @@ extension ImplementationTests {
         NSLayoutConstraint.activate(constraints)
         
         root.frame = CGRect(origin: .zero, size: .init(width: 200, height: 200))
-        root.slLayout()
+        root.layoutIfNeeded()
         XCTAssertEqual(child.frame.size, .init(width: 200, height: 200))
         root.removeConstraints(constraints)
         
         let constraints1 = Anchors(.top, .leading).constraints(item: child, toItem: root)
-        let constraints2 = Anchors(.width, .height).equalTo(constant: 98).constraints(item: child, toItem: root)
+        let constraints2 = Anchors(.width, .height).equalTo(constant: 98).constraints(item: child, toItem: nil)
         
         NSLayoutConstraint.activate(constraints1)
         NSLayoutConstraint.activate(constraints2)
         
-        root.slLayout()
+        root.layoutIfNeeded()
+        child.setNeedsLayout()
+        child.layoutIfNeeded()
         XCTAssertEqual(child.frame.size, .init(width: 98, height: 98))
     }
     
     func testSelfContraint() {
-        let superview = SLView().viewTag.superview
-        let subview = SLView().viewTag.subview
+        let superview = UIView().viewTag.superview
+        let subview = UIView().viewTag.subview
         
         let constraint = subview.widthAnchor.constraint(equalToConstant: 24)
         
@@ -342,11 +344,11 @@ extension ImplementationTests {
     }
     
     func testRules() {
-        let root = SLView().viewTag.root
+        let root = UIView().viewTag.root
         root.translatesAutoresizingMaskIntoConstraints = false
         window.addSubview(root)
-        let child = SLView().viewTag.child
-        let friend = SLView().viewTag.friend
+        let child = UIView().viewTag.child
+        let friend = UIView().viewTag.friend
         
         enum TestCase {
             case topEqualToNameless
@@ -532,9 +534,9 @@ extension ImplementationTests {
 
 extension ImplementationTests {
     func testFinalActive() {
-        let root = SLView().viewTag.root
-        let cap = SLView().viewTag.cap
-        let shoe = SLView().viewTag.shoe
+        let root = UIView().viewTag.root
+        let cap = UIView().viewTag.cap
+        let shoe = UIView().viewTag.shoe
         
         root {
             cap.anchors {
@@ -563,7 +565,7 @@ extension ImplementationTests {
 // MARK: - Anchors only
 extension ImplementationTests {
     func testAnchorsOnly() {
-        let fixedView = SLView(frame: .init(x: 0, y: 0, width: 120, height: 120))
+        let fixedView = UIView(frame: .init(x: 0, y: 0, width: 120, height: 120))
         fixedView.translatesAutoresizingMaskIntoConstraints = false
         window.addSubview(fixedView)
         fixedView.anchors {
@@ -578,7 +580,7 @@ extension ImplementationTests {
     }
     
     func testConveniencesOfAnchors() {
-        let fixedView = SLView().viewTag.fixedView
+        let fixedView = UIView().viewTag.fixedView
         fixedView.translatesAutoresizingMaskIntoConstraints = false
         window.addSubview(fixedView)
         fixedView.anchors {
@@ -624,7 +626,7 @@ extension ImplementationTests {
             }.identifying("hellolabel").anchors {
                 Anchors.cap()
             }.sublayout {
-                SLView().identifying("lastview").anchors {
+                UIView().identifying("lastview").anchors {
                     Anchors.allSides()
                 }
             }
@@ -660,7 +662,7 @@ extension ImplementationTests {
             }.identifying("hellolabel").anchors {
                 Anchors.cap()
             }.sublayout {
-                SLView().identifying("lastview").anchors {
+                UIView().identifying("lastview").anchors {
                     Anchors.allSides()
                 }
             }
@@ -703,12 +705,12 @@ extension ImplementationTests {
         XCTAssertNil(test.trueView.superview)
     }
     
-    private class TestView: SLView, Layoutable {
+    private class TestView: UIView, Layoutable {
         
         @LayoutProperty var flag = true
         
-        var trueView = SLView().viewTag.true
-        var falseView = SLView().viewTag.false
+        var trueView = UIView().viewTag.true
+        var falseView = UIView().viewTag.false
         
         var activation: Activation?
         

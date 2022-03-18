@@ -11,7 +11,7 @@ import SwiftLayout
 class ReferenceTests: XCTestCase {
     
     var view: SelfReferenceView?
-    weak var weakView: SLView?
+    weak var weakView: UIView?
     
     func testReferenceReleasing() {
         context("prepare") { [weak self] in
@@ -32,7 +32,7 @@ class ReferenceTests: XCTestCase {
     override func setUpWithError() throws {}
     override func tearDownWithError() throws {}
     
-    class DeinitView: SLView {
+    class DeinitView: UIView {
         static var deinitCount: Int = 0
         
         deinit {
@@ -40,7 +40,7 @@ class ReferenceTests: XCTestCase {
         }
     }
     
-    class SelfReferenceView: SLView, Layoutable {
+    class SelfReferenceView: UIView, Layoutable {
         var layout: some Layout {
             self {
                 DeinitView().anchors {

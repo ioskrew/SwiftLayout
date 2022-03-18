@@ -1,9 +1,5 @@
 import Foundation
-#if canImport(UIKit)
 import UIKit
-#elseif canImport(AppKit)
-import AppKit
-#endif
 
 protocol AnyLayoutBox: Layout {}
 struct _AnyLayoutBox<L: Layout>: AnyLayoutBox {
