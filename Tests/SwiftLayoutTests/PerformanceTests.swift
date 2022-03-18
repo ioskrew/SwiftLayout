@@ -24,12 +24,12 @@ class PerformanceTests: XCTestCase {
         let nib = UINib(nibName: "XibView", bundle: .module)
         let view = nib.instantiate(withOwner: nil, options: nil)[0] as! XibView
         view.frame = .init(origin: .zero, size: .init(width: 375, height: 667))
-        attachScreenshot(named: "screenshot for XibView", view: view)
+        attachSnapshot(named: "screenshot for XibView", view: view)
     }
     
     func testDrawSwiftLayoutView() {
         let view = SwiftLayoutView(frame: .init(x: 0, y: 0, width: 375, height: 667))
-        attachScreenshot(named: "screenshot for SwiftLayoutView", view: view)
+        attachSnapshot(named: "screenshot for SwiftLayoutView", view: view)
     }
     
     func testPerformanceInterfaceBuilder() throws {
@@ -48,11 +48,12 @@ class PerformanceTests: XCTestCase {
         }
     }
     
-    func attachScreenshot(named: String, view: UIView) {
+    func attachSnapshot(named: String, view: UIView) {
         XCTContext.runActivity(named: named) { activity in
             let rect = view.bounds
             view.setNeedsLayout()
             view.layoutIfNeeded()
+            view.drawHierarchy(in: rect, afterScreenUpdates: true)
             let renderer = UIGraphicsImageRenderer(size: rect.size)
             let image = renderer.image { context in
                 view.layer.render(in: context.cgContext)
