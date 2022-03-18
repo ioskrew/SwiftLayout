@@ -47,6 +47,8 @@ final class LayoutBuildingTests: XCTestCase {
         XCTAssertEqual(view.root.count(view.friend), 1)
         XCTAssertEqual(view.friend.superview, view.root)
         XCTAssertEqual(view.root.bounds.size, .init(width: 90, height: 90))
+        view.friend.setNeedsLayout()
+        view.friend.layoutIfNeeded()
         XCTAssertEqual(view.friend.bounds.size, .init(width: 90, height: 90))
         XCTAssertEqual(SwiftLayoutPrinter(view).print(), """
         view {
