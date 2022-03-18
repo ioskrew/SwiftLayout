@@ -48,6 +48,27 @@ class PerformanceTests: XCTestCase {
         }
     }
     
+    func testPerformanceInterfaceBuilderAndLayout() throws {
+        let metrics: [XCTMetric] = [XCTCPUMetric(), XCTMemoryMetric()]
+        self.measure(metrics: metrics) {
+            let nib = UINib(nibName: "XibView", bundle: .module)
+            let view = nib.instantiate(withOwner: nil, options: nil)[0] as! XibView
+            view.setNeedsLayout()
+            view.layoutIfNeeded()
+        }
+    }
+    
+    func testPerformanceLayoutableAndLayout() throws {
+        let metrics: [XCTMetric] = [XCTCPUMetric(), XCTMemoryMetric()]
+
+        self.measure(metrics: metrics) {
+            let view = SwiftLayoutView(frame: .init(x: 0, y: 0, width: 375, height: 667))
+            view.setNeedsLayout()
+            view.layoutIfNeeded()
+        }
+    }
+    
+    
     func attachSnapshot(named: String, view: UIView) {
         XCTContext.runActivity(named: named) { activity in
             let rect = view.bounds
