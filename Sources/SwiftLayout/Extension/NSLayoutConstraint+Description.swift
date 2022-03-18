@@ -6,18 +6,14 @@
 //
 
 import Foundation
-#if canImport(UIKit)
 import UIKit
-#elseif canImport(AppKit)
-import AppKit
-#endif
 
 extension NSLayoutConstraint {
     
     var firstShort: String? {
-        if let view = self.firstItem as? SLView {
+        if let view = self.firstItem as? UIView {
             return view.tagDescription
-        } else if let guide = self.firstItem as? SLLayoutGuide {
+        } else if let guide = self.firstItem as? UILayoutGuide {
             return guide.detailDescription
         } else {
             return nil
@@ -25,9 +21,9 @@ extension NSLayoutConstraint {
     }
     
     var secondShort: String? {
-        if let view = self.secondItem as? SLView {
+        if let view = self.secondItem as? UIView {
             return view.tagDescription
-        } else if let guide = self.secondItem as? SLLayoutGuide {
+        } else if let guide = self.secondItem as? UILayoutGuide {
             return guide.detailDescription
         } else {
             return nil
@@ -98,7 +94,6 @@ extension NSLayoutConstraint.Attribute: CustomStringConvertible, CustomDebugStri
             return "lastBaseline"
         case .firstBaseline:
             return "firstBaseline"
-            #if canImport(UIKit)
         case .leftMargin:
             return "leftMargin"
         case .rightMargin:
@@ -115,7 +110,6 @@ extension NSLayoutConstraint.Attribute: CustomStringConvertible, CustomDebugStri
             return "centerXWithinMargins"
         case .centerYWithinMargins:
             return "centerYWithinMargins"
-            #endif
         case .notAnAttribute:
             return "notAnAttribute"
         @unknown default:
@@ -148,7 +142,6 @@ extension NSLayoutConstraint.Attribute: CustomStringConvertible, CustomDebugStri
             return "NSLayoutConstraint.Attribute.lastBaseline"
         case .firstBaseline:
             return "NSLayoutConstraint.Attribute.firstBaseline"
-            #if canImport(UIKit)
         case .leftMargin:
             return "NSLayoutConstraint.Attribute.leftMargin"
         case .rightMargin:
@@ -165,7 +158,6 @@ extension NSLayoutConstraint.Attribute: CustomStringConvertible, CustomDebugStri
             return "NSLayoutConstraint.Attribute.centerXWithinMargins"
         case .centerYWithinMargins:
             return "NSLayoutConstraint.Attribute.centerYWithinMargins"
-            #endif
         case .notAnAttribute:
             return "NSLayoutConstraint.Attribute.notAnAttribute"
         @unknown default:

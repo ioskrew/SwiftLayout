@@ -4,10 +4,11 @@
 //
 //  Created by aiden_h on 2022/03/09.
 //
+import UIKit
 
 class LayoutElements {
     let viewInformations: [ViewInformation]
-    let viewConstraints: [SLLayoutConstraint]
+    let viewConstraints: [NSLayoutConstraint]
     
     init(layout: Layout) {
         let components = LayoutExplorer.components(layout: layout)
@@ -29,12 +30,12 @@ class LayoutElements {
 
 private enum LayoutExplorer {
     struct Component {
-        var superView: SLView? = nil
-        var view: SLView
+        var superView: UIView? = nil
+        var view: UIView
         var anchors: Anchors? = nil
     }
     
-    typealias TraversalHandler = (_ layout: Layout, _ superview: SLView?) -> Void
+    typealias TraversalHandler = (_ layout: Layout, _ superview: UIView?) -> Void
     
     static func components(layout: Layout) -> [Component] {
         var elements: [Component] = []
@@ -48,7 +49,7 @@ private enum LayoutExplorer {
         return elements
     }
     
-    static func traversal(layout: Layout, superview: SLView?, handler: TraversalHandler) {
+    static func traversal(layout: Layout, superview: UIView?, handler: TraversalHandler) {
         handler(layout, superview)
         
         let nextSuperview = layout.view ?? superview

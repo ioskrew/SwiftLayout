@@ -6,11 +6,7 @@
 //
 
 import Foundation
-#if canImport(UIKit)
 import UIKit
-#elseif canImport(AppKit)
-import AppKit
-#endif
 
 enum Activator {
     
@@ -106,18 +102,13 @@ private extension Activator {
         for viewInfo in viewInfos {
             if let constraints = prevInfos[viewInfo] {
                 if constraints != viewInfo.view.map({ Set($0.constraints.weakens) }) {
-                    viewInfo.view?.slLayout()
+                    viewInfo.view?.layoutIfNeeded()
                 }
             } else {
                 // for newly add to superview
-                viewInfo.view?.slLayout()
-#if canImport(AppKit)
-                viewInfo.view?.layer?.removeAnimation(forKey: "bounds.size")
-                viewInfo.view?.layer?.removeAnimation(forKey: "position")
-#else
+                viewInfo.view?.layoutIfNeeded()
                 viewInfo.view?.layer.removeAnimation(forKey: "bounds.size")
                 viewInfo.view?.layer.removeAnimation(forKey: "position")
-#endif
             }
         }
     }

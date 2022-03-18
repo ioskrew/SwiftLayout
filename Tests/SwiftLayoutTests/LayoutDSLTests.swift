@@ -4,29 +4,29 @@ import SwiftLayout
 /// test cases for DSL syntax
 final class LayoutDSLTests: XCTestCase {
     
-    var window: SLView!
+    var window: UIView!
     
-    var root: SLView = SLView().viewTag.root
-    var child: SLView = SLView().viewTag.child
+    var root: UIView = UIView().viewTag.root
+    var child: UIView = UIView().viewTag.child
     var button: UIButton = UIButton().viewTag.button
     var label: UILabel = UILabel().viewTag.label
-    var red: SLView = SLView().viewTag.red
-    var blue: SLView = SLView().viewTag.blue
-    var green: SLView = SLView().viewTag.green
+    var red: UIView = UIView().viewTag.red
+    var blue: UIView = UIView().viewTag.blue
+    var green: UIView = UIView().viewTag.green
     var image: UIImageView = UIImageView().viewTag.image
     
     var activation: Set<Activation> = []
     
     override func setUp() {
-        window = SLView(frame: .init(x: 0, y: 0, width: 150, height: 150))
-        root = SLView().viewTag.root
+        window = UIView(frame: .init(x: 0, y: 0, width: 150, height: 150))
+        root = UIView().viewTag.root
         root.translatesAutoresizingMaskIntoConstraints = false
         window.addSubview(root)
-        child = SLView().viewTag.child
+        child = UIView().viewTag.child
         button = UIButton().viewTag.button
         label = UILabel().viewTag.label
-        red = SLView().viewTag.red
-        blue = SLView().viewTag.blue
+        red = UIView().viewTag.red
+        blue = UIView().viewTag.blue
         image = UIImageView().viewTag.image
     }
     
@@ -193,10 +193,10 @@ extension LayoutDSLTests {
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect.tabbed)
     }
     
-    private final class TestView: SLView, Layoutable {
-        lazy var red = SLView().viewTag.red
-        lazy var blue = SLView().viewTag.blue
-        lazy var green = SLView().viewTag.green
+    private final class TestView: UIView, Layoutable {
+        lazy var red = UIView().viewTag.red
+        lazy var blue = UIView().viewTag.blue
+        lazy var green = UIView().viewTag.green
         
         var activation: Activation? 
         @LayoutBuilder
@@ -229,7 +229,7 @@ extension LayoutDSLTests {
 extension LayoutDSLTests {
     
     func testUpdateIdentifiers() {
-        let rootView = SLView(frame: .init(x: 0, y: 0, width: 150, height: 150))
+        let rootView = UIView(frame: .init(x: 0, y: 0, width: 150, height: 150))
         let container = TestViewContainer()
         container.root.translatesAutoresizingMaskIntoConstraints = false
         rootView.addSubview(container.root)
@@ -261,19 +261,19 @@ extension LayoutDSLTests {
         
         XCTAssertEqual(SwiftLayoutPrinter(container.root).print(options: .onlyIdentifier), expect)
         
-        XCTAssertEqual(container.root.slIdentifier, "root")
-        XCTAssertEqual(container.red.slIdentifier, "red")
-        XCTAssertEqual(container.button.slIdentifier, "button")
-        XCTAssertEqual(container.label.slIdentifier, "label")
-        XCTAssertEqual(container.blue.slIdentifier, "blue")
-        XCTAssertEqual(container.image.slIdentifier, "image")
+        XCTAssertEqual(container.root.accessibilityIdentifier, "root")
+        XCTAssertEqual(container.red.accessibilityIdentifier, "red")
+        XCTAssertEqual(container.button.accessibilityIdentifier, "button")
+        XCTAssertEqual(container.label.accessibilityIdentifier, "label")
+        XCTAssertEqual(container.blue.accessibilityIdentifier, "blue")
+        XCTAssertEqual(container.image.accessibilityIdentifier, "image")
     }
     
-    // This can be a SLViewController or a SLView.
+    // This can be a UIViewController or a UIView.
     private final class TestViewContainer {
-        let root = SLView()
-        let red = SLView()
-        let blue = SLView()
+        let root = UIView()
+        let red = UIView()
+        let blue = UIView()
         let button = UIButton()
         let label = UILabel()
         let image = UIImageView()
@@ -291,15 +291,15 @@ extension LayoutDSLTests {
                 }
                 
                 if flag {
-                    SLView().viewTag.true
+                    UIView().viewTag.true
                 } else {
-                    SLView().viewTag.false
+                    UIView().viewTag.false
                 }
             }
         }
         
         context("if true") {
-            root = SLView().viewTag.root
+            root = UIView().viewTag.root
             layout(true).finalActive()
             XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
             root {
@@ -312,7 +312,7 @@ extension LayoutDSLTests {
         }
         
         context("if false") {
-            root = SLView().viewTag.root
+            root = UIView().viewTag.root
             layout(false).finalActive()
             XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
             root {
@@ -338,11 +338,11 @@ extension LayoutDSLTests {
                 child {
                     switch test {
                     case .first:
-                        SLView().viewTag.first
+                        UIView().viewTag.first
                     case .second:
-                        SLView().viewTag.second
+                        UIView().viewTag.second
                     case .third:
-                        SLView().viewTag.third
+                        UIView().viewTag.third
                     }
                 }
             }
@@ -366,7 +366,7 @@ extension LayoutDSLTests {
     func testLayoutWithOptionalViews() {
         
         @LayoutBuilder
-        func layout(_ view: SLView?) -> some Layout {
+        func layout(_ view: UIView?) -> some Layout {
             root {
                 red {
                     view?.identifying("optional")
@@ -386,7 +386,7 @@ extension LayoutDSLTests {
         
         context("view is optional") {
             activation = []
-            layout(SLView()).active().store(&activation)
+            layout(UIView()).active().store(&activation)
             XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
             root {
                 red {
@@ -403,7 +403,7 @@ extension LayoutDSLTests {
         func layout() -> some Layout {
             root {
                 for index in 0..<3 {
-                    SLView().identifying("view_\(index)")
+                    UIView().identifying("view_\(index)")
                 }
             }
         }
@@ -477,14 +477,14 @@ extension LayoutDSLTests {
         """.tabbed)
     }
     
-    class MockView: SLView {
-        var addSubviewCounts: [SLView: Int] = [:]
+    class MockView: UIView {
+        var addSubviewCounts: [UIView: Int] = [:]
         
-        func count(_ view: SLView) -> Int {
+        func count(_ view: UIView) -> Int {
             addSubviewCounts[view] ?? 0
         }
         
-        override func addSubview(_ view: SLView) {
+        override func addSubview(_ view: UIView) {
             if let count = addSubviewCounts[view] {
                 addSubviewCounts[view] = count + 1
             } else {
@@ -494,11 +494,11 @@ extension LayoutDSLTests {
         }
     }
     
-    class LayoutView: SLView {
+    class LayoutView: UIView {
         var flag = true
         
         let root = MockView().viewTag.root
-        let child = SLView().viewTag.child
+        let child = UIView().viewTag.child
         let friend = UILabel().viewTag.friend
         
         var activation: Activation?
@@ -527,10 +527,10 @@ extension LayoutDSLTests {
 
 extension LayoutDSLTests {
     func testGroupLayout() {
-        let group1_1 = SLView().viewTag.group1_1
-        let group1_2 = SLView().viewTag.group1_2
-        let group2_1 = SLView().viewTag.group2_1
-        let group2_2 = SLView().viewTag.group2_2
+        let group1_1 = UIView().viewTag.group1_1
+        let group1_2 = UIView().viewTag.group1_2
+        let group2_1 = UIView().viewTag.group2_1
+        let group2_2 = UIView().viewTag.group2_2
         
         root {
             GroupLayout {

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 protocol CustomHashable: AnyObject {
     func customHash(_ hasher: inout Hasher)
@@ -40,7 +41,7 @@ final class WeakReference<Origin>: Hashable, Comparable where Origin: CustomHash
     }
 }
 
-extension SLLayoutConstraint: CustomHashable {
+extension NSLayoutConstraint: CustomHashable {
     func customHash(_ hasher: inout Hasher) {
         hasher.combine(firstItem as? NSObject)
         hasher.combine(firstAttribute)
@@ -52,7 +53,7 @@ extension SLLayoutConstraint: CustomHashable {
         hasher.combine(priority)
     }
     
-    func isLessThan(_ hashable: SLLayoutConstraint) -> Bool {
+    func isLessThan(_ hashable: NSLayoutConstraint) -> Bool {
         if firstAttribute.rawValue < hashable.firstAttribute.rawValue {
             return true
         } else if firstAttribute == hashable.firstAttribute {
@@ -87,13 +88,13 @@ extension SLLayoutConstraint: CustomHashable {
     }
 }
 
-extension WeakReference: CustomDebugStringConvertible where Origin: SLLayoutConstraint {
+extension WeakReference: CustomDebugStringConvertible where Origin: NSLayoutConstraint {
     var debugDescription: String {
         guard let origin = origin else { return "WK constraint: unknown: \(UUID().uuidString)" }
-        guard let first = origin.firstItem as? SLView else { return "WK constraint: unknown: \(UUID().uuidString)" }
-        if let second = origin.secondItem as? SLView {
+        guard let first = origin.firstItem as? UIView else { return "WK constraint: unknown: \(UUID().uuidString)" }
+        if let second = origin.secondItem as? UIView {
             return "WK constraint: \(first.tagDescription):\(origin.firstAttribute) \(origin.relation)[\(origin.constant)x\(origin.multiplier)] \(second.tagDescription):\(origin.secondAttribute)"
-        } else if let second = origin.secondItem as? SLLayoutGuide {
+        } else if let second = origin.secondItem as? UILayoutGuide {
             return "WK constraint: \(first.tagDescription):\(origin.firstAttribute) \(origin.relation)[\(origin.constant)x\(origin.multiplier)] \(second.tagDescription):\(origin.secondAttribute)"
         } else {
             return "WK constraint: \(first.tagDescription):\(origin.firstAttribute) \(origin.relation)[\(origin.constant)x\(origin.multiplier)]"

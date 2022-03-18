@@ -1,15 +1,8 @@
 import SwiftLayout
-#if canImport(UIKit)
 import UIKit
-#elseif canImport(AppKit)
-import AppKit
-typealias UILabel = NSTextView
-typealias UIImageView = NSImageView
-typealias UIButton = NSButton
-#endif
 
-extension SLView {
-    func findConstraints(items: (NSObject?, NSObject?), attributes: (SLLayoutConstraint.Attribute, SLLayoutConstraint.Attribute)? = nil, relation: SLLayoutConstraint.Relation = .equal, constant: CGFloat = .zero, multiplier: CGFloat = 1.0) -> [SLLayoutConstraint] {
+extension UIView {
+    func findConstraints(items: (NSObject?, NSObject?), attributes: (NSLayoutConstraint.Attribute, NSLayoutConstraint.Attribute)? = nil, relation: NSLayoutConstraint.Relation = .equal, constant: CGFloat = .zero, multiplier: CGFloat = 1.0) -> [NSLayoutConstraint] {
         var constraints = self.constraints.filter { constraint in
             constraint.isFit(items: items, attributes: attributes, relation: relation, constant: constant, multiplier: multiplier)
         }
@@ -20,8 +13,8 @@ extension SLView {
     }
 }
 
-extension SLLayoutConstraint {
-    func isFit(items: (NSObject?, NSObject?), attributes: (SLLayoutConstraint.Attribute, SLLayoutConstraint.Attribute)? = nil, relation: SLLayoutConstraint.Relation = .equal, constant: CGFloat = .zero, multiplier: CGFloat = 1.0) -> Bool {
+extension NSLayoutConstraint {
+    func isFit(items: (NSObject?, NSObject?), attributes: (NSLayoutConstraint.Attribute, NSLayoutConstraint.Attribute)? = nil, relation: NSLayoutConstraint.Relation = .equal, constant: CGFloat = .zero, multiplier: CGFloat = 1.0) -> Bool {
         let item = firstItem as? NSObject
         let toItem = secondItem as? NSObject
         return (item, toItem) == items
@@ -33,21 +26,3 @@ extension SLLayoutConstraint {
 extension String {
     var tabbed: String { replacingOccurrences(of: "    ", with: "\t") }
 }
-
-#if canImport(AppKit)
-extension NSView {
-    func systemLayoutSizeFitting(_ size: CGSize) -> CGSize {
-        fittingSize
-    }
-    var backgroundColor: NSColor? {
-        get { layer?.backgroundColor.flatMap(NSColor.init) }
-        set { layer?.backgroundColor = newValue?.cgColor }
-    }
-}
-extension NSTextView {
-    var text: String? {
-        get { string }
-        set { string = newValue ?? "" }
-    }
-}
-#endif

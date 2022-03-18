@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 public final class IdentifierUpdater {
     /// update identifiers with property name
@@ -36,7 +37,7 @@ public final class IdentifierUpdater {
             lhs.hashValue == rhs.hashValue
         }
         
-        internal init(prefix: String = "", identifier: String, view: SLView) {
+        internal init(prefix: String = "", identifier: String, view: UIView) {
             self.prefix = prefix
             self.identifier = identifier
             self.view = view
@@ -44,21 +45,21 @@ public final class IdentifierUpdater {
         
         let prefix: String
         let identifier: String
-        let view: SLView
+        let view: UIView
         
         func prepare(enableViewType: Bool = false) {
             if enableViewType {
                 if prefix.isEmpty {
-                    view.slIdentifier = "\(identifier):\(type(of: view))"
+                    view.accessibilityIdentifier = "\(identifier):\(type(of: view))"
                 } else {
-                    view.slIdentifier = "\(prefix).\(identifier):\(type(of: view))"
+                    view.accessibilityIdentifier = "\(prefix).\(identifier):\(type(of: view))"
                 }
             } else {
                 
                 if prefix.isEmpty {
-                    view.slIdentifier = identifier
+                    view.accessibilityIdentifier = identifier
                 } else {
-                    view.slIdentifier = "\(prefix).\(identifier)"
+                    view.accessibilityIdentifier = "\(prefix).\(identifier)"
                 }
             }
         }
@@ -92,7 +93,7 @@ public final class IdentifierUpdater {
             }
             for child in mirror.children {
                 guard let label = child.label?.replacingOccurrences(of: "$__lazy_storage_$_", with: "") else { continue }
-                guard let view = child.value as? SLView else { continue }
+                guard let view = child.value as? UIView else { continue }
                 let identified = Identified(prefix: enablePrefixChain ? prefix : "", identifier: label, view: view)
                 if self.identifieds.contains(identified) { continue }
                 self.identifieds.insert(identified)

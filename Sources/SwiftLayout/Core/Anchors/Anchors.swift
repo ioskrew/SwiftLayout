@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import CoreGraphics
+import UIKit
 
 ///
 /// type of ``AnchorsBuilder`` for auto layout constraint.
@@ -30,7 +30,7 @@ public final class Anchors {
     /// initialize and return new Anchors with array of **NSLayoutConstraint.Attribute**
     ///
     /// - Parameter attributes: variadic of **NSLayoutConstraint.Attribute**
-    public convenience init(_ attributes: SLLayoutConstraint.Attribute...) {
+    public convenience init(_ attributes: NSLayoutConstraint.Attribute...) {
         let items = attributes.map { Anchors.Constraint(attribute: $0) }
         self.init(items: items)
     }
@@ -38,7 +38,7 @@ public final class Anchors {
     /// initialize and return new Anchors with array of **NSLayoutConstraint.Attribute**
     ///
     /// - Parameter attributes: array of **NSLayoutConstraint.Attribute**
-    public convenience init(_ attributes: [SLLayoutConstraint.Attribute]) {
+    public convenience init(_ attributes: [NSLayoutConstraint.Attribute]) {
         let items = attributes.map { Anchors.Constraint(attribute: $0) }
         self.init(items: items)
     }
@@ -50,12 +50,12 @@ public final class Anchors {
 
 extension Anchors {
     
-    func constraints(item fromItem: NSObject, toItem: NSObject?) -> [SLLayoutConstraint] {
+    func constraints(item fromItem: NSObject, toItem: NSObject?) -> [NSLayoutConstraint] {
         constraints(item: fromItem, toItem: toItem, viewInfoSet: nil)
     }
     
-    func constraints(item fromItem: NSObject, toItem: NSObject?, viewInfoSet: ViewInformationSet?) -> [SLLayoutConstraint] {
-        var constraints: [SLLayoutConstraint] = []
+    func constraints(item fromItem: NSObject, toItem: NSObject?, viewInfoSet: ViewInformationSet?) -> [NSLayoutConstraint] {
+        var constraints: [NSLayoutConstraint] = []
         for item in items {
             let from = fromItem
             let attribute = item.attribute
@@ -64,8 +64,8 @@ extension Anchors {
             let toAttribute = item.toAttribute(attribute)
             let multiplier = item.multiplier
             let constant = item.constant
-            assert(to is SLView || to is SLLayoutGuide || to == nil, "to: \(to.debugDescription) is not item")
-            let constraint = SLLayoutConstraint(
+            assert(to is UIView || to is UILayoutGuide || to == nil, "to: \(to.debugDescription) is not item")
+            let constraint = NSLayoutConstraint(
                 item: from,
                 attribute: attribute,
                 relatedBy: relation,
@@ -80,7 +80,7 @@ extension Anchors {
         return constraints
     }
     
-    func to(_ relation: SLLayoutConstraint.Relation, to: ConstraintTarget) -> Self {
+    func to(_ relation: NSLayoutConstraint.Relation, to: ConstraintTarget) -> Self {
         func update(_ updateItem: Constraint) -> Constraint {
             var updateItem = updateItem
             updateItem.relation = relation
@@ -173,7 +173,7 @@ extension Anchors {
     /// - Parameter attribute: Represents the `secondAttribute` property of `NSLayoutConstraint`.
     /// - Returns: ``Anchors``
     ///
-    public func equalTo<I>(_ toItem: I, attribute: SLLayoutConstraint.Attribute) -> Self where I: ConstraintableItem {
+    public func equalTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute) -> Self where I: ConstraintableItem {
         to(.equal, to: .init(item: toItem, attribute: attribute, constant: .zero))
     }
     
@@ -184,7 +184,7 @@ extension Anchors {
     /// - Parameter attribute: Represents the `secondAttribute` property of `NSLayoutConstraint`.
     /// - Returns: ``Anchors``
     ///
-    public func greaterThanOrEqualTo<I>(_ toItem: I, attribute: SLLayoutConstraint.Attribute) -> Self where I: ConstraintableItem {
+    public func greaterThanOrEqualTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute) -> Self where I: ConstraintableItem {
         to(.greaterThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: .zero))
     }
     
@@ -195,7 +195,7 @@ extension Anchors {
     /// - Parameter attribute: Represents the `secondAttribute` property of `NSLayoutConstraint`.
     /// - Returns: ``Anchors``
     ///
-    public func lessThanOrEqualTo<I>(_ toItem: I, attribute: SLLayoutConstraint.Attribute) -> Self where I: ConstraintableItem {
+    public func lessThanOrEqualTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute) -> Self where I: ConstraintableItem {
         to(.lessThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: .zero))
     }
     
@@ -240,7 +240,7 @@ extension Anchors {
     /// - Parameter constant: Represents the `constant` property of `NSLayoutConstraint`.
     /// - Returns: ``Anchors``
     ///
-    public func equalTo<I>(_ toItem: I, attribute: SLLayoutConstraint.Attribute, constant: CGFloat) -> Self where I: ConstraintableItem {
+    public func equalTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute, constant: CGFloat) -> Self where I: ConstraintableItem {
         to(.equal, to: .init(item: toItem, attribute: attribute, constant: constant))
     }
     
@@ -252,7 +252,7 @@ extension Anchors {
     /// - Parameter constant: Represents the `constant` property of `NSLayoutConstraint`.
     /// - Returns: ``Anchors``
     ///
-    public func greaterThanOrEqualTo<I>(_ toItem: I, attribute: SLLayoutConstraint.Attribute, constant: CGFloat) -> Self where I: ConstraintableItem {
+    public func greaterThanOrEqualTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute, constant: CGFloat) -> Self where I: ConstraintableItem {
         to(.greaterThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: constant))
     }
     
@@ -264,7 +264,7 @@ extension Anchors {
     /// - Parameter constant: Represents the `constant` property of `NSLayoutConstraint`.
     /// - Returns: ``Anchors``
     ///
-    public func lessThanOrEqualTo<I>(_ toItem: I, attribute: SLLayoutConstraint.Attribute, constant: CGFloat) -> Self where I: ConstraintableItem {
+    public func lessThanOrEqualTo<I>(_ toItem: I, attribute: NSLayoutConstraint.Attribute, constant: CGFloat) -> Self where I: ConstraintableItem {
         to(.lessThanOrEqual, to: .init(item: toItem, attribute: attribute, constant: constant))
     }
     
@@ -303,7 +303,7 @@ extension Anchors {
     /// - Parameter layoutAnchor: A layout anchor from a `UIView` or `UILayoutGuide` object.
     /// - Returns: ``Anchors``
     ///
-    public func equalTo(_ layoutAnchor: SLLayoutXAxisAnchor) -> Self {
+    public func equalTo(_ layoutAnchor: NSLayoutXAxisAnchor) -> Self {
         let target = constraintTargetWithConstant(layoutAnchor)
         return to(.equal, to: target)
     }
@@ -314,7 +314,7 @@ extension Anchors {
     /// - Parameter layoutAnchor: A layout anchor from a `UIView` or `UILayoutGuide` object.
     /// - Returns: ``Anchors``
     ///
-    public func equalTo(_ layoutAnchor: SLLayoutYAxisAnchor) -> Self {
+    public func equalTo(_ layoutAnchor: NSLayoutYAxisAnchor) -> Self {
         let target = constraintTargetWithConstant(layoutAnchor)
         return to(.equal, to: target)
     }
@@ -325,7 +325,7 @@ extension Anchors {
     /// - Parameter layoutAnchor: A layout anchor from a `UIView` or `UILayoutGuide` object.
     /// - Returns: ``Anchors``
     ///
-    public func equalTo(_ layoutAnchor: SLLayoutDimension) -> Self {
+    public func equalTo(_ layoutAnchor: NSLayoutDimension) -> Self {
         let target = constraintTargetWithConstant(layoutAnchor)
         return to(.equal, to: target)
     }
@@ -336,7 +336,7 @@ extension Anchors {
     /// - Parameter layoutAnchor: A layout anchor from a `UIView` or `UILayoutGuide` object.
     /// - Returns: ``Anchors``
     ///
-    public func greaterThanOrEqualTo(_ layoutAnchor: SLLayoutXAxisAnchor) -> Self {
+    public func greaterThanOrEqualTo(_ layoutAnchor: NSLayoutXAxisAnchor) -> Self {
         let target = constraintTargetWithConstant(layoutAnchor)
         return to(.greaterThanOrEqual, to: target)
     }
@@ -347,7 +347,7 @@ extension Anchors {
     /// - Parameter layoutAnchor: A layout anchor from a `UIView` or `UILayoutGuide` object.
     /// - Returns: ``Anchors``
     ///
-    public func greaterThanOrEqualTo(_ layoutAnchor: SLLayoutYAxisAnchor) -> Self {
+    public func greaterThanOrEqualTo(_ layoutAnchor: NSLayoutYAxisAnchor) -> Self {
         let target = constraintTargetWithConstant(layoutAnchor)
         return to(.greaterThanOrEqual, to: target)
     }
@@ -358,7 +358,7 @@ extension Anchors {
     /// - Parameter layoutAnchor: A layout anchor from a `UIView` or `UILayoutGuide` object.
     /// - Returns: ``Anchors``
     ///
-    public func greaterThanOrEqualTo(_ layoutAnchor: SLLayoutDimension) -> Self {
+    public func greaterThanOrEqualTo(_ layoutAnchor: NSLayoutDimension) -> Self {
         let target = constraintTargetWithConstant(layoutAnchor)
         return to(.greaterThanOrEqual, to: target)
     }
@@ -369,7 +369,7 @@ extension Anchors {
     /// - Parameter layoutAnchor: A layout anchor from a `UIView` or `UILayoutGuide` object.
     /// - Returns: ``Anchors``
     ///
-    public func lessThanOrEqualTo(_ layoutAnchor: SLLayoutXAxisAnchor) -> Self {
+    public func lessThanOrEqualTo(_ layoutAnchor: NSLayoutXAxisAnchor) -> Self {
         let target = constraintTargetWithConstant(layoutAnchor)
         return to(.lessThanOrEqual, to: target)
     }
@@ -380,7 +380,7 @@ extension Anchors {
     /// - Parameter layoutAnchor: A layout anchor from a `UIView` or `UILayoutGuide` object.
     /// - Returns: ``Anchors``
     ///
-    public func lessThanOrEqualTo(_ layoutAnchor: SLLayoutYAxisAnchor) -> Self {
+    public func lessThanOrEqualTo(_ layoutAnchor: NSLayoutYAxisAnchor) -> Self {
         let target = constraintTargetWithConstant(layoutAnchor)
         return to(.lessThanOrEqual, to: target)
     }
@@ -391,24 +391,24 @@ extension Anchors {
     /// - Parameter layoutAnchor: A layout anchor from a `UIView` or `UILayoutGuide` object.
     /// - Returns: ``Anchors``
     ///
-    public func lessThanOrEqualTo(_ layoutAnchor: SLLayoutDimension) -> Self {
+    public func lessThanOrEqualTo(_ layoutAnchor: NSLayoutDimension) -> Self {
         let target = constraintTargetWithConstant(layoutAnchor)
         return to(.lessThanOrEqual, to: target)
     }
     
-    private func constraintTargetWithConstant(_ layoutAnchor: SLLayoutXAxisAnchor) -> Anchors.ConstraintTarget {
-        targetFromConstraint(SLView().leadingAnchor.constraint(equalTo: layoutAnchor))
+    private func constraintTargetWithConstant(_ layoutAnchor: NSLayoutXAxisAnchor) -> Anchors.ConstraintTarget {
+        targetFromConstraint(UIView().leadingAnchor.constraint(equalTo: layoutAnchor))
     }
     
-    private func constraintTargetWithConstant(_ layoutAnchor: SLLayoutYAxisAnchor) -> Anchors.ConstraintTarget {
-        targetFromConstraint(SLView().topAnchor.constraint(equalTo: layoutAnchor))
+    private func constraintTargetWithConstant(_ layoutAnchor: NSLayoutYAxisAnchor) -> Anchors.ConstraintTarget {
+        targetFromConstraint(UIView().topAnchor.constraint(equalTo: layoutAnchor))
     }
     
-    private func constraintTargetWithConstant(_ layoutAnchor: SLLayoutDimension) -> Anchors.ConstraintTarget {
-        targetFromConstraint(SLView().widthAnchor.constraint(equalTo: layoutAnchor))
+    private func constraintTargetWithConstant(_ layoutAnchor: NSLayoutDimension) -> Anchors.ConstraintTarget {
+        targetFromConstraint(UIView().widthAnchor.constraint(equalTo: layoutAnchor))
     }
     
-    private func targetFromConstraint(_ constraint: SLLayoutConstraint) -> Anchors.ConstraintTarget {
+    private func targetFromConstraint(_ constraint: NSLayoutConstraint) -> Anchors.ConstraintTarget {
         if let object = constraint.secondItem as? NSObject {
             return .init(item: .object(object), attribute: constraint.secondAttribute, constant: .zero)
         } else {
@@ -419,28 +419,28 @@ extension Anchors {
 
 extension Anchors {
     struct ConstraintTarget {
-        init<I>(item: I?, attribute: SLLayoutConstraint.Attribute?, constant: CGFloat) where I: ConstraintableItem {
+        init<I>(item: I?, attribute: NSLayoutConstraint.Attribute?, constant: CGFloat) where I: ConstraintableItem {
             self.item = ItemFromView(item).item
             self.attribute = attribute
             self.constant = constant
         }
         
-        init(item: Item = .transparent, attribute: SLLayoutConstraint.Attribute?, constant: CGFloat) {
+        init(item: Item = .transparent, attribute: NSLayoutConstraint.Attribute?, constant: CGFloat) {
             self.item = item
             self.attribute = attribute
             self.constant = constant
         }
         
         let item: Item
-        let attribute: SLLayoutConstraint.Attribute?
+        let attribute: NSLayoutConstraint.Attribute?
         let constant: CGFloat
     }
     
     struct Constraint: Hashable {
-        var attribute: SLLayoutConstraint.Attribute
-        var relation: SLLayoutConstraint.Relation = .equal
+        var attribute: NSLayoutConstraint.Attribute
+        var relation: NSLayoutConstraint.Relation = .equal
         var toItem: Item = .transparent
-        var toAttribute: SLLayoutConstraint.Attribute?
+        var toAttribute: NSLayoutConstraint.Attribute?
         
         var constant: CGFloat = 0.0
         var multiplier: CGFloat = 1.0
@@ -463,7 +463,7 @@ extension Anchors {
             }
         }
         
-        func toAttribute(_ attribute: SLLayoutConstraint.Attribute) -> SLLayoutConstraint.Attribute {
+        func toAttribute(_ attribute: NSLayoutConstraint.Attribute) -> NSLayoutConstraint.Attribute {
             return toAttribute ?? attribute
         }
     }
