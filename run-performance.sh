@@ -4,6 +4,6 @@ xcodebuild clean test -quiet -scheme SwiftLayout -sdk iphonesimulator -destinati
         grep -o "^\d*.\d*ms\t[^$]*$" |
         awk '!visited[$0]++' |
         sed -e "s|$(pwd)/||" |
-        grep -v "Pods" |
+        grep -v "Tests" |
         sort -n
 xcrun simctl delete swiftlayouttest
