@@ -32,6 +32,11 @@ class PerformanceTests: XCTestCase {
         attachSnapshot(named: "screenshot for SwiftLayoutView", view: view)
     }
     
+    func testDrawNativeApi() {
+        let view = NativeApiView(frame: .init(x: 0, y: 0, width: 375, height: 667))
+        attachSnapshot(named: "screenshot for NativeApiView", view: view)
+    }
+    
     func testPerformanceInterfaceBuilder() throws {
         let metrics: [XCTMetric] = [XCTCPUMetric(), XCTMemoryMetric()]
         self.measure(metrics: metrics) {
@@ -40,9 +45,15 @@ class PerformanceTests: XCTestCase {
         }
     }
     
+    func testPerformanceNativeApi() throws {
+        let metrics: [XCTMetric] = [XCTCPUMetric(), XCTMemoryMetric()]
+        self.measure(metrics: metrics) {
+            _ = NativeApiView(frame: .init(x: 0, y: 0, width: 375, height: 667))
+        }
+    }
+    
     func testPerformanceLayoutable() throws {
         let metrics: [XCTMetric] = [XCTCPUMetric(), XCTMemoryMetric()]
-
         self.measure(metrics: metrics) {
             _ = SwiftLayoutView(frame: .init(x: 0, y: 0, width: 375, height: 667))
         }
@@ -58,9 +69,17 @@ class PerformanceTests: XCTestCase {
         }
     }
     
+    func testPerformanceNativeApiAndLayout() throws {
+        let metrics: [XCTMetric] = [XCTCPUMetric(), XCTMemoryMetric()]
+        self.measure(metrics: metrics) {
+            let view = NativeApiView(frame: .init(x: 0, y: 0, width: 375, height: 667))
+            view.setNeedsLayout()
+            view.layoutIfNeeded()
+        }
+    }
+    
     func testPerformanceLayoutableAndLayout() throws {
         let metrics: [XCTMetric] = [XCTCPUMetric(), XCTMemoryMetric()]
-
         self.measure(metrics: metrics) {
             let view = SwiftLayoutView(frame: .init(x: 0, y: 0, width: 375, height: 667))
             view.setNeedsLayout()
