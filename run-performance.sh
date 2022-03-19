@@ -6,5 +6,5 @@ xcodebuild clean build -quiet -scheme SwiftLayout -sdk iphonesimulator -destinat
         sed -e "s|$(pwd)/||" |
         grep -v "Tests" |
         sort -n
-xcodebuild test -scheme SwiftLayout -sdk iphonesimulator -destination 'name=swiftlayouttest' -only-testing:SwiftLayoutTests/PerformanceTests/testPerformanceLayoutableAndLayout 2>/dev/null | grep testPerformanceLayoutableAndLayout
+# xcodebuild test -scheme SwiftLayout -sdk iphonesimulator -destination 'name=swiftlayouttest' -only-testing:SwiftLayoutTests/PerformanceTests/testPerformanceLayoutableAndLayout 2>/dev/null | grep testPerformanceLayoutableAndLayout
 xcrun simctl delete swiftlayouttest >/dev/null
