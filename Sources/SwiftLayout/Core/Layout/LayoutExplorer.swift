@@ -49,7 +49,8 @@ extension LayoutExplorer {
             } else {
                 anchorsIndent = sublayoutIndent + "│     "
             }
-            if let items = layout.anchors?.items {
+            let items = layout.anchors.items
+            if !items.isEmpty {
                 result.append(contentsOf: items.map({ item in "\(anchorsIndent)\(item.description)" }))
             }
         }

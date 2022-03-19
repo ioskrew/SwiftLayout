@@ -9,13 +9,13 @@ import UIKit
 
 public protocol Layout: CustomStringConvertible, CustomDebugStringConvertible {
     var view: UIView? { get }
-    var anchors: Anchors? { get }
+    var anchors: Anchors { get }
     var sublayouts: [Layout] { get }
 }
 
 extension Layout {
     public var view: UIView? { nil }
-    public var anchors: Anchors? { nil }
+    public var anchors: Anchors { Anchors() }
 }
 
 extension Layout {

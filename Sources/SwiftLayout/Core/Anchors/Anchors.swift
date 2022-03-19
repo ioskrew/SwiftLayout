@@ -94,8 +94,13 @@ extension Anchors {
     }
     
     func union(_ anchors: Anchors) -> Anchors {
+        var items = self.items
         items.append(contentsOf: anchors.items)
-        return self
+        return Anchors(items: items)
+    }
+    
+    func formUnion(_ anchors: Anchors) {
+        self.items.append(contentsOf: anchors.items)
     }
     
     static func + (lhs: Anchors, rhs: Anchors) -> Anchors {

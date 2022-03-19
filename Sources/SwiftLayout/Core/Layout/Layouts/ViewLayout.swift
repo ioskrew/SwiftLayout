@@ -23,7 +23,7 @@ public struct ViewLayout<V: UIView>: Layout {
         attachments.compactMap(\.sublayout)
     }
     
-    public var anchors: Anchors? {
+    public var anchors: Anchors {
         attachments.compactMap(\.anchors).reduce(Anchors(), +)
     }
 }

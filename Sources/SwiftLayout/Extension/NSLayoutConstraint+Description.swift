@@ -50,11 +50,11 @@ extension NSLayoutConstraint {
     public var shortDescription: String {
         var shorts: [String] = []
         if let firstShort = firstShort {
-            shorts.append(firstShort + ".\(firstAttribute.description)")
+            shorts.append("\(firstShort).\(firstAttribute.description)")
         }
         shorts.append(relation.shortDescription)
         if let secondShort = secondShort {
-            shorts.append(secondShort + ".\(secondAttribute.description)")
+            shorts.append("\(secondShort).\(secondAttribute.description)")
         }
         if let constantShort = constantShort {
             shorts.append(constantShort)
