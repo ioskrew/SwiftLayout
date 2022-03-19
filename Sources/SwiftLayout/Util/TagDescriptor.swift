@@ -5,7 +5,6 @@
 //  Created by oozoofrog on 2022/01/30.
 //
 
-import Foundation
 import UIKit
 
 struct TagDescriptor<Value>: CustomDebugStringConvertible where Value: TagDescriptable, Value: AnyObject {

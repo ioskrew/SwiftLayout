@@ -5,7 +5,6 @@
 //  Created by oozoofrog on 2022/02/17.
 //
 
-import Foundation
 import UIKit
 
 public final class IdentifierUpdater {

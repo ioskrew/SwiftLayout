@@ -5,8 +5,6 @@
 //  Created by oozoofrog on 2022/03/06.
 //
 
-import Foundation
-
 /**
  
  a property wrapper that can update states of layout in Layoutable.

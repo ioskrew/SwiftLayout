@@ -4,9 +4,10 @@
 //
 //  Created by oozoofrog on 2022/01/26.
 //
+
 import UIKit
 
-public protocol Layout: CustomDebugStringConvertible {
+public protocol Layout: CustomStringConvertible, CustomDebugStringConvertible {
     var view: UIView? { get }
     var anchors: Anchors? { get }
     var sublayouts: [Layout] { get }
@@ -64,5 +65,25 @@ extension Layout {
     public func updateIdentifiers(rootObject: AnyObject) -> some Layout {
         IdentifierUpdater.nameOnly.update(rootObject)
         return self
+    }
+}
+
+extension Layout {
+    public var description: String {
+        let typeName = String(describing: type(of: self))
+        let typeNameWithoutGeneric = String(typeName.split(separator: "<").first ?? "Unkwon")
+        if let view = self.view {
+            return typeNameWithoutGeneric + " - view: \(view.tagDescription)"
+        } else {
+            return typeNameWithoutGeneric
+        }
+    }
+    
+    public var debugDescription: String {
+        LayoutExplorer.debugLayoutStructure(layout: self).joined(separator: "\n")
+    }
+    
+    public var debugDetailDescription: String {
+        LayoutExplorer.debugLayoutStructure(layout: self, withAnchors: true).joined(separator: "\n")
     }
 }
