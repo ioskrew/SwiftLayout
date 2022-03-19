@@ -8,9 +8,8 @@
 import UIKit
 
 extension UILayoutGuide {
-    var propertyDescription: String? {
-        guard let view = owningView else { return nil }
-        let description = view.tagDescription
+    var propertyDescription: String {
+        guard let description = owningView?.tagDescription else { return "unknown" }
         switch identifier {
         case "UIViewLayoutMarginsGuide":
             return description.appending(".layoutMarginsGuide")
@@ -21,7 +20,7 @@ extension UILayoutGuide {
         case "UIViewReadableContentGuide":
             return description.appending(".readableContentGuide")
         default:
-            return description.appending(":\(identifier)")
+            return description.appending(":").appending(identifier)
         }
     }
 }
