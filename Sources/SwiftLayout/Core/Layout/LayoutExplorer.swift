@@ -43,8 +43,15 @@ extension LayoutExplorer {
         var result = ["\(indent)\(layout.description)"]
         
         if withAnchors {
-            let anchorsIndent = layout.sublayouts.isEmpty ? sublayoutIndent + "      " : sublayoutIndent + "│     "
-            result += layout.anchors?.items.map { anchorsIndent + $0.description } ?? []
+            let anchorsIndent: String
+            if layout.sublayouts.isEmpty {
+                anchorsIndent = sublayoutIndent + "      "
+            } else {
+                anchorsIndent = sublayoutIndent + "│     "
+            }
+            if let items = layout.anchors?.items {
+                result.append(contentsOf: items.map({ item in "\(anchorsIndent)\(item.description)" }))
+            }
         }
         
         layout.sublayouts.enumerated().forEach { i, sublayout in
