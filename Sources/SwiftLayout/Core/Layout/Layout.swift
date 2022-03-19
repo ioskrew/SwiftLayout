@@ -82,4 +82,8 @@ extension Layout {
     public var debugDescription: String {
         LayoutExplorer.debugLayoutStructure(layout: self).joined(separator: "\n")
     }
+    
+    public var debugDetailDescription: String {
+        LayoutExplorer.debugLayoutStructure(layout: self, withAnchors: true).joined(separator: "\n")
+    }
 }

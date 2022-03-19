@@ -14,7 +14,7 @@ extension UILayoutGuide {
         switch identifier {
         case "UIViewLayoutMarginsGuide":
             return description + ".layoutMarginsGuide"
-        case "UIViewLayoutSafeAreaGuide":
+        case "UIViewSafeAreaLayoutGuide":
             return description + ".safeAreaLayoutGuide"
         case "UIViewKeyboardLayoutGuide":
             return description + ".keyboardLayoutGuide"

@@ -39,15 +39,20 @@ enum LayoutExplorer {
 }
 
 extension LayoutExplorer {
-    static func debugLayoutStructure(layout: Layout, indent: String = "", sublayoutIndent: String = "") -> [String] {
+    static func debugLayoutStructure(layout: Layout, withAnchors: Bool = false, _ indent: String = "", _ sublayoutIndent: String = "") -> [String] {
         var result = ["\(indent)\(layout.description)"]
         let sublayouts = layout.sublayouts.filter { type(of: $0) != EmptyLayout.self }
         
+        if withAnchors {
+            let anchorsIndent = sublayouts.isEmpty ? sublayoutIndent + "      " : sublayoutIndent + "│     "
+            result += layout.anchors?.items.map { anchorsIndent + $0.description } ?? []
+        }
+        
         sublayouts.enumerated().forEach { i, sublayout in
             if i == sublayouts.count - 1 {
-                result += debugLayoutStructure(layout: sublayout, indent: sublayoutIndent + "└─ ", sublayoutIndent: sublayoutIndent + "   ")
+                result += debugLayoutStructure(layout: sublayout, withAnchors: withAnchors, sublayoutIndent + "└─ ", sublayoutIndent + "   ")
             } else {
-                result += debugLayoutStructure(layout: sublayout, indent: sublayoutIndent + "├─ ", sublayoutIndent: sublayoutIndent + "│  ")
+                result += debugLayoutStructure(layout: sublayout, withAnchors: withAnchors,sublayoutIndent + "├─ ", sublayoutIndent + "│  ")
             }
         }
         

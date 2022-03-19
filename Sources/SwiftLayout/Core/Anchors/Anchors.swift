@@ -435,7 +435,7 @@ extension Anchors {
         let constant: CGFloat
     }
     
-    struct Constraint: Hashable {
+    struct Constraint: Hashable, CustomStringConvertible {
         var attribute: NSLayoutConstraint.Attribute
         var relation: NSLayoutConstraint.Relation = .equal
         var toItem: Item = .transparent
@@ -465,6 +465,29 @@ extension Anchors {
         func toAttribute(_ attribute: NSLayoutConstraint.Attribute) -> NSLayoutConstraint.Attribute {
             return toAttribute ?? attribute
         }
+        
+        var description: String {
+            var elements: [String] = []
+            elements.append(".\(attribute.description)")
+            elements.append(relation.shortDescription)
+            if let itemDescription = toItem.shortDescription {
+                elements.append("\(itemDescription).\((toAttribute ?? attribute).description)")
+            } else if attribute != .height && attribute != .width {
+                elements.append("\("superview").\((toAttribute ?? attribute).description)")
+            }
+            
+            if multiplier != 1.0 {
+                elements.append("x \(multiplier)")
+            }
+            
+            if constant < 0 {
+                elements.append("- \(-constant)")
+            } else if constant > 0 {
+                elements.append("+ \(constant)")
+            }
+            
+            return elements.joined(separator: " ")
+        }
     }
     
     enum Item: Hashable {
@@ -480,6 +503,25 @@ extension Anchors {
                 self = .object(object)
             } else {
                 self = .transparent
+            }
+        }
+        
+        var shortDescription: String? {
+            switch self {
+            case .object(let object):
+                if let view = object as? UIView {
+                    return view.tagDescription
+                } else if let guide = object as? UILayoutGuide {
+                    return guide.detailDescription ?? "unknown"
+                } else {
+                    return "unknown"
+                }
+            case .identifier(let string):
+                return string
+            case .transparent:
+                return "superview"
+            case .deny:
+                return nil
             }
         }
     }
