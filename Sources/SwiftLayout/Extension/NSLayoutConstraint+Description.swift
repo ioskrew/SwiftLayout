@@ -13,7 +13,7 @@ extension NSLayoutConstraint {
         if let view = self.firstItem as? UIView {
             return view.tagDescription
         } else if let guide = self.firstItem as? UILayoutGuide {
-            return guide.detailDescription
+            return guide.propertyDescription
         } else {
             return nil
         }
@@ -23,7 +23,7 @@ extension NSLayoutConstraint {
         if let view = self.secondItem as? UIView {
             return view.tagDescription
         } else if let guide = self.secondItem as? UILayoutGuide {
-            return guide.detailDescription
+            return guide.propertyDescription
         } else {
             return nil
         }
@@ -66,29 +66,6 @@ extension NSLayoutConstraint {
     }
 }
 
-private let attributeDescriptions: [NSLayoutConstraint.Attribute: String] = [
-    .left: "left",
-    .right: "right",
-    .top: "top",
-    .bottom: "bottom",
-    .leading: "leading",
-    .trailing: "trailing",
-    .width: "width",
-    .height: "height",
-    .centerX: "centerX",
-    .centerY: "centerY",
-    .lastBaseline: "lastBaseline",
-    .firstBaseline: "firstBaseline",
-    .leftMargin: "leftMargin",
-    .rightMargin: "rightMargin",
-    .topMargin: "topMargin",
-    .bottomMargin: "bottomMargin",
-    .leadingMargin: "leadingMargin",
-    .trailingMargin: "trailingMargin",
-    .centerXWithinMargins: "centerXWithinMargins",
-    .centerYWithinMargins: "centerYWithinMargins",
-    .notAnAttribute: "notAnAttribute",
-]
 extension NSLayoutConstraint.Attribute: CustomStringConvertible {
     public var description: String {
         if let description = attributeDescriptions[self] {
@@ -149,3 +126,27 @@ extension Array where Element: NSLayoutConstraint {
         map(\.shortDescription).joined(separator: "\n")
     }
 }
+
+private let attributeDescriptions: [NSLayoutConstraint.Attribute: String] = [
+    .left: "left",
+    .right: "right",
+    .top: "top",
+    .bottom: "bottom",
+    .leading: "leading",
+    .trailing: "trailing",
+    .width: "width",
+    .height: "height",
+    .centerX: "centerX",
+    .centerY: "centerY",
+    .lastBaseline: "lastBaseline",
+    .firstBaseline: "firstBaseline",
+    .leftMargin: "leftMargin",
+    .rightMargin: "rightMargin",
+    .topMargin: "topMargin",
+    .bottomMargin: "bottomMargin",
+    .leadingMargin: "leadingMargin",
+    .trailingMargin: "trailingMargin",
+    .centerXWithinMargins: "centerXWithinMargins",
+    .centerYWithinMargins: "centerYWithinMargins",
+    .notAnAttribute: "notAnAttribute",
+]

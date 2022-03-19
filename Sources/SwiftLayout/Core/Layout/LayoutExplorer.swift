@@ -40,18 +40,18 @@ enum LayoutExplorer {
 
 extension LayoutExplorer {
     static func debugLayoutStructure(layout: Layout, withAnchors: Bool = false, _ indent: String = "", _ sublayoutIndent: String = "") -> [String] {
-        var result = ["\(indent)\(layout.description)"]
+        var result: [String] = ["\(indent)\(layout.description)"]
         
         if withAnchors {
             let anchorsIndent: String
             if layout.sublayouts.isEmpty {
-                anchorsIndent = sublayoutIndent + "      "
+                anchorsIndent = sublayoutIndent.appending("      ")
             } else {
-                anchorsIndent = sublayoutIndent + "│     "
+                anchorsIndent = sublayoutIndent.appending("│     ")
             }
             let items = layout.anchors.items
             if !items.isEmpty {
-                result.append(contentsOf: items.map({ item in "\(anchorsIndent)\(item.description)" }))
+                result.append(contentsOf: items.map({ item in anchorsIndent.appending(item.description) }))
             }
         }
         
@@ -59,11 +59,17 @@ extension LayoutExplorer {
         if sublayouts.isEmpty {
             return result
         } else {
-            let last = sublayouts.removeLast()
+            let last: Layout = sublayouts.removeLast()
             for sublayout in sublayouts {
-                result.append(contentsOf: debugLayoutStructure(layout: sublayout, withAnchors: withAnchors,sublayoutIndent + "├─ ", sublayoutIndent + "│  "))
+                result.append(contentsOf: debugLayoutStructure(layout: sublayout,
+                                                               withAnchors: withAnchors,
+                                                               sublayoutIndent.appending("├─ "),
+                                                               sublayoutIndent.appending("│  ")))
             }
-            result.append(contentsOf: debugLayoutStructure(layout: last, withAnchors: withAnchors, sublayoutIndent + "└─ ", sublayoutIndent + "   "))
+            result.append(contentsOf: debugLayoutStructure(layout: last,
+                                                           withAnchors: withAnchors,
+                                                           sublayoutIndent.appending("└─ "),
+                                                           sublayoutIndent.appending("   ")))
         }
         
         return result

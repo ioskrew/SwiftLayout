@@ -539,7 +539,7 @@ extension Anchors {
                 if let view = object as? UIView {
                     return view.tagDescription
                 } else if let guide = object as? UILayoutGuide {
-                    return guide.detailDescription ?? "unknown"
+                    return guide.propertyDescription ?? "unknown"
                 } else {
                     return "unknown"
                 }
