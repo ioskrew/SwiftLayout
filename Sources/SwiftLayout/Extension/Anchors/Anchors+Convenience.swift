@@ -10,10 +10,12 @@ extension Anchors {
     ///  - offset: CGFloat. leading constant is `offset`, trailing constant is `-offset`
     ///
     /// - Returns: ``Anchors``
-    public static func horizontal<I: ConstraintableItem>(_ item: I, offset: CGFloat = .zero) -> Anchors {
-        let leading = Anchors(.leading).equalTo(item, constant: offset)
-        let trailing = Anchors(.trailing).equalTo(item, constant: -offset)
-        return leading.union(trailing)
+    public static func horizontal<I>(_ item: I, offset: CGFloat = .zero) -> Anchors where I: ConstraintableItem {
+        if offset == .zero {
+            return Anchors(.leading).equalTo(item).union(Anchors(.trailing).equalTo(item))
+        } else {
+            return Anchors(.leading).equalTo(item, constant: offset).union(Anchors(.trailing).equalTo(item, constant: -1.0 * offset))
+        }
     }
     
     /// ``Anchors`` for top, bottom
@@ -24,9 +26,11 @@ extension Anchors {
     ///
     /// - Returns: ``Anchors``
     public static func vertical<I: ConstraintableItem>(_ item: I, offset: CGFloat = .zero) -> Anchors {
-        let top = Anchors(.top).equalTo(item, constant: offset)
-        let bottom = Anchors(.bottom).equalTo(item, constant: -offset)
-        return top.union(bottom)
+        if offset == .zero {
+            return Anchors(.top).equalTo(item).union(Anchors(.bottom).equalTo(item))
+        } else {
+            return Anchors(.top).equalTo(item, constant: offset).union(Anchors(.bottom).equalTo(item, constant: -1.0 * offset))
+        }
     }
     
     ///
@@ -37,9 +41,11 @@ extension Anchors {
     ///
     /// - Returns: ``Anchors``
     public static func horizontal(offset: CGFloat = .zero) -> Anchors {
-        let leading = Anchors(.leading).equalTo(constant: offset)
-        let trailing = Anchors(.trailing).equalTo(constant: -offset)
-        return leading.union(trailing)
+        if offset == .zero {
+            return Anchors(.leading).union(Anchors(.trailing))
+        } else {
+            return Anchors(.leading).equalTo(constant: offset).union(Anchors(.trailing).equalTo(constant: -1.0 * offset))
+        }
     }
     
     /// ``Anchors`` for top, bottom toward superview
@@ -49,9 +55,11 @@ extension Anchors {
     ///
     /// - Returns: ``Anchors``
     public static func vertical(offset: CGFloat = .zero) -> Anchors {
-        let top = Anchors(.top).equalTo(constant: offset)
-        let bottom = Anchors(.bottom).equalTo(constant: -offset)
-        return top.union(bottom)
+        if offset == .zero {
+            return Anchors(.top).union(Anchors(.bottom))
+        } else {
+            return Anchors(.top).equalTo(constant: offset).union(Anchors(.bottom).equalTo(constant: -1.0 * offset))
+        }
     }
     
     /// ``Anchors`` for leading, trailing, top, bottom
@@ -101,7 +109,7 @@ extension Anchors {
     /// - Returns: ``Anchors``
     public static func shoe<I: ConstraintableItem>(_ item: I, offset: CGFloat = .zero) -> Anchors {
         let horizontal = horizontal(item, offset: offset)
-        let bottom = Anchors(.bottom).equalTo(item, constant: -offset)
+        let bottom = Anchors(.bottom).equalTo(item, constant: -1.0 * offset)
         return horizontal.union(bottom)
     }
     
@@ -125,7 +133,7 @@ extension Anchors {
     /// - Returns: ``Anchors``
     public static func shoe(offset: CGFloat = .zero) -> Anchors {
         let horizontal = horizontal(offset: offset)
-        let bottom = Anchors(.bottom).equalTo(constant: -offset)
+        let bottom = Anchors(.bottom).equalTo(constant: -1.0 * offset)
         return horizontal.union(bottom)
     }
     
@@ -138,7 +146,7 @@ extension Anchors {
     ///
     /// - Returns: ``Anchors``
     public static func size<I: ConstraintableItem>(_ toItem: I, offset: CGFloat = .zero) -> Anchors {
-        size(toItem, offset: .init(width: offset, height: offset))
+        size(toItem, offset: CGSize(width: offset, height: offset))
     }
     
     /// ``Anchors`` for width, height toward self

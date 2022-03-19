@@ -81,7 +81,7 @@ extension Anchors {
     
     func to(_ relation: NSLayoutConstraint.Relation, to: ConstraintTarget) -> Self {
         func update(_ updateItem: Constraint) -> Constraint {
-            var updateItem = updateItem
+            let updateItem = updateItem
             updateItem.relation = relation
             updateItem.toItem = to.item
             updateItem.toAttribute = to.attribute
@@ -440,7 +440,20 @@ extension Anchors {
         let constant: CGFloat
     }
     
-    struct Constraint: Hashable, CustomStringConvertible {
+    final class Constraint: Hashable, CustomStringConvertible {
+        static func == (lhs: Anchors.Constraint, rhs: Anchors.Constraint) -> Bool {
+            lhs.hashValue == rhs.hashValue
+        }
+        
+        internal init(attribute: NSLayoutConstraint.Attribute, relation: NSLayoutConstraint.Relation = .equal, toItem: Anchors.Item = .transparent, toAttribute: NSLayoutConstraint.Attribute? = nil, constant: CGFloat = 0.0, multiplier: CGFloat = 1.0) {
+            self.attribute = attribute
+            self.relation = relation
+            self.toItem = toItem
+            self.toAttribute = toAttribute
+            self.constant = constant
+            self.multiplier = multiplier
+        }
+        
         var attribute: NSLayoutConstraint.Attribute
         var relation: NSLayoutConstraint.Relation = .equal
         var toItem: Item = .transparent
@@ -448,6 +461,15 @@ extension Anchors {
         
         var constant: CGFloat = 0.0
         var multiplier: CGFloat = 1.0
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(attribute)
+            hasher.combine(relation)
+            hasher.combine(toItem)
+            hasher.combine(toAttribute)
+            hasher.combine(constant)
+            hasher.combine(multiplier)
+        }
         
         func toItem(_ toItem: NSObject?, viewInfoSet: ViewInformationSet? = nil) -> NSObject? {
             switch self.toItem {
@@ -486,7 +508,7 @@ extension Anchors {
             }
             
             if constant < 0 {
-                elements.append("- \(-constant)")
+                elements.append("- \(-1.0 * constant)")
             } else if constant > 0 {
                 elements.append("+ \(constant)")
             }

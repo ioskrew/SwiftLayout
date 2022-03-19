@@ -55,12 +55,15 @@ extension LayoutExplorer {
             }
         }
         
-        layout.sublayouts.enumerated().forEach { i, sublayout in
-            if i == layout.sublayouts.count - 1 {
-                result += debugLayoutStructure(layout: sublayout, withAnchors: withAnchors, sublayoutIndent + "└─ ", sublayoutIndent + "   ")
-            } else {
-                result += debugLayoutStructure(layout: sublayout, withAnchors: withAnchors,sublayoutIndent + "├─ ", sublayoutIndent + "│  ")
+        var sublayouts = layout.sublayouts
+        if sublayouts.isEmpty {
+            return result
+        } else {
+            let last = sublayouts.removeLast()
+            for sublayout in sublayouts {
+                result.append(contentsOf: debugLayoutStructure(layout: sublayout, withAnchors: withAnchors,sublayoutIndent + "├─ ", sublayoutIndent + "│  "))
             }
+            result.append(contentsOf: debugLayoutStructure(layout: last, withAnchors: withAnchors, sublayoutIndent + "└─ ", sublayoutIndent + "   "))
         }
         
         return result

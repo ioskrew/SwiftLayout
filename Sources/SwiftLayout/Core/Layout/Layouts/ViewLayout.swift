@@ -24,7 +24,7 @@ public struct ViewLayout<V: UIView>: Layout {
     }
     
     public var anchors: Anchors {
-        attachments.compactMap(\.anchors).reduce(Anchors(), +)
+        Anchors(items: attachments.compactMap(\.anchors?).flatMap(\.items))
     }
 }
 

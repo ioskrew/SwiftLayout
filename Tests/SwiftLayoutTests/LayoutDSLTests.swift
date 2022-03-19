@@ -142,7 +142,11 @@ extension LayoutDSLTests {
                 Anchors.allSides()
             }.sublayout {
                 blue.anchors {
-                    Anchors.allSides()
+                    Anchors.allSides(offset: 8)
+                }.sublayout {
+                    green.anchors {
+                        Anchors.allSides(blue, offset: 16)
+                    }
                 }
             }
         }.active().store(&activation)
@@ -153,7 +157,13 @@ extension LayoutDSLTests {
                 Anchors(.top, .bottom, .leading, .trailing)
             }.sublayout {
                 blue.anchors {
-                    Anchors(.top, .bottom, .leading, .trailing)
+                    Anchors(.top, .leading).equalTo(constant: 8.0)
+                    Anchors(.bottom, .trailing).equalTo(constant: -8.0)
+                }.sublayout {
+                    green.anchors {
+                        Anchors(.top, .leading).equalTo(constant: 16.0)
+                        Anchors(.bottom, .trailing).equalTo(constant: -16.0)
+                    }
                 }
             }
         }
@@ -529,6 +539,7 @@ extension LayoutDSLTests {
     func testGroupLayout() {
         let group1_1 = UIView().viewTag.group1_1
         let group1_2 = UIView().viewTag.group1_2
+        let group1_3 = UIView().viewTag.group1_3
         let group2_1 = UIView().viewTag.group2_1
         let group2_2 = UIView().viewTag.group2_2
         
@@ -539,13 +550,17 @@ extension LayoutDSLTests {
                 }
                 group1_2.anchors {
                     Anchors(.top).equalTo(group1_1, attribute: .bottom)
-                    Anchors.horizontal()
+                    Anchors.horizontal(root)
+                }
+                group1_3.anchors {
+                    Anchors(.top).equalTo(group1_1, attribute: .bottom)
+                    Anchors.horizontal(root, offset: 8.0)
                 }
             }
             GroupLayout {
                 group2_1.anchors {
-                    Anchors(.top).equalTo(group1_2, attribute: .bottom)
-                    Anchors.horizontal()
+                    Anchors(.top).equalTo(group1_3, attribute: .bottom)
+                    Anchors.horizontal(offset: 12)
                 }
                 group2_2.anchors {
                     Anchors(.top).equalTo(group2_2, attribute: .bottom)
@@ -563,9 +578,15 @@ extension LayoutDSLTests {
                 Anchors(.top).equalTo(group1_1, attribute: .bottom)
                 Anchors(.leading, .trailing)
             }
+            group1_3.anchors {
+                Anchors(.top).equalTo(group1_1, attribute: .bottom)
+                Anchors(.leading).equalTo(constant: 8.0)
+                Anchors(.trailing).equalTo(constant: -8.0)
+            }
             group2_1.anchors {
-                Anchors(.top).equalTo(group1_2, attribute: .bottom)
-                Anchors(.leading, .trailing)
+                Anchors(.top).equalTo(group1_3, attribute: .bottom)
+                Anchors(.leading).equalTo(constant: 12.0)
+                Anchors(.trailing).equalTo(constant: -12.0)
             }
             group2_2.anchors {
                 Anchors(.bottom, .leading, .trailing)
