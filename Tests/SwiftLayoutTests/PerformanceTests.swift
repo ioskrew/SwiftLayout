@@ -62,7 +62,8 @@ class PerformanceTests: XCTestCase {
     func testPerformanceInterfaceBuilderAndLayout() throws {
         let metrics: [XCTMetric] = [XCTCPUMetric(), XCTMemoryMetric()]
         self.measure(metrics: metrics) {
-            let view = NativeApiView(frame: .init(x: 0, y: 0, width: 375, height: 667))
+            let nib = UINib(nibName: "XibView", bundle: .module)
+            let view = nib.instantiate(withOwner: nil, options: nil)[0] as! XibView
             view.setNeedsLayout()
             view.layoutIfNeeded()
         }
@@ -71,8 +72,7 @@ class PerformanceTests: XCTestCase {
     func testPerformanceNativeApiAndLayout() throws {
         let metrics: [XCTMetric] = [XCTCPUMetric(), XCTMemoryMetric()]
         self.measure(metrics: metrics) {
-            let nib = UINib(nibName: "XibView", bundle: .module)
-            let view = nib.instantiate(withOwner: nil, options: nil)[0] as! XibView
+            let view = NativeApiView(frame: .init(x: 0, y: 0, width: 375, height: 667))
             view.setNeedsLayout()
             view.layoutIfNeeded()
         }
