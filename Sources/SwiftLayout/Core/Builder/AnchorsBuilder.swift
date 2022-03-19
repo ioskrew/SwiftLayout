@@ -8,7 +8,11 @@
 @resultBuilder
 public struct AnchorsBuilder {
     public static func buildBlock(_ components: Anchors...) -> Anchors {
-        components.reduce(Anchors(), +)
+        let anchors = Anchors()
+        for component in components {
+            anchors.formUnion(component)
+        }
+        return anchors
     }
     
     public static func buildEither(first component: Anchors) -> Anchors {
@@ -20,7 +24,11 @@ public struct AnchorsBuilder {
     }
    
     public static func buildArray(_ components: [Anchors]) -> Anchors {
-        components.reduce(Anchors(), +)
+        let anchors = Anchors()
+        for component in components {
+            anchors.formUnion(component)
+        }
+        return anchors
     }
     
     public static func buildOptional(_ component: Anchors?) -> Anchors {
