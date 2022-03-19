@@ -23,10 +23,6 @@ public struct ViewLayout<V: UIView, SubLayout: Layout>: Layout {
     public var anchors: Anchors? {
         attachments.compactMap(\.anchors).reduce(Anchors(), +)
     }
-
-    public var debugDescription: String {
-        innerView.tagDescription + ": [\(sublayout.debugDescription)]"
-    }
 }
 
 extension ViewLayout {

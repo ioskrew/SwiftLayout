@@ -6,10 +6,6 @@ public struct TupleLayout<L>: Layout {
         self.layout = layout
     }
     
-    public var debugDescription: String {
-        "TupleLayout<\(L.self)>"
-    }
-    
     public var sublayouts: [Layout] {
         Mirror(reflecting: layout).children.compactMap { (_, value) in
             value as? Layout

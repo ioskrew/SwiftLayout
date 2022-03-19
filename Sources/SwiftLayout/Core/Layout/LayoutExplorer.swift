@@ -37,3 +37,20 @@ enum LayoutExplorer {
         }
     }
 }
+
+extension LayoutExplorer {
+    static func debugLayoutStructure(layout: Layout, indent: String = "", sublayoutIndent: String = "") -> [String] {
+        var result = ["\(indent)\(layout.description)"]
+        let sublayouts = layout.sublayouts.filter { type(of: $0) != EmptyLayout.self }
+        
+        sublayouts.enumerated().forEach { i, sublayout in
+            if i == sublayouts.count - 1 {
+                result += debugLayoutStructure(layout: sublayout, indent: sublayoutIndent + "└─ ", sublayoutIndent: sublayoutIndent + "   ")
+            } else {
+                result += debugLayoutStructure(layout: sublayout, indent: sublayoutIndent + "├─ ", sublayoutIndent: sublayoutIndent + "│  ")
+            }
+        }
+        
+        return result
+    }
+}

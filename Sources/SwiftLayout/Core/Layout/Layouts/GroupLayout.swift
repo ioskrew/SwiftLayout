@@ -13,10 +13,6 @@ public struct GroupLayout<L: Layout>: Layout {
         self.layout = handler()
     }
     
-    public var debugDescription: String {
-        "GroupLayout"
-    }
-    
     public var sublayouts: [Layout] {
         [layout]
     }

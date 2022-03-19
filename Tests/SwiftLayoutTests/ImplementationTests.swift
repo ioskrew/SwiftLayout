@@ -231,6 +231,35 @@ extension ImplementationTests {
         let constraintsBetweebViews = Set(Anchors(.top).equalTo(label!, attribute: .bottom).constraints(item: secondView!, toItem: label).weakens)
         XCTAssertEqual(currents.intersection(constraintsBetweebViews), constraintsBetweebViews)
     }
+    
+    func testDebugLayoutStructurePrint() {
+        let root: UIView = UIView().viewTag.root
+        let button: UIButton = UIButton().viewTag.button
+        let label: UILabel = UILabel().viewTag.label
+        let redView: UIView = UIView().viewTag.redView
+        let image: UIImageView = UIImageView().viewTag.image
+        
+        let layout = root {
+            redView
+            label {
+                button
+                image
+            }.anyLayout
+        }
+        
+        let expectedResult = """
+        ViewLayout - view: root
+        └─ TupleLayout
+           ├─ ViewLayout - view: redView
+           └─ AnyLayout
+              └─ ViewLayout - view: label
+                 └─ TupleLayout
+                    ├─ ViewLayout - view: button
+                    └─ ViewLayout - view: image
+        """
+        
+        XCTAssertEqual(layout.debugDescription, expectedResult)
+    }
 }
 
 extension ImplementationTests {
