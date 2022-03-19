@@ -1,6 +1,3 @@
-import Foundation
-import UIKit
-
 public struct ConditionalLayout<True: Layout, False: Layout>: Layout {
     
     enum _ConditionalLayout {

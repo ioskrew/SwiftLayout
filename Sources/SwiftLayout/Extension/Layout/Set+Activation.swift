@@ -5,7 +5,6 @@
 //  Created by oozoofrog on 2022/02/23.
 //
 
-import Foundation
 import UIKit
 
 public extension Collection where Element: Activation {

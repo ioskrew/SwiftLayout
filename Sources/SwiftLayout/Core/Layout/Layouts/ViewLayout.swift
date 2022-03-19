@@ -1,4 +1,3 @@
-import Foundation
 import UIKit
 
 public struct ViewLayout<V: UIView, SubLayout: Layout>: Layout {

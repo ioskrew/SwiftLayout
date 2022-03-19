@@ -5,9 +5,6 @@
 //  Created by oozoofrog on 2022/03/01.
 //
 
-import Foundation
-import UIKit
-
 public struct GroupLayout<L: Layout>: Layout {
     
     let layout: L

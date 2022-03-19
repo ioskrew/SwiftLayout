@@ -5,9 +5,6 @@
 //  Created by oozoofrog on 2022/02/06.
 //
 
-import Foundation
-import UIKit
-
 public protocol Layoutable: AnyObject {
     associatedtype LayoutBody: Layout
     var activation: Activation? { get set }

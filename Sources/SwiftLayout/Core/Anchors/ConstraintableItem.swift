@@ -5,7 +5,6 @@
 //  Created by oozoofrog on 2022/02/14.
 //
 
-import Foundation
 import UIKit
 
 final class ItemFromView<View> where View: ConstraintableItem {

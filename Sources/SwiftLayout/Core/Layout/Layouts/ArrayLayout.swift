@@ -1,6 +1,3 @@
-import Foundation
-import UIKit
-
 public struct ArrayLayout<L: Layout>: Layout {
     
     let layouts: [L]

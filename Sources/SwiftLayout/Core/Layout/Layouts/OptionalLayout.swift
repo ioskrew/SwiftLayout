@@ -1,6 +1,3 @@
-import Foundation
-import UIKit
-
 public struct OptionalLayout<L: Layout>: Layout {
     
     let layout: L?

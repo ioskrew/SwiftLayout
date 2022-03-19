@@ -5,8 +5,6 @@
 //  Created by oozoofrog on 2022/02/06.
 //
 
-import Foundation
-import UIKit
 import SwiftUI
 
 public protocol LayoutableViewRepresentable: UIViewRepresentable, Layoutable {}

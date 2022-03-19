@@ -1,6 +1,3 @@
-import Foundation
-import UIKit
-
 public struct TupleLayout<L>: Layout {
     
     let layout: L

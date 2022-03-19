@@ -1,6 +1,3 @@
-import Foundation
-import UIKit
-
 public struct EmptyLayout: Layout {
     
     public var debugDescription: String {

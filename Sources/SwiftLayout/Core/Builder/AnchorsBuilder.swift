@@ -5,8 +5,6 @@
 //  Created by oozoofrog on 2022/02/04.
 //
 
-import Foundation
-
 @resultBuilder
 public struct AnchorsBuilder {
     public static func buildBlock(_ components: Anchors...) -> Anchors {

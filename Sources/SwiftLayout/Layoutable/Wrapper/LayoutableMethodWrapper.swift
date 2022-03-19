@@ -5,8 +5,6 @@
 //  Created by oozoofrog on 2022/03/13.
 //
 
-import Foundation
-
 public final class LayoutableMethodWrapper<L: Layoutable> {
     private weak var layoutable: L?
     
