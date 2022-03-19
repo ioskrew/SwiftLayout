@@ -1,16 +1,18 @@
-import Foundation
 import UIKit
 
-public struct ViewLayout<V: UIView, SubLayout: Layout>: Layout {
+public struct ViewLayout<V: UIView>: Layout {
     
     let innerView: V
-    var sublayout: SubLayout
     var attachments: [Attachment]
     
-    init(_ view: V, sublayout: SubLayout) {
+    init(_ view: V) {
         self.innerView = view
-        self.sublayout = sublayout
         self.attachments = []
+    }
+    
+    init(_ view: V, sublayout: Layout) {
+        self.init(view)
+        attachments.append(.sublayout(sublayout))
     }
     
     public var view: UIView? {
@@ -18,15 +20,11 @@ public struct ViewLayout<V: UIView, SubLayout: Layout>: Layout {
     }
     
     public var sublayouts: [Layout] {
-        [sublayout] + attachments.compactMap(\.sublayout)
+        attachments.compactMap(\.sublayout)
     }
     
     public var anchors: Anchors? {
         attachments.compactMap(\.anchors).reduce(Anchors(), +)
-    }
-
-    public var debugDescription: String {
-        innerView.tagDescription + ": [\(sublayout.debugDescription)]"
     }
 }
 

@@ -1,6 +1,3 @@
-import Foundation
-import UIKit
-
 public struct ConditionalLayout<True: Layout, False: Layout>: Layout {
     
     enum _ConditionalLayout {
@@ -9,10 +6,6 @@ public struct ConditionalLayout<True: Layout, False: Layout>: Layout {
     }
     
     let layout: _ConditionalLayout
-    
-    public var debugDescription: String {
-        "ConditionalLayout<True: \(True.self), False: \(False.self)>"
-    }
     
     public var sublayouts: [Layout] {
         switch layout {

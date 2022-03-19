@@ -7,8 +7,6 @@
 
 #if canImport(UIKit)
 import XCTest
-import SwiftLayout
-import UIKit
 
 class PerformanceTests: XCTestCase {
 

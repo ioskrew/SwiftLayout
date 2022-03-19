@@ -5,8 +5,6 @@
 //  Created by oozoofrog on 2022/02/17.
 //
 
-import Foundation
-
 struct AddressDescriptor<Object>: CustomStringConvertible where Object: AnyObject {
     let description: String
     

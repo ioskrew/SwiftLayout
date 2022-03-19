@@ -5,7 +5,6 @@
 //  Created by oozoofrog on 2022/02/21.
 //
 
-import Foundation
 import UIKit
 
 struct Weakens<O>: Hashable where O: Hashable {

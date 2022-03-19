@@ -5,7 +5,6 @@
 //  Created by oozoofrog on 2022/03/14.
 //
 
-import Foundation
 import UIKit
 
 extension UILayoutGuide {
@@ -15,7 +14,7 @@ extension UILayoutGuide {
         switch identifier {
         case "UIViewLayoutMarginsGuide":
             return description + ".layoutMarginsGuide"
-        case "UIViewLayoutSafeAreaGuide":
+        case "UIViewSafeAreaLayoutGuide":
             return description + ".safeAreaLayoutGuide"
         case "UIViewKeyboardLayoutGuide":
             return description + ".keyboardLayoutGuide"

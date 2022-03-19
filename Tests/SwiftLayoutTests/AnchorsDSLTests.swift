@@ -1,6 +1,5 @@
 import XCTest
 import SwiftLayout
-import UIKit
 
 /// test cases for constraint DSL syntax
 final class AnchorsDSLTests: XCTestCase {

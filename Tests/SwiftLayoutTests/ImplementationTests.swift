@@ -231,6 +231,117 @@ extension ImplementationTests {
         let constraintsBetweebViews = Set(Anchors(.top).equalTo(label!, attribute: .bottom).constraints(item: secondView!, toItem: label).weakens)
         XCTAssertEqual(currents.intersection(constraintsBetweebViews), constraintsBetweebViews)
     }
+    
+    func testDebugLayoutStructurePrint() {
+        let root: UIView = UIView().viewTag.root
+        let contentView: UIView = UIView().viewTag.contentView
+        let image: UIImageView = UIImageView().viewTag.image
+        let title: UILabel = UILabel().viewTag.title
+        let description: UILabel = UILabel().viewTag.description
+
+        let layout = root {
+            contentView.anchors {
+                Anchors(.leading).equalTo(root.safeAreaLayoutGuide, constant: 16.0)
+                Anchors(.trailing).equalTo(root.safeAreaLayoutGuide, constant: -16.0)
+                Anchors(.centerY).equalTo(root)
+                Anchors(.height).equalTo(constant: 80.0)
+            }.sublayout {
+                image.anchors {
+                    Anchors(.leading).equalTo(constant: 10.0)
+                    Anchors(.centerY)
+                    Anchors(.height, .width).equalTo(constant: 70.0)
+                }
+                
+                title.anchors {
+                    Anchors(.top).equalTo(constant: 8.0)
+                    Anchors(.leading).equalTo(image, attribute: .trailing, constant: 10.0)
+                    Anchors(.height).equalTo(constant: 24.0)
+                }.anyLayout
+                
+                description.anchors {
+                    Anchors(.top).equalTo(title, attribute: .bottom, constant: 5.0)
+                    Anchors(.leading).equalTo(image, attribute: .trailing, constant: 10.0)
+                    Anchors(.bottom).equalTo(constant: -8.0)
+                    Anchors(.trailing).equalTo(constant: -10.0)
+                }
+            }
+        }
+        
+        let expectedResult = """
+        ViewLayout - view: root
+        └─ ViewLayout - view: contentView
+           └─ TupleLayout
+              ├─ ViewLayout - view: image
+              ├─ AnyLayout
+              │  └─ ViewLayout - view: title
+              └─ ViewLayout - view: description
+        """
+        
+        XCTAssertEqual(layout.debugDescription, expectedResult)
+    }
+    
+    func testDebugLayoutStructurePrintWithAnchors() {
+        let root: UIView = UIView().viewTag.root
+        let contentView: UIView = UIView().viewTag.contentView
+        let image: UIImageView = UIImageView().viewTag.image
+        let title: UILabel = UILabel().viewTag.title
+        let description: UILabel = UILabel().viewTag.description
+
+        let layout = root {
+            contentView.anchors {
+                Anchors(.leading).equalTo(root.safeAreaLayoutGuide, constant: 16.0)
+                Anchors(.trailing).equalTo(root.safeAreaLayoutGuide, constant: -16.0)
+                Anchors(.centerY).equalTo(root)
+                Anchors(.height).equalTo(constant: 80.0)
+            }.sublayout {
+                image.anchors {
+                    Anchors(.leading).equalTo(constant: 10.0)
+                    Anchors(.centerY)
+                    Anchors(.height, .width).equalTo(constant: 70.0)
+                }
+                
+                title.anchors {
+                    Anchors(.top).equalTo(constant: 8.0)
+                    Anchors(.leading).equalTo(image, attribute: .trailing, constant: 10.0)
+                    Anchors(.height).equalTo(constant: 24.0)
+                }.anyLayout
+                
+                description.anchors {
+                    Anchors(.top).equalTo(title, attribute: .bottom, constant: 5.0)
+                    Anchors(.leading).equalTo(image, attribute: .trailing, constant: 10.0)
+                    Anchors(.bottom).equalTo(constant: -8.0)
+                    Anchors(.trailing).equalTo(constant: -10.0)
+                }
+            }
+        }
+        
+        let expectedResult = """
+        ViewLayout - view: root
+        └─ ViewLayout - view: contentView
+           │     .leading == root.safeAreaLayoutGuide.leading + 16.0
+           │     .trailing == root.safeAreaLayoutGuide.trailing - 16.0
+           │     .centerY == root.centerY
+           │     .height == + 80.0
+           └─ TupleLayout
+              ├─ ViewLayout - view: image
+              │        .leading == superview.leading + 10.0
+              │        .centerY == superview.centerY
+              │        .height == + 70.0
+              │        .width == + 70.0
+              ├─ AnyLayout
+              │  └─ ViewLayout - view: title
+              │           .top == superview.top + 8.0
+              │           .leading == image.trailing + 10.0
+              │           .height == + 24.0
+              └─ ViewLayout - view: description
+                       .top == title.bottom + 5.0
+                       .leading == image.trailing + 10.0
+                       .bottom == superview.bottom - 8.0
+                       .trailing == superview.trailing - 10.0
+        """
+        
+        XCTAssertEqual(layout.debugDetailDescription, expectedResult)
+    }
 }
 
 extension ImplementationTests {
