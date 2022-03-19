@@ -5,17 +5,19 @@
 //  Created by oozoofrog on 2022/03/18.
 //
 
-#if canImport(UIKit)
 import XCTest
+import SwiftLayout
 
 class PerformanceTests: XCTestCase {
+    
+    let frame = CGRect(origin: .zero, size: .init(width: 414.0, height: 896.0))
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
 
     override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        Bundle.module.unload()
     }
     
 //    func testDrawXibView() {
@@ -24,12 +26,12 @@ class PerformanceTests: XCTestCase {
 //        view.frame = .init(origin: .zero, size: .init(width: 375, height: 667))
 //        attachSnapshot(named: "screenshot for XibView", view: view)
 //    }
-//    
+//
 //    func testDrawSwiftLayoutView() {
 //        let view = SwiftLayoutView(frame: .init(x: 0, y: 0, width: 375, height: 667))
 //        attachSnapshot(named: "screenshot for SwiftLayoutView", view: view)
 //    }
-//    
+//
 //    func testDrawNativeApi() {
 //        let view = NativeApiView(frame: .init(x: 0, y: 0, width: 375, height: 667))
 //        attachSnapshot(named: "screenshot for NativeApiView", view: view)
@@ -39,21 +41,22 @@ class PerformanceTests: XCTestCase {
         let metrics: [XCTMetric] = [XCTCPUMetric(), XCTMemoryMetric()]
         self.measure(metrics: metrics) {
             let nib = UINib(nibName: "XibView", bundle: .module)
-            _ = nib.instantiate(withOwner: nil, options: nil)[0] as! XibView
+            let view = nib.instantiate(withOwner: nil, options: nil)[0] as! XibView
+            view.frame = frame
         }
     }
     
     func testPerformanceNativeApi() throws {
         let metrics: [XCTMetric] = [XCTCPUMetric(), XCTMemoryMetric()]
         self.measure(metrics: metrics) {
-            _ = NativeApiView(frame: .init(x: 0, y: 0, width: 375, height: 667))
+            _ = NativeApiView(frame: frame)
         }
     }
     
     func testPerformanceLayoutable() throws {
         let metrics: [XCTMetric] = [XCTCPUMetric(), XCTMemoryMetric()]
         self.measure(metrics: metrics) {
-            _ = SwiftLayoutView(frame: .init(x: 0, y: 0, width: 375, height: 667))
+            _ = SwiftLayoutView(frame: frame)
         }
     }
     
@@ -62,6 +65,7 @@ class PerformanceTests: XCTestCase {
         self.measure(metrics: metrics) {
             let nib = UINib(nibName: "XibView", bundle: .module)
             let view = nib.instantiate(withOwner: nil, options: nil)[0] as! XibView
+            view.frame = frame
             view.setNeedsLayout()
             view.layoutIfNeeded()
         }
@@ -70,7 +74,7 @@ class PerformanceTests: XCTestCase {
     func testPerformanceNativeApiAndLayout() throws {
         let metrics: [XCTMetric] = [XCTCPUMetric(), XCTMemoryMetric()]
         self.measure(metrics: metrics) {
-            let view = NativeApiView(frame: .init(x: 0, y: 0, width: 375, height: 667))
+            let view = NativeApiView(frame: frame)
             view.setNeedsLayout()
             view.layoutIfNeeded()
         }
@@ -79,7 +83,7 @@ class PerformanceTests: XCTestCase {
     func testPerformanceLayoutableAndLayout() throws {
         let metrics: [XCTMetric] = [XCTCPUMetric(), XCTMemoryMetric()]
         self.measure(metrics: metrics) {
-            let view = SwiftLayoutView(frame: .init(x: 0, y: 0, width: 375, height: 667))
+            let view = SwiftLayoutView(frame: frame)
             view.setNeedsLayout()
             view.layoutIfNeeded()
         }
@@ -103,4 +107,3 @@ class PerformanceTests: XCTestCase {
     }
     
 }
-#endif
