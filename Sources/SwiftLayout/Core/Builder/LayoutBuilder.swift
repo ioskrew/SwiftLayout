@@ -11,14 +11,14 @@ public struct LayoutBuilder {
         OptionalLayout(layout: layout)
     }
     
-    public static func buildExpression<V: UIView>(_ uiView: V) -> ViewLayout<V, EmptyLayout> {
-        ViewLayout(uiView, sublayout: EmptyLayout())
+    public static func buildExpression<V: UIView>(_ uiView: V) -> ViewLayout<V> {
+        ViewLayout(uiView)
     }
     
-    public static func buildExpression<V: UIView>(_ uiView: V?) -> OptionalLayout<ViewLayout<V, EmptyLayout>> {
-        var viewLayout: ViewLayout<V, EmptyLayout>?
+    public static func buildExpression<V: UIView>(_ uiView: V?) -> OptionalLayout<ViewLayout<V>> {
+        var viewLayout: ViewLayout<V>?
         if let view = uiView {
-            viewLayout = ViewLayout(view, sublayout: EmptyLayout())
+            viewLayout = ViewLayout(view)
         }
         
         return OptionalLayout(layout: viewLayout)
