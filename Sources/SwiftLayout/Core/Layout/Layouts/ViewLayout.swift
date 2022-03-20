@@ -69,7 +69,8 @@ extension ViewLayout {
     /// - Returns: The layout itself with sublayout coordinator added
     ///
     public func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> Self {
-        let sublayouts = sublayouts + [build()]
+        var sublayouts = self.sublayouts
+        sublayouts.append(build())
         return Self.init(innerView, sublayouts: sublayouts, anchors: anchors)
     }
     
