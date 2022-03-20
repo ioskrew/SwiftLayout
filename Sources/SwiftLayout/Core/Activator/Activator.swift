@@ -16,7 +16,7 @@ enum Activator {
     @discardableResult
     static func update<L: Layout>(layout: L, fromActivation activation: Activation, layoutIfNeededForcefully: Bool) -> Activation {
         var prevInfos: [ViewInformation: Set<WeakReference<NSLayoutConstraint>>] = [:]
-        for viewInfo in activation.viewInfos.infos {
+        for viewInfo in activation.viewInfos {
             guard let view = viewInfo.view else { continue }
             prevInfos[viewInfo] = Set(view.constraints.weakens)
         }
@@ -57,7 +57,7 @@ private extension Activator {
     static func updateViews(activation: Activation, viewInfos: [ViewInformation]) {
         let newInfos = viewInfos
         let newInfosSet = Set(newInfos)
-        let oldInfos = activation.viewInfos.infos
+        let oldInfos = activation.viewInfos
         
         // remove old views
         for viewInfo in oldInfos where !newInfosSet.contains(viewInfo) {
@@ -72,7 +72,7 @@ private extension Activator {
             viewInfo.addSuperview()
         }
         
-        activation.viewInfos = ViewInformationSet(infos: viewInfos)
+        activation.viewInfos = viewInfos
     }
     
     static func updateViews(viewInfos: [ViewInformation]) {

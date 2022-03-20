@@ -49,16 +49,3 @@ extension ViewInformation {
         hasher.combine(view)
     }
 }
-
-struct ViewInformationSet: Hashable {
-    
-    let infos: Set<ViewInformation>
-    
-    init(infos: [ViewInformation] = []) {
-        self.infos = Set(infos)
-    }
-    
-    subscript(_ identifier: String) -> UIView? {
-        infos.first(where: { $0.identifier == identifier })?.view
-    }
-}

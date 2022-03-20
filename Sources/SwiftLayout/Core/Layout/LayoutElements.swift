@@ -14,18 +14,19 @@ final class LayoutElements<L: Layout> {
     init(layout: L) {
         let components = LayoutExplorer.components(layout: layout)
         
-        viewInformations = components.map { component in
+        let viewInformations = components.map { component in
             ViewInformation(superview: component.superView, view: component.view)
         }
+        self.viewInformations = viewInformations
         
-        let viewInfoSet = ViewInformationSet(infos: viewInformations)
         viewConstraints = components.flatMap { component in
             component.anchors.constraints(
                 item: component.view,
                 toItem: component.superView,
-                viewInfoSet: viewInfoSet
+                viewInfos: viewInformations
             )
         }
+        
     }
 }
 
