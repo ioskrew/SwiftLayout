@@ -332,8 +332,8 @@ extension AnchorsDSLTests {
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
         root {
             red.anchors {
-                Anchors(.bottom).equalTo(blue, attribute: .top)
                 Anchors(.top, .leading, .trailing)
+                Anchors(.bottom).equalTo(blue, attribute: .top)
             }
             blue.anchors {
                 Anchors(.bottom, .leading, .trailing)
@@ -505,8 +505,8 @@ extension AnchorsDSLTests {
         let expect = """
         root {
             red.anchors {
-                Anchors(.bottom).greaterThanOrEqualTo(constant: 13.0)
                 Anchors(.top, .leading, .trailing, .width, .height, .centerX, .centerY).greaterThanOrEqualTo()
+                Anchors(.bottom).greaterThanOrEqualTo(constant: 13.0)
             }
         }
         """.tabbed
@@ -532,8 +532,8 @@ extension AnchorsDSLTests {
         let expect = """
         root {
             red.anchors {
-                Anchors(.height).lessThanOrEqualTo(constant: 12.0)
                 Anchors(.top, .bottom, .leading, .trailing, .width, .centerX, .centerY).lessThanOrEqualTo()
+                Anchors(.height).lessThanOrEqualTo(constant: 12.0)
             }
         }
         """.tabbed

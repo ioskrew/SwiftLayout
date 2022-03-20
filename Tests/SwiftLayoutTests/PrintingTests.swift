@@ -136,8 +136,8 @@ extension PrintingTests {
         let expect = """
         root {
             child.anchors {
-                Anchors(.bottom).equalTo(constant: -10.0)
                 Anchors(.top)
+                Anchors(.bottom).equalTo(constant: -10.0)
             }
         }
         """.tabbed
@@ -165,8 +165,8 @@ extension PrintingTests {
         let expect = """
         root {
             child.anchors {
-                Anchors(.bottom).equalTo(constant: -10.0)
                 Anchors(.top)
+                Anchors(.bottom).equalTo(constant: -10.0)
             }
             friend.anchors {
                 Anchors(.top).equalTo(child, attribute: .bottom)
@@ -270,8 +270,8 @@ extension PrintingTests {
         let expect = """
         root {
             child.anchors {
-                Anchors(.leading)
                 Anchors(.top, .bottom).equalTo(root.safeAreaLayoutGuide)
+                Anchors(.leading)
             }
         }
         """.tabbed
@@ -318,8 +318,8 @@ extension PrintingTests {
                 Anchors(.top, .leading, .trailing)
             }
             friend.anchors {
-                Anchors(.bottom, .leading)
                 Anchors(.top).greaterThanOrEqualTo(child, attribute: .bottom, constant: 8.0)
+                Anchors(.bottom, .leading)
                 Anchors(.trailing).equalTo(child)
             }
         }
@@ -348,9 +348,9 @@ extension PrintingTests {
         let expect = """
         root {
             child.anchors {
+                Anchors(.top).greaterThanOrEqualTo()
                 Anchors(.bottom).lessThanOrEqualTo()
                 Anchors(.height).equalTo(constant: 12.0)
-                Anchors(.top).greaterThanOrEqualTo()
             }
             friend.anchors {
                 Anchors(.height).equalTo(child)
@@ -427,8 +427,8 @@ extension PrintingTests {
                         }
                     }
                     duny.truename:\(UILabel.self).anchors {
-                        Anchors(.bottom, .leading, .trailing)
                         Anchors(.top).equalTo(duny.nickname:\(UILabel.self), attribute: .bottom)
+                        Anchors(.bottom, .leading, .trailing)
                     }.sublayout {
                         ged.anchors {
                             Anchors(.top, .bottom, .leading, .trailing)

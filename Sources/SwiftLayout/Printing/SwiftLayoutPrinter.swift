@@ -190,38 +190,8 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
     let constant: String
     let multiplier: String
     
-    static let attributes: [String: NSLayoutConstraint.Attribute] = [
-        "left": .left,
-        "right": .right,
-        "top": .top,
-        "bottom": .bottom,
-        "leading": .leading,
-        "trailing": .trailing,
-        "width": .width,
-        "height": .height,
-        "centerX": .centerX,
-        "centerY": .centerY,
-        "lastBaseline": .lastBaseline,
-        "firstBaseline": .firstBaseline,
-        "leftMargin": .leftMargin,
-        "rightMargin": .rightMargin,
-        "topMargin": .topMargin,
-        "bottomMargin": .bottomMargin,
-        "leadingMargin": .leadingMargin,
-        "trailingMargin": .trailingMargin,
-        "centerXWithinMargins": .centerXWithinMargins,
-        "centerYWithinMargins": .centerYWithinMargins,
-        "notAnAttribute": .notAnAttribute
-    ]
-    
-    private func attributeSort(_ lhs: String, _ rhs: String) -> Bool {
-        guard let left = Self.attributes[lhs] else { return true }
-        guard let right = Self.attributes[rhs] else { return false }
-        return left.rawValue < right.rawValue
-    }
-    
     var description: String {
-        var descriptions: [String] = ["Anchors(\(firstAttributes.sorted(by: attributeSort).map({ "." + $0 }).joined(separator: ", ")))"]
+        var descriptions: [String] = ["Anchors(\(firstAttributes.map({ "." + $0 }).joined(separator: ", ")))"]
         var arguments: [String] = []
         if !secondTag.isEmpty && superTag != secondTag {
             arguments.append(secondTag)
@@ -253,8 +223,20 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
     
     struct Parser {
         static func from(_ view: UIView, tags: [String: String], options: SwiftLayoutPrinter.PrintOptions) -> [ConstraintToken] {
-            let constraints = view.constraints
-                .filter({ Validator.isUserCreation($0, options: options) })
+            let constraints = view.constraints.sorted { lhs, rhs in
+                func compareTuple(_ value: NSLayoutConstraint) -> (Int, Int, Int, CGFloat, CGFloat, Float) {
+                    (
+                        value.firstAttribute.rawValue,
+                        value.secondAttribute.rawValue,
+                        value.relation.rawValue,
+                        value.constant,
+                        value.multiplier,
+                        value.priority.rawValue
+                    )
+                }
+                
+                return compareTuple(lhs) < compareTuple(rhs)
+            }.filter({ Validator.isUserCreation($0, options: options) })
             var tokens = constraints.map({ ConstraintToken(constraint: $0, tags: tags) })
             tokens.append(contentsOf: view.subviews.flatMap({ from($0, tags:tags, options: options) }))
             return tokens
@@ -323,7 +305,7 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
                 }
             }
             
-            return mergedTokens.map({ "\t" + $0.description }).sorted().joined(separator: "\n")
+            return mergedTokens.map({ "\t" + $0.description }).joined(separator: "\n")
         }
     }
     
