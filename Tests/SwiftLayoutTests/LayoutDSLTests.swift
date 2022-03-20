@@ -157,12 +157,12 @@ extension LayoutDSLTests {
                 Anchors(.top, .bottom, .leading, .trailing)
             }.sublayout {
                 blue.anchors {
-                    Anchors(.top, .leading).equalTo(constant: 8.0)
                     Anchors(.bottom, .trailing).equalTo(constant: -8.0)
+                    Anchors(.top, .leading).equalTo(constant: 8.0)
                 }.sublayout {
                     green.anchors {
-                        Anchors(.top, .leading).equalTo(constant: 16.0)
                         Anchors(.bottom, .trailing).equalTo(constant: -16.0)
+                        Anchors(.top, .leading).equalTo(constant: 16.0)
                     }
                 }
             }
@@ -189,8 +189,8 @@ extension LayoutDSLTests {
                 Anchors(.top, .bottom, .leading, .trailing)
             }.sublayout {
                 blue.anchors {
-                    Anchors(.top, .bottom, .leading, .trailing)
                     Anchors(.height).equalTo(constant: 44.0)
+                    Anchors(.top, .bottom, .leading, .trailing)
                 }.sublayout {
                     green.anchors {
                         Anchors(.top, .bottom, .leading, .trailing)
@@ -575,17 +575,17 @@ extension LayoutDSLTests {
                 Anchors(.top, .leading, .trailing)
             }
             group1_2.anchors {
-                Anchors(.top).equalTo(group1_1, attribute: .bottom)
                 Anchors(.leading, .trailing)
+                Anchors(.top).equalTo(group1_1, attribute: .bottom)
             }
             group1_3.anchors {
-                Anchors(.top).equalTo(group1_1, attribute: .bottom)
                 Anchors(.leading).equalTo(constant: 8.0)
+                Anchors(.top).equalTo(group1_1, attribute: .bottom)
                 Anchors(.trailing).equalTo(constant: -8.0)
             }
             group2_1.anchors {
-                Anchors(.top).equalTo(group1_3, attribute: .bottom)
                 Anchors(.leading).equalTo(constant: 12.0)
+                Anchors(.top).equalTo(group1_3, attribute: .bottom)
                 Anchors(.trailing).equalTo(constant: -12.0)
             }
             group2_2.anchors {

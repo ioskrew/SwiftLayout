@@ -445,8 +445,8 @@ extension ImplementationTests {
         let expect = """
         root {
             child.anchors {
-                Anchors(.top, .leading, .trailing)
                 Anchors(.height).equalTo(constant: 44.0)
+                Anchors(.top, .leading, .trailing)
             }
         }
         """

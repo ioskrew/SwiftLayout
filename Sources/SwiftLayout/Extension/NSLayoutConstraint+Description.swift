@@ -121,12 +121,6 @@ extension NSLayoutConstraint.Relation: CustomStringConvertible, CustomDebugStrin
     }
 }
 
-extension Array where Element: NSLayoutConstraint {
-    public var shortDescription: String {
-        map(\.shortDescription).joined(separator: "\n")
-    }
-}
-
 private let attributeDescriptions: [NSLayoutConstraint.Attribute: String] = [
     .left: "left",
     .right: "right",

@@ -92,13 +92,13 @@ private extension Activator {
         let olds = Set(activation.constraints)
         
         NSLayoutConstraint.deactivate(olds.compactMap(\.origin).filter(\.isActive))
-        NSLayoutConstraint.activate(news.sorted().compactMap(\.origin))
+        NSLayoutConstraint.activate(news.compactMap(\.origin))
         activation.constraints = news
     }
     
     static func updateConstraints(constraints: [NSLayoutConstraint]) {
         let news = Set(constraints.weakens)
-        NSLayoutConstraint.activate(news.sorted().compactMap(\.origin))
+        NSLayoutConstraint.activate(news.compactMap(\.origin))
     }
     
     static func layoutIfNeeded(_ viewInfos: [ViewInformation], _ prevInfos: [ViewInformation: Set<WeakReference<NSLayoutConstraint>>] = [:]) {
