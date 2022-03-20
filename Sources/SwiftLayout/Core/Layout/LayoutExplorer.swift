@@ -9,9 +9,9 @@ import UIKit
 
 enum LayoutExplorer {
     struct Component {
-        var superView: UIView? = nil
+        var superView: UIView? 
         var view: UIView
-        var anchors: Anchors? = nil
+        var anchors: Anchors
     }
     
     typealias TraversalHandler = (_ layout: Layout, _ superview: UIView?) -> Void

@@ -20,11 +20,11 @@ final class LayoutElements<L: Layout> {
         
         let viewInfoSet = ViewInformationSet(infos: viewInformations)
         viewConstraints = components.flatMap { component in
-            component.anchors?.constraints(
+            component.anchors.constraints(
                 item: component.view,
                 toItem: component.superView,
                 viewInfoSet: viewInfoSet
-            ) ?? []
+            )
         }
     }
 }
