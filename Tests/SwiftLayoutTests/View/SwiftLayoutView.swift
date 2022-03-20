@@ -736,15 +736,4 @@ class SwiftLayoutView: UIView, Layoutable {
     
     var activation: Activation?
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        let date = Date()
-        self.sl.updateLayout()
-        print("SwiftLayoutView updateLayout time: \(-date.timeIntervalSinceNow)")
-    }
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        self.sl.updateLayout()
-    }
 }

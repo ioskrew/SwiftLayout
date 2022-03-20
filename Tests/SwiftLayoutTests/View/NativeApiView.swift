@@ -8,18 +8,6 @@
 import UIKit
 
 class NativeApiView: UIView {
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        let date = Date()
-        loadView()
-        print("NativeApiView loadView time: \(-date.timeIntervalSinceNow)")
-    }
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        loadView()
-    }
 
     func loadView() {
         self.backgroundColor = .systemBackground
