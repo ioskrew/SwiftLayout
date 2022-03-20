@@ -10,14 +10,14 @@ public final class Activation: Hashable {
     
     typealias Constraints = Set<WeakReference<NSLayoutConstraint>>
     
-    var viewInfos: [ViewInformation]
+    var viewInfos: ViewInformationSet
     var constraints: Constraints
     
     convenience init() {
         self.init(viewInfos: .init(), constraints: .init())
     }
     
-    init(viewInfos: [ViewInformation], constraints: Constraints) {
+    init(viewInfos: ViewInformationSet, constraints: Constraints) {
         self.viewInfos = viewInfos
         self.constraints = constraints
     }
@@ -33,7 +33,7 @@ public final class Activation: Hashable {
     }
     
     func deactiveViews() {
-        let views = viewInfos.compactMap(\.view)
+        let views = viewInfos.infos.compactMap(\.view)
         for view in views {
             if views.contains(where: { $0 == view.superview }) {
                 view.removeFromSuperview()
@@ -50,7 +50,7 @@ extension Activation {
     }
     
     public func viewForIdentifier(_ identifier: String) -> UIView? {
-        viewInfos.first(where: { $0.identifier == identifier })?.view
+        viewInfos.infos.first(where: { $0.identifier == identifier })?.view
     }
 
     public func store<C: RangeReplaceableCollection>(_ store: inout C) where C.Element == Activation {
