@@ -103,13 +103,12 @@ private extension Activator {
     
     static func layoutIfNeeded(_ viewInfos: [ViewInformation], _ prevInfos: [ViewInformation: Set<WeakReference<NSLayoutConstraint>>] = [:]) {
         for viewInfo in viewInfos {
-            if let constraints = prevInfos[viewInfo] {
-                if constraints != viewInfo.view.map({ Set($0.constraints.weakens) }) {
-                    viewInfo.view?.layoutIfNeeded()
-                }
-            } else {
+            if viewInfo.superview == nil, let view = viewInfo.view {
+                view.setNeedsLayout()
+                view.layoutIfNeeded()
+            }
+            if prevInfos[viewInfo] == nil {
                 // for newly add to superview
-                viewInfo.view?.layoutIfNeeded()
                 viewInfo.view?.layer.removeAnimation(forKey: "bounds.size")
                 viewInfo.view?.layer.removeAnimation(forKey: "position")
             }
