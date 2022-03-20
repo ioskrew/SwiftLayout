@@ -1,6 +1,10 @@
 public struct ArrayLayout<L: Layout>: Layout {
     
-    let layouts: [L]
+    private let layouts: [L]
+    
+    init(layouts: [L]) {
+        self.layouts = layouts
+    }
     
     public var sublayouts: [Layout] {
         layouts

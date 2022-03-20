@@ -7,7 +7,7 @@
 
 public struct GroupLayout<L: Layout>: Layout {
     
-    let layout: L
+    private let layout: L
     
     public init(@LayoutBuilder _ handler: () -> L) {
         self.layout = handler()

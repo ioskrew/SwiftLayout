@@ -1,6 +1,6 @@
 public struct TupleLayout<L>: Layout {
     
-    let layout: L
+    private let layout: L
     
     init(_ layout: L) {
         self.layout = layout

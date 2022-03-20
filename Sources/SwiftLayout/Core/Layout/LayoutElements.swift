@@ -7,11 +7,11 @@
 
 import UIKit
 
-class LayoutElements {
+final class LayoutElements<L: Layout> {
     let viewInformations: [ViewInformation]
     let viewConstraints: [NSLayoutConstraint]
     
-    init(layout: Layout) {
+    init(layout: L) {
         let components = LayoutExplorer.components(layout: layout)
         
         viewInformations = components.map { component in
