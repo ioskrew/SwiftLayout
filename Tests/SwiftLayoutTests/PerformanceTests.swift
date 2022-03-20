@@ -20,22 +20,22 @@ class PerformanceTests: XCTestCase {
         Bundle.module.unload()
     }
     
-//    func testDrawXibView() {
-//        let nib = UINib(nibName: "XibView", bundle: .module)
-//        let view = nib.instantiate(withOwner: nil, options: nil)[0] as! XibView
-//        view.frame = .init(origin: .zero, size: .init(width: 375, height: 667))
-//        attachSnapshot(named: "screenshot for XibView", view: view)
-//    }
-//
-//    func testDrawSwiftLayoutView() {
-//        let view = SwiftLayoutView(frame: .init(x: 0, y: 0, width: 375, height: 667))
-//        attachSnapshot(named: "screenshot for SwiftLayoutView", view: view)
-//    }
-//
-//    func testDrawNativeApi() {
-//        let view = NativeApiView(frame: .init(x: 0, y: 0, width: 375, height: 667))
-//        attachSnapshot(named: "screenshot for NativeApiView", view: view)
-//    }
+    func testDrawXibView() {
+        let nib = UINib(nibName: "XibView", bundle: .module)
+        let view = nib.instantiate(withOwner: nil, options: nil)[0] as! XibView
+        view.frame = .init(origin: .zero, size: .init(width: 375, height: 667))
+        attachSnapshot(named: "screenshot for XibView", view: view)
+    }
+
+    func testDrawSwiftLayoutView() {
+        let view = SwiftLayoutView(frame: .init(x: 0, y: 0, width: 375, height: 667))
+        attachSnapshot(named: "screenshot for SwiftLayoutView", view: view)
+    }
+
+    func testDrawNativeApi() {
+        let view = NativeApiView(frame: .init(x: 0, y: 0, width: 375, height: 667))
+        attachSnapshot(named: "screenshot for NativeApiView", view: view)
+    }
     
     func testPerformanceInterfaceBuilder() throws {
         let metrics: [XCTMetric] = [XCTCPUMetric(), XCTMemoryMetric()]
