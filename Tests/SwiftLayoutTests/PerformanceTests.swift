@@ -27,7 +27,21 @@ class PerformanceTests: XCTestCase {
     }
 
     override func tearDownWithError() throws {
-        Bundle.module.unload()
+    }
+    
+    func attachSnapshot(named: String, view: UIView) {
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
+        let renderer = UIGraphicsImageRenderer(bounds: view.bounds)
+        let image = renderer.image { ctx in
+            view.layer.render(in: ctx.cgContext)
+        }
+        
+        XCTContext.runActivity(named: named) { activity in
+            let attachment = XCTAttachment(image: image)
+            attachment.lifetime = .keepAlways
+            activity.add(attachment)
+        }
     }
     
     func testDrawXibView() {
@@ -38,19 +52,14 @@ class PerformanceTests: XCTestCase {
 
     func testDrawSwiftLayoutView() {
         let view = SwiftLayoutView(frame: frame)
+        view.sl.updateLayout()
         attachSnapshot(named: "screenshot for SwiftLayoutView", view: view)
     }
 
     func testDrawNativeApi() {
         let view = NativeApiView(frame: frame)
+        view.loadView()
         attachSnapshot(named: "screenshot for NativeApiView", view: view)
-    }
-
-    @available(iOS 15.0, *)
-    func testDrawSwiftUI() {
-        let view = _UIHostingView(rootView: SwiftUIView())
-        view.frame = frame
-        attachSnapshot(named: "screenshot for SwiftUIView", view: view)
     }
     
     func testPerformance1InterfaceBuilder() throws {
@@ -77,19 +86,6 @@ class PerformanceTests: XCTestCase {
             startMeasuring()
             let view = SwiftLayoutView(frame: frame)
             view.sl.updateLayout()
-            stopMeasuring()
-        }
-    }
-    
-    @available(iOS 15.0, *)
-    func testPerformance1SwiftUI() throws {
-        let superview = UIView(frame: frame)
-        self.measure(metrics: [XCTCPUMetric()]) {
-            startMeasuring()
-            let view = _UIHostingView(rootView: SwiftUIView())
-            view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-            view.frame = frame
-            superview.addSubview(view)
             stopMeasuring()
         }
     }
@@ -125,39 +121,6 @@ class PerformanceTests: XCTestCase {
             view.setNeedsLayout()
             view.layoutIfNeeded()
             stopMeasuring()
-        }
-    }
-    @available(iOS 15.0, *)
-    func testPerformance2SwiftUIAndLayout() throws {
-        let superview = UIView(frame: frame)
-        self.measure(metrics: [XCTCPUMetric()]) {
-            startMeasuring()
-            let view = _UIHostingView(rootView: SwiftUIView())
-            view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-            view.frame = frame
-            superview.addSubview(view)
-            view.setNeedsLayout()
-            view.layoutIfNeeded()
-            stopMeasuring()
-        }
-    }
-    
-    func attachSnapshot(named: String, view: UIView) {
-        let superview = UIView(frame: view.bounds)
-        view.translatesAutoresizingMaskIntoConstraints = true
-        view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        superview.addSubview(view)
-        XCTContext.runActivity(named: named) { activity in
-            superview.setNeedsLayout()
-            superview.layoutIfNeeded()
-            superview.drawHierarchy(in: view.bounds, afterScreenUpdates: true)
-            let renderer = UIGraphicsImageRenderer(size: view.bounds.size)
-            let image = renderer.image { context in
-                superview.layer.render(in: context.cgContext)
-            }
-            let attachment = XCTAttachment(image: image)
-            attachment.lifetime = .keepAlways
-            activity.add(attachment)
         }
     }
     

@@ -272,7 +272,6 @@ class NativeApiView: UIView {
         let tmp811f90UIView = UIView()
         tmp811f90UIView.backgroundColor = .separator
 
-        self.translatesAutoresizingMaskIntoConstraints = false
         headerView.translatesAutoresizingMaskIntoConstraints = false
         headerLabel.translatesAutoresizingMaskIntoConstraints = false
         headerButton0.translatesAutoresizingMaskIntoConstraints = false
