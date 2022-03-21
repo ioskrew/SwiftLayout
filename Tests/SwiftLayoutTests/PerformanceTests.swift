@@ -7,6 +7,7 @@
 
 import XCTest
 import SwiftLayout
+import SwiftUI
 
 class PerformanceTests: XCTestCase {
   
@@ -36,13 +37,20 @@ class PerformanceTests: XCTestCase {
     }
 
     func testDrawSwiftLayoutView() {
-        let view = SwiftLayoutView(frame: .init(x: 0, y: 0, width: 375, height: 667))
+        let view = SwiftLayoutView(frame: frame)
         attachSnapshot(named: "screenshot for SwiftLayoutView", view: view)
     }
 
     func testDrawNativeApi() {
-        let view = NativeApiView(frame: .init(x: 0, y: 0, width: 375, height: 667))
+        let view = NativeApiView(frame: frame)
         attachSnapshot(named: "screenshot for NativeApiView", view: view)
+    }
+
+    @available(iOS 15.0, *)
+    func testDrawSwiftUI() {
+        let view = _UIHostingView(rootView: SwiftUIView())
+        view.frame = frame
+        attachSnapshot(named: "screenshot for SwiftUIView", view: view)
     }
     
     func testPerformance1InterfaceBuilder() throws {
@@ -69,6 +77,19 @@ class PerformanceTests: XCTestCase {
             startMeasuring()
             let view = SwiftLayoutView(frame: frame)
             view.sl.updateLayout()
+            stopMeasuring()
+        }
+    }
+    
+    @available(iOS 15.0, *)
+    func testPerformance1SwiftUI() throws {
+        let superview = UIView(frame: frame)
+        self.measure(metrics: [XCTCPUMetric()]) {
+            startMeasuring()
+            let view = _UIHostingView(rootView: SwiftUIView())
+            view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            view.frame = frame
+            superview.addSubview(view)
             stopMeasuring()
         }
     }
@@ -106,16 +127,33 @@ class PerformanceTests: XCTestCase {
             stopMeasuring()
         }
     }
-    
-    func attachSnapshot(named: String, view: UIView) {
-        XCTContext.runActivity(named: named) { activity in
-            let rect = view.bounds
+    @available(iOS 15.0, *)
+    func testPerformance2SwiftUIAndLayout() throws {
+        let superview = UIView(frame: frame)
+        self.measure(metrics: [XCTCPUMetric()]) {
+            startMeasuring()
+            let view = _UIHostingView(rootView: SwiftUIView())
+            view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            view.frame = frame
+            superview.addSubview(view)
             view.setNeedsLayout()
             view.layoutIfNeeded()
-            view.drawHierarchy(in: rect, afterScreenUpdates: true)
-            let renderer = UIGraphicsImageRenderer(size: rect.size)
+            stopMeasuring()
+        }
+    }
+    
+    func attachSnapshot(named: String, view: UIView) {
+        let superview = UIView(frame: view.bounds)
+        view.translatesAutoresizingMaskIntoConstraints = true
+        view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        superview.addSubview(view)
+        XCTContext.runActivity(named: named) { activity in
+            superview.setNeedsLayout()
+            superview.layoutIfNeeded()
+            superview.drawHierarchy(in: view.bounds, afterScreenUpdates: true)
+            let renderer = UIGraphicsImageRenderer(size: view.bounds.size)
             let image = renderer.image { context in
-                view.layer.render(in: context.cgContext)
+                superview.layer.render(in: context.cgContext)
             }
             let attachment = XCTAttachment(image: image)
             attachment.lifetime = .keepAlways
