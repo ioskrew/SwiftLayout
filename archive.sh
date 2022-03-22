@@ -3,6 +3,7 @@ rm -rf ./build
 rm -rf ./Binary
 
 echo "Create xcodeproj"
+cp -f PackageNoFramework.swift Package.swift
 swift package generate-xcodeproj
 
 echo "Archiving..."
@@ -19,3 +20,5 @@ rm -rf ./SwiftLayout.xcodeproj
 
 echo "Cleaning..."
 rm -rf ./build
+
+cp -f PackagePublic.swift Package.swift
