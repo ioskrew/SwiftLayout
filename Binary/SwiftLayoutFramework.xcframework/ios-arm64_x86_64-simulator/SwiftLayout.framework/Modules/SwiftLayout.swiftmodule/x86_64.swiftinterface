@@ -241,10 +241,15 @@ public protocol Layoutable : AnyObject {
   associatedtype LayoutBody : SwiftLayout.Layout
   var activation: SwiftLayout.Activation? { get set }
   @SwiftLayout.LayoutBuilder var layout: Self.LayoutBody { get }
+  @available(*, deprecated, renamed: "self.sl.layout()", message: "updateLayout of Layoutable moved to sl wrapper type")
+  func updateLayout()
 }
 extension SwiftLayout.Layoutable {
   @available(*, deprecated, renamed: "self.sl.layout()", message: "updateLayout of Layoutable moved to sl wrapper type")
   public func updateLayout()
+  public var sl: SwiftLayout.LayoutableMethodWrapper<Self> {
+    get
+  }
 }
 @propertyWrapper final public class LayoutProperty<Value> {
   public init(wrappedValue: Value)
@@ -262,11 +267,6 @@ extension SwiftLayout.Layoutable {
 @_hasMissingDesignatedInitializers final public class LayoutableMethodWrapper<L> where L : SwiftLayout.Layoutable {
   final public func updateLayout(layoutIfNeededForcefully: Swift.Bool = false)
   @objc deinit
-}
-extension SwiftLayout.Layoutable {
-  public var sl: SwiftLayout.LayoutableMethodWrapper<Self> {
-    get
-  }
 }
 public struct SwiftLayoutPrinter : Swift.CustomStringConvertible {
   public struct PrintOptions : Swift.OptionSet {

@@ -9,6 +9,9 @@ public protocol Layoutable: AnyObject {
     associatedtype LayoutBody: Layout
     var activation: Activation? { get set }
     @LayoutBuilder var layout: LayoutBody { get }
+    
+    @available(*, deprecated, renamed: "self.sl.layout()", message: "updateLayout of Layoutable moved to sl wrapper type")
+    func updateLayout()
 }
 
 public extension Layoutable {
@@ -17,4 +20,6 @@ public extension Layoutable {
     func updateLayout() {
         self.activation = Activator.update(layout: layout, fromActivation: activation ?? Activation(), layoutIfNeededForcefully: false)
     }
+    
+    var sl: LayoutableMethodWrapper<Self> { .init(self) }
 }
