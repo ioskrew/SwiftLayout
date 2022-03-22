@@ -13,7 +13,7 @@ echo "Create XCFramework"
 xcodebuild -create-xcframework \
 -framework "./build/ios.xcarchive/Products/Library/Frameworks/SwiftLayout.framework" \
 -framework "./build/ios_sim.xcarchive/Products/Library/Frameworks/SwiftLayout.framework" \
--output "./Binary/SwiftLayout.xcframework"
+-output "./Binary/SwiftLayoutFramework.xcframework"
 
 rm -rf ./SwiftLayout.xcodeproj
 

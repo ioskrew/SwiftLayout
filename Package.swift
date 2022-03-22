@@ -9,12 +9,17 @@ let package = Package(
         .library(
             name: "SwiftLayout",
             targets: ["SwiftLayout"]),
+        .library(
+            name: "SwiftLayoutFramework",
+            targets: ["SwiftLayoutFramework"])
     ],
     dependencies: [],
     targets: [
         .target(
             name: "SwiftLayout",
             dependencies: []),
+        .binaryTarget(name: "SwiftLayoutFramework",
+                      path: "Binary/SwiftLayoutFramework.xcframework"),
         .testTarget(
             name: "SwiftLayoutTests",
             dependencies: ["SwiftLayout"],
