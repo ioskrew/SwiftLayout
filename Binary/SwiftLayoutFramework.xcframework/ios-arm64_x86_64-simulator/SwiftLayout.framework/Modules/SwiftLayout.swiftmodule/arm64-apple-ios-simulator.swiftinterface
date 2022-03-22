@@ -269,23 +269,23 @@ extension SwiftLayout.Layoutable {
   @objc deinit
 }
 public struct SwiftLayoutPrinter : Swift.CustomStringConvertible {
-  public struct PrintOptions : Swift.OptionSet {
-    public let rawValue: Swift.Int
-    public init(rawValue: Swift.Int)
-    public static let withSystemConstraints: SwiftLayout.SwiftLayoutPrinter.PrintOptions
-    public static let onlyIdentifier: SwiftLayout.SwiftLayoutPrinter.PrintOptions
-    public static let withViewConfig: SwiftLayout.SwiftLayoutPrinter.PrintOptions
-    public typealias ArrayLiteralElement = SwiftLayout.SwiftLayoutPrinter.PrintOptions
-    public typealias Element = SwiftLayout.SwiftLayoutPrinter.PrintOptions
-    public typealias RawValue = Swift.Int
-  }
   public init(_ view: UIKit.UIView, tags: [UIKit.UIView : Swift.String] = [:])
   public var description: Swift.String {
     get
   }
   @available(*, deprecated, message: "use PrintOptions")
   public func print(_ updater: SwiftLayout.IdentifierUpdater? = nil, systemConstraintsHidden: Swift.Bool = true, printOnlyIdentifier: Swift.Bool = false) -> Swift.String
-  public func print(_ updater: SwiftLayout.IdentifierUpdater? = nil, options: SwiftLayout.SwiftLayoutPrinter.PrintOptions = []) -> Swift.String
+  public func print(_ updater: SwiftLayout.IdentifierUpdater? = nil, options: SwiftLayout.SwiftLayoutPrintOptions = []) -> Swift.String
+}
+public struct SwiftLayoutPrintOptions : Swift.OptionSet {
+  public let rawValue: Swift.Int
+  public init(rawValue: Swift.Int)
+  public static let withSystemConstraints: SwiftLayout.SwiftLayoutPrintOptions
+  public static let onlyIdentifier: SwiftLayout.SwiftLayoutPrintOptions
+  public static let withViewConfig: SwiftLayout.SwiftLayoutPrintOptions
+  public typealias ArrayLiteralElement = SwiftLayout.SwiftLayoutPrintOptions
+  public typealias Element = SwiftLayout.SwiftLayoutPrintOptions
+  public typealias RawValue = Swift.Int
 }
 @_hasMissingDesignatedInitializers final public class IdentifierUpdater {
   public static var nameOnly: SwiftLayout.IdentifierUpdater {

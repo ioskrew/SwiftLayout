@@ -9,21 +9,6 @@ import UIKit
 
 public struct SwiftLayoutPrinter: CustomStringConvertible {
     
-    public struct PrintOptions: OptionSet {
-        public let rawValue: Int
-        
-        public init(rawValue: Int) {
-            self.rawValue = rawValue
-        }
-        
-        /// print system constraints
-        public static let withSystemConstraints: PrintOptions = .init(rawValue: 1)
-        /// print view only have accessibility identifier
-        public static let onlyIdentifier: PrintOptions = .init(rawValue: 1 << 1)
-        /// print with view config
-        public static let withViewConfig: PrintOptions = .init(rawValue: 1 << 2)
-    }
-    
     public init(_ view: UIView, tags: [UIView: String] = [:]) {
         self.view = view
         self.tags = Dictionary(uniqueKeysWithValues: tags.map({ ($0.key.tagDescription, $0.value) }))
@@ -46,7 +31,7 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
     public func print(_ updater: IdentifierUpdater? = nil,
                       systemConstraintsHidden: Bool = true,
                       printOnlyIdentifier: Bool = false) -> String {
-        var options: PrintOptions = []
+        var options: SwiftLayoutPrintOptions = []
         if !systemConstraintsHidden {
             options.insert(.withSystemConstraints)
         }
@@ -61,7 +46,7 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
     ///  - updater: ``IdentifierUpdater``
     ///  - options: ``PrintOptions``
     /// - Returns: String of SwiftLayout syntax
-    public func print(_ updater: IdentifierUpdater? = nil, options: PrintOptions = []) -> String {
+    public func print(_ updater: IdentifierUpdater? = nil, options: SwiftLayoutPrintOptions = []) -> String {
         guard let view = view else {
             return ""
         }
@@ -143,7 +128,7 @@ private struct ViewToken {
     let views: [ViewToken]
     
     struct Parser {
-        static func from(_ view: UIView, tags: [String: String], options: SwiftLayoutPrinter.PrintOptions) -> ViewToken? {
+        static func from(_ view: UIView, tags: [String: String], options: SwiftLayoutPrintOptions) -> ViewToken? {
             if let identifier = tags[view.tagDescription] {
                 return ViewToken(identifier: identifier, views: view.subviews.compactMap({ from($0, tags: tags, options: options) }))
             } else {
@@ -222,7 +207,7 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
     }
     
     struct Parser {
-        static func from(_ view: UIView, tags: [String: String], options: SwiftLayoutPrinter.PrintOptions) -> [ConstraintToken] {
+        static func from(_ view: UIView, tags: [String: String], options: SwiftLayoutPrintOptions) -> [ConstraintToken] {
             let constraints = view.constraints.sorted { lhs, rhs in
                 func compareTuple(_ value: NSLayoutConstraint) -> (Int, Int, Int, CGFloat, CGFloat, Float) {
                     (
@@ -244,7 +229,7 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
     }
     
     struct Validator {
-        static func isUserCreation(_ constraint: NSLayoutConstraint, options: SwiftLayoutPrinter.PrintOptions) -> Bool {
+        static func isUserCreation(_ constraint: NSLayoutConstraint, options: SwiftLayoutPrintOptions) -> Bool {
             let description = constraint.debugDescription
             if options.contains(.withSystemConstraints) {
                 return true
@@ -316,4 +301,19 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
         && self.multiplier == token.multiplier
         && self.relation == token.relation
     }
+}
+
+public struct SwiftLayoutPrintOptions: OptionSet {
+    public let rawValue: Int
+    
+    public init(rawValue: Int) {
+        self.rawValue = rawValue
+    }
+    
+    /// print system constraints
+    public static let withSystemConstraints: SwiftLayoutPrintOptions = .init(rawValue: 1)
+    /// print view only have accessibility identifier
+    public static let onlyIdentifier: SwiftLayoutPrintOptions = .init(rawValue: 1 << 1)
+    /// print with view config
+    public static let withViewConfig: SwiftLayoutPrintOptions = .init(rawValue: 1 << 2)
 }
