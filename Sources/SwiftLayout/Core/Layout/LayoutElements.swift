@@ -18,12 +18,22 @@ final class LayoutElements<L: Layout> {
             ViewInformation(superview: component.superView, view: component.view)
         }
         
-        let viewInfoSet = ViewInformationSet(infos: viewInformations)
+        let viewDic = Dictionary(
+            viewInformations.compactMap { info -> (String, UIView)? in
+                guard let identifier = info.identifier, let view = info.view else {
+                    return nil
+                }
+                
+                return (identifier, view)
+            },
+            uniquingKeysWith: { first, _ in first}
+        )
+        
         viewConstraints = components.flatMap { component in
             component.anchors.constraints(
                 item: component.view,
                 toItem: component.superView,
-                viewInfoSet: viewInfoSet
+                viewDic: viewDic
             )
         }
     }

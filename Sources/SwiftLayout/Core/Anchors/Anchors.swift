@@ -48,16 +48,16 @@ public final class Anchors {
     
     // MARK: - Cores
     func constraints(item fromItem: NSObject, toItem: NSObject?) -> [NSLayoutConstraint] {
-        constraints(item: fromItem, toItem: toItem, viewInfoSet: nil)
+        constraints(item: fromItem, toItem: toItem, viewDic: [:])
     }
     
-    func constraints(item fromItem: NSObject, toItem: NSObject?, viewInfoSet: ViewInformationSet?) -> [NSLayoutConstraint] {
+    func constraints(item fromItem: NSObject, toItem: NSObject?, viewDic: [String: UIView]) -> [NSLayoutConstraint] {
         var constraints: [NSLayoutConstraint] = []
         for item in items {
             let from = fromItem
             let attribute = item.attribute
             let relation = item.relation
-            let to = item.toItem(toItem, viewInfoSet: viewInfoSet)
+            let to = item.toItem(toItem, viewDic: viewDic)
             let toAttribute = item.toAttribute(attribute)
             let multiplier = item.multiplier
             let constant = item.constant
@@ -671,12 +671,12 @@ public final class Anchors {
             hasher.combine(multiplier)
         }
         
-        func toItem(_ toItem: NSObject?, viewInfoSet: ViewInformationSet? = nil) -> NSObject? {
+        func toItem(_ toItem: NSObject?, viewDic: [String: UIView]) -> NSObject? {
             switch self.toItem {
             case let .object(object):
                 return object
             case let .identifier(identifier):
-                return viewInfoSet?[identifier] ?? toItem
+                return viewDic[identifier] ?? toItem
             case .transparent:
                 return toItem
             case .deny:
