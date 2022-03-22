@@ -3,7 +3,7 @@ rm -rf ./build
 rm -rf ./Binary
 
 echo "Create xcodeproj"
-cp -f PackageNoFramework.swift Package.swift
+cp -f PackageForXCFramework.swift Package.swift
 swift package generate-xcodeproj
 
 echo "Archiving..."
