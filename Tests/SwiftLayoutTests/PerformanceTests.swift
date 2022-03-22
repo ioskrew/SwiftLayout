@@ -55,7 +55,13 @@ class PerformanceTests: XCTestCase {
         view.sl.updateLayout()
         attachSnapshot(named: "screenshot for SwiftLayoutView", view: view)
     }
-
+    
+    func testDrawSwiftLayoutWithoutAssistantsView() {
+        let view = SwiftLayoutWithoutAssistantsView(frame: frame)
+        view.sl.updateLayout()
+        attachSnapshot(named: "screenshot for SwiftLayoutWithoutAssistantsView", view: view)
+    }
+    
     func testDrawNativeApi() {
         let view = NativeApiView(frame: frame)
         view.loadView()
@@ -90,6 +96,15 @@ class PerformanceTests: XCTestCase {
         }
     }
     
+    func testPerformance1LayoutableWithoutAssistants() throws {
+        self.measure(metrics: [XCTCPUMetric()]) {
+            startMeasuring()
+            let view = SwiftLayoutWithoutAssistantsView(frame: frame)
+            view.sl.updateLayout()
+            stopMeasuring()
+        }
+    }
+    
     func testPerformance2InterfaceBuilderAndLayout() throws {
         self.measure(metrics: [XCTCPUMetric()]) {
             startMeasuring()
@@ -116,6 +131,17 @@ class PerformanceTests: XCTestCase {
     func testPerformance2LayoutableAndLayout() throws {
         self.measure(metrics: [XCTCPUMetric()]) {
             let view = SwiftLayoutView(frame: frame)
+            startMeasuring()
+            view.sl.updateLayout()
+            view.setNeedsLayout()
+            view.layoutIfNeeded()
+            stopMeasuring()
+        }
+    }
+    
+    func testPerformance2LayoutableWithoutAssistantsAndLayout() throws {
+        self.measure(metrics: [XCTCPUMetric()]) {
+            let view = SwiftLayoutWithoutAssistantsView(frame: frame)
             startMeasuring()
             view.sl.updateLayout()
             view.setNeedsLayout()
