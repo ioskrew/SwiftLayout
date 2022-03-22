@@ -9,13 +9,13 @@ import UIKit
 
 public protocol Layout: CustomStringConvertible, CustomDebugStringConvertible {
     var view: UIView? { get }
-    var anchors: Anchors? { get }
+    var anchors: Anchors { get }
     var sublayouts: [Layout] { get }
 }
 
 extension Layout {
     public var view: UIView? { nil }
-    public var anchors: Anchors? { nil }
+    public var anchors: Anchors { Anchors() }
 }
 
 extension Layout {
@@ -71,9 +71,15 @@ extension Layout {
 extension Layout {
     public var description: String {
         let typeName = String(describing: type(of: self))
-        let typeNameWithoutGeneric = String(typeName.split(separator: "<").first ?? "Unkwon")
+        let typeNameWithoutGeneric: String
+        if let typeName = typeName.split(separator: "<").first {
+            typeNameWithoutGeneric = typeName.description
+        } else {
+            typeNameWithoutGeneric = "Unknown"
+        }
+
         if let view = self.view {
-            return typeNameWithoutGeneric + " - view: \(view.tagDescription)"
+            return "\(typeNameWithoutGeneric) - view: \(view.tagDescription)"
         } else {
             return typeNameWithoutGeneric
         }

@@ -8,20 +8,19 @@
 import UIKit
 
 extension UILayoutGuide {
-    var detailDescription: String? {
-        guard let view = owningView else { return nil }
-        let description = view.tagDescription
+    var propertyDescription: String {
+        guard let description = owningView?.tagDescription else { return "unknown" }
         switch identifier {
         case "UIViewLayoutMarginsGuide":
-            return description + ".layoutMarginsGuide"
+            return description.appending(".layoutMarginsGuide")
         case "UIViewSafeAreaLayoutGuide":
-            return description + ".safeAreaLayoutGuide"
+            return description.appending(".safeAreaLayoutGuide")
         case "UIViewKeyboardLayoutGuide":
-            return description + ".keyboardLayoutGuide"
+            return description.appending(".keyboardLayoutGuide")
         case "UIViewReadableContentGuide":
-            return description + ".readableContentGuide"
+            return description.appending(".readableContentGuide")
         default:
-            return description + ":\(identifier)"
+            return description.appending(":").appending(identifier)
         }
     }
 }

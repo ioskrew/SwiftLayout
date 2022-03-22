@@ -7,24 +7,28 @@
 
 import UIKit
 
-class LayoutElements {
+final class LayoutElements<L: Layout> {
     let viewInformations: [ViewInformation]
     let viewConstraints: [NSLayoutConstraint]
     
-    init(layout: Layout) {
+    init(layout: L) {
         let components = LayoutExplorer.components(layout: layout)
         
         viewInformations = components.map { component in
             ViewInformation(superview: component.superView, view: component.view)
         }
         
-        let viewInfoSet = ViewInformationSet(infos: viewInformations)
+        let viewDic = Dictionary(
+            components.compactMap { $0.keyValueTupe },
+            uniquingKeysWith: { first, _ in first}
+        )
+        
         viewConstraints = components.flatMap { component in
-            component.anchors?.constraints(
+            component.anchors.constraints(
                 item: component.view,
                 toItem: component.superView,
-                viewInfoSet: viewInfoSet
-            ) ?? []
+                viewDic: viewDic
+            )
         }
     }
 }

@@ -223,8 +223,20 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
     
     struct Parser {
         static func from(_ view: UIView, tags: [String: String], options: SwiftLayoutPrinter.PrintOptions) -> [ConstraintToken] {
-            let constraints = view.constraints
-                .filter({ Validator.isUserCreation($0, options: options) })
+            let constraints = view.constraints.sorted { lhs, rhs in
+                func compareTuple(_ value: NSLayoutConstraint) -> (Int, Int, Int, CGFloat, CGFloat, Float) {
+                    (
+                        value.firstAttribute.rawValue,
+                        value.secondAttribute.rawValue,
+                        value.relation.rawValue,
+                        value.constant,
+                        value.multiplier,
+                        value.priority.rawValue
+                    )
+                }
+                
+                return compareTuple(lhs) < compareTuple(rhs)
+            }.filter({ Validator.isUserCreation($0, options: options) })
             var tokens = constraints.map({ ConstraintToken(constraint: $0, tags: tags) })
             tokens.append(contentsOf: view.subviews.flatMap({ from($0, tags:tags, options: options) }))
             return tokens

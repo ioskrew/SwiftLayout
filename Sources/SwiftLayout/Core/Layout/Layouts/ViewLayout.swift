@@ -2,29 +2,20 @@ import UIKit
 
 public struct ViewLayout<V: UIView>: Layout {
     
-    let innerView: V
-    var attachments: [Attachment]
+    private let innerView: V
     
-    init(_ view: V) {
+    public private(set) var sublayouts: [Layout]
+    
+    public private(set) var anchors: Anchors
+    
+    init(_ view: V, sublayouts: [Layout] = [], anchors: Anchors = Anchors()) {
         self.innerView = view
-        self.attachments = []
-    }
-    
-    init(_ view: V, sublayout: Layout) {
-        self.init(view)
-        attachments.append(.sublayout(sublayout))
+        self.sublayouts = sublayouts
+        self.anchors = anchors
     }
     
     public var view: UIView? {
         self.innerView
-    }
-    
-    public var sublayouts: [Layout] {
-        attachments.compactMap(\.sublayout)
-    }
-    
-    public var anchors: Anchors? {
-        attachments.compactMap(\.anchors).reduce(Anchors(), +)
     }
 }
 
@@ -57,9 +48,8 @@ extension ViewLayout {
     /// - Returns: The layout itself  with anchors coordinator added
     ///
     public func anchors(@AnchorsBuilder _ build: () -> Anchors) -> Self {
-        var viewLayout = self
-        viewLayout.attachments.append(.anchors(build()))
-        return viewLayout
+        let anchors = self.anchors.union(build())
+        return Self.init(innerView, sublayouts: sublayouts, anchors: anchors)
     }
     
     ///
@@ -79,9 +69,9 @@ extension ViewLayout {
     /// - Returns: The layout itself with sublayout coordinator added
     ///
     public func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> Self {
-        var viewLayout = self
-        viewLayout.attachments.append(.sublayout(build()))
-        return viewLayout
+        var sublayouts = self.sublayouts
+        sublayouts.append(build())
+        return Self.init(innerView, sublayouts: sublayouts, anchors: anchors)
     }
     
     ///
@@ -93,31 +83,5 @@ extension ViewLayout {
     public func identifying(_ accessibilityIdentifier: String) -> Self {
         innerView.accessibilityIdentifier = accessibilityIdentifier
         return self
-    }
-}
-
-extension ViewLayout {
-    
-    enum Attachment {
-        case sublayout(_ layout: Layout)
-        case anchors(_ anchors: Anchors)
-        
-        var sublayout: Layout? {
-            switch self {
-            case .sublayout(let layout):
-                return layout
-            default:
-                return nil
-            }
-        }
-        
-        var anchors: Anchors? {
-            switch self {
-            case .anchors(let anchors):
-                return anchors
-            default:
-                return nil
-            }
-        }
     }
 }

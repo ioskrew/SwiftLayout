@@ -16,7 +16,7 @@ enum Activator {
     @discardableResult
     static func update<L: Layout>(layout: L, fromActivation activation: Activation, layoutIfNeededForcefully: Bool) -> Activation {
         var prevInfos: [ViewInformation: Set<WeakReference<NSLayoutConstraint>>] = [:]
-        for viewInfo in activation.viewInfos.infos {
+        for viewInfo in activation.viewInfos {
             guard let view = viewInfo.view else { continue }
             prevInfos[viewInfo] = Set(view.constraints.weakens)
         }
@@ -57,7 +57,7 @@ private extension Activator {
     static func updateViews(activation: Activation, viewInfos: [ViewInformation]) {
         let newInfos = viewInfos
         let newInfosSet = Set(newInfos)
-        let oldInfos = activation.viewInfos.infos
+        let oldInfos = activation.viewInfos
         
         // remove old views
         for viewInfo in oldInfos where !newInfosSet.contains(viewInfo) {
@@ -72,7 +72,7 @@ private extension Activator {
             viewInfo.addSuperview()
         }
         
-        activation.viewInfos = ViewInformationSet(infos: viewInfos)
+        activation.viewInfos = viewInfos
     }
     
     static func updateViews(viewInfos: [ViewInformation]) {
@@ -92,24 +92,23 @@ private extension Activator {
         let olds = Set(activation.constraints)
         
         NSLayoutConstraint.deactivate(olds.compactMap(\.origin).filter(\.isActive))
-        NSLayoutConstraint.activate(news.sorted().compactMap(\.origin))
+        NSLayoutConstraint.activate(news.compactMap(\.origin))
         activation.constraints = news
     }
     
     static func updateConstraints(constraints: [NSLayoutConstraint]) {
         let news = Set(constraints.weakens)
-        NSLayoutConstraint.activate(news.sorted().compactMap(\.origin))
+        NSLayoutConstraint.activate(news.compactMap(\.origin))
     }
     
     static func layoutIfNeeded(_ viewInfos: [ViewInformation], _ prevInfos: [ViewInformation: Set<WeakReference<NSLayoutConstraint>>] = [:]) {
         for viewInfo in viewInfos {
-            if let constraints = prevInfos[viewInfo] {
-                if constraints != viewInfo.view.map({ Set($0.constraints.weakens) }) {
-                    viewInfo.view?.layoutIfNeeded()
-                }
-            } else {
+            if viewInfo.superview == nil, let view = viewInfo.view {
+                view.setNeedsLayout()
+                view.layoutIfNeeded()
+            }
+            if prevInfos[viewInfo] == nil {
                 // for newly add to superview
-                viewInfo.view?.layoutIfNeeded()
                 viewInfo.view?.layer.removeAnimation(forKey: "bounds.size")
                 viewInfo.view?.layer.removeAnimation(forKey: "position")
             }

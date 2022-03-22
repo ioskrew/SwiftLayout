@@ -13,7 +13,7 @@ extension NSLayoutConstraint {
         if let view = self.firstItem as? UIView {
             return view.tagDescription
         } else if let guide = self.firstItem as? UILayoutGuide {
-            return guide.detailDescription
+            return guide.propertyDescription
         } else {
             return nil
         }
@@ -23,7 +23,7 @@ extension NSLayoutConstraint {
         if let view = self.secondItem as? UIView {
             return view.tagDescription
         } else if let guide = self.secondItem as? UILayoutGuide {
-            return guide.detailDescription
+            return guide.propertyDescription
         } else {
             return nil
         }
@@ -50,11 +50,11 @@ extension NSLayoutConstraint {
     public var shortDescription: String {
         var shorts: [String] = []
         if let firstShort = firstShort {
-            shorts.append(firstShort + ".\(firstAttribute.description)")
+            shorts.append("\(firstShort).\(firstAttribute.description)")
         }
         shorts.append(relation.shortDescription)
         if let secondShort = secondShort {
-            shorts.append(secondShort + ".\(secondAttribute.description)")
+            shorts.append("\(secondShort).\(secondAttribute.description)")
         }
         if let constantShort = constantShort {
             shorts.append(constantShort)
@@ -66,102 +66,19 @@ extension NSLayoutConstraint {
     }
 }
 
-extension NSLayoutConstraint.Attribute: CustomStringConvertible, CustomDebugStringConvertible {
+extension NSLayoutConstraint.Attribute: CustomStringConvertible {
     public var description: String {
-        switch self {
-        case .left:
-            return "left"
-        case .right:
-            return "right"
-        case .top:
-            return "top"
-        case .bottom:
-            return "bottom"
-        case .leading:
-            return "leading"
-        case .trailing:
-            return "trailing"
-        case .width:
-            return "width"
-        case .height:
-            return "height"
-        case .centerX:
-            return "centerX"
-        case .centerY:
-            return "centerY"
-        case .lastBaseline:
-            return "lastBaseline"
-        case .firstBaseline:
-            return "firstBaseline"
-        case .leftMargin:
-            return "leftMargin"
-        case .rightMargin:
-            return "rightMargin"
-        case .topMargin:
-            return "topMargin"
-        case .bottomMargin:
-            return "bottomMargin"
-        case .leadingMargin:
-            return "leadingMargin"
-        case .trailingMargin:
-            return "trailingMargin"
-        case .centerXWithinMargins:
-            return "centerXWithinMargins"
-        case .centerYWithinMargins:
-            return "centerYWithinMargins"
-        case .notAnAttribute:
-            return "notAnAttribute"
-        @unknown default:
+        if let description = attributeDescriptions[self] {
+            return description
+        } else {
             return "unknown"
         }
     }
+}
+
+extension NSLayoutConstraint.Attribute: CustomDebugStringConvertible {
     public var debugDescription: String {
-        switch self {
-        case .left:
-            return "NSLayoutConstraint.Attribute.left"
-        case .right:
-            return "NSLayoutConstraint.Attribute.right"
-        case .top:
-            return "NSLayoutConstraint.Attribute.top"
-        case .bottom:
-            return "NSLayoutConstraint.Attribute.bottom"
-        case .leading:
-            return "NSLayoutConstraint.Attribute.leading"
-        case .trailing:
-            return "NSLayoutConstraint.Attribute.trailing"
-        case .width:
-            return "NSLayoutConstraint.Attribute.width"
-        case .height:
-            return "NSLayoutConstraint.Attribute.height"
-        case .centerX:
-            return "NSLayoutConstraint.Attribute.centerX"
-        case .centerY:
-            return "NSLayoutConstraint.Attribute.centerY"
-        case .lastBaseline:
-            return "NSLayoutConstraint.Attribute.lastBaseline"
-        case .firstBaseline:
-            return "NSLayoutConstraint.Attribute.firstBaseline"
-        case .leftMargin:
-            return "NSLayoutConstraint.Attribute.leftMargin"
-        case .rightMargin:
-            return "NSLayoutConstraint.Attribute.rightMargin"
-        case .topMargin:
-            return "NSLayoutConstraint.Attribute.topMargin"
-        case .bottomMargin:
-            return "NSLayoutConstraint.Attribute.bottomMargin"
-        case .leadingMargin:
-            return "NSLayoutConstraint.Attribute.leadingMargin"
-        case .trailingMargin:
-            return "NSLayoutConstraint.Attribute.trailingMargin"
-        case .centerXWithinMargins:
-            return "NSLayoutConstraint.Attribute.centerXWithinMargins"
-        case .centerYWithinMargins:
-            return "NSLayoutConstraint.Attribute.centerYWithinMargins"
-        case .notAnAttribute:
-            return "NSLayoutConstraint.Attribute.notAnAttribute"
-        @unknown default:
-            return "NSLayoutConstraint.Attribute.unknown"
-        }
+        "NSLayoutConstraint.Attribute.\(self.description)"
     }
 }
 
@@ -204,8 +121,26 @@ extension NSLayoutConstraint.Relation: CustomStringConvertible, CustomDebugStrin
     }
 }
 
-extension Array where Element: NSLayoutConstraint {
-    public var shortDescription: String {
-        map(\.shortDescription).joined(separator: "\n")
-    }
-}
+private let attributeDescriptions: [NSLayoutConstraint.Attribute: String] = [
+    .left: "left",
+    .right: "right",
+    .top: "top",
+    .bottom: "bottom",
+    .leading: "leading",
+    .trailing: "trailing",
+    .width: "width",
+    .height: "height",
+    .centerX: "centerX",
+    .centerY: "centerY",
+    .lastBaseline: "lastBaseline",
+    .firstBaseline: "firstBaseline",
+    .leftMargin: "leftMargin",
+    .rightMargin: "rightMargin",
+    .topMargin: "topMargin",
+    .bottomMargin: "bottomMargin",
+    .leadingMargin: "leadingMargin",
+    .trailingMargin: "trailingMargin",
+    .centerXWithinMargins: "centerXWithinMargins",
+    .centerYWithinMargins: "centerYWithinMargins",
+    .notAnAttribute: "notAnAttribute",
+]

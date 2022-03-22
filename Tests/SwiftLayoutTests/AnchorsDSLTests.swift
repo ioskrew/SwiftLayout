@@ -49,7 +49,7 @@ extension AnchorsDSLTests {
                 
                 XCTAssertEqual(root.constraints.shortDescription, """
                 red.\(attribute.description) == root.\(attribute.description) \(constantDescription)
-                """)
+                """.descriptions)
             }
         }
         
@@ -68,7 +68,7 @@ extension AnchorsDSLTests {
                     root.layoutMarginsGuide.left == root.left + 8.0
                     root.right == root.layoutMarginsGuide.right + 8.0
                     root.layoutMarginsGuide.top == root.top + 8.0
-                    """)
+                    """.descriptions)
                 }
             }
         }
@@ -86,7 +86,7 @@ extension AnchorsDSLTests {
                 
                 XCTAssertEqual(root.constraints.shortDescription, """
                 red.\(attribute.description) >= root.\(attribute.description) \(constantDescription)
-                """)
+                """.descriptions)
             }
         }
         
@@ -100,7 +100,7 @@ extension AnchorsDSLTests {
             XCTAssertEqual(root.constraints.shortDescription, """
             red.width >= root.width \(constantDescription)
             red.height >= root.height \(constantDescription)
-            """)
+            """.descriptions)
         }
         
         context("anchor for ") {
@@ -118,7 +118,7 @@ extension AnchorsDSLTests {
                     root.layoutMarginsGuide.left == root.left + 8.0
                     root.right == root.layoutMarginsGuide.right + 8.0
                     root.layoutMarginsGuide.top == root.top + 8.0
-                    """)
+                    """.descriptions)
                 }
             }
         }
@@ -136,7 +136,7 @@ extension AnchorsDSLTests {
                 
                 XCTAssertEqual(root.constraints.shortDescription, """
                 red.\(attribute.description) <= root.\(attribute.description) \(constantDescription)
-                """)
+                """.descriptions)
             }
         }
         
@@ -150,7 +150,7 @@ extension AnchorsDSLTests {
             XCTAssertEqual(root.constraints.shortDescription, """
             red.width <= root.width \(constantDescription)
             red.height <= root.height \(constantDescription)
-            """)
+            """.descriptions)
         }
         
         context("anchor for ") {
@@ -168,7 +168,7 @@ extension AnchorsDSLTests {
                     root.layoutMarginsGuide.left == root.left + 8.0
                     root.right == root.layoutMarginsGuide.right + 8.0
                     root.layoutMarginsGuide.top == root.top + 8.0
-                    """)
+                    """.descriptions)
                 }
             }
         }
@@ -190,11 +190,11 @@ extension AnchorsDSLTests {
         red.bottom == root.bottom
         red.leading == root.leading
         red.trailing == root.trailing
-        """)
+        """.descriptions)
         XCTAssertEqual(red.constraints.shortDescription, """
         blue.centerX == red.centerX
         blue.centerY == red.centerY
-        """)
+        """.descriptions)
     }
     
     func testAnchorsTrueOnly() {
@@ -215,7 +215,7 @@ extension AnchorsDSLTests {
         red.bottom == root.bottom
         red.leading == root.leading
         red.trailing == root.trailing
-        """)
+        """.descriptions)
     }
     
     func testAnchorsIF() {
@@ -237,7 +237,7 @@ extension AnchorsDSLTests {
             red.top == root.top
             red.leading == root.leading
             red.trailing == root.trailing
-            """)
+            """.descriptions)
         }
         
         context("false") {
@@ -246,7 +246,7 @@ extension AnchorsDSLTests {
             red.bottom == root.bottom
             red.leading == root.leading
             red.trailing == root.trailing
-            """)
+            """.descriptions)
         }
     }
     
@@ -261,12 +261,12 @@ extension AnchorsDSLTests {
         
         context("nil anchors") {
             layout(nil).finalActive()
-            XCTAssertEqual(root.constraints.shortDescription, "")
+            XCTAssertEqual(root.constraints.shortDescription, Set())
         }
         
         context("leading anchors") {
             layout(Anchors(.leading)).finalActive()
-            XCTAssertEqual(root.constraints.shortDescription, "red.leading == root.leading")
+            XCTAssertEqual(root.constraints.shortDescription, "red.leading == root.leading".descriptions)
         }
     }
     
@@ -283,12 +283,12 @@ extension AnchorsDSLTests {
         
         context("nil anchors") {
             layout(nil).finalActive()
-            XCTAssertEqual(root.constraints.shortDescription, "")
+            XCTAssertEqual(root.constraints.shortDescription, "".descriptions)
         }
         
         context("leading anchors") {
             layout(Anchors(.leading)).finalActive()
-            XCTAssertEqual(root.constraints.shortDescription, "red.leading == root.leading")
+            XCTAssertEqual(root.constraints.shortDescription, "red.leading == root.leading".descriptions)
         }
     }
     
@@ -313,7 +313,7 @@ extension AnchorsDSLTests {
         red.bottom == root.bottom
         red.leading == root.leading
         red.trailing == root.trailing
-        """)
+        """.descriptions)
     }
     
     func testAnchorsFromSeperately() {
@@ -417,7 +417,7 @@ extension AnchorsDSLTests {
         red.bottom == root.bottom
         red.leading == root.leading
         red.trailing == root.trailing
-        """)
+        """.descriptions)
         XCTAssertEqual(red.bounds.size, .init(width: 100, height: 100))
     }
     
@@ -433,11 +433,11 @@ extension AnchorsDSLTests {
         XCTAssertEqual(root.constraints.shortDescription, """
         red.bottom == root.bottom
         red.trailing == root.trailing
-        """)
+        """.descriptions)
         XCTAssertEqual(red.constraints.shortDescription, """
         red.width == + 30.0
         red.height == + 30.0
-        """)
+        """.descriptions)
         XCTAssertEqual(red.frame, .init(x: 70, y: 70, width: 30, height: 30))
     }
     

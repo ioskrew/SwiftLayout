@@ -1,4 +1,4 @@
-import SwiftLayout
+@testable import SwiftLayout
 import UIKit
 
 extension UIView {
@@ -25,4 +25,26 @@ extension NSLayoutConstraint {
 
 extension String {
     var tabbed: String { replacingOccurrences(of: "    ", with: "\t") }
+}
+
+extension Optional {
+    func or(_ value: Wrapped) -> Wrapped {
+        if let unwrapped = self {
+            return unwrapped
+        } else {
+            return value
+        }
+    }
+}
+
+extension Array where Element: NSLayoutConstraint {
+    var shortDescription: Set<String> {
+        Set(map(\.shortDescription))
+    }
+}
+
+extension String {
+    var descriptions: Set<String> {
+        Set(split(separator: "\n").map({ $0.trimmingCharacters(in: .whitespacesAndNewlines) }))
+    }
 }

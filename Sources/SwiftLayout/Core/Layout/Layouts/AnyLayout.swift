@@ -1,5 +1,5 @@
-protocol AnyLayoutBox: Layout {}
-struct _AnyLayoutBox<L: Layout>: AnyLayoutBox {
+private protocol AnyLayoutBox: Layout {}
+private struct _AnyLayoutBox<L: Layout>: AnyLayoutBox {
     
     let layout: L
     
@@ -10,7 +10,7 @@ struct _AnyLayoutBox<L: Layout>: AnyLayoutBox {
 
 public struct AnyLayout: Layout {
     
-    let box: AnyLayoutBox
+    private let box: AnyLayoutBox
     
     init<L: Layout>(_ layout: L) {
         self.box = _AnyLayoutBox(layout: layout)

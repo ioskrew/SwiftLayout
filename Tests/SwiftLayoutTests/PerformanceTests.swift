@@ -5,102 +5,174 @@
 //  Created by oozoofrog on 2022/03/18.
 //
 
-#if canImport(UIKit)
 import XCTest
+import SwiftLayout
+import SwiftUI
 
 class PerformanceTests: XCTestCase {
+  
+    override class var defaultPerformanceMetrics: [XCTPerformanceMetric] { [.wallClockTime] }
+    
+    override class var defaultMeasureOptions: XCTMeasureOptions {
+        let options = XCTMeasureOptions()
+        options.invocationOptions = [.manuallyStart, .manuallyStop]
+        options.iterationCount = 20
+        return options
+    }
+    
+    let frame = CGRect(origin: .zero, size: .init(width: 414.0, height: 896.0))
 
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        
     }
 
     override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
-    
-    func testDrawXibView() {
-        let nib = UINib(nibName: "XibView", bundle: .module)
-        let view = nib.instantiate(withOwner: nil, options: nil)[0] as! XibView
-        view.frame = .init(origin: .zero, size: .init(width: 375, height: 667))
-        attachSnapshot(named: "screenshot for XibView", view: view)
-    }
-    
-    func testDrawSwiftLayoutView() {
-        let view = SwiftLayoutView(frame: .init(x: 0, y: 0, width: 375, height: 667))
-        attachSnapshot(named: "screenshot for SwiftLayoutView", view: view)
-    }
-    
-    func testDrawNativeApi() {
-        let view = NativeApiView(frame: .init(x: 0, y: 0, width: 375, height: 667))
-        attachSnapshot(named: "screenshot for NativeApiView", view: view)
-    }
-    
-    func testPerformanceInterfaceBuilder() throws {
-        let metrics: [XCTMetric] = [XCTCPUMetric(), XCTMemoryMetric()]
-        self.measure(metrics: metrics) {
-            let nib = UINib(nibName: "XibView", bundle: .module)
-            _ = nib.instantiate(withOwner: nil, options: nil)[0] as! XibView
-        }
-    }
-    
-    func testPerformanceNativeApi() throws {
-        let metrics: [XCTMetric] = [XCTCPUMetric(), XCTMemoryMetric()]
-        self.measure(metrics: metrics) {
-            _ = NativeApiView(frame: .init(x: 0, y: 0, width: 375, height: 667))
-        }
-    }
-    
-    func testPerformanceLayoutable() throws {
-        let metrics: [XCTMetric] = [XCTCPUMetric(), XCTMemoryMetric()]
-        self.measure(metrics: metrics) {
-            _ = SwiftLayoutView(frame: .init(x: 0, y: 0, width: 375, height: 667))
-        }
-    }
-    
-    func testPerformanceInterfaceBuilderAndLayout() throws {
-        let metrics: [XCTMetric] = [XCTCPUMetric(), XCTMemoryMetric()]
-        self.measure(metrics: metrics) {
-            let nib = UINib(nibName: "XibView", bundle: .module)
-            let view = nib.instantiate(withOwner: nil, options: nil)[0] as! XibView
-            view.setNeedsLayout()
-            view.layoutIfNeeded()
-        }
-    }
-    
-    func testPerformanceNativeApiAndLayout() throws {
-        let metrics: [XCTMetric] = [XCTCPUMetric(), XCTMemoryMetric()]
-        self.measure(metrics: metrics) {
-            let view = NativeApiView(frame: .init(x: 0, y: 0, width: 375, height: 667))
-            view.setNeedsLayout()
-            view.layoutIfNeeded()
-        }
-    }
-    
-    func testPerformanceLayoutableAndLayout() throws {
-        let metrics: [XCTMetric] = [XCTCPUMetric(), XCTMemoryMetric()]
-        self.measure(metrics: metrics) {
-            let view = SwiftLayoutView(frame: .init(x: 0, y: 0, width: 375, height: 667))
-            view.setNeedsLayout()
-            view.layoutIfNeeded()
-        }
-    }
-    
     
     func attachSnapshot(named: String, view: UIView) {
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
+        let renderer = UIGraphicsImageRenderer(bounds: view.bounds)
+        let image = renderer.image { ctx in
+            view.layer.render(in: ctx.cgContext)
+        }
+        
         XCTContext.runActivity(named: named) { activity in
-            let rect = view.bounds
-            view.setNeedsLayout()
-            view.layoutIfNeeded()
-            view.drawHierarchy(in: rect, afterScreenUpdates: true)
-            let renderer = UIGraphicsImageRenderer(size: rect.size)
-            let image = renderer.image { context in
-                view.layer.render(in: context.cgContext)
-            }
             let attachment = XCTAttachment(image: image)
             attachment.lifetime = .keepAlways
             activity.add(attachment)
         }
     }
     
+    func testDrawXibView() {
+        let nib = UINib(nibName: "XibView", bundle: .module)
+        let view = nib.instantiate(withOwner: nil, options: nil)[0] as! XibView
+        attachSnapshot(named: "screenshot for XibView", view: view)
+    }
+
+    func testDrawSwiftLayoutView() {
+        let view = SwiftLayoutView(frame: frame)
+        view.sl.updateLayout()
+        attachSnapshot(named: "screenshot for SwiftLayoutView", view: view)
+    }
+    
+    func testDrawSwiftLayoutWithoutAssistantsView() {
+        let view = SwiftLayoutWithoutAssistantsView(frame: frame)
+        view.sl.updateLayout()
+        attachSnapshot(named: "screenshot for SwiftLayoutWithoutAssistantsView", view: view)
+    }
+    
+    func testDrawSwiftLayoutWithoutIdentifyingView() {
+        let view = SwiftLayoutWithoutIdentifyingView(frame: frame)
+        view.sl.updateLayout()
+        attachSnapshot(named: "screenshot for SwiftLayoutWithoutIdentifyingView", view: view)
+    }
+    
+    func testDrawNativeApi() {
+        let view = NativeApiView(frame: frame)
+        view.loadView()
+        attachSnapshot(named: "screenshot for NativeApiView", view: view)
+    }
+    
+    func testPerformance1InterfaceBuilder() throws {
+        self.measure(metrics: [XCTCPUMetric()]) {
+            startMeasuring()
+            let nib = UINib(nibName: "XibView", bundle: .module)
+            let view = nib.instantiate(withOwner: nil, options: nil)[0] as! XibView
+            view.frame = frame
+            stopMeasuring()
+        }
+    }
+    
+    func testPerformance1NativeApi() throws {
+        self.measure(metrics: [XCTCPUMetric()]) {
+            startMeasuring()
+            let view = NativeApiView(frame: frame)
+            view.loadView()
+            stopMeasuring()
+        }
+    }
+    
+    func testPerformance1Layoutable() throws {
+        self.measure(metrics: [XCTCPUMetric()]) {
+            startMeasuring()
+            let view = SwiftLayoutView(frame: frame)
+            view.sl.updateLayout()
+            stopMeasuring()
+        }
+    }
+    
+    func testPerformance1LayoutableWithoutAssistants() throws {
+        self.measure(metrics: [XCTCPUMetric()]) {
+            startMeasuring()
+            let view = SwiftLayoutWithoutAssistantsView(frame: frame)
+            view.sl.updateLayout()
+            stopMeasuring()
+        }
+    }
+    
+    func testPerformance1LayoutableWithoutIdentifying() throws {
+        self.measure(metrics: [XCTCPUMetric()]) {
+            startMeasuring()
+            let view = SwiftLayoutWithoutIdentifyingView(frame: frame)
+            view.sl.updateLayout()
+            stopMeasuring()
+        }
+    }
+    
+    func testPerformance2InterfaceBuilderAndLayout() throws {
+        self.measure(metrics: [XCTCPUMetric()]) {
+            startMeasuring()
+            let nib = UINib(nibName: "XibView", bundle: .module)
+            let view = nib.instantiate(withOwner: nil, options: nil)[0] as! XibView
+            view.frame = frame
+            view.setNeedsLayout()
+            view.layoutIfNeeded()
+            stopMeasuring()
+        }
+    }
+    
+    func testPerformance2NativeApiAndLayout() throws {
+        self.measure(metrics: [XCTCPUMetric()]) {
+            let view = NativeApiView(frame: frame)
+            startMeasuring()
+            view.loadView()
+            view.setNeedsLayout()
+            view.layoutIfNeeded()
+            stopMeasuring()
+        }
+    }
+    
+    func testPerformance2LayoutableAndLayout() throws {
+        self.measure(metrics: [XCTCPUMetric()]) {
+            let view = SwiftLayoutView(frame: frame)
+            startMeasuring()
+            view.sl.updateLayout()
+            view.setNeedsLayout()
+            view.layoutIfNeeded()
+            stopMeasuring()
+        }
+    }
+    
+    func testPerformance2LayoutableWithoutIdentifyingAndLayout() throws {
+        self.measure(metrics: [XCTCPUMetric()]) {
+            let view = SwiftLayoutWithoutIdentifyingView(frame: frame)
+            startMeasuring()
+            view.sl.updateLayout()
+            view.setNeedsLayout()
+            view.layoutIfNeeded()
+            stopMeasuring()
+        }
+    }
+    
+    func testPerformance2LayoutableWithoutAssistantsAndLayout() throws {
+        self.measure(metrics: [XCTCPUMetric()]) {
+            let view = SwiftLayoutWithoutAssistantsView(frame: frame)
+            startMeasuring()
+            view.sl.updateLayout()
+            view.setNeedsLayout()
+            view.layoutIfNeeded()
+            stopMeasuring()
+        }
+    }
 }
-#endif

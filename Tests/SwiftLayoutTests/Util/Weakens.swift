@@ -34,7 +34,7 @@ extension Weakens where O == NSLayoutConstraint {
 extension Weakens where O == Array<NSLayoutConstraint> {
     init(_ constraints: O) {
         self.init(constraints) { constraints in
-            let weakens: [Weakens<NSLayoutConstraint>] = constraints.map { constraint in
+            let weakens = constraints.map { constraint in
                 Weakens<NSLayoutConstraint>(constraint)
             }
             return AnyHashable(Set(weakens))

@@ -20,7 +20,7 @@ extension _UIViewExtension where Self: UIView {
     /// - Returns: An ``ViewLayout`` that wraps this view and contains sublayouts .
     ///
     public func callAsFunction<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<Self> {
-        ViewLayout(self, sublayout: build())
+        ViewLayout(self, sublayouts: [build()])
     }
     
     ///
@@ -50,7 +50,7 @@ extension _UIViewExtension where Self: UIView {
     /// - Returns: An ``ViewLayout`` that wraps this view and contains the anchors  coordinator.
     ///
     public func anchors(@AnchorsBuilder _ build: () -> Anchors) -> ViewLayout<Self> {
-        ViewLayout(self).anchors(build)
+        ViewLayout(self, anchors: build())
     }
     
     ///
@@ -70,7 +70,7 @@ extension _UIViewExtension where Self: UIView {
     /// - Returns: An ``ViewLayout`` that wraps this view and contains sublayouts .
     ///
     public func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<Self> {
-        ViewLayout(self, sublayout: build())
+        ViewLayout(self, sublayouts: [build()])
     }
     
     ///
