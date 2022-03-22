@@ -19,13 +19,7 @@ final class LayoutElements<L: Layout> {
         }
         
         let viewDic = Dictionary(
-            viewInformations.compactMap { info -> (String, UIView)? in
-                guard let identifier = info.identifier, let view = info.view else {
-                    return nil
-                }
-                
-                return (identifier, view)
-            },
+            components.compactMap { $0.keyValueTupe },
             uniquingKeysWith: { first, _ in first}
         )
         

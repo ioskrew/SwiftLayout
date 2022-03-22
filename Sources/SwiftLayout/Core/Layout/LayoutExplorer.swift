@@ -12,6 +12,14 @@ enum LayoutExplorer {
         var superView: UIView? 
         var view: UIView
         var anchors: Anchors
+        
+        var keyValueTupe: (String, UIView)? {
+            guard let identifier = view.accessibilityIdentifier else {
+                return nil
+            }
+            
+            return (identifier, view)
+        }
     }
     
     typealias TraversalHandler = (_ layout: Layout, _ superview: UIView?) -> Void
