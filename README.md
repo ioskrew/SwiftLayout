@@ -37,6 +37,10 @@
 
 <img src="https://user-images.githubusercontent.com/3011832/157275626-c5f5672f-0a4a-4f45-8800-5ea3871c9dac.png" alt="thateasy" style="zoom:25%;" />
 
+# translation
+
+- [Korean](README_ko.md)
+
 # requirements
 
 - iOS 13+
