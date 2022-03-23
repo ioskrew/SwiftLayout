@@ -12,24 +12,31 @@
 
 ```swift
 @LayoutBuilder var layout: some Layout {
-  contentView {
-    firstNameLabel.anchors {
-      Anchors(.leading)
-      Anchors.vertical()
+  self {
+    leftParenthesis.anchors {
+      Anchors(.leading).equalTo(constant: 16)
+      Anchors(.centerY)
     }
-    if showMiddleName {
-      middleNameLabel.anchors {
-        Anchors(.leading).equalTo(firstNameLabel, attribute: .trailing)
-				Anchors.veritcal()
-      }
+    viewLogo.anchors {
+      Anchors(.leading).equalTo(leftParenthesis, attribute: .trailing, constant: 20)
+      Anchors(.centerY).equalTo(constant: 30)
+      Anchors.size(CGSize(width: 200, height: 200))
     }
-    secondNameLabel.anchors {
-      if showMiddleName {
-        Anchors(.leading).equalTo(middleNameLabel.trailingAnchor)
-      } else {
-        Anchors(.leading).equalTo(firstNameLabel.trailingAnchor)
-      }
-      Anchors.vertical()
+    UIImageView().identifying("plus").config { imageView in
+      imageView.image = UIImage(systemName: "plus")
+      imageView.tintColor = .SLColor
+    }.anchors {
+      Anchors.center(offsetY: 30)
+      Anchors.size(length: 150)
+    }
+    constraintLogo.anchors {
+      Anchors(.trailing).equalTo(rightParenthesis.leadingAnchor)
+      Anchors(.centerY).equalTo("plus")
+      Anchors.size(CGSize(width: 200, height: 150))
+    }
+    rightParenthesis.anchors {
+      Anchors(.trailing).equalTo(constant: -16)
+      Anchors(.centerY)
     }
   }
 }
