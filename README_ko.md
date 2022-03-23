@@ -184,15 +184,15 @@ Layout의 메소드인 anchors 안에서 주로 사용됩니다.
   
   ```swift
   @LayoutBuilder func layout() -> some Layout {
-   superview {
-     selfview.anchors {
-       Anchors.allSides()
-     }.sublayout {
-       subview.anchors {
-         Anchors.allSides()
-       }
-     }
-   } 
+    superview {
+      selfview.anchors {
+        Anchors.allSides()
+      }.sublayout {
+        subview.anchors {
+          Anchors.allSides()
+        }
+      }
+    } 
   }
   ```
 
