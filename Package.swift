@@ -17,7 +17,6 @@ let package = Package(
             dependencies: []),
         .testTarget(
             name: "SwiftLayoutTests",
-            dependencies: ["SwiftLayout"],
-            resources: [.process("Resources/XibView.xib")])
+            dependencies: ["SwiftLayout"])
     ]
 )
