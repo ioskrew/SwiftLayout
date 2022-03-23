@@ -279,7 +279,7 @@ Implementing this protocol, you needs be write following codes:
     
     init(frame: CGRect) {
       super.init(frame: frame)
-      updateLayout() // call active or update of Layout
+      self.sl.updateLayout() // call active or update of Layout
     }
   }
   ```
@@ -293,7 +293,7 @@ so, if some states of values affects to layout of view, you need to call `update
 ```swift
 var showMiddleName: Bool = false {
   didSet {
-    updateLayout()
+    self.sl.updateLayout()
   }
 }
 
@@ -330,7 +330,7 @@ var layout: some Layout {
 
 you can start animation by updating constraint in `Layoutable`, And the method is as easy as the following:
 
-- just call `updateLayout` in animation block of `UIView`
+- just call `updateLayout` and set true for `layoutIfNeededForcefully` parameter in animation block of `UIView`
 
 ```swift
 final class PreviewView: UIView, LayoutBuilding {
@@ -338,7 +338,7 @@ final class PreviewView: UIView, LayoutBuilding {
     didSet {
       // start animation for change constraints
       UIView.animate(withDuration: 1.0) {
-        self.updateLayout()
+        self.sl.updateLayout(layoutIfNeededForcefully: true)
       }
     }
   }
@@ -400,7 +400,7 @@ final class PreviewView: UIView, LayoutBuilding {
     }), for: .touchUpInside)
     self.accessibilityIdentifier = "root"
     updateIdentifiers(rootObject: self)
-    updateLayout()
+    self.sl.updateLayout()
   }
     
 }
