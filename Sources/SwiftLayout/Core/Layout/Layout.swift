@@ -7,15 +7,15 @@
 
 import UIKit
 
-public protocol Layout: CustomDebugStringConvertible {
+public protocol Layout: CustomStringConvertible, CustomDebugStringConvertible {
     var view: UIView? { get }
-    var anchors: Anchors? { get }
+    var anchors: Anchors { get }
     var sublayouts: [Layout] { get }
 }
 
 extension Layout {
     public var view: UIView? { nil }
-    public var anchors: Anchors? { nil }
+    public var anchors: Anchors { Anchors() }
 }
 
 extension Layout {
@@ -25,8 +25,8 @@ extension Layout {
     ///
     /// - Returns: A ``Activation`` instance, which you use when you update or deactivate layout. Deallocation of the result will deactivate layout.
     ///
-    public func active() -> Activation {
-        Activator.active(layout: self)
+    public func active(forceLayout: Bool = false) -> Activation {
+        Activator.active(layout: self, forceLayout: forceLayout)
     }
     
     ///
@@ -35,16 +35,16 @@ extension Layout {
     /// - Parameter activation: The activation of the previously activated layout. It is used to identify changes in layout.
     /// - Returns: A ``Activation`` instance, which you use when you update or deactivate layout. Deallocation of the result will deactivate layout.
     ///
-    public func update(fromActivation activation: Activation) -> Activation {
-        Activator.update(layout: self, fromActivation: activation)
+    public func update(fromActivation activation: Activation, forceLayout: Bool = false) -> Activation {
+        Activator.update(layout: self, fromActivation: activation, forceLayout: forceLayout)
     }
     
     ///
     /// Activate this layout permanently.
     /// Until the view is released according to the lifecycle of the app
     ///
-    public func finalActive() {
-        Activator.finalActive(layout: self)
+    public func finalActive(forceLayout: Bool = false) {
+        Activator.finalActive(layout: self, forceLayout: forceLayout)
     }
     
     ///
@@ -65,5 +65,31 @@ extension Layout {
     public func updateIdentifiers(rootObject: AnyObject) -> some Layout {
         IdentifierUpdater.nameOnly.update(rootObject)
         return self
+    }
+}
+
+extension Layout {
+    public var description: String {
+        let typeName = String(describing: type(of: self))
+        let typeNameWithoutGeneric: String
+        if let typeName = typeName.split(separator: "<").first {
+            typeNameWithoutGeneric = typeName.description
+        } else {
+            typeNameWithoutGeneric = "Unknown"
+        }
+
+        if let view = self.view {
+            return "\(typeNameWithoutGeneric) - view: \(view.tagDescription)"
+        } else {
+            return typeNameWithoutGeneric
+        }
+    }
+    
+    public var debugDescription: String {
+        LayoutExplorer.debugLayoutStructure(layout: self).joined(separator: "\n")
+    }
+    
+    public var debugDetailDescription: String {
+        LayoutExplorer.debugLayoutStructure(layout: self, withAnchors: true).joined(separator: "\n")
     }
 }

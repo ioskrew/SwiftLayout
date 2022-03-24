@@ -1,13 +1,15 @@
 import XCTest
-import UIKit
 import SwiftLayout
 
 class PrintingTests: XCTestCase {
+    
+    var window: UIView!
     
     var activation: Activation? 
     
     override func setUpWithError() throws {
         continueAfterFailure = false
+        window = UIView(frame: .init(x: 0, y: 0, width: 150, height: 150))
     }
 
     override func tearDownWithError() throws {
@@ -121,6 +123,8 @@ extension PrintingTests {
     
     func testPrintWithAnchorsWithOneDepth() {
         let root = UIView().viewTag.root
+        root.translatesAutoresizingMaskIntoConstraints = false
+        window.addSubview(root)
         let child = UIView().viewTag.child
         activation = root {
             child.anchors {
@@ -144,6 +148,8 @@ extension PrintingTests {
     
     func testPrintWithAnchorsOfTwoViewWithOneDepth() {
         let root = UIView().viewTag.root
+        root.translatesAutoresizingMaskIntoConstraints = false
+        window.addSubview(root)
         let child = UIView().viewTag.child
         let friend = UIView().viewTag.friend
         activation = root {
@@ -279,8 +285,8 @@ extension PrintingTests {
         let cell = Cell()
         let expect = """
         contentView {
-            profileView:UIImageView
-            nameLabel:UILabel
+            profileView:\(UIImageView.self)
+            nameLabel:\(UILabel.self)
         }
         """.tabbed
         
@@ -290,6 +296,8 @@ extension PrintingTests {
     
     func testPrintMoreEfficiently() {
         let root = UIView().viewTag.root
+        root.translatesAutoresizingMaskIntoConstraints = false
+        window.addSubview(root)
         let child = UIView().viewTag.child
         let friend = UIView().viewTag.friend
         
@@ -322,6 +330,8 @@ extension PrintingTests {
     
     func testGreaterThanAndLessThan() {
         let root = UIView().viewTag.root
+        root.translatesAutoresizingMaskIntoConstraints = false
+        window.addSubview(root)
         let child = UIView().viewTag.child
         let friend = UIView().viewTag.friend
         activation = root {
@@ -365,7 +375,7 @@ extension PrintingTests {
     
     class Cell: UIView, Layoutable {
         
-        var profileView: UIImageView = .init(image: nil)
+        var profileView: UIImageView = .init(image: .init())
         var nameLabel: UILabel = .init()
         
         var activation: Activation?
@@ -379,12 +389,12 @@ extension PrintingTests {
         
         init() {
             super.init(frame: .zero)
-            updateLayout()
+            sl.updateLayout()
         }
         
         required init?(coder: NSCoder) {
             super.init(coder: coder)
-            updateLayout()
+            sl.updateLayout()
         }
     }
 }
@@ -392,28 +402,32 @@ extension PrintingTests {
 // MARK: - identifier assignment deeply
 extension PrintingTests {
     
+    class One: UIView {}
+    class Two: One {}
+    class Three: Two {}
+   
     func testDeepAssignIdentifier() {
         let gont = Gont()
         
         XCTAssertEqual(SwiftLayoutPrinter(gont, tags: [gont: "gont"]).print(.referenceAndNameWithTypeOfView),
         """
         gont {
-            sea:UILabel.anchors {
+            sea:\(UILabel.self).anchors {
                 Anchors(.top, .bottom, .leading, .trailing)
             }.sublayout {
                 duny:Duny.anchors {
                     Anchors(.centerX).setMultiplier(1.2000000476837158)
                     Anchors(.centerY).setMultiplier(0.800000011920929)
                 }.sublayout {
-                    duny.nickname:UILabel.anchors {
+                    duny.nickname:\(UILabel.self).anchors {
                         Anchors(.top, .leading, .trailing)
                     }.sublayout {
                         sparrowhawk.anchors {
                             Anchors(.top, .bottom, .leading, .trailing)
                         }
                     }
-                    duny.truename:UILabel.anchors {
-                        Anchors(.top).equalTo(duny.nickname:UILabel, attribute: .bottom)
+                    duny.truename:\(UILabel.self).anchors {
+                        Anchors(.top).equalTo(duny.nickname:\(UILabel.self), attribute: .bottom)
                         Anchors(.bottom, .leading, .trailing)
                     }.sublayout {
                         ged.anchors {
@@ -449,7 +463,7 @@ extension PrintingTests {
         
         override init(frame: CGRect) {
             super.init(frame: frame)
-            updateLayout()
+            sl.updateLayout()
         }
         
         required init?(coder: NSCoder) {
@@ -466,7 +480,7 @@ extension PrintingTests {
         init(in earth: Earth) {
             super.init(frame: .zero)
             self.earth = earth
-            updateLayout()
+            sl.updateLayout()
         }
         
         weak var earth: Earth?
@@ -499,7 +513,7 @@ extension PrintingTests {
         
         override init(frame: CGRect) {
             super.init(frame: frame)
-            updateLayout()
+            sl.updateLayout()
         }
     }
     
@@ -524,14 +538,10 @@ extension PrintingTests {
         }
         
         layout().finalActive()
-        label.setNeedsLayout()
-        label.layoutIfNeeded()
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(systemConstraintsHidden: false), """
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(options: .onlyIdentifier), """
         root {
             label.anchors {
                 Anchors(.top, .bottom, .leading, .trailing)
-                Anchors(.width).equalTo(constant: 38.666666666666664)
-                Anchors(.height).equalTo(constant: 14.333333333333334)
             }
         }
         """.tabbed)
@@ -545,14 +555,14 @@ extension PrintingTests {
         let id = ID()
         IdentifierUpdater.nameOnly.update(id)
         XCTAssertEqual(id.name.accessibilityIdentifier, "name")
-        XCTAssertNil(id.name.label.accessibilityIdentifier)
+        XCTAssertEqual(id.name.label.accessibilityIdentifier ?? "", "")
     }
     
     func testWithTypeOfView() {
         let id = ID()
         IdentifierUpdater.withTypeOfView.update(id)
         XCTAssertEqual(id.name.accessibilityIdentifier, "name:Name")
-        XCTAssertNil(id.name.label.accessibilityIdentifier)
+        XCTAssertEqual(id.name.label.accessibilityIdentifier ?? "", "")
     }
     
     func testReferenceAndName() {
@@ -566,7 +576,7 @@ extension PrintingTests {
         let id = ID()
         IdentifierUpdater.referenceAndNameWithTypeOfView.update(id)
         XCTAssertEqual(id.name.accessibilityIdentifier, "name:Name")
-        XCTAssertEqual(id.name.label.accessibilityIdentifier, "name.label:UILabel")
+        XCTAssertEqual(id.name.label.accessibilityIdentifier, "name.label:\(UILabel.self)")
     }
 
     class Name: UIView {
@@ -583,7 +593,7 @@ extension PrintingTests {
     func testSwiftLayoutPrinterPerformance() {
         measure {
             let gont = Gont()
-            print(SwiftLayoutPrinter(gont, tags: [gont: "gont"]).print(.referenceAndNameWithTypeOfView))
+            _ = SwiftLayoutPrinter(gont, tags: [gont: "gont"]).print(.referenceAndNameWithTypeOfView)
         }
     }
 }

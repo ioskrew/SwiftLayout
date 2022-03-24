@@ -5,19 +5,18 @@
 //  Created by aiden_h on 2022/02/16.
 //
 
-import Foundation
 import UIKit
 
 enum Activator {
     
-    static func active<L: Layout>(layout: L) -> Activation {
-        return update(layout: layout, fromActivation: Activation())
+    static func active<L: Layout>(layout: L, forceLayout: Bool = false) -> Activation {
+        return update(layout: layout, fromActivation: Activation(), forceLayout: forceLayout)
     }
     
     @discardableResult
-    static func update<L: Layout>(layout: L, fromActivation activation: Activation) -> Activation {
+    static func update<L: Layout>(layout: L, fromActivation activation: Activation, forceLayout: Bool) -> Activation {
         var prevInfos: [ViewInformation: Set<WeakReference<NSLayoutConstraint>>] = [:]
-        for viewInfo in activation.viewInfos.infos {
+        for viewInfo in activation.viewInfos {
             guard let view = viewInfo.view else { continue }
             prevInfos[viewInfo] = Set(view.constraints.weakens)
         }
@@ -30,16 +29,8 @@ enum Activator {
         let constraints = elements.viewConstraints
         updateConstraints(activation: activation, constraints: constraints)
 
-        for viewInfo in viewInfos {
-            if let constraints = prevInfos[viewInfo] {
-                if constraints != viewInfo.view.map({ Set($0.constraints.weakens) }) {
-                    viewInfo.view?.layoutIfNeeded()
-                }
-            } else {
-                // for newly add to superview
-                viewInfo.view?.layer.removeAnimation(forKey: "bounds.size")
-                viewInfo.view?.layer.removeAnimation(forKey: "position")
-            }
+        if forceLayout {
+            layoutIfNeeded(viewInfos, prevInfos)
         }
         
         return activation
@@ -47,7 +38,7 @@ enum Activator {
 }
 
 extension Activator {
-    public static func finalActive<L: Layout>(layout: L) {
+    public static func finalActive<L: Layout>(layout: L, forceLayout: Bool) {
         let elements = LayoutElements(layout: layout)
         
         let viewInfos = elements.viewInformations
@@ -55,6 +46,10 @@ extension Activator {
         
         let constraints = elements.viewConstraints
         updateConstraints(constraints: constraints)
+        
+        if forceLayout {
+            layoutIfNeeded(viewInfos)
+        }
     }
 }
 
@@ -62,7 +57,7 @@ private extension Activator {
     static func updateViews(activation: Activation, viewInfos: [ViewInformation]) {
         let newInfos = viewInfos
         let newInfosSet = Set(newInfos)
-        let oldInfos = activation.viewInfos.infos
+        let oldInfos = activation.viewInfos
         
         // remove old views
         for viewInfo in oldInfos where !newInfosSet.contains(viewInfo) {
@@ -77,7 +72,7 @@ private extension Activator {
             viewInfo.addSuperview()
         }
         
-        activation.viewInfos = ViewInformationSet(infos: viewInfos)
+        activation.viewInfos = viewInfos
     }
     
     static func updateViews(viewInfos: [ViewInformation]) {
@@ -97,13 +92,26 @@ private extension Activator {
         let olds = Set(activation.constraints)
         
         NSLayoutConstraint.deactivate(olds.compactMap(\.origin).filter(\.isActive))
-        NSLayoutConstraint.activate(news.sorted().compactMap(\.origin))
+        NSLayoutConstraint.activate(news.compactMap(\.origin))
         activation.constraints = news
     }
     
     static func updateConstraints(constraints: [NSLayoutConstraint]) {
         let news = Set(constraints.weakens)
-        NSLayoutConstraint.activate(news.sorted().compactMap(\.origin))
+        NSLayoutConstraint.activate(news.compactMap(\.origin))
     }
     
+    static func layoutIfNeeded(_ viewInfos: [ViewInformation], _ prevInfos: [ViewInformation: Set<WeakReference<NSLayoutConstraint>>] = [:]) {
+        for viewInfo in viewInfos {
+            if viewInfo.superview == nil, let view = viewInfo.view {
+                view.setNeedsLayout()
+                view.layoutIfNeeded()
+            }
+            if prevInfos[viewInfo] == nil {
+                // for newly add to superview
+                viewInfo.view?.layer.removeAnimation(forKey: "bounds.size")
+                viewInfo.view?.layer.removeAnimation(forKey: "position")
+            }
+        }
+    }
 }

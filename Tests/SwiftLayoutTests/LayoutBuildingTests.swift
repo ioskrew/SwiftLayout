@@ -1,5 +1,4 @@
 import XCTest
-import UIKit
 import SwiftLayout
 
 final class LayoutBuildingTests: XCTestCase {
@@ -26,7 +25,7 @@ final class LayoutBuildingTests: XCTestCase {
         }
         """.tabbed)
 
-        view.updateLayout()
+        view.sl.updateLayout(forceLayout: true)
 
         XCTAssertEqual(view.root.count(view.child), 1)
         XCTAssertEqual(view.root.count(view.friend), 0)
@@ -43,13 +42,13 @@ final class LayoutBuildingTests: XCTestCase {
         """.tabbed)
 
         view.flag.toggle()
-        view.setNeedsLayout()
-        view.layoutIfNeeded()
 
         XCTAssertEqual(view.root.count(view.child), 1)
         XCTAssertEqual(view.root.count(view.friend), 1)
         XCTAssertEqual(view.friend.superview, view.root)
         XCTAssertEqual(view.root.bounds.size, .init(width: 90, height: 90))
+        view.friend.setNeedsLayout()
+        view.friend.layoutIfNeeded()
         XCTAssertEqual(view.friend.bounds.size, .init(width: 90, height: 90))
         XCTAssertEqual(SwiftLayoutPrinter(view).print(), """
         view {
@@ -86,7 +85,7 @@ extension LayoutBuildingTests {
     class LayoutView: UIView, Layoutable {
         var flag = true {
             didSet {
-                updateLayout()
+                sl.updateLayout()
             }
         }
         
@@ -121,7 +120,7 @@ extension LayoutBuildingTests {
         
         override init(frame: CGRect) {
             super.init(frame: frame)
-            updateLayout()
+            sl.updateLayout()
         }
         
         required init?(coder: NSCoder) {

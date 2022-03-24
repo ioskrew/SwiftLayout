@@ -1,5 +1,5 @@
+@testable import SwiftLayout
 import UIKit
-import SwiftLayout
 
 extension UIView {
     func findConstraints(items: (NSObject?, NSObject?), attributes: (NSLayoutConstraint.Attribute, NSLayoutConstraint.Attribute)? = nil, relation: NSLayoutConstraint.Relation = .equal, constant: CGFloat = .zero, multiplier: CGFloat = 1.0) -> [NSLayoutConstraint] {
@@ -25,4 +25,26 @@ extension NSLayoutConstraint {
 
 extension String {
     var tabbed: String { replacingOccurrences(of: "    ", with: "\t") }
+}
+
+extension Optional {
+    func or(_ value: Wrapped) -> Wrapped {
+        if let unwrapped = self {
+            return unwrapped
+        } else {
+            return value
+        }
+    }
+}
+
+extension Array where Element: NSLayoutConstraint {
+    var shortDescription: Set<String> {
+        Set(map(\.shortDescription))
+    }
+}
+
+extension String {
+    var descriptions: Set<String> {
+        Set(split(separator: "\n").map({ $0.trimmingCharacters(in: .whitespacesAndNewlines) }))
+    }
 }

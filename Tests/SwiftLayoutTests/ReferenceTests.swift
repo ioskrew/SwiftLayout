@@ -2,7 +2,7 @@
 //  ReferenceTests.swift
 //  
 //
-//  Created by maylee on 2022/03/05.
+//  Created by oozoofrog on 2022/03/05.
 //
 
 import XCTest
@@ -20,8 +20,7 @@ class ReferenceTests: XCTestCase {
             self.view = SelfReferenceView()
             self.weakView = view
             
-            self.view?.updateLayout()
-            self.view?.layoutIfNeeded()
+            self.view?.sl.updateLayout()
             self.view = nil
         }
         context("check release reference") {

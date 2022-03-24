@@ -5,7 +5,6 @@
 //  Created by oozoofrog on 2022/01/30.
 //
 
-import Foundation
 import UIKit
 
 struct TagDescriptor<Value>: CustomDebugStringConvertible where Value: TagDescriptable, Value: AnyObject {
@@ -20,7 +19,7 @@ struct TagDescriptor<Value>: CustomDebugStringConvertible where Value: TagDescri
     }
     
     var identifier: String {
-        if let identifier = value.accessibilityIdentifier {
+        if let identifier = value.accessibilityIdentifier, !identifier.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return identifier
         } else {
             return objectDescription

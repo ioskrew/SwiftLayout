@@ -5,7 +5,6 @@
 //  Created by oozoofrog on 2022/02/14.
 //
 
-import Foundation
 import UIKit
 
 final class ViewInformation: Hashable, CustomDebugStringConvertible {
@@ -48,18 +47,5 @@ extension ViewInformation {
     func hash(into hasher: inout Hasher) {
         hasher.combine(superview)
         hasher.combine(view)
-    }
-}
-
-struct ViewInformationSet: Hashable {
-    
-    let infos: Set<ViewInformation>
-    
-    init(infos: [ViewInformation] = []) {
-        self.infos = Set(infos)
-    }
-    
-    subscript(_ identifier: String) -> UIView? {
-        infos.first(where: { $0.identifier == identifier })?.view
     }
 }

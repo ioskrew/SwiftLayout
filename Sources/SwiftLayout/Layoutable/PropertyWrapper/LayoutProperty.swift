@@ -5,8 +5,6 @@
 //  Created by oozoofrog on 2022/03/06.
 //
 
-import Foundation
-
 /**
  
  a property wrapper that can update states of layout in Layoutable.
@@ -49,7 +47,7 @@ public final class LayoutProperty<Value> {
         }
         set {
             instance[keyPath: storageKeyPath].stored = newValue
-            instance.updateLayout()
+            instance.sl.updateLayout()
         }
     }
     
