@@ -1,10 +1,3 @@
-//
-//  GroupLayout.swift
-//  
-//
-//  Created by oozoofrog on 2022/03/01.
-//
-
 public struct GroupLayout<L: Layout>: Layout {
     
     private let layout: L

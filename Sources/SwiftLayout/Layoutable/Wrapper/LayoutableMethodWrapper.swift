@@ -21,7 +21,3 @@ public final class LayoutableMethodWrapper<L: Layoutable> {
                                                  forceLayout: forceLayout)
     }
 }
-
-extension Layoutable {
-    public var sl: LayoutableMethodWrapper<Self> { .init(self) }
-}

@@ -114,6 +114,4 @@ private extension Activator {
             }
         }
     }
-    
-    
 }
