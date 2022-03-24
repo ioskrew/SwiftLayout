@@ -157,13 +157,14 @@ you can read details [here](https://developer.apple.com/documentation/uikit/nsla
   ...
   ```
 
-  also, you can set extra constraint like this:
+  also, you can set constraint and multiplier like this:
 
   ```swift
   Anchors(.top).setConstraint(10)
+  Anchors(.top).setMultiplier(10)
   ```
 
-- attributes like width and height can be set for first item(view) self not second item.
+- width and height attributes can be set for first item(view) self not second item.
 
   ```swift
   superview {
