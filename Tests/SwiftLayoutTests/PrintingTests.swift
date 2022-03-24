@@ -132,6 +132,7 @@ extension PrintingTests {
         one.trailing == root.trailing
         two.width == one.width
         """.descriptions)
+        
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
         root {
             one.anchors {

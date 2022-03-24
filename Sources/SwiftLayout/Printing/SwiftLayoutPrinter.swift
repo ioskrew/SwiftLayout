@@ -309,11 +309,16 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
         }
     }
     
+    private var isAttributeSame: Bool {
+        firstAttribute == secondAttribute
+    }
+    
     func intersect(_ token: ConstraintToken) -> Bool {
         return self.firstTag == token.firstTag
         && self.secondTag == token.secondTag
         && self.constant == token.constant
         && self.multiplier == token.multiplier
         && self.relation == token.relation
+        && self.isAttributeSame == token.isAttributeSame
     }
 }
