@@ -335,7 +335,7 @@ var layout: some Layout {
 
 `Layoutable`의 오토레이아웃을 변경한 경우 애니메이션을 시작할 수 있습니다. 방법은 다음과 같이 간단합니다.
 
-- `UIView`의 animation 블럭 안에서 `updateLayout` 을 layoutIfNeededForcefully 매개변수를 true로 호출해주세요.
+- `UIView`의 animation 블럭 안에서 `updateLayout` 을 forceLayout 매개변수를 true로 호출해주세요.
 
 ```swift
 final class PreviewView: UIView, LayoutBuilding {
@@ -343,7 +343,7 @@ final class PreviewView: UIView, LayoutBuilding {
     didSet {
       // start animation for change constraints
       UIView.animate(withDuration: 1.0) {
-        self.updateLayout(layoutIfNeededForcefully: true)
+        self.updateLayout(forceLayout: true)
       }
     }
   }

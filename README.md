@@ -337,7 +337,7 @@ var layout: some Layout {
 
 you can start animation by updating constraint in `Layoutable`, And the method is as easy as the following:
 
-- just call `updateLayout` and set true for `layoutIfNeededForcefully` parameter in animation block of `UIView`
+- just call `updateLayout` and set true for `forceLayout` parameter in animation block of `UIView`
 
 ```swift
 final class PreviewView: UIView, LayoutBuilding {
@@ -345,7 +345,7 @@ final class PreviewView: UIView, LayoutBuilding {
     didSet {
       // start animation for change constraints
       UIView.animate(withDuration: 1.0) {
-        self.sl.updateLayout(layoutIfNeededForcefully: true)
+        self.sl.updateLayout(forceLayout: true)
       }
     }
   }

@@ -12,13 +12,13 @@ public final class LayoutableMethodWrapper<L: Layoutable> {
         self.layoutable = layoutable
     }
     
-    public func updateLayout(layoutIfNeededForcefully: Bool = false) {
+    public func updateLayout(forceLayout: Bool = false) {
         guard let layoutable = layoutable else {
             return
         }
         layoutable.activation = Activator.update(layout: layoutable.layout,
                                                  fromActivation: layoutable.activation ?? Activation(),
-                                                 layoutIfNeededForcefully: layoutIfNeededForcefully)
+                                                 forceLayout: forceLayout)
     }
 }
 

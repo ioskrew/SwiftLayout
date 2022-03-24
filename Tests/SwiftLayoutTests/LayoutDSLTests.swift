@@ -435,7 +435,7 @@ extension LayoutDSLTests {
         let view = LayoutView().viewTag.view
         view.frame = .init(x: 0, y: 0, width: 90, height: 90)
         
-        var activation = view.layout.active(layoutIfNeededForcefully: true)
+        var activation = view.layout.active(forceLayout: true)
         
         XCTAssertEqual(view.child.bounds.size, CGSize(width: 90, height: 90))
         XCTAssertEqual(SwiftLayoutPrinter(view).print(), """
@@ -450,7 +450,7 @@ extension LayoutDSLTests {
         }
         """.tabbed)
         
-        activation = view.layout.update(fromActivation: activation, layoutIfNeededForcefully: true)
+        activation = view.layout.update(fromActivation: activation, forceLayout: true)
 
         XCTAssertEqual(view.root.count(view.child), 1)
         XCTAssertEqual(view.root.count(view.friend), 0)
@@ -467,7 +467,7 @@ extension LayoutDSLTests {
         """.tabbed)
 
         view.flag.toggle()
-        activation = view.layout.update(fromActivation: activation, layoutIfNeededForcefully: true)
+        activation = view.layout.update(fromActivation: activation, forceLayout: true)
         
         XCTAssertEqual(view.root.count(view.child), 1)
         XCTAssertEqual(view.root.count(view.friend), 1)

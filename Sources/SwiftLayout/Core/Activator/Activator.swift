@@ -9,12 +9,12 @@ import UIKit
 
 enum Activator {
     
-    static func active<L: Layout>(layout: L, layoutIfNeededForcefully: Bool = false) -> Activation {
-        return update(layout: layout, fromActivation: Activation(), layoutIfNeededForcefully: layoutIfNeededForcefully)
+    static func active<L: Layout>(layout: L, forceLayout: Bool = false) -> Activation {
+        return update(layout: layout, fromActivation: Activation(), forceLayout: forceLayout)
     }
     
     @discardableResult
-    static func update<L: Layout>(layout: L, fromActivation activation: Activation, layoutIfNeededForcefully: Bool) -> Activation {
+    static func update<L: Layout>(layout: L, fromActivation activation: Activation, forceLayout: Bool) -> Activation {
         var prevInfos: [ViewInformation: Set<WeakReference<NSLayoutConstraint>>] = [:]
         for viewInfo in activation.viewInfos {
             guard let view = viewInfo.view else { continue }
@@ -29,7 +29,7 @@ enum Activator {
         let constraints = elements.viewConstraints
         updateConstraints(activation: activation, constraints: constraints)
 
-        if layoutIfNeededForcefully {
+        if forceLayout {
             layoutIfNeeded(viewInfos, prevInfos)
         }
         
@@ -38,7 +38,7 @@ enum Activator {
 }
 
 extension Activator {
-    public static func finalActive<L: Layout>(layout: L, layoutIfNeededForcefully: Bool) {
+    public static func finalActive<L: Layout>(layout: L, forceLayout: Bool) {
         let elements = LayoutElements(layout: layout)
         
         let viewInfos = elements.viewInformations
@@ -47,7 +47,7 @@ extension Activator {
         let constraints = elements.viewConstraints
         updateConstraints(constraints: constraints)
         
-        if layoutIfNeededForcefully {
+        if forceLayout {
             layoutIfNeeded(viewInfos)
         }
     }

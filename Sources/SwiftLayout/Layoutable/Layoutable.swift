@@ -15,6 +15,6 @@ public extension Layoutable {
     
     @available(*, deprecated, renamed: "self.sl.layout()", message: "updateLayout of Layoutable moved to sl wrapper type")
     func updateLayout() {
-        self.activation = Activator.update(layout: layout, fromActivation: activation ?? Activation(), layoutIfNeededForcefully: false)
+        self.activation = Activator.update(layout: layout, fromActivation: activation ?? Activation(), forceLayout: false)
     }
 }
