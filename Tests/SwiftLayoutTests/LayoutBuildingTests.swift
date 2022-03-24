@@ -25,7 +25,7 @@ final class LayoutBuildingTests: XCTestCase {
         }
         """.tabbed)
 
-        view.sl.updateLayout(layoutIfNeededForcefully: true)
+        view.sl.updateLayout(forceLayout: true)
 
         XCTAssertEqual(view.root.count(view.child), 1)
         XCTAssertEqual(view.root.count(view.friend), 0)
