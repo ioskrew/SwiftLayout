@@ -565,11 +565,23 @@ public final class Anchors {
     /// ``Anchors`` for width, height toward self
     ///
     /// - Parameters:
-    ///  - length: constant
+    ///  - length: constant, default value is 0.0
     ///
     /// - Returns: ``Anchors``
-    public static func size(length: CGFloat) -> Anchors {
+    public static func size(length: CGFloat = 0.0) -> Anchors {
         size(.init(width: length, height: length))
+    }
+    
+    /// ``Anchors`` for CGSize toward self
+    ///
+    /// - Parameters:
+    ///  - size: constant
+    ///
+    /// - Returns: ``Anchors``
+    public static func size(_ size: CGSize) -> Anchors {
+        let width = Anchors(.width).equalTo(constant: size.width)
+        let height = Anchors(.height).equalTo(constant: size.height)
+        return width.union(height)
     }
     
     /// ``Anchors`` for CGSize toward toItem: ``ConstraintableItem``
@@ -582,18 +594,6 @@ public final class Anchors {
     public static func size<I: ConstraintableItem>(_ toItem: I, offset: CGSize) -> Anchors {
         let width = Anchors(.width).equalTo(toItem, constant: offset.width)
         let height = Anchors(.height).equalTo(toItem, constant: offset.height)
-        return width.union(height)
-    }
-    
-    /// ``Anchors`` for CGSize toward self
-    ///
-    /// - Parameters:
-    ///  - size: constant
-    ///
-    /// - Returns: ``Anchors``
-    public static func size(_ size: CGSize) -> Anchors {
-        let width = Anchors(.width).equalTo(constant: size.width)
-        let height = Anchors(.height).equalTo(constant: size.height)
         return width.union(height)
     }
     
