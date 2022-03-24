@@ -19,8 +19,8 @@ extension _UIViewExtension where Self: UIView {
     /// - Parameter build: A ``LayoutBuilder`` that  create sublayouts of this view.
     /// - Returns: An ``ViewLayout`` that wraps this view and contains sublayouts .
     ///
-    public func callAsFunction<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<Self, L> {
-        ViewLayout(self, sublayout: build())
+    public func callAsFunction<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<Self> {
+        ViewLayout(self, sublayouts: [build()])
     }
     
     ///
@@ -49,8 +49,8 @@ extension _UIViewExtension where Self: UIView {
     /// - Parameter build: A ``AnchorsBuilder`` that  create ``Anchors`` to be applied to this layout
     /// - Returns: An ``ViewLayout`` that wraps this view and contains the anchors  coordinator.
     ///
-    public func anchors(@AnchorsBuilder _ build: () -> Anchors) -> ViewLayout<Self, EmptyLayout> {
-        ViewLayout(self, sublayout: EmptyLayout()).anchors(build)
+    public func anchors(@AnchorsBuilder _ build: () -> Anchors) -> ViewLayout<Self> {
+        ViewLayout(self, anchors: build())
     }
     
     ///
@@ -69,8 +69,8 @@ extension _UIViewExtension where Self: UIView {
     /// - Parameter build: A ``LayoutBuilder`` that  create sublayouts of this view.
     /// - Returns: An ``ViewLayout`` that wraps this view and contains sublayouts .
     ///
-    public func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<Self, EmptyLayout> {
-        ViewLayout(self, sublayout: EmptyLayout()).sublayout(build)
+    public func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<Self> {
+        ViewLayout(self, sublayouts: [build()])
     }
     
     ///

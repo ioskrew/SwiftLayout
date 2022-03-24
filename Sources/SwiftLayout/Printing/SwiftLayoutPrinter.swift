@@ -5,10 +5,25 @@
 //  Created by oozoofrog on 2022/02/16.
 //
 
-import Foundation
 import UIKit
 
 public struct SwiftLayoutPrinter: CustomStringConvertible {
+    
+    public struct PrintOptions: OptionSet {
+        public let rawValue: Int
+        
+        public init(rawValue: Int) {
+            self.rawValue = rawValue
+        }
+        
+        /// print system constraints
+        public static let withSystemConstraints: PrintOptions = .init(rawValue: 1)
+        /// print view only have accessibility identifier
+        public static let onlyIdentifier: PrintOptions = .init(rawValue: 1 << 1)
+        /// print with view config
+        public static let withViewConfig: PrintOptions = .init(rawValue: 1 << 2)
+    }
+    
     public init(_ view: UIView, tags: [UIView: String] = [:]) {
         self.view = view
         self.tags = Dictionary(uniqueKeysWithValues: tags.map({ ($0.key.tagDescription, $0.value) }))
@@ -22,9 +37,31 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
     }
     
     /// print ``SwiftLayout`` syntax from view structures
-    /// - Parameter includeSystems: print all constraints include system creations(safe layout guide, label size, etc...)
+    /// - Parameters:
+    ///  - updater: ``IdentifierUpdater``
+    ///  - systemConstraintsHidden: automatically assigned constraints from system hidden, default value is `true`
+    ///  - printOnlyIdentifier: print view only having accessibility identifier
     /// - Returns: String of SwiftLayout syntax
-    public func print(_ updater: IdentifierUpdater? = nil, systemConstraintsHidden: Bool = true) -> String {
+    @available(*, deprecated, message: "use PrintOptions")
+    public func print(_ updater: IdentifierUpdater? = nil,
+                      systemConstraintsHidden: Bool = true,
+                      printOnlyIdentifier: Bool = false) -> String {
+        var options: PrintOptions = []
+        if !systemConstraintsHidden {
+            options.insert(.withSystemConstraints)
+        }
+        if printOnlyIdentifier {
+            options.insert(.onlyIdentifier)
+        }
+        return print(updater, options: options)
+    }
+    
+    /// print ``SwiftLayout`` syntax from view structures
+    /// - Parameters:
+    ///  - updater: ``IdentifierUpdater``
+    ///  - options: ``PrintOptions``
+    /// - Returns: String of SwiftLayout syntax
+    public func print(_ updater: IdentifierUpdater? = nil, options: PrintOptions = []) -> String {
         guard let view = view else {
             return ""
         }
@@ -33,8 +70,8 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
             updater.update(view, fixedTags: Set(tags.keys))
         }
         
-        let viewToken = ViewToken.Parser.from(view, tags: tags)
-        let constraints = ConstraintToken.Parser.from(view, tags: tags, systemConstraintsHidden: systemConstraintsHidden)
+        guard let viewToken = ViewToken.Parser.from(view, tags: tags, options: options) else { return "" }
+        let constraints = ConstraintToken.Parser.from(view, tags: tags, options: options)
         return Describer(viewToken, constraints).description
     }
     
@@ -106,11 +143,19 @@ private struct ViewToken {
     let views: [ViewToken]
     
     struct Parser {
-        static func from(_ view: UIView, tags: [String: String]) -> ViewToken {
+        static func from(_ view: UIView, tags: [String: String], options: SwiftLayoutPrinter.PrintOptions) -> ViewToken? {
             if let identifier = tags[view.tagDescription] {
-                return ViewToken(identifier: identifier, views: view.subviews.map({ from($0, tags: tags) }))
+                return ViewToken(identifier: identifier, views: view.subviews.compactMap({ from($0, tags: tags, options: options) }))
             } else {
-                return ViewToken(identifier: view.tagDescription, views: view.subviews.map({ from($0, tags: tags) }))
+                if options.contains(.onlyIdentifier) {
+                    if let identifier = view.accessibilityIdentifier, !identifier.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        return ViewToken(identifier: identifier, views: view.subviews.compactMap({ from($0, tags: tags, options: options) }))
+                    } else {
+                        return nil
+                    }
+                } else {
+                    return ViewToken(identifier: view.tagDescription, views: view.subviews.compactMap({ from($0, tags: tags, options: options) }))
+                }
             }
         }
     }
@@ -177,24 +222,36 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
     }
     
     struct Parser {
-        static func from(_ view: UIView, tags: [String: String], systemConstraintsHidden: Bool = true) -> [ConstraintToken] {
-            let constraints = view.constraints
-                .filter({ Validator.isUserCreation($0, systemConstraintsHidden: systemConstraintsHidden) })
+        static func from(_ view: UIView, tags: [String: String], options: SwiftLayoutPrinter.PrintOptions) -> [ConstraintToken] {
+            let constraints = view.constraints.sorted { lhs, rhs in
+                func compareTuple(_ value: NSLayoutConstraint) -> (Int, Int, Int, CGFloat, CGFloat, Float) {
+                    (
+                        value.firstAttribute.rawValue,
+                        value.secondAttribute.rawValue,
+                        value.relation.rawValue,
+                        value.constant,
+                        value.multiplier,
+                        value.priority.rawValue
+                    )
+                }
+                
+                return compareTuple(lhs) < compareTuple(rhs)
+            }.filter({ Validator.isUserCreation($0, options: options) })
             var tokens = constraints.map({ ConstraintToken(constraint: $0, tags: tags) })
-            tokens.append(contentsOf: view.subviews.flatMap({ from($0, tags:tags, systemConstraintsHidden: systemConstraintsHidden) }))
+            tokens.append(contentsOf: view.subviews.flatMap({ from($0, tags:tags, options: options) }))
             return tokens
         }
     }
     
     struct Validator {
-        static func isUserCreation(_ constraint: NSLayoutConstraint, systemConstraintsHidden: Bool = true) -> Bool {
+        static func isUserCreation(_ constraint: NSLayoutConstraint, options: SwiftLayoutPrinter.PrintOptions) -> Bool {
             let description = constraint.debugDescription
-            if systemConstraintsHidden {
+            if options.contains(.withSystemConstraints) {
+                return true
+            } else {
                 guard description.contains("NSLayoutConstraint") else { return false }
                 guard let range = description.range(of: "'UIViewSafeAreaLayoutGuide-[:alpha:]*'", options: [.regularExpression], range: description.startIndex..<description.endIndex) else { return true }
                 return range.isEmpty
-            } else {
-                return true
             }
         }
     }

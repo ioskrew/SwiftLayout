@@ -5,9 +5,6 @@
 //  Created by oozoofrog on 2022/02/06.
 //
 
-import Foundation
-import UIKit
-
 public protocol Layoutable: AnyObject {
     associatedtype LayoutBody: Layout
     var activation: Activation? { get set }
@@ -16,7 +13,8 @@ public protocol Layoutable: AnyObject {
 
 public extension Layoutable {
     
+    @available(*, deprecated, renamed: "self.sl.layout()", message: "updateLayout of Layoutable moved to sl wrapper type")
     func updateLayout() {
-        self.activation = Activator.update(layout: layout, fromActivation: activation ?? Activation())
+        self.activation = Activator.update(layout: layout, fromActivation: activation ?? Activation(), layoutIfNeededForcefully: false)
     }
 }

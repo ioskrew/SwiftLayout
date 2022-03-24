@@ -5,8 +5,6 @@
 //  Created by oozoofrog on 2022/02/06.
 //
 
-import Foundation
-import UIKit
 import SwiftUI
 
 public protocol LayoutableViewRepresentable: UIViewRepresentable, Layoutable {}
@@ -16,8 +14,8 @@ public extension LayoutableViewRepresentable where Self: UIView {
     func makeUIView(context: UIViewRepresentableContext<Self>) -> Self {
         return self
     }
-    func updateUIView(_ uiView: Self, context: UIViewRepresentableContext<Self>) {
-        uiView.updateLayout()
+    func updateUIView(_ view: Self, context: UIViewRepresentableContext<Self>) {
+        view.sl.updateLayout()
     }
 }
 
@@ -25,7 +23,7 @@ public extension LayoutableViewControllerRepresentable where Self: UIViewControl
     func makeUIViewController(context: UIViewControllerRepresentableContext<Self>) -> Self {
         return self
     }
-    func updateUIViewController(_ uiViewController: Self, context: UIViewControllerRepresentableContext<Self>) {
-        uiViewController.updateLayout()
+    func updateUIViewController(_ viewController: Self, context: UIViewControllerRepresentableContext<Self>) {
+        viewController.sl.updateLayout()
     }
 }

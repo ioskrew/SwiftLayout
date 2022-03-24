@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  Tag.swift
 //  
 //
 //  Created by aiden_h on 2022/02/18.
@@ -7,8 +7,12 @@
 
 import UIKit
 
+protocol UIViewTaggable: AnyObject {
+    var accessibilityIdentifier: String? { get set }
+}
+
 @dynamicMemberLookup
-struct Tag<Taggable> where Taggable: UIAccessibilityIdentification {
+struct Tag<Taggable: UIViewTaggable> {
     let taggable: Taggable
     
     subscript(dynamicMember tag: String) -> Taggable {
@@ -17,7 +21,9 @@ struct Tag<Taggable> where Taggable: UIAccessibilityIdentification {
     }
 }
 
-extension UIAccessibilityIdentification {
+extension UIView: UIViewTaggable {}
+
+extension UIViewTaggable {
     var viewTag: Tag<Self> {
         Tag(taggable: self)
     }

@@ -1,12 +1,9 @@
-import Foundation
-import UIKit
-
 public struct ArrayLayout<L: Layout>: Layout {
     
-    let layouts: [L]
+    private let layouts: [L]
     
-    public var debugDescription: String {
-        "ArrayLayout<\(L.self)>"
+    init(layouts: [L]) {
+        self.layouts = layouts
     }
     
     public var sublayouts: [Layout] {

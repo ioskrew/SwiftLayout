@@ -8,7 +8,7 @@ let package = Package(
     products: [
         .library(
             name: "SwiftLayout",
-            targets: ["SwiftLayout"]),
+            targets: ["SwiftLayout"])
     ],
     dependencies: [],
     targets: [
@@ -17,6 +17,6 @@ let package = Package(
             dependencies: []),
         .testTarget(
             name: "SwiftLayoutTests",
-            dependencies: ["SwiftLayout"]),
+            dependencies: ["SwiftLayout"])
     ]
 )

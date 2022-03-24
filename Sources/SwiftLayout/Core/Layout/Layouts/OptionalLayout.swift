@@ -1,12 +1,9 @@
-import Foundation
-import UIKit
-
 public struct OptionalLayout<L: Layout>: Layout {
     
-    let layout: L?
+    private let layout: L?
     
-    public var debugDescription: String {
-        "OptionalLayout<\(L.self)>"
+    init(layout: L?) {
+        self.layout = layout
     }
     
     public var sublayouts: [Layout] {

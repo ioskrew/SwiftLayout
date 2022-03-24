@@ -1,11 +1,10 @@
 //
-//  File.swift
+//  Weakens.swift
 //  
 //
 //  Created by oozoofrog on 2022/02/21.
 //
 
-import Foundation
 import UIKit
 
 struct Weakens<O>: Hashable where O: Hashable {
@@ -35,7 +34,7 @@ extension Weakens where O == NSLayoutConstraint {
 extension Weakens where O == Array<NSLayoutConstraint> {
     init(_ constraints: O) {
         self.init(constraints) { constraints in
-            let weakens: [Weakens<NSLayoutConstraint>] = constraints.map { constraint in
+            let weakens = constraints.map { constraint in
                 Weakens<NSLayoutConstraint>(constraint)
             }
             return AnyHashable(Set(weakens))
