@@ -596,3 +596,91 @@ extension LayoutDSLTests {
         """.tabbed)
     }
 }
+
+// MARK: - ModularLayout
+
+extension LayoutDSLTests {
+    struct Module1: ModularLayout {
+        let module1view1 = UIView().viewTag.module1view1
+        let module1view2 = UIView().viewTag.module1view2
+        let module1view3 = UIView().viewTag.module1view3
+        
+        @LayoutBuilder var layout: some Layout {
+            module1view1.anchors {
+                Anchors(.leading, .top)
+                Anchors(.height, .width).setMultiplier(0.5)
+            }.sublayout {
+                module1view2.anchors {
+                    Anchors(.centerY, .leading)
+                    Anchors.size(width: 50, height: 50)
+                }
+            }
+            
+            module1view3.anchors {
+                Anchors(.height).equalTo(constant: 20)
+                Anchors(.leading, .bottom)
+            }
+        }
+    }
+    
+    struct Module2: ModularLayout {
+        let module2view1 = UIView().viewTag.module2view1
+        let module2view2 = UIView().viewTag.module2view2
+        let module2view3 = UIView().viewTag.module2view3
+        
+        @LayoutBuilder var layout: some Layout {
+            module2view1.anchors {
+                Anchors(.top, .trailing)
+                Anchors(.height, .width).setMultiplier(0.5)
+            }.sublayout {
+                module2view2.anchors {
+                    Anchors(.centerY, .trailing)
+                    Anchors.size(width: 50, height: 50)
+                }
+            }
+            
+            module2view3.anchors {
+                Anchors(.height).equalTo(constant: 20)
+                Anchors(.bottom, .trailing)
+            }
+        }
+    }
+    
+    func testModularLayout() {
+        root {
+            Module1()
+            Module2()
+        }.finalActive()
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+        root {
+            module1view1.anchors {
+                Anchors(.top, .leading)
+                Anchors(.width, .height).setMultiplier(0.5)
+            }.sublayout {
+                module1view2.anchors {
+                    Anchors(.leading, .centerY)
+                    Anchors(.width, .height).equalTo(constant: 50.0)
+                }
+            }
+            module1view3.anchors {
+                Anchors(.bottom, .leading)
+                Anchors(.height).equalTo(constant: 20.0)
+            }
+            module2view1.anchors {
+                Anchors(.top, .trailing)
+                Anchors(.width, .height).setMultiplier(0.5)
+            }.sublayout {
+                module2view2.anchors {
+                    Anchors(.trailing, .centerY)
+                    Anchors(.width, .height).equalTo(constant: 50.0)
+                }
+            }
+            module2view3.anchors {
+                Anchors(.bottom, .trailing)
+                Anchors(.height).equalTo(constant: 20.0)
+            }
+        }
+        """.tabbed)
+    }
+}
