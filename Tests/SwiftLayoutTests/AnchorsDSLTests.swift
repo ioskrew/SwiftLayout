@@ -533,7 +533,7 @@ extension AnchorsDSLTests {
         root {
             red.anchors {
                 Anchors(.top, .bottom, .leading, .trailing, .width, .centerX, .centerY).lessThanOrEqualTo()
-                Anchors(.height).lessThanOrEqualTo(constant: 12.0)
+                Anchors(.height).lessThanOrEqualTo(root, constant: 12.0)
             }
         }
         """.tabbed
