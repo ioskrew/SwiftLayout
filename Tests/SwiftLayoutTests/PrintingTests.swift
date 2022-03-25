@@ -105,6 +105,66 @@ extension PrintingTests {
         XCTAssertEqual(result, expect)
     }
     
+    func testTopBottomAndEquals() {
+        let root = UIView().viewTag.root
+        let one = UIView().viewTag.one
+        let two = UIView().viewTag.two
+        
+        func layout() -> some Layout {
+            root {
+                one.anchors {
+                    Anchors.shoe()
+                }
+                two.anchors {
+                    Anchors(.top).equalTo(one.bottomAnchor)
+                    Anchors(.width, .centerX).equalTo(one)
+                }
+            }
+        }
+        
+        layout().finalActive()
+        
+        XCTAssertEqual(root.constraints.shortDescription, """
+        one.leading == root.leading
+        one.bottom == root.bottom
+        two.top == one.bottom
+        two.centerX == one.centerX
+        one.trailing == root.trailing
+        two.width == one.width
+        """.descriptions)
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+        root {
+            one.anchors {
+                Anchors(.bottom, .leading, .trailing)
+            }
+            two.anchors {
+                Anchors(.top).equalTo(one, attribute: .bottom)
+                Anchors(.width, .centerX).equalTo(one)
+            }
+        }
+        """.tabbed)
+    }
+    
+    func testSizeWithConstant() {
+        let root = UIView().viewTag.root
+        let one = UIView().viewTag.one
+        
+        root {
+            one.anchors {
+                Anchors(.width).equalTo(root, constant: -20)
+            }
+        }.finalActive()
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+        root {
+            one.anchors {
+                Anchors(.width).equalTo(root, constant: -20.0)
+            }
+        }
+        """.tabbed)
+    }
+    
     func testPrintWithSimpleAnchors() {
         let root = UIView().viewTag.root
         activation = root.anchors {
