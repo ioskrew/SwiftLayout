@@ -551,17 +551,6 @@ public final class Anchors {
         return horizontal.union(bottom)
     }
     
-    /// ``Anchors`` for width, height toward toItem: ``ConstraintableItem``
-    ///
-    ///
-    /// - Parameters:
-    ///  - toItem: constraint second item, ``ConstraintableItem``
-    ///
-    /// - Returns: ``Anchors``
-    public static func size<I: ConstraintableItem>(_ toItem: I) -> Anchors {
-        size(toItem, offset: .zero)
-    }
-    
     /// ``Anchors`` for width, height toward self
     ///
     /// - Parameters:
@@ -569,7 +558,7 @@ public final class Anchors {
     ///
     /// - Returns: ``Anchors``
     public static func size(length: CGFloat = 0.0) -> Anchors {
-        size(.init(width: length, height: length))
+        size(width: length, height: length)
     }
     
     /// ``Anchors`` for CGSize toward self
@@ -579,9 +568,31 @@ public final class Anchors {
     ///
     /// - Returns: ``Anchors``
     public static func size(_ size: CGSize) -> Anchors {
-        let width = Anchors(.width).equalTo(constant: size.width)
-        let height = Anchors(.height).equalTo(constant: size.height)
+        self.size(width: size.width, height: size.height)
+    }
+    
+    /// ``Anchors`` for width, height toward self
+    ///
+    /// - Parameters:
+    ///  - width: constant
+    ///  - height: constant
+    ///
+    /// - Returns: ``Anchors``
+    public static func size(width: CGFloat, height: CGFloat) -> Anchors {
+        let width = Anchors(.width).equalTo(constant: width)
+        let height = Anchors(.height).equalTo(constant: height)
         return width.union(height)
+    }
+    
+    /// ``Anchors`` for width, height toward toItem: ``ConstraintableItem``
+    ///
+    ///
+    /// - Parameters:
+    ///  - toItem: constraint second item, ``ConstraintableItem``
+    ///
+    /// - Returns: ``Anchors``
+    public static func size<I: ConstraintableItem>(_ toItem: I) -> Anchors {
+        size(toItem, offset: .zero)
     }
     
     /// ``Anchors`` for CGSize toward toItem: ``ConstraintableItem``
