@@ -183,6 +183,9 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
     let superTag: String
     let firstTag: String
     let firstAttribute: String
+    var isSizeFirstAttribute: Bool {
+        firstAttribute == "width" || firstAttribute == "height"
+    }
     var firstAttributes: [String]
     let secondTag: String
     let secondAttribute: String
@@ -193,8 +196,14 @@ private struct ConstraintToken: CustomStringConvertible, Hashable {
     var description: String {
         var descriptions: [String] = ["Anchors(\(firstAttributes.map({ "." + $0 }).joined(separator: ", ")))"]
         var arguments: [String] = []
-        if !secondTag.isEmpty && superTag != secondTag {
-            arguments.append(secondTag)
+        if !secondTag.isEmpty {
+            if superTag == secondTag {
+                if isSizeFirstAttribute && constant != "0.0" {
+                    arguments.append(secondTag)
+                }
+            } else {
+                arguments.append(secondTag)
+            }
         }
         if firstAttribute != secondAttribute && secondAttribute != NSLayoutConstraint.Attribute.notAnAttribute.description {
             arguments.append("attribute: .\(secondAttribute)")

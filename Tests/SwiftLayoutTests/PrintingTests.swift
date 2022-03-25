@@ -146,6 +146,25 @@ extension PrintingTests {
         """.tabbed)
     }
     
+    func testSizeWithConstant() {
+        let root = UIView().viewTag.root
+        let one = UIView().viewTag.one
+        
+        root {
+            one.anchors {
+                Anchors(.width).equalTo(root, constant: -20)
+            }
+        }.finalActive()
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+        root {
+            one.anchors {
+                Anchors(.width).equalTo(root, constant: -20.0)
+            }
+        }
+        """.tabbed)
+    }
+    
     func testPrintWithSimpleAnchors() {
         let root = UIView().viewTag.root
         activation = root.anchors {
