@@ -23,7 +23,11 @@ final class ViewInformation: Hashable, CustomDebugStringConvertible {
             return
         }
         if superview != view.superview {
-            superview?.addSubview(view)
+            if let stackSuperView = superview as? UIStackView {
+                stackSuperView.addArrangedSubview(view)
+            } else {
+                superview?.addSubview(view)
+            }
         }
     }
     
