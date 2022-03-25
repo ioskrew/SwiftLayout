@@ -361,6 +361,36 @@ extension PrintingTests {
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
     }
     
+    func testPrintSize() {
+       
+        let root = UIView().viewTag.root
+        let child = UIView().viewTag.child
+        
+        func layout() -> some Layout {
+            root {
+                child.anchors {
+                    Anchors(.width, .height)
+                }
+            }
+        }
+        
+        layout().finalActive()
+        
+        XCTAssertEqual(root.constraints.shortDescription, """
+        child.width == root.width
+        child.height == root.height
+        """.descriptions)
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+        root {
+            child.anchors {
+                Anchors(.width, .height)
+            }
+        }
+        """.tabbed)
+        
+    }
+    
 }
 
 // MARK: - automatic identifier assignment
