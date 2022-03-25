@@ -48,8 +48,8 @@ extension ViewLayout {
     /// - Returns: The layout itself  with anchors coordinator added
     ///
     public func anchors(@AnchorsBuilder _ build: () -> Anchors) -> Self {
-        let anchors = self.anchors.union(build())
-        return Self.init(innerView, sublayouts: sublayouts, anchors: anchors)
+        self.anchors.formUnion(build())
+        return self
     }
     
     ///

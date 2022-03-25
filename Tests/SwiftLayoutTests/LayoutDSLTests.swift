@@ -596,3 +596,58 @@ extension LayoutDSLTests {
         """.tabbed)
     }
 }
+
+extension LayoutDSLTests {
+    
+    func testAnchorsForGroup() {
+        
+        root {
+            GroupLayout {
+                red
+                blue
+            }.anchors {
+                Anchors.size()
+            }
+        }.finalActive()
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+        root {
+            red.anchors {
+                Anchors(.width, .height)
+            }
+            blue.anchors {
+                Anchors(.width, .height)
+            }
+        }
+        """.tabbed)
+        
+    }
+    
+    func testAnchorsForSublayouts() {
+        
+        @LayoutBuilder
+        func sublayouts() -> some Layout {
+            red
+            blue
+        }
+        
+        root {
+            sublayouts().anchors {
+                Anchors.size()
+            }
+        }.finalActive()
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+        root {
+            red.anchors {
+                Anchors(.width, .height)
+            }
+            blue.anchors {
+                Anchors(.width, .height)
+            }
+        }
+        """.tabbed)
+        
+    }
+    
+}

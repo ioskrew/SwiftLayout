@@ -10,12 +10,19 @@ import UIKit
 public protocol Layout: CustomStringConvertible, CustomDebugStringConvertible {
     var view: UIView? { get }
     var anchors: Anchors { get }
+    func anchors(@AnchorsBuilder _ build: () -> Anchors) -> Self
     var sublayouts: [Layout] { get }
 }
 
 extension Layout {
     public var view: UIView? { nil }
     public var anchors: Anchors { Anchors() }
+    public func anchors(@AnchorsBuilder _ build: () -> Anchors) -> Self {
+        self.sublayouts.forEach({ layout in
+            _ = layout.anchors(build)
+        })
+        return self
+    }
 }
 
 extension Layout {
