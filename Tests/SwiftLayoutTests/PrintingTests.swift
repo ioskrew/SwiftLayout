@@ -116,8 +116,9 @@ extension PrintingTests {
                     Anchors.shoe()
                 }
                 two.anchors {
-                    Anchors(.top).equalTo(one.bottomAnchor)
-                    Anchors(.width, .centerX).equalTo(one)
+                    Anchors.top.equalTo(one.bottomAnchor)
+                    Anchors.width.equalTo(one)
+                    Anchors.centerX.equalTo(one)
                 }
             }
         }
@@ -152,7 +153,7 @@ extension PrintingTests {
         
         root {
             one.anchors {
-                Anchors(.width).equalTo(root, constant: -20)
+                Anchors.width.equalTo(root, constant: -20)
             }
         }.finalActive()
         
@@ -168,7 +169,7 @@ extension PrintingTests {
     func testPrintWithSimpleAnchors() {
         let root = UIView().viewTag.root
         activation = root.anchors {
-            Anchors(.width, .height)
+            Anchors.dimensions(.width, .height)
         }.active()
         
         let expect = """
@@ -188,8 +189,8 @@ extension PrintingTests {
         let child = UIView().viewTag.child
         activation = root {
             child.anchors {
-                Anchors(.top)
-                Anchors(.bottom).equalTo(constant: -10.0)
+                Anchors.top
+                Anchors.bottom.equalToSuper(constant: -10.0)
             }
         }.active()
         
@@ -214,11 +215,11 @@ extension PrintingTests {
         let friend = UIView().viewTag.friend
         activation = root {
             child.anchors {
-                Anchors(.top)
-                Anchors(.bottom).equalTo(constant: -10.0)
+                Anchors.top
+                Anchors.bottom.equalToSuper(constant: -10.0)
             }
             friend.anchors {
-                Anchors(.top).equalTo(child, attribute: .bottom)
+                Anchors.top.equalTo(child, attribute: .bottom)
             }
         }.active()
         
@@ -298,7 +299,7 @@ extension PrintingTests {
         activation = root {
             child {
                 grand.anchors {
-                    Anchors(.top)
+                    Anchors.top
                 }
             }
         }.active()
@@ -322,8 +323,8 @@ extension PrintingTests {
         let child = UIView().viewTag.child
         activation = root {
             child.anchors {
-                Anchors(.top, .bottom).equalTo(root.safeAreaLayoutGuide)
-                Anchors(.leading)
+                Anchors.yAxis(.top, .bottom).equalTo(root.safeAreaLayoutGuide)
+                Anchors.leading
             }
         }.active()
         
@@ -366,9 +367,10 @@ extension PrintingTests {
                 Anchors.cap()
             }
             friend.anchors {
-                Anchors(.leading, .bottom)
-                Anchors(.top).greaterThanOrEqualTo(child, attribute: .bottom, constant: 8)
-                Anchors(.trailing).equalTo(child)
+                Anchors.leading
+                Anchors.bottom
+                Anchors.top.greaterThanOrEqualTo(child, attribute: .bottom, constant: 8)
+                Anchors.trailing.equalTo(child)
             }
         }.active()
         
@@ -396,12 +398,12 @@ extension PrintingTests {
         let friend = UIView().viewTag.friend
         activation = root {
             child.anchors {
-                Anchors(.top).greaterThanOrEqualTo()
-                Anchors(.bottom).lessThanOrEqualTo()
-                Anchors(.height).equalTo(constant: 12.0)
+                Anchors.top.greaterThanOrEqualToSuper()
+                Anchors.bottom.lessThanOrEqualToSuper()
+                Anchors.height.equalTo(constant: 12.0)
             }
             friend.anchors {
-                Anchors(.height).equalTo(child)
+                Anchors.height.equalTo(child)
             }
         }.active()
         
@@ -429,7 +431,7 @@ extension PrintingTests {
         func layout() -> some Layout {
             root {
                 child.anchors {
-                    Anchors(.width, .height)
+                    Anchors.dimensions(.width, .height)
                 }
             }
         }
@@ -544,8 +546,8 @@ extension PrintingTests {
                     Anchors.allSides()
                 }).sublayout {
                     duny.anchors {
-                        Anchors(.centerX).setMultiplier(1.2)
-                        Anchors(.centerY).setMultiplier(0.8)
+                        Anchors.centerX.multiplier(1.2)
+                        Anchors.centerY.multiplier(0.8)
                     }
                 }
             }
@@ -587,7 +589,7 @@ extension PrintingTests {
                     }
                 }
                 truename.anchors({
-                    Anchors(.top).equalTo(nickname.bottomAnchor)
+                    Anchors.top.equalTo(nickname.bottomAnchor)
                     Anchors.shoe()
                 }).sublayout {
                     UIView().viewTag.ged.anchors {

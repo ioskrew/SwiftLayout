@@ -225,10 +225,10 @@ extension LayoutDSLTests {
                 }
             }
             blue.anchors {
-                Anchors(.height).equalTo(constant: 44.0)
+                Anchors.height.equalTo(constant: 44.0)
             }
             green.anchors {
-                Anchors(.width).equalTo(constant: 88.0)
+                Anchors.width.equalTo(constant: 88.0)
             }
         }
     }
@@ -549,21 +549,21 @@ extension LayoutDSLTests {
                     Anchors.cap()
                 }
                 group1_2.anchors {
-                    Anchors(.top).equalTo(group1_1, attribute: .bottom)
+                    Anchors.top.equalTo(group1_1, attribute: .bottom)
                     Anchors.horizontal(root)
                 }
                 group1_3.anchors {
-                    Anchors(.top).equalTo(group1_1, attribute: .bottom)
+                    Anchors.top.equalTo(group1_1, attribute: .bottom)
                     Anchors.horizontal(root, offset: 8.0)
                 }
             }
             GroupLayout {
                 group2_1.anchors {
-                    Anchors(.top).equalTo(group1_3, attribute: .bottom)
+                    Anchors.top.equalTo(group1_3, attribute: .bottom)
                     Anchors.horizontal(offset: 12)
                 }
                 group2_2.anchors {
-                    Anchors(.top).equalTo(group2_2, attribute: .bottom)
+                    Anchors.top.equalTo(group2_2, attribute: .bottom)
                     Anchors.shoe()
                 }
             }
@@ -607,18 +607,21 @@ extension LayoutDSLTests {
         
         @LayoutBuilder var layout: some Layout {
             module1view1.anchors {
-                Anchors(.leading, .top)
-                Anchors(.height, .width).setMultiplier(0.5)
+                Anchors.leading
+                Anchors.top
+                Anchors.dimensions(.height, .width).multiplier(0.5)
             }.sublayout {
                 module1view2.anchors {
-                    Anchors(.centerY, .leading)
+                    Anchors.centerY
+                    Anchors.leading
                     Anchors.size(width: 50, height: 50)
                 }
             }
             
             module1view3.anchors {
-                Anchors(.height).equalTo(constant: 20)
-                Anchors(.leading, .bottom)
+                Anchors.height.equalTo(constant: 20)
+                Anchors.leading
+                Anchors.bottom
             }
         }
     }
@@ -630,18 +633,21 @@ extension LayoutDSLTests {
         
         @LayoutBuilder var layout: some Layout {
             module2view1.anchors {
-                Anchors(.top, .trailing)
-                Anchors(.height, .width).setMultiplier(0.5)
+                Anchors.top
+                Anchors.trailing
+                Anchors.dimensions(.height, .width).multiplier(0.5)
             }.sublayout {
                 module2view2.anchors {
-                    Anchors(.centerY, .trailing)
+                    Anchors.centerY
+                    Anchors.trailing
                     Anchors.size(width: 50, height: 50)
                 }
             }
             
             module2view3.anchors {
-                Anchors(.height).equalTo(constant: 20)
-                Anchors(.bottom, .trailing)
+                Anchors.height.equalTo(constant: 20)
+                Anchors.bottom
+                Anchors.trailing
             }
         }
     }

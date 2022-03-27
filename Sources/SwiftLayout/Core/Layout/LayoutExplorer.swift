@@ -11,7 +11,7 @@ enum LayoutExplorer {
     struct Component {
         var superView: UIView? 
         var view: UIView
-        var anchors: Anchors
+        var anchors: AnchorsContainer
         
         var keyValueTupe: (String, UIView)? {
             guard let identifier = view.accessibilityIdentifier else {
@@ -57,7 +57,7 @@ extension LayoutExplorer {
             } else {
                 anchorsIndent = sublayoutIndent.appending("│     ")
             }
-            let items = layout.anchors.items
+            let items = layout.anchors.constraints
             if !items.isEmpty {
                 result.append(contentsOf: items.map({ item in anchorsIndent.appending(item.description) }))
             }
