@@ -83,11 +83,7 @@ extension LayoutBuildingTests {
     }
     
     class LayoutView: UIView, Layoutable {
-        var flag = true {
-            didSet {
-                sl.updateLayout()
-            }
-        }
+        @LayoutProperty var flag = true
         
         let root = MockView().viewTag.root
         let child = UIView().viewTag.child
