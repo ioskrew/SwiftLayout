@@ -26,7 +26,7 @@ public final class IdentifierUpdater {
     public func update(_ target: Any, prefix: String = "", fixedTags: Set<String> = []) {
         let digger = MirrorDigger(enablePrefixChain: option == .referenceAndName || option == .referenceAndNameWithTypeOfView )
         digger.digging(Mirror(reflecting: target), prefix: prefix)
-        for identified in digger.identifieds where !fixedTags.contains(TagDescriptor(identified.view).objectDescription) {
+        for identified in digger.identifieds where !fixedTags.contains(AddressDescriptor(identified.view).description) {
             identified.prepare(enableViewType: option == .withTypeOfView || option == .referenceAndNameWithTypeOfView)
         }
     }

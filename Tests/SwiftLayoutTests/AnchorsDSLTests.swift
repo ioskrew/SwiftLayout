@@ -313,11 +313,13 @@ extension AnchorsDSLTests {
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
         root {
             red.anchors {
-                Anchors(.top, .leading, .trailing)
-                Anchors(.bottom).equalTo(blue, attribute: .top)
+                Anchors.top.equalToSuper()
+                Anchors.bottom.equalTo(blue, attribute: top)
+                Anchors.leading.trailing.equalToSuper()
             }
             blue.anchors {
-                Anchors(.bottom, .leading, .trailing)
+                Anchors.bottom.equalToSuper()
+                Anchors.leading.trailing.equalToSuper()
             }
         }
         """.tabbed)
@@ -332,7 +334,8 @@ extension AnchorsDSLTests {
         
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
         root.anchors {
-            Anchors(.top, .bottom, .leading, .trailing).equalTo(red.safeAreaLayoutGuide)
+            Anchors.top.bottom.equalTo(red.safeAreaLayoutGuide)
+            Anchors.leading.trailing.equalTo(red.safeAreaLayoutGuide)
         }.sublayout {
             red
         }
@@ -348,7 +351,8 @@ extension AnchorsDSLTests {
         
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
         root.anchors {
-            Anchors(.top, .bottom, .leading, .trailing).equalTo(label)
+            Anchors.top.bottom.equalTo(label)
+            Anchors.leading.trailing.equalTo(label)
         }.sublayout {
             label
         }
@@ -377,11 +381,13 @@ extension AnchorsDSLTests {
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
         root {
             red.anchors {
-                Anchors(.top, .bottom, .leading)
-                Anchors(.trailing).equalTo(blue, attribute: .leading)
+                Anchors.top.bottom.equalToSuper()
+                Anchors.leading.equalToSuper()
+                Anchors.trailing.equalTo(blue, attribute: leading)
             }
             blue.anchors {
-                Anchors(.top, .bottom, .trailing)
+                Anchors.top.bottom.equalToSuper()
+                Anchors.trailing.equalToSuper()
             }
         }
         """.tabbed)
@@ -430,19 +436,19 @@ extension AnchorsDSLTests {
     func testConvenience() {
         activation = root {
             red.anchors {
-                Anchors.allSides(root)
+                Anchors.allSides()
             }
         }.active()
         
         let expect = """
         root {
             red.anchors {
-                Anchors(.top, .bottom, .leading, .trailing)
+                Anchors.allSides()
             }
         }
         """.tabbed
         
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(options: .pretty), expect)
     }
 }
 
@@ -464,8 +470,10 @@ extension AnchorsDSLTests {
         let expect = """
         root {
             red.anchors {
-                Anchors(.top, .bottom, .leading, .height, .centerY)
-                Anchors(.trailing).equalTo(constant: -14.0)
+                Anchors.top.bottom.centerY.equalToSuper()
+                Anchors.leading.equalToSuper()
+                Anchors.trailing.equalToSuper(constant: -14.0)
+                Anchors.height.equalToSuper()
             }
         }
         """.tabbed
@@ -491,8 +499,10 @@ extension AnchorsDSLTests {
         let expect = """
         root {
             red.anchors {
-                Anchors(.top, .leading, .trailing, .width, .height, .centerX, .centerY).greaterThanOrEqualTo()
-                Anchors(.bottom).greaterThanOrEqualTo(constant: 13.0)
+                Anchors.top.centerY.greaterThanOrEqualToSuper()
+                Anchors.bottom.greaterThanOrEqualToSuper(constant: 13.0)
+                Anchors.leading.trailing.centerX.greaterThanOrEqualToSuper()
+                Anchors.width.height.greaterThanOrEqualToSuper()
             }
         }
         """.tabbed

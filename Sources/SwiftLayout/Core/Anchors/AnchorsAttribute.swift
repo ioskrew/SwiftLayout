@@ -7,7 +7,7 @@
 
 import UIKit
 
-public protocol AnchorsAttribute {
+public protocol AnchorsAttribute: Equatable {
     init?(attribute: NSLayoutConstraint.Attribute)
     var attribute: NSLayoutConstraint.Attribute { get }
 }
