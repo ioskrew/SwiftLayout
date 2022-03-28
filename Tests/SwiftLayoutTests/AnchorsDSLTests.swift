@@ -267,30 +267,36 @@ extension AnchorsDSLTests {
         }
     }
     
-//    func testAnchorsWithForIn() {
-//        let attributes: [NSLayoutConstraint.Attribute] = [
-//            .top,
-//            .bottom,
-//            .leading,
-//            .trailing
-//        ]
-//
-//        root {
-//            red.anchors {
-//                for attr in attributes {
-//                    Anchors(attr)
-//                }
-//            }
-//        }.finalActive()
-//
-//        XCTAssertEqual(root.constraints.shortDescription, """
-//        red.top == root.top
-//        red.bottom == root.bottom
-//        red.leading == root.leading
-//        red.trailing == root.trailing
-//        """.descriptions)
-//    }
-//
+    func testAnchorsWithForIn() {
+        let xAxis = [
+            Anchors.leading,
+            Anchors.trailing
+        ]
+        let yAxis = [
+            Anchors.top,
+            Anchors.bottom
+        ]
+
+        root {
+            red.anchors {
+                for anchors in xAxis {
+                    anchors
+                }
+                
+                for anchors in yAxis {
+                    anchors
+                }
+            }
+        }.finalActive()
+
+        XCTAssertEqual(root.constraints.shortDescription, """
+        red.top == root.top
+        red.bottom == root.bottom
+        red.leading == root.leading
+        red.trailing == root.trailing
+        """.descriptions)
+    }
+
     func testAnchorsFromSeperately() {
         root {
             red.anchors {
