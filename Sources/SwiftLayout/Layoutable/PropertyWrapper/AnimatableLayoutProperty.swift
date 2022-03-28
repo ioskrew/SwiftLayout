@@ -46,7 +46,7 @@ public final class AnimatableLayoutProperty<Value> {
                 delay: instance[keyPath: storageKeyPath].delay,
                 options: instance[keyPath: storageKeyPath].options,
                 animations: { [weak instance] in
-                    instance?.sl.updateLayout()
+                    instance?.sl.updateLayout(forceLayout: true)
                 },
                 completion: instance[keyPath: storageKeyPath].completion
             )
