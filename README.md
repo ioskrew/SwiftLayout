@@ -8,35 +8,33 @@
 
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fioskrew%2FSwiftLayout%2Fbadge%3Ftype%3Dplatforms)](https://github.com/ioskrew/SwiftLayout)
 
-
-
 ```swift
 @LayoutBuilder var layout: some Layout {
   self {
     leftParenthesis.anchors {
-      Anchors(.leading).equalTo(constant: 16)
-      Anchors(.centerY)
+      Anchors.leading.equalToSuper(constant: 16)
+      Anchors.centerY
     }
     viewLogo.anchors {
-      Anchors(.leading).equalTo(leftParenthesis, attribute: .trailing, constant: 20)
-      Anchors(.centerY).equalTo(constant: 30)
-      Anchors.size(CGSize(width: 200, height: 200))
+      Anchors.leading.equalTo(leftParenthesis, attribute: .trailing, constant: 20)
+      Anchors.centerY.equalToSuper(constant: 30)
+      Anchors.size(width: 200, height: 200)
     }
     UIImageView().identifying("plus").config { imageView in
       imageView.image = UIImage(systemName: "plus")
       imageView.tintColor = .SLColor
     }.anchors {
       Anchors.center(offsetY: 30)
-      Anchors.size(length: 150)
+      Anchors.size(width: 150, height: 150)
     }
     constraintLogo.anchors {
-      Anchors(.trailing).equalTo(rightParenthesis.leadingAnchor)
-      Anchors(.centerY).equalTo("plus")
-      Anchors.size(CGSize(width: 200, height: 150))
+      Anchors.trailing.equalTo(rightParenthesis.leadingAnchor)
+      Anchors.centerY.equalTo("plus")
+      Anchors.size(width: 200, height: 150)
     }
     rightParenthesis.anchors {
-      Anchors(.trailing).equalTo(constant: -16)
-      Anchors(.centerY)
+      Anchors.trailing.equalToSuper(constant: -16)
+      Anchors.centerY
     }
   }
 }
@@ -44,16 +42,16 @@
 
 <img src="https://user-images.githubusercontent.com/3011832/157275626-c5f5672f-0a4a-4f45-8800-5ea3871c9dac.png" alt="thateasy" style="zoom:25%;" />
 
-# translation
+# Translation
 
 - [Korean](README_ko.md)
 
-# requirements
+# Requirements
 
 - iOS 13+
 - Swift 5.4+
 
-# installation
+# Installation
 
 **SwiftLayout** supply **SPM** only
 
@@ -63,7 +61,7 @@ dependencies: [
 ],
 ```
 
-# features
+# Features
 
 - DSL features for `addSubview` and `removeFromSuperview`
 - DSL features for `NSLayoutConstraint`, `NSLayoutAnchor` and activation
@@ -72,11 +70,11 @@ dependencies: [
 - offer propertyWrapper for automatically updating of layout
 - offering varierty features for relations of constraints. 
 
-# usage
+# Usage
 
-## `LayoutBuilder`
+## LayoutBuilder
 
-**LayoutBuilder** is DSL builder for UIView hierarchy. it presents simple doing add subview to superview. 
+`LayoutBuilder` is DSL builder for UIView hierarchy. it presents simple doing add subview to superview. 
 
 ```swift
 @LayoutBuilder var layout: some Layout {
@@ -97,79 +95,78 @@ subview.addSubview(subsubview)
 subview.addSubview(subsub2view)
 ```
 
-## `AnchorsBuilder`
+## AnchorsBuilder
 
-**AnchorsBuilder** is DSL builder of `Anchors` for making autolayout constraint between views or view itself. most are used within the `anchors` function of Layout.
+`AnchorsBuilder` is DSL builder of `Anchors` for making autolayout constraint between views or view itself. most are used within the `anchors` function of Layout.
 
-### `Anchors`
+### Anchors
 
- **Anchors** have attributes for NSLayoutConstraint and can creates.
+ `Anchors` have attributes for NSLayoutConstraint and can creates.
 
 > summary of NSLayoutConstraint
->
+> 
 > - first: Item1 and attribute1
 > - second: item2 and attribute2
 > - relation: relation(=, >=, <=), constant, multiplier
->
 
-equation of constraint has following format:
->Item1.attribute1 [= | >= | <= ] multiplier x item2.attribute2 + constant
+> equation of constraint has following format:
+> Item1.attribute1 [= | >= | <= ] multiplier x item2.attribute2 + constant
 
-you can read details [here](https://developer.apple.com/documentation/uikit/nslayoutconstraint).
+> you can read details [here](https://developer.apple.com/documentation/uikit/nslayoutconstraint).
 
-- initializing with attributes for first part: variadic(or array) of `NSLayoutConstraint.Attribute`
-
+- The first part is to get the necessary attributes using static values ​​defined in Anchors.
+  
   ```swift
-  Anchors(.top, .bottom, ...)
+  Anchors.top.bottom
   ```
 
 - enable to set of second part(item, attribute) through relation functions
-
+  
   ```swift
   superview {
     selfview.anchors {
-      Anchors(.top).equalTo(superview, attribute: .top, constant: 10)
+      Anchors.top.equalTo(superview, attribute: .top, constant: 10)
     }
   }
   ```
-
+  
   this is same as following constraint format:
-
+  
   ```
   selfview.top = superview.top + 10
   ```
 
 - second item of Anchors with no relation functions may be its superview
-
+  
   ```swift
   superview {
     selfview.anchors {
-      Anchors(.top, .bottom, ...)
+      Anchors.top.bottom
     }
   }
   ```
-
+  
   this is same as following format exactly:
-
+  
   ```
   selfview.top = superview.top
   selfview.bottom = superview.bottom
   ...
   ```
-
-  also, you can set constraint and multiplier like this:
-
+  
+  also, you can set constant and multiplier like this:
+  
   ```swift
-  Anchors(.top).setConstraint(10)
-  Anchors(.top).setMultiplier(10)
+  Anchors.top.constant(10)
+  Anchors.top.multiplier(10)
   ```
 
 - width and height attributes can be set for first item(view) self not second item.
-
+  
   ```swift
   superview {
     selfview.anchors {
-      Anchors(.width, .height).equalTo(constraint: 10) // only for selfview
+      Anchors.width.height.equalToSuper(constant: 10) // only for selfview
     }
   }
   ```
@@ -181,14 +178,14 @@ you can read details [here](https://developer.apple.com/documentation/uikit/nsla
   selfview.height = 10
   ```
 
-### `LayoutBuilder` + `AnchorsBuilder`
+## LayoutBuilder + AnchorsBuilder
 
-*ah, finally*
+### *ah, finally*
 
-now you can combine LayoutBuilder and AnchorsBuilder for add subview and make constraint between views, and make applying to view:
+Now you can combine `LayoutBuilder` and `AnchorsBuilder` for add subview and make constraint between views, and make applying to view
 
 - add subview to selfview after `anchors` needs `sublayout`
-
+  
   ```swift
   @LayoutBuilder func layout() -> some Layout {
     superview {
@@ -203,8 +200,8 @@ now you can combine LayoutBuilder and AnchorsBuilder for add subview and make co
   }
   ```
 
-- don't want sublayout? separates it.
-
+- don't want `sublayout`? separates it.
+  
   ```swift
   @LayoutBuilder func layout() -> some Layout {
     superview {
@@ -220,37 +217,40 @@ now you can combine LayoutBuilder and AnchorsBuilder for add subview and make co
   }
   ```
 
-### `active` and `finalActive`
+### active and finalActive
 
-`LayoutBuilder`, `AnchorsBuilder` only contain contexts for actual works. so, for do addSubview and active constraints needs following works:
+The `Layout` types created with `LayoutBuilder` and `AnchorsBuilder` only contain information to actually work.  
+so, for do addSubview and active constraints needs following works:
 
 - you can call `finalActive` of `Layout` for instantly do all stuff in case of no needs to updates.
+
 - `finalActive` return nothing after addSubview and active constraints instantly.
   
   ```swift
   @LayoutBuilder func layout() -> some Layout {
     superview {
       selfview.anchors {
-        Anchors(.top)
+        Anchors.top
       }
     }
   }
   
   init() {
-  	layout().finalActive()
+    layout().finalActive()
   }
   ```
-  
-- you can call `active` of `Layout` if needs using some features for updates.
 
+- you can call `active` of `Layout` if needs using some features for updates.  
+  Returns `Activation`, an object containing information needed for update.
+  
   ```swift
   @LayoutBuilder func layout() -> some Layout {
     superview {
       selfview.anchors {
         if someCondition {
-          Anchors(.bottom)
+          Anchors.bottom
         } else {
-        	Anchors(.top)
+          Anchors.top
         }
       }
     }
@@ -265,17 +265,18 @@ now you can combine LayoutBuilder and AnchorsBuilder for add subview and make co
   func someUpdate() {
     activation = layout().update(fromActivation: activation)
   }
+  ```
 
-### `Layoutable`
+### Layoutable
 
-`Layoutable`  is holding position of `SwiftUI.View` in **SwiftLayout** in some viewpoint.
+In **SwiftLayout**, `Layoutable` plays a role similar to that of `View` in **SwiftUI**.
 
-Implementing this protocol, you needs be write following codes:
+For implementing `Layoutable`, you needs be write following codes
 
 - `var activation: Activation?`
 
 - `@LayoutBuilder var layout: some Layout { ... }`: @LayoutBuilder may not required.
-
+  
   ```swift
   class SomeView: UIView, Layoutable {
     var activation: Activation?
@@ -284,7 +285,7 @@ Implementing this protocol, you needs be write following codes:
         ...
       }
     }
-    
+  
     init(frame: CGRect) {
       super.init(frame: frame)
       self.sl.updateLayout() // call active or update of Layout
@@ -292,11 +293,11 @@ Implementing this protocol, you needs be write following codes:
   }
   ```
 
-#### `LayoutProperty`
+### LayoutProperty
 
 Builders of SwiftLayout is DSL languages, so you can perform if, switch case, for etc.
 
-so, if some states of values affects to layout of view, you need to call `updateLayout` of `Layoutable` in right timing and position:
+However, in order to reflect the state change in the layout of the view, you must directly call the `updateLayout` method of the `sl` property provided by `Layoutable` when necessary.
 
 ```swift
 var showMiddleName: Bool = false {
@@ -316,32 +317,32 @@ var layout: some Layout {
 }
 ```
 
-- if **showMiddleName** is false, **middleNameLabel** is not added to superview or removed from superview.
+If `showMiddleName` is false, `middleNameLabel` is not added to the super view, and if it is already added, it is removed from the super view.
 
-- you can update automatically by using `LayoutProperty`:
-
-  ```swift
-  @LayoutProeprty var showMiddleName: Bool = false // change value call updateLayout of Layoutable
-  
-  var layout: some Layout {
-    self {
-      firstNameLabel
-      if showMiddleName {
-        middleNameLabel
-      }
-      lastNameLabel
-    }
-  }
-  ```
-
-### animations
-
-you can start animation by updating constraint in `Layoutable`, And the method is as easy as the following:
-
-- just call `updateLayout` and set true for `forceLayout` parameter in animation block of `UIView`
+In this case, you can update automatically by using `LayoutProperty`:
 
 ```swift
-final class PreviewView: UIView, LayoutBuilding {
+@LayoutProeprty var showMiddleName: Bool = false // change value call updateLayout of Layoutable
+
+var layout: some Layout {
+  self {
+    firstNameLabel
+    if showMiddleName {
+      middleNameLabel
+    }
+    lastNameLabel
+  }
+}
+```
+
+### Animations
+
+you can start animation by updating constraint in `Layoutable`, And the method is as easy as the following
+
+- In the animation block of `UIView`, call `updateLayout` with `forceLayout` parameter set to true.
+
+```swift
+final class PreviewView: UIView, Layoutable {
   var capTop = true {
     didSet {
       // start animation for change constraints
@@ -350,53 +351,53 @@ final class PreviewView: UIView, LayoutBuilding {
       }
     }
   }
-    
+
   let cap = UIButton()
   let shoe = UIButton()
   let title = UILabel()
-    
+
   var top: UIButton { capTop ? cap : shoe }
   var bottom: UIButton { capTop ? shoe : cap }
-    
+
   var activation: Activation?
-    
+
   var layout: some Layout {
     self {
       top.anchors {
         Anchors.cap()
       }
       bottom.anchors {
-        Anchors(.top).equalTo(top.bottomAnchor)
-        Anchors(.height).equalTo(top)
+        Anchors.top.equalTo(top.bottomAnchor)
+        Anchors.height.equalTo(top)
         Anchors.shoe()
       }
       title.config { label in
         label.text = "Top Title"
-        UIView.transition(with: label, duration: 1.0, options: [.beginFromCurrentState, .transitionCrossDissolve], animations: {
+        UIView.transition(with: label, duration: 1.0, options: [.beginFromCurrentState, .transitionCrossDissolve]) {
           label.textColor = self.capTop ? .black : .yellow
-        }, completion: nil)
+        }
       }.anchors {
-        Anchors(.centerX, .centerY).equalTo(top)
+        Anchors.center(top)
       }
       UILabel().config { label in
         label.text = "Bottom Title"
         label.textColor = capTop ? .yellow : .black
       }.identifying("title.bottom").anchors {
-        Anchors(.centerX, .centerY).equalTo(bottom)
+        Anchors.center(bottom)
       }
     }
   }
-    
+
   override init(frame: CGRect) {
     super.init(frame: frame)
     initViews()
   }
-    
+
   required init?(coder: NSCoder) {
     super.init(coder: coder)
     initViews()
   }
-    
+
   func initViews() {
     cap.backgroundColor = .yellow
     shoe.backgroundColor = .black
@@ -410,11 +411,8 @@ final class PreviewView: UIView, LayoutBuilding {
     updateIdentifiers(rootObject: self)
     self.sl.updateLayout()
   }
-    
 }
 ```
-
-
 
 [![animation in update layout](https://user-images.githubusercontent.com/3011832/156908073-d4089c26-928f-41d9-961b-8b04d7dcde37.png)](https://user-images.githubusercontent.com/3011832/156908065-8d6bcebd-553b-490b-903b-6e375d4c97a3.mp4)
 
@@ -437,24 +435,28 @@ contentView {
 
 ### `identifying` of `UIView` and `Layout`
 
-set `accessibilityIdentifier` of view for (mostly) debugging pupose.
+You can set `accessibilityIdentifier` and use that instead of the view reference.
 
 ```swift
 contentView {
   nameLabel.identifying("name").anchors {
-    Anchors.allSides()
+    Anchors.cap()
+  }
+  ageLabel.anchors {
+    Anchors.top.equalTo("name", attribute: .bottom)
+    Anchors.shoe()
   }
 }
 ```
 
-- nameLabel in description of constraints show **name**
+- From a debugging point, if you set identifier, the corresponding string is output together in the description of NSLayoutConstraint.
 
 ### SwiftLayoutPrinter
 
 for several reasons, you want current view state migration to SwiftLayout. 
 
 - printing UIView hierarchy and autolayout constraint relationship to SwiftLayout syntax
-
+  
   ```swift
   let contentView: UIView
   let firstNameLabel: UILabel
@@ -462,9 +464,9 @@ for several reasons, you want current view state migration to SwiftLayout.
   ```
 
 - You can use SwiftLayoutPrinter in source or debug console:
-
+  
   > (lldb) po SwiftLayoutPrinter(contentView)
-
+  
   ```swift
   0x01234567890:UIView {
     0x01234567891:UILabel
@@ -472,7 +474,7 @@ for several reasons, you want current view state migration to SwiftLayout.
   ```
 
 - printing labels for view by name of view property is very convenient.
-
+  
   ```swift
   class SomeView {
     let root: UIView // subview of SomeView
@@ -481,9 +483,9 @@ for several reasons, you want current view state migration to SwiftLayout.
   }
   let someView = SomeView()
   ```
-
+  
   > po SwiftLayoutPrinter(someView, tags: [someView: "SomeView"]).print(.nameOnly)
-
+  
   ```swift
   SomeView {
     root {
@@ -492,7 +494,6 @@ for several reasons, you want current view state migration to SwiftLayout.
     }
   }
   ```
-  
 
 <img src="https://user-images.githubusercontent.com/3011832/157275626-c5f5672f-0a4a-4f45-8800-5ea3871c9dac.png" alt="thateasy" style="zoom:25%;" />
 
