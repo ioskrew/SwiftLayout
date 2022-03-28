@@ -16,17 +16,28 @@ public protocol AnchorsAttribute {
 public enum AnchorsXAxisAttribute: AnchorsAttribute {
     case centerX
     case leading
+    case trailing
     case left
     case right
-    case trailing
+    case centerXWithinMargins
+    case leftMargin
+    case rightMargin
+    case leadingMargin
+    case trailingMargin
+    
     
     public init?(attribute: NSLayoutConstraint.Attribute) {
         switch attribute {
         case .centerX: self = .centerX
         case .leading: self = .leading
+        case .trailing: self = .trailing
         case .left: self = .left
         case .right: self = .right
-        case .trailing: self = .trailing
+        case .centerXWithinMargins: self = .centerXWithinMargins
+        case .leftMargin: self = .leftMargin
+        case .rightMargin: self = .rightMargin
+        case .leadingMargin: self = .leadingMargin
+        case .trailingMargin: self = .trailingMargin
         default: return nil
         }
     }
@@ -38,35 +49,50 @@ public enum AnchorsXAxisAttribute: AnchorsAttribute {
         case .left: return .left
         case .right: return .right
         case .trailing: return .trailing
+        case .centerXWithinMargins: return .centerXWithinMargins
+        case .leftMargin: return .leftMargin
+        case .rightMargin: return .rightMargin
+        case .leadingMargin: return .leadingMargin
+        case .trailingMargin: return .trailingMargin
         }
     }
 }
 
 public enum AnchorsYAxisAttribute: AnchorsAttribute {
     case centerY
-    case firstBaseline
-    case lastBaseline
     case top
     case bottom
+    case firstBaseline
+    case lastBaseline
+    case centerYWithinMargins
+    case topMargin
+    case bottomMargin
+    
     
     public init?(attribute: NSLayoutConstraint.Attribute) {
         switch attribute {
-        case .bottom: self = .bottom
         case .centerY: self = .centerY
+        case .top: self = .top
+        case .bottom: self = .bottom
         case .firstBaseline: self = .firstBaseline
         case .lastBaseline: self = .lastBaseline
-        case .top: self = .top
+        case .centerYWithinMargins: self = .centerYWithinMargins
+        case .topMargin: self = .topMargin
+        case .bottomMargin: self = .bottomMargin
         default: return nil
         }
     }
     
     public var attribute: NSLayoutConstraint.Attribute {
         switch self {
-        case .bottom: return .bottom
         case .centerY: return .centerY
+        case .top: return .top
+        case .bottom: return .bottom
         case .firstBaseline: return .firstBaseline
         case .lastBaseline: return .lastBaseline
-        case .top: return .top
+        case .centerYWithinMargins: return .centerYWithinMargins
+        case .topMargin: return .topMargin
+        case .bottomMargin: return .bottomMargin
         }
     }
 }

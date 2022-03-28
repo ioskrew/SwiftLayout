@@ -107,9 +107,14 @@ extension AnchorsExpression where Attribute == AnchorsXAxisAttribute {
     
     public var centerX: Self { Self.init(from: self, appendedAttribute: .centerX) }
     public var leading: Self { Self.init(from: self, appendedAttribute: .leading) }
+    public var trailing: Self { Self.init(from: self, appendedAttribute: .trailing) }
     public var left: Self { Self.init(from: self, appendedAttribute: .left) }
     public var right: Self { Self.init(from: self, appendedAttribute: .right) }
-    public var trailing: Self { Self.init(from: self, appendedAttribute: .trailing) }
+    public var centerXWithinMargins: Self { Self.init(from: self, appendedAttribute: .centerXWithinMargins) }
+    public var leftMargin: Self { Self.init(from: self, appendedAttribute: .leftMargin) }
+    public var rightMargin: Self { Self.init(from: self, appendedAttribute: .rightMargin) }
+    public var leadingMargin: Self { Self.init(from: self, appendedAttribute: .leadingMargin) }
+    public var trailingMargin: Self { Self.init(from: self, appendedAttribute: .trailingMargin) }
 
     public func equalTo(_ layoutAnchor: NSLayoutXAxisAnchor, constant: CGFloat = .zero) -> Self {
         let tmpConstraint = UIView().leadingAnchor.constraint(equalTo: layoutAnchor)
@@ -135,13 +140,16 @@ extension AnchorsExpression where Attribute == AnchorsYAxisAttribute {
     init(yAxis attributes: Attribute...) {
         self.attributes = attributes
     }
-    
+
     public var centerY: Self { Self.init(from: self, appendedAttribute: .centerY) }
-    public var firstBaseline: Self { Self.init(from: self, appendedAttribute: .firstBaseline) }
-    public var lastBaseline: Self { Self.init(from: self, appendedAttribute: .lastBaseline) }
     public var top: Self { Self.init(from: self, appendedAttribute: .top) }
     public var bottom: Self { Self.init(from: self, appendedAttribute: .bottom) }
-
+    public var firstBaseline: Self { Self.init(from: self, appendedAttribute: .firstBaseline) }
+    public var lastBaseline: Self { Self.init(from: self, appendedAttribute: .lastBaseline) }
+    public var centerYWithinMargins: Self { Self.init(from: self, appendedAttribute: .centerYWithinMargins) }
+    public var topMargin: Self { Self.init(from: self, appendedAttribute: .topMargin) }
+    public var bottomMargin: Self { Self.init(from: self, appendedAttribute: .bottomMargin) }
+    
     public func equalTo(_ layoutAnchor: NSLayoutYAxisAnchor, constant: CGFloat = .zero) -> Self {
         let tmpConstraint = UIView().topAnchor.constraint(equalTo: layoutAnchor)
         let target = targetFromConstraint(tmpConstraint)
