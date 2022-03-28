@@ -609,7 +609,7 @@ extension LayoutDSLTests {
             module1view1.anchors {
                 Anchors.leading
                 Anchors.top
-                Anchors.dimensions(.height, .width).multiplier(0.5)
+                Anchors.height.width.multiplier(0.5)
             }.sublayout {
                 module1view2.anchors {
                     Anchors.centerY
@@ -635,7 +635,7 @@ extension LayoutDSLTests {
             module2view1.anchors {
                 Anchors.top
                 Anchors.trailing
-                Anchors.dimensions(.height, .width).multiplier(0.5)
+                Anchors.height.width.multiplier(0.5)
             }.sublayout {
                 module2view2.anchors {
                     Anchors.centerY

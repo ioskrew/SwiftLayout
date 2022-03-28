@@ -180,7 +180,7 @@ extension AnchorsDSLTests {
                 Anchors.allSides()
             }.sublayout {
                 blue.anchors {
-                    Anchors.center()
+                    Anchors.center().multiplier(0.5)
                 }
             }
         }.finalActive()
@@ -192,8 +192,8 @@ extension AnchorsDSLTests {
         red.trailing == root.trailing
         """.descriptions)
         XCTAssertEqual(red.constraints.shortDescription, """
-        blue.centerX == red.centerX
-        blue.centerY == red.centerY
+        blue.centerX == red.centerX x 0.5
+        blue.centerY == red.centerY x 0.5
         """.descriptions)
     }
     
@@ -377,18 +377,18 @@ extension AnchorsDSLTests {
     func testDuplicateAnchorBuilder() {
         root {
             red.anchors {
-                Anchors.yAxis(.top, .bottom)
+                Anchors.top.bottom
                 Anchors.leading
-                Anchors.yAxis(.top, .bottom)
+                Anchors.top.bottom
                 Anchors.leading
             }.anchors {
                 Anchors.trailing.equalTo(blue, attribute: .leading)
                 Anchors.trailing.equalTo(blue, attribute: .leading)
             }
             blue.anchors {
-                Anchors.yAxis(.top, .bottom)
+                Anchors.top.bottom
                 Anchors.trailing
-                Anchors.yAxis(.top, .bottom)
+                Anchors.top.bottom
                 Anchors.trailing
             }
         }.finalActive()

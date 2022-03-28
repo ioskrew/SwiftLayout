@@ -169,7 +169,7 @@ extension PrintingTests {
     func testPrintWithSimpleAnchors() {
         let root = UIView().viewTag.root
         activation = root.anchors {
-            Anchors.dimensions(.width, .height)
+            Anchors.width.height
         }.active()
         
         let expect = """
@@ -323,7 +323,7 @@ extension PrintingTests {
         let child = UIView().viewTag.child
         activation = root {
             child.anchors {
-                Anchors.yAxis(.top, .bottom).equalTo(root.safeAreaLayoutGuide)
+                Anchors.top.bottom.equalTo(root.safeAreaLayoutGuide)
                 Anchors.leading
             }
         }.active()
@@ -431,7 +431,7 @@ extension PrintingTests {
         func layout() -> some Layout {
             root {
                 child.anchors {
-                    Anchors.dimensions(.width, .height)
+                    Anchors.width.height
                 }
             }
         }

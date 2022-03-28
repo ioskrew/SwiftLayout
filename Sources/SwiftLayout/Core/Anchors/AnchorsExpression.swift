@@ -33,6 +33,15 @@ public struct AnchorsExpression<Attribute: AnchorsAttribute> {
         self.multiplier = multiplier
     }
     
+    init(from anchors: AnchorsExpression<Attribute>, appendedAttribute: Attribute) {
+        self.attributes = anchors.attributes + [appendedAttribute]
+        self.relation = anchors.relation
+        self.toItem = anchors.toItem
+        self.toAttribute = anchors.toAttribute
+        self.constant = anchors.constant
+        self.multiplier = anchors.multiplier
+    }
+    
     var constraints: [Constraint] {
         attributes.map {
             Constraint(
@@ -96,9 +105,11 @@ extension AnchorsExpression where Attribute == AnchorsXAxisAttribute {
         self.attributes = attributes
     }
     
-    init(xAxis attributes: [Attribute]) {
-        self.attributes = attributes
-    }
+    public var centerX: Self { Self.init(from: self, appendedAttribute: .centerX) }
+    public var leading: Self { Self.init(from: self, appendedAttribute: .leading) }
+    public var left: Self { Self.init(from: self, appendedAttribute: .left) }
+    public var right: Self { Self.init(from: self, appendedAttribute: .right) }
+    public var trailing: Self { Self.init(from: self, appendedAttribute: .trailing) }
 
     public func equalTo(_ layoutAnchor: NSLayoutXAxisAnchor, constant: CGFloat = .zero) -> Self {
         let tmpConstraint = UIView().leadingAnchor.constraint(equalTo: layoutAnchor)
@@ -125,9 +136,11 @@ extension AnchorsExpression where Attribute == AnchorsYAxisAttribute {
         self.attributes = attributes
     }
     
-    init(yAxis attributes: [Attribute]) {
-        self.attributes = attributes
-    }
+    public var centerY: Self { Self.init(from: self, appendedAttribute: .centerY) }
+    public var firstBaseline: Self { Self.init(from: self, appendedAttribute: .firstBaseline) }
+    public var lastBaseline: Self { Self.init(from: self, appendedAttribute: .lastBaseline) }
+    public var top: Self { Self.init(from: self, appendedAttribute: .top) }
+    public var bottom: Self { Self.init(from: self, appendedAttribute: .bottom) }
 
     public func equalTo(_ layoutAnchor: NSLayoutYAxisAnchor, constant: CGFloat = .zero) -> Self {
         let tmpConstraint = UIView().topAnchor.constraint(equalTo: layoutAnchor)
@@ -153,14 +166,13 @@ extension AnchorsExpression where Attribute == AnchorsDimensionAttribute {
     init(dimensions attributes: Attribute...) {
         self.attributes = attributes
     }
-    
-    init(dimensions attributes: [Attribute]) {
-        self.attributes = attributes
-    }
 
     public func equalTo(constant: CGFloat) -> Self {
         Self.init(from: self, relation: .equal, toItem: .deny, constant: constant)
     }
+    
+    public var height: Self { Self.init(from: self, appendedAttribute: .height) }
+    public var width: Self { Self.init(from: self, appendedAttribute: .width) }
     
     public func equalTo(_ layoutAnchor: NSLayoutDimension, constant: CGFloat = .zero) -> Self {
         let tmpConstraint = UIView().widthAnchor.constraint(equalTo: layoutAnchor)

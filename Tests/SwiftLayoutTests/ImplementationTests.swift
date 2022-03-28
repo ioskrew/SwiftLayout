@@ -360,7 +360,7 @@ extension ImplementationTests {
 
         let constraints1 = AnchorsContainer(Anchors.top).constraints(item: child, toItem: root)
         let constraints2 = AnchorsContainer(Anchors.leading).constraints(item: child, toItem: root)
-        let constraints3 = AnchorsContainer(Anchors.dimensions(.width, .height).equalTo(constant: 98)).constraints(item: child, toItem: nil)
+        let constraints3 = AnchorsContainer(Anchors.width.height.equalTo(constant: 98)).constraints(item: child, toItem: nil)
 
         NSLayoutConstraint.activate(constraints1)
         NSLayoutConstraint.activate(constraints2)
@@ -683,7 +683,7 @@ extension ImplementationTests {
         fixedView.translatesAutoresizingMaskIntoConstraints = false
         window.addSubview(fixedView)
         fixedView.anchors {
-            Anchors.dimensions(.width, .height).equalTo(constant: 24.0)
+            Anchors.width.height.equalTo(constant: 24.0)
         }.finalActive()
         
         XCTAssertEqual(SwiftLayoutPrinter(fixedView, tags: [fixedView: "fixedView"]).print(), """

@@ -55,4 +55,11 @@ public final class AnchorsContainer {
             return constraint
         }
     }
+    
+    public func multiplier(_ multiplier: CGFloat) -> Self {
+        for i in 0..<constraints.count {
+            constraints[i].multiplier = multiplier
+        }
+        return self
+    }
 }

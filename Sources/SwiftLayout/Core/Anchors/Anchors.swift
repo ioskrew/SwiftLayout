@@ -21,18 +21,6 @@ public enum Anchors {
     public static var height: AnchorsExpression<AnchorsDimensionAttribute> { AnchorsExpression(dimensions: .height) }
     public static var width: AnchorsExpression<AnchorsDimensionAttribute> { AnchorsExpression(dimensions: .width) }
     
-    public static func xAxis(_ attributes: AnchorsXAxisAttribute...) -> AnchorsExpression<AnchorsXAxisAttribute> {
-        AnchorsExpression(xAxis: attributes)
-    }
-    
-    public static func yAxis(_ attributes: AnchorsYAxisAttribute...) -> AnchorsExpression<AnchorsYAxisAttribute> {
-        return AnchorsExpression(yAxis: attributes)
-    }
-    
-    public static func dimensions(_ attributes: AnchorsDimensionAttribute...) -> AnchorsExpression<AnchorsDimensionAttribute> {
-        AnchorsExpression(dimensions: attributes)
-    }
-    
     public static func horizontal(offset: CGFloat = .zero) -> AnchorsContainer {
         let container = AnchorsContainer()
         container.append(AnchorsExpression(xAxis: .leading).equalToSuper(constant: offset))
