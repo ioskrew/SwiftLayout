@@ -37,142 +37,117 @@ final class AnchorsDSLTests: XCTestCase {
 }
 
 extension AnchorsDSLTests {
-//    func testAnchorsEqualToSuperview() {
-//        let attributes: [NSLayoutConstraint.Attribute] = [.top, .bottom, .leading, .trailing, .left, .right, .centerX, .centerY, .width, .height, .firstBaseline, .lastBaseline]
-//        for attribute in attributes {
-//            context("anchor for \(attribute.description) \(constantDescription)") {
-//                root {
-//                    red.anchors {
-//                        Anchors(attribute).setConstant(constant)
-//                    }
-//                }.finalActive()
-//                
-//                XCTAssertEqual(root.constraints.shortDescription, """
-//                red.\(attribute.description) == root.\(attribute.description) \(constantDescription)
-//                """.descriptions)
-//            }
-//        }
-//        
-//        context("anchor for ") {
-//            let attributes: [NSLayoutConstraint.Attribute] = [.topMargin, .bottomMargin, .leadingMargin, .trailingMargin, .leftMargin, .rightMargin, .centerXWithinMargins, .centerYWithinMargins]
-//            for attribute in attributes {
-//                context("\(attribute.description)  \(constantDescription)") {
-//                    root {
-//                        red.anchors {
-//                            Anchors(attribute).setConstant(constant)
-//                        }
-//                    }.finalActive()
-//                    XCTAssertEqual(root.constraints.shortDescription, """
-//                    red.\(attribute) == root.\(attribute) \(constantDescription)
-//                    root.bottom == root.layoutMarginsGuide.bottom + 8.0
-//                    root.layoutMarginsGuide.left == root.left + 8.0
-//                    root.right == root.layoutMarginsGuide.right + 8.0
-//                    root.layoutMarginsGuide.top == root.top + 8.0
-//                    """.descriptions)
-//                }
-//            }
-//        }
-//    }
-//    
-//    func testAnchorsGreaterThanOrEqualToSuperview() {
-//        let attributes: [NSLayoutConstraint.Attribute] = [.top, .bottom, .leading, .trailing, .left, .right, .centerX, .centerY, .firstBaseline, .lastBaseline]
-//        for attribute in attributes {
-//            context("anchor for \(attribute.description) \(constantDescription)") {
-//                root {
-//                    red.anchors {
-//                        Anchors(attribute).greaterThanOrEqualTo(constant: constant)
-//                    }
-//                }.finalActive()
-//                
-//                XCTAssertEqual(root.constraints.shortDescription, """
-//                red.\(attribute.description) >= root.\(attribute.description) \(constantDescription)
-//                """.descriptions)
-//            }
-//        }
-//        
-//        context("anchor for width and height") {
-//            root {
-//                red.anchors {
-//                    Anchors(.width, .height).greaterThanOrEqualTo(root, constant: constant)
-//                }
-//            }.finalActive()
-//            
-//            XCTAssertEqual(root.constraints.shortDescription, """
-//            red.width >= root.width \(constantDescription)
-//            red.height >= root.height \(constantDescription)
-//            """.descriptions)
-//        }
-//        
-//        context("anchor for ") {
-//            let attributes: [NSLayoutConstraint.Attribute] = [.topMargin, .bottomMargin, .leadingMargin, .trailingMargin, .leftMargin, .rightMargin, .centerXWithinMargins, .centerYWithinMargins]
-//            for attribute in attributes {
-//                context(attribute.description) {
-//                    root {
-//                        red.anchors {
-//                            Anchors(attribute).greaterThanOrEqualTo().setConstant(constant)
-//                        }
-//                    }.finalActive()
-//                    XCTAssertEqual(root.constraints.shortDescription, """
-//                    red.\(attribute) >= root.\(attribute) \(constantDescription)
-//                    root.bottom == root.layoutMarginsGuide.bottom + 8.0
-//                    root.layoutMarginsGuide.left == root.left + 8.0
-//                    root.right == root.layoutMarginsGuide.right + 8.0
-//                    root.layoutMarginsGuide.top == root.top + 8.0
-//                    """.descriptions)
-//                }
-//            }
-//        }
-//    }
-//    
-//    func testAnchorsLessThanOrEqualToSuperview() {
-//        let attributes: [NSLayoutConstraint.Attribute] = [.top, .bottom, .leading, .trailing, .left, .right, .centerX, .centerY, .firstBaseline, .lastBaseline]
-//        for attribute in attributes {
-//            context("anchor for \(attribute.description)") {
-//                root {
-//                    red.anchors {
-//                        Anchors(attribute).lessThanOrEqualTo().setConstant(constant)
-//                    }
-//                }.finalActive()
-//                
-//                XCTAssertEqual(root.constraints.shortDescription, """
-//                red.\(attribute.description) <= root.\(attribute.description) \(constantDescription)
-//                """.descriptions)
-//            }
-//        }
-//        
-//        context("anchor for width and height") {
-//            root {
-//                red.anchors {
-//                    Anchors(.width, .height).lessThanOrEqualTo(root, constant: constant)
-//                }
-//            }.finalActive()
-//            
-//            XCTAssertEqual(root.constraints.shortDescription, """
-//            red.width <= root.width \(constantDescription)
-//            red.height <= root.height \(constantDescription)
-//            """.descriptions)
-//        }
-//        
-//        context("anchor for ") {
-//            let attributes: [NSLayoutConstraint.Attribute] = [.topMargin, .bottomMargin, .leadingMargin, .trailingMargin, .leftMargin, .rightMargin, .centerXWithinMargins, .centerYWithinMargins]
-//            for attribute in attributes {
-//                context(attribute.description) {
-//                    root {
-//                        red.anchors {
-//                            Anchors(attribute).lessThanOrEqualTo().setConstant(constant)
-//                        }
-//                    }.finalActive()
-//                    XCTAssertEqual(root.constraints.shortDescription, """
-//                    red.\(attribute) <= root.\(attribute) \(constantDescription)
-//                    root.bottom == root.layoutMarginsGuide.bottom + 8.0
-//                    root.layoutMarginsGuide.left == root.left + 8.0
-//                    root.right == root.layoutMarginsGuide.right + 8.0
-//                    root.layoutMarginsGuide.top == root.top + 8.0
-//                    """.descriptions)
-//                }
-//            }
-//        }
-//    }
+    func testAnchorsEqualToSuperview() {
+        let xaxis = ["centerX": Anchors.centerX,
+                     "leading": Anchors.leading,
+                     "trailing": Anchors.trailing,
+                     "left": Anchors.left,
+                     "right": Anchors.right]
+        for (key, x) in xaxis {
+            context("x anchor for \(key) \(constantDescription)") {
+                root {
+                    red.anchors {
+                        x.constant(constant)
+                    }
+                }.finalActive()
+                
+                XCTAssertEqual(root.constraints.shortDescription, """
+                red.\(key) == root.\(key) \(constantDescription)
+                """.descriptions)
+            }
+        }
+        
+        let yaxis = ["centerY": Anchors.centerY,
+                     "top": Anchors.top,
+                     "bottom": Anchors.bottom,
+                     "firstBaseline": Anchors.firstBaseline,
+                     "lastBaseline": Anchors.lastBaseline]
+        for (key, y) in yaxis {
+            context("y anchor for \(key) \(constantDescription)") {
+                root {
+                    red.anchors {
+                        y.constant(constant)
+                    }
+                }.finalActive()
+                
+                XCTAssertEqual(root.constraints.shortDescription, """
+                red.\(key) == root.\(key) \(constantDescription)
+                """.descriptions)
+            }
+        }
+        
+        let dimensions = ["width": Anchors.width,
+                          "height": Anchors.height]
+        for (key, dimension) in dimensions {
+            context("dimension anchor for \(key) \(constantDescription)") {
+                root {
+                    red.anchors {
+                        dimension.constant(constant)
+                    }
+                }.finalActive()
+                
+                XCTAssertEqual(root.constraints.shortDescription, """
+                red.\(key) == root.\(key) \(constantDescription)
+                """.descriptions)
+            }
+        }
+    }
+    
+    func testAnchorsLessThanOrEqualToSuperview() {
+        let xaxis = ["centerX": Anchors.centerX,
+                     "leading": Anchors.leading,
+                     "trailing": Anchors.trailing,
+                     "left": Anchors.left,
+                     "right": Anchors.right]
+        for (key, x) in xaxis {
+            context("x anchor for \(key) \(constantDescription)") {
+                root {
+                    red.anchors {
+                        x.lessThanOrEqualToSuper().constant(constant)
+                    }
+                }.finalActive()
+                
+                XCTAssertEqual(root.constraints.shortDescription, """
+                red.\(key) <= root.\(key) \(constantDescription)
+                """.descriptions)
+            }
+        }
+        
+        let yaxis = ["centerY": Anchors.centerY,
+                     "top": Anchors.top,
+                     "bottom": Anchors.bottom,
+                     "firstBaseline": Anchors.firstBaseline,
+                     "lastBaseline": Anchors.lastBaseline]
+        for (key, y) in yaxis {
+            context("y anchor for \(key) \(constantDescription)") {
+                root {
+                    red.anchors {
+                        y.lessThanOrEqualToSuper().constant(constant)
+                    }
+                }.finalActive()
+                
+                XCTAssertEqual(root.constraints.shortDescription, """
+                red.\(key) <= root.\(key) \(constantDescription)
+                """.descriptions)
+            }
+        }
+        
+        let dimensions = ["width": Anchors.width,
+                          "height": Anchors.height]
+        for (key, dimension) in dimensions {
+            context("dimension anchor for \(key) \(constantDescription)") {
+                root {
+                    red.anchors {
+                        dimension.lessThanOrEqualToSuper().constant(constant)
+                    }
+                }.finalActive()
+                
+                XCTAssertEqual(root.constraints.shortDescription, """
+                red.\(key) <= root.\(key) \(constantDescription)
+                """.descriptions)
+            }
+        }
+    }
     
     func testAnchorsInSublayout() {
         root {
