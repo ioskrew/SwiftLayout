@@ -314,8 +314,8 @@ extension AnchorsDSLTests {
         root {
             red.anchors {
                 Anchors.top
-                Anchors.leading.trailing
                 Anchors.bottom.equalTo(blue, attribute: .top)
+                Anchors.leading.trailing
             }
             blue.anchors {
                 Anchors.bottom
@@ -473,7 +473,7 @@ extension AnchorsDSLTests {
             red.anchors {
                 Anchors.top.bottom.centerY
                 Anchors.leading
-                Anchors.trailing.constant(-14.0)
+                Anchors.trailing.equalToSuper(constant: -14.0)
                 Anchors.height.equalToSuper()
             }
         }
@@ -501,8 +501,8 @@ extension AnchorsDSLTests {
         root {
             red.anchors {
                 Anchors.top.centerY.greaterThanOrEqualToSuper()
-                Anchors.leading.trailing.centerX.greaterThanOrEqualToSuper()
                 Anchors.bottom.greaterThanOrEqualToSuper(constant: 13.0)
+                Anchors.leading.trailing.centerX.greaterThanOrEqualToSuper()
                 Anchors.width.height.greaterThanOrEqualToSuper()
             }
         }
@@ -530,8 +530,8 @@ extension AnchorsDSLTests {
         root {
             red.anchors {
                 Anchors.top.centerY.lessThanOrEqualToSuper()
-                Anchors.leading.trailing.centerX.lessThanOrEqualToSuper()
                 Anchors.bottom.lessThanOrEqualToSuper(constant: 13.0)
+                Anchors.leading.trailing.centerX.lessThanOrEqualToSuper()
                 Anchors.width.height.lessThanOrEqualToSuper()
             }
         }
