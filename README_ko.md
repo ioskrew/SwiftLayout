@@ -353,6 +353,8 @@ final class PreviewView: UIView, Layoutable {
       }
     }
   }
+  // or just use the convenient propertyWrapper like below
+  // @AnimatableLayoutProperty(duration: 1.0) var capTop = true
 
   let cap = UIButton()
   let shoe = UIButton()
