@@ -489,8 +489,15 @@ for several reasons, you want current view state migration to SwiftLayout.
   ```swift
   SomeView {
     root {
-      child
-      friend
+      child.anchors {
+        Anchors.top
+        Anchors.leading.trailing
+      }
+      friend.anchors {
+        Anchors.top.equalTo(child, attribute: .bottom)
+        Anchors.bottom
+        Anchors.leading.trailing
+      }
     }
   }
   ```

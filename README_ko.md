@@ -492,8 +492,15 @@ xib혹은 UIKit으로 직접 구현되어 있는 뷰를 SwiftLayout으로 마이
   ```swift
   SomeView {
     root {
-      child
-      friend
+      child.anchors {
+        Anchors.top
+        Anchors.leading.trailing
+      }
+      friend.anchors {
+        Anchors.top.equalTo(child, attribute: .bottom)
+        Anchors.bottom
+        Anchors.leading.trailing
+      }
     }
   }
   ```
