@@ -89,25 +89,31 @@ enum AnchorsDescriber {
             functionDescription.append(")")
             return functionDescription
         }
+        
         private static func describeValues(_ token: AnchorToken) -> [String] {
             var descriptions: [String] = []
+            if isEnableHideRelation(token), token.constant != 0.0 {
+                descriptions.append("constant(\(token.constant))")
+            }
             if token.multiplier != 1.0 {
                 descriptions.append("multiplier(\(token.multiplier))")
             }
             return descriptions
         }
+        
         static func describeAnchorToken(_ tokens: [AnchorToken]) -> String {
             var descriptions: [String] = ["Anchors"]
             descriptions.append(tokens.map(\.firstAttribute.description).joined(separator: "."))
-            if isNeedRelationFunction(tokens[0]) {
+            if !isEnableHideRelation(tokens[0]) {
                 descriptions.append(describeRelationFunction(tokens[0]))
             }
             descriptions.append(contentsOf: describeValues(tokens[0]))
             return descriptions.joined(separator: ".")
         }
         
-        private static func isNeedRelationFunction(_ token: AnchorToken) -> Bool {
-            !(token.relation == .equal && token.secondTagIsSuperview && token.firstAttributeIsSecondAttribute && token.constant == 0.0)
+        private static func isEnableHideRelation(_ token: AnchorToken) -> Bool {
+            token.firstAttributeIsSecondAttribute && token.secondTagIsSuperview && token.relation == .equal
         }
+        
     }
 }

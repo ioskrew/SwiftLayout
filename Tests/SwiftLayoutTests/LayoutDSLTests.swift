@@ -152,17 +152,22 @@ extension LayoutDSLTests {
         }.active().store(&activation)
         
         let expect = """
-        root {
+        oot {
             red.anchors {
-                Anchors(.top, .bottom, .leading, .trailing)
+                Anchors.top.bottom
+                Anchors.leading.trailing
             }.sublayout {
                 blue.anchors {
-                    Anchors(.top, .leading).equalTo(constant: 8.0)
-                    Anchors(.bottom, .trailing).equalTo(constant: -8.0)
+                    Anchors.top.equalToSuper(constant: 8.0)
+                    Anchors.bottom.equalToSuper(constant: -8.0)
+                    Anchors.leading.equalToSuper(constant: 8.0)
+                    Anchors.trailing.equalToSuper(constant: -8.0)
                 }.sublayout {
                     green.anchors {
-                        Anchors(.top, .leading).equalTo(constant: 16.0)
-                        Anchors(.bottom, .trailing).equalTo(constant: -16.0)
+                        Anchors.top.equalToSuper(constant: 16.0)
+                        Anchors.bottom.equalToSuper(constant: -16.0)
+                        Anchors.leading.equalToSuper(constant: 16.0)
+                        Anchors.trailing.equalToSuper(constant: -16.0)
                     }
                 }
             }

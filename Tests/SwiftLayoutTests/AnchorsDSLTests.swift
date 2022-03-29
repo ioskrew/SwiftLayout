@@ -473,7 +473,7 @@ extension AnchorsDSLTests {
             red.anchors {
                 Anchors.top.bottom.centerY
                 Anchors.leading
-                Anchors.trailing.equalToSuper(constant: -14.0)
+                Anchors.trailing.constant(-14.0)
                 Anchors.height
             }
         }
@@ -540,4 +540,43 @@ extension AnchorsDSLTests {
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
     }
     
+    func testAnchorsHideEqualToSuper() {
+        root {
+            red.anchors {
+                Anchors.top.constant(24.0)
+            }
+        }.finalActive()
+        
+        XCTAssertEqual(root.constraints.shortDescription, """
+        red.top == root.top + 24.0
+        """.descriptions)
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+        root {
+            red.anchors {
+                Anchors.top.constant(24.0)
+            }
+        }
+        """.tabbed)
+    }
+    
+    func testAnchorsLessThanOrEqualToSuper() {
+        root {
+            red.anchors {
+                Anchors.top.lessThanOrEqualToSuper(constant: 24.0)
+            }
+        }.finalActive()
+        
+        XCTAssertEqual(root.constraints.shortDescription, """
+        red.top <= root.top + 24.0
+        """.descriptions)
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+        root {
+            red.anchors {
+                Anchors.top.lessThanOrEqualToSuper(constant: 24.0)
+            }
+        }
+        """.tabbed)
+    }
 }
