@@ -1,5 +1,6 @@
 import XCTest
 import SwiftLayout
+import SwiftLayoutPrinter
 
 class PrintingTests: XCTestCase {
     
@@ -468,7 +469,8 @@ extension PrintingTests {
 extension PrintingTests {
     
     func testautomaticIdentifierAssignmentOption() {
-        let cell = Cell().updateIdentifiers()
+        let cell = Cell()
+        SwiftLayoutPrinter(cell).updateIdentifiers()
         
         XCTAssertEqual(cell.profileView.accessibilityIdentifier, "profileView")
         XCTAssertEqual(cell.nameLabel.accessibilityIdentifier, "nameLabel")

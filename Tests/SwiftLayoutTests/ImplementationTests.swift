@@ -1,5 +1,8 @@
 import XCTest
+import _SwiftLayoutUtil
+import SwiftLayoutPrinter
 @testable import SwiftLayout
+
 
 /// test cases for api rules except DSL syntax
 final class ImplementationTests: XCTestCase {
@@ -196,7 +199,8 @@ extension ImplementationTests {
     }
     
     func testAccessibilityIdentifierOption() {
-        let view = IdentifiedView().updateIdentifiers()
+        let view = IdentifiedView()
+        SwiftLayoutPrinter(view).updateIdentifiers()
         XCTAssertEqual(view.contentView.accessibilityIdentifier, "contentView")
         XCTAssertEqual(view.nameLabel.accessibilityIdentifier, "nameLabel")
     }

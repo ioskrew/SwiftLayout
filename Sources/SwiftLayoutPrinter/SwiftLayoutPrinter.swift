@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import _SwiftLayoutUtil
 
 public struct SwiftLayoutPrinter: CustomStringConvertible {
     
@@ -73,6 +74,18 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
         guard let viewToken = ViewToken.Parser.from(view, viewTags: viewTags, options: options) else { return "" }
         let constraints = AnchorToken.Parser.from(view, viewTags: viewTags, options: options)
         return Describer(viewToken, constraints).description
+    }
+    
+    ///
+    /// Set the **accessibilityIdentifier** of all view objects included in the layout hierarchy to the property name of the object that has each views.
+    ///
+    /// - Parameter rootObject: root object for referencing property names
+    /// - Returns: The view itself with the **accessibilityIdentifier** applied
+    ///
+    @discardableResult
+    public func updateIdentifiers(rootObject: AnyObject? = nil) -> Self {
+        IdentifierUpdater.nameOnly.update(rootObject ?? self.view)
+        return self
     }
     
 }

@@ -1,5 +1,6 @@
 import XCTest
 import SwiftLayout
+import SwiftLayoutPrinter
 
 /// test cases for DSL syntax
 final class LayoutDSLTests: XCTestCase {
@@ -261,7 +262,6 @@ extension LayoutDSLTests {
                 }
             }
         }
-        .updateIdentifiers(rootObject: container)
         .active()
         .store(&activation)
         
@@ -277,7 +277,13 @@ extension LayoutDSLTests {
         }
         """.tabbed
         
-        XCTAssertEqual(SwiftLayoutPrinter(container.root).print(options: .onlyIdentifier), expect)
+        SwiftLayoutPrinter(container.root).updateIdentifiers(rootObject: container)
+        
+        XCTAssertEqual(
+            SwiftLayoutPrinter(container.root)
+                .print(options: .onlyIdentifier),
+            expect
+        )
         
         XCTAssertEqual(container.root.accessibilityIdentifier, "root")
         XCTAssertEqual(container.red.accessibilityIdentifier, "red")

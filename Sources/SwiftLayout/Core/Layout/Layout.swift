@@ -55,17 +55,6 @@ extension Layout {
     public var anyLayout: AnyLayout {
         AnyLayout(self)
     }
-    
-    ///
-    /// Set the **accessibilityIdentifier** of all view objects included in the layout hierarchy to the property name of the object that has each views.
-    ///
-    /// - Parameter rootObject: root object for referencing property names
-    /// - Returns: The layout itself with the **accessibilityIdentifier** applied
-    ///
-    public func updateIdentifiers(rootObject: AnyObject) -> some Layout {
-        IdentifierUpdater.nameOnly.update(rootObject)
-        return self
-    }
 }
 
 extension Layout {

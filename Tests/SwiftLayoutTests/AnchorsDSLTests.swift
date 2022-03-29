@@ -1,5 +1,6 @@
 import XCTest
 import SwiftLayout
+import SwiftLayoutPrinter
 
 /// test cases for constraint DSL syntax
 final class AnchorsDSLTests: XCTestCase {
