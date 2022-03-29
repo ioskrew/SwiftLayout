@@ -427,7 +427,9 @@ extension ImplementationTests {
         let expect = """
         root {
             child.anchors {
-                Anchors(.top, .bottom, .leading, .trailing, .width, .height)
+                Anchors.top.bottom
+                Anchors.leading.trailing
+                Anchors.width.height.equalToSuper()
             }
         }
         """
@@ -447,8 +449,9 @@ extension ImplementationTests {
         let expect = """
         root {
             child.anchors {
-                Anchors(.top, .leading, .trailing)
-                Anchors(.height).equalTo(constant: 44.0)
+                Anchors.top
+                Anchors.leading.trailing
+                Anchors.height.equalTo(constant: 44.0)
             }
         }
         """
@@ -664,10 +667,12 @@ extension ImplementationTests {
         let expect = """
         root {
             cap.anchors {
-                Anchors(.top, .leading, .trailing)
+                Anchors.top
+                Anchors.leading.trailing
             }
             shoe.anchors {
-                Anchors(.bottom, .leading, .trailing)
+                Anchors.bottom
+                Anchors.leading.trailing
             }
         }
         """.tabbed
@@ -688,7 +693,7 @@ extension ImplementationTests {
         
         XCTAssertEqual(SwiftLayoutPrinter(fixedView, tags: [fixedView: "fixedView"]).print(), """
         fixedView.anchors {
-            Anchors(.width, .height).equalTo(constant: 24.0)
+            Anchors.width.height.equalTo(constant: 24.0)
         }
         """.tabbed)
     }
@@ -723,7 +728,8 @@ extension ImplementationTests {
         let expect = """
         root {
             child.anchors {
-                Anchors(.top, .bottom, .leading, .trailing)
+                Anchors.top.bottom
+                Anchors.leading.trailing
             }
         }
         """.tabbed
@@ -752,14 +758,17 @@ extension ImplementationTests {
         let expect = """
         root {
             hellolabel.anchors {
-                Anchors(.top, .leading, .trailing)
+                Anchors.top
+                Anchors.leading.trailing
             }.sublayout {
                 lastview.anchors {
-                    Anchors(.top, .bottom, .leading, .trailing)
+                    Anchors.top.bottom
+                    Anchors.leading.trailing
                 }
             }
             button.anchors {
-                Anchors(.bottom, .leading, .trailing)
+                Anchors.bottom
+                Anchors.leading.trailing
             }
         }
         """.tabbed
@@ -788,14 +797,17 @@ extension ImplementationTests {
         let expect = """
         root {
             hellolabel.anchors {
-                Anchors(.top, .leading, .trailing)
+                Anchors.top
+                Anchors.leading.trailing
             }.sublayout {
                 lastview.anchors {
-                    Anchors(.top, .bottom, .leading, .trailing)
+                    Anchors.top.bottom
+                    Anchors.leading.trailing
                 }
             }
             button.anchors {
-                Anchors(.bottom, .leading, .trailing)
+                Anchors.bottom
+                Anchors.leading.trailing
             }
         }
         """.tabbed
