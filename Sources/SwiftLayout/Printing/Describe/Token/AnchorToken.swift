@@ -95,9 +95,9 @@ struct AnchorToken: Hashable {
         let tags: ViewTags
         func tagFromItem(_ item: AnyObject?) -> String {
             if let view = item as? UIView {
-                return tags[view] ?? view.tagDescription
+                return tags.tag(object: view) ?? view.tagDescription
             } else if let view = (item as? UILayoutGuide)?.owningView {
-                return tags[view].flatMap({ $0 + ".safeAreaLayoutGuide" }) ?? (view.tagDescription + ".safeAreaLayoutGuide")
+                return tags.tag(object: view).flatMap({ $0 + ".safeAreaLayoutGuide" }) ?? (view.tagDescription + ".safeAreaLayoutGuide")
             } else {
                 return ""
             }
