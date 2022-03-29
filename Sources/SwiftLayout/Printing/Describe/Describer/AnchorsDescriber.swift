@@ -69,14 +69,14 @@ enum AnchorsDescriber {
                 functionDescription.append("greaterThanOrEqualTo")
             }
            
-            if token.secondTagIsSuperview && token.firstAttributeType != .dimension {
+            if token.secondTagIsSuperview && (token.firstAttributeIsSecondAttribute || token.firstAttributeType != .dimension) {
                 functionDescription.append("Super(")
             } else {
                 functionDescription.append("(")
             }
             
             var parameters: [String] = []
-            if !(token.secondTagIsSuperview && token.firstAttributeType != .dimension), !token.secondTag.isEmpty {
+            if !(token.secondTagIsSuperview && (token.firstAttributeIsSecondAttribute || token.firstAttributeType != .dimension)), !token.secondTag.isEmpty {
                 parameters.append(token.secondTag)
             }
             if !token.firstAttributeIsSecondAttribute, token.secondAttribute != .notAnAttribute {

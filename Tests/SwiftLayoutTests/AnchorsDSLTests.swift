@@ -314,7 +314,7 @@ extension AnchorsDSLTests {
         root {
             red.anchors {
                 Anchors.top
-                Anchors.bottom.equalTo(blue, attribute: top)
+                Anchors.bottom.equalTo(blue, attribute: .top)
                 Anchors.leading.trailing
             }
             blue.anchors {
@@ -383,7 +383,7 @@ extension AnchorsDSLTests {
             red.anchors {
                 Anchors.top.bottom
                 Anchors.leading
-                Anchors.trailing.equalTo(blue, attribute: leading)
+                Anchors.trailing.equalTo(blue, attribute: .leading)
             }
             blue.anchors {
                 Anchors.top.bottom
