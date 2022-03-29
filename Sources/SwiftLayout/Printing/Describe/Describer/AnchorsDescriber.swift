@@ -22,9 +22,9 @@ enum AnchorsDescriber {
         let independents = constraintPool
         var descriptionLines: [String] = []
         seconds.sorted(by: { sort($0.key, $1.key) }).forEach { (token, tokens) in
-            var tokens = [token]
-            tokens.append(contentsOf: tokens)
-            descriptionLines.append(AnchorsLineDescriber.describeAnchorToken(tokens.sorted(by: { $0.secondAttribute.rawValue < $1.secondAttribute.rawValue })))
+            var mergedTokens = [token]
+            mergedTokens.append(contentsOf: tokens)
+            descriptionLines.append(AnchorsLineDescriber.describeAnchorToken(mergedTokens.sorted(by: { $0.secondAttribute.rawValue < $1.secondAttribute.rawValue })))
         }
         independents.sorted(by: sort).forEach { token in
             descriptionLines.append(AnchorsLineDescriber.describeAnchorToken([token]))
