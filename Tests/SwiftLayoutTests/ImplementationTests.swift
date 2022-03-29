@@ -442,8 +442,7 @@ extension ImplementationTests {
             child.anchors {
                 Anchors.top.bottom
                 Anchors.leading.trailing
-                Anchors.width.equalTo(constant: 24.0)
-                Anchors.width.height
+                Anchors.width.height.equalToSuper()
             }
         }
         """.tabbed)

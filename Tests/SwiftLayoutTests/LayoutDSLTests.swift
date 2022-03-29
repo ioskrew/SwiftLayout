@@ -604,9 +604,9 @@ extension LayoutDSLTests {
                 Anchors.trailing.equalToSuper(constant: -12.0)
             }
             group2_2.anchors {
+                Anchors.top.equalTo(group2_2, attribute: .bottom)
                 Anchors.bottom
                 Anchors.leading.trailing
-                Anchors.top.equalTo(group2_2, attribute: .bottom)
             }
         }
         """.tabbed)
@@ -679,12 +679,12 @@ extension LayoutDSLTests {
             module1view1.anchors {
                 Anchors.top
                 Anchors.leading
-                Anchors.width.height.multiplier(0.5)
+                Anchors.width.height.equalToSuper().multiplier(0.5)
             }.sublayout {
                 module1view2.anchors {
                     Anchors.leading
-                    Anchors.centerY
                     Anchors.width.height.equalTo(constant: 50.0)
+                    Anchors.centerY
                 }
             }
             module1view3.anchors {
@@ -695,12 +695,12 @@ extension LayoutDSLTests {
             module2view1.anchors {
                 Anchors.top
                 Anchors.trailing
-                Anchors.width.height.multiplier(0.5)
+                Anchors.width.height.equalToSuper().multiplier(0.5)
             }.sublayout {
                 module2view2.anchors {
                     Anchors.trailing
-                    Anchors.centerY
                     Anchors.width.height.equalTo(constant: 50.0)
+                    Anchors.centerY
                 }
             }
             module2view3.anchors {

@@ -473,8 +473,8 @@ extension AnchorsDSLTests {
             red.anchors {
                 Anchors.top.bottom.centerY
                 Anchors.leading
-                Anchors.trailing.constant(-14.0)
-                Anchors.height
+                Anchors.trailing.equalToSuper(constant: -14.0)
+                Anchors.height.equalToSuper()
             }
         }
         """.tabbed
@@ -529,10 +529,10 @@ extension AnchorsDSLTests {
         let expect = """
         root {
             red.anchors {
-                Anchors.top.bottom.centerY.lessThanOrEqualToSuper()
+                Anchors.top.centerY.lessThanOrEqualToSuper()
+                Anchors.bottom.lessThanOrEqualToSuper(constant: 13.0)
                 Anchors.leading.trailing.centerX.lessThanOrEqualToSuper()
-                Anchors.width.lessThanOrEqualToSuper()
-                Anchors.height.lessThanOrEqualToSuper(constant: 12.0)
+                Anchors.width.height.lessThanOrEqualToSuper()
             }
         }
         """.tabbed
