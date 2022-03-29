@@ -7,11 +7,10 @@
 
 import UIKit
 
-public protocol AnchorsAttribute: Equatable {
+public protocol AnchorsAttribute {
     init?(attribute: NSLayoutConstraint.Attribute)
     var attribute: NSLayoutConstraint.Attribute { get }
 }
-
 
 public enum AnchorsXAxisAttribute: AnchorsAttribute {
     case centerX
