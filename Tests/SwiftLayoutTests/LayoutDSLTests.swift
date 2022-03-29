@@ -152,7 +152,7 @@ extension LayoutDSLTests {
         }.active().store(&activation)
         
         let expect = """
-        oot {
+        root {
             red.anchors {
                 Anchors.top.bottom
                 Anchors.leading.trailing

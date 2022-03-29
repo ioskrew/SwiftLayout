@@ -529,10 +529,10 @@ extension AnchorsDSLTests {
         let expect = """
         root {
             red.anchors {
-                Anchors.top.centerY.lessThanOrEqualToSuper()
-                Anchors.bottom.lessThanOrEqualToSuper(constant: 13.0)
+                Anchors.top.bottom.centerY.lessThanOrEqualToSuper()
                 Anchors.leading.trailing.centerX.lessThanOrEqualToSuper()
-                Anchors.width.height.lessThanOrEqualToSuper()
+                Anchors.width.lessThanOrEqualToSuper()
+                Anchors.height.lessThanOrEqualToSuper(constant: 12.0)
             }
         }
         """.tabbed
