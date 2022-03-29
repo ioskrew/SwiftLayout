@@ -33,7 +33,8 @@ enum AnchorsDescriber {
     }
     
     private static func isEqualRelation(lt: AnchorToken, rt: AnchorToken) -> Bool {
-        isAttributeTypes(lt.firstAttribute) == isAttributeTypes(rt.firstAttribute)
+        lt.firstAttributeType != .unknown
+        && lt.firstAttributeType == rt.firstAttributeType
         && lt.relation == rt.relation
         && lt.constant == rt.constant
         && lt.multiplier == rt.multiplier
@@ -57,35 +58,6 @@ enum AnchorsDescriber {
         }
     }
     
-    private static func isAttributeTypes(_ attribute: NSLayoutConstraint.Attribute) -> (Bool, Bool, Bool) {
-        (isX(attribute), isY(attribute), isDimension(attribute))
-    }
-    
-    private static func isX(_ attribute: NSLayoutConstraint.Attribute) -> Bool {
-        switch attribute {
-        case .centerX, .centerXWithinMargins, .leading, .leadingMargin, .trailing, .trailingMargin, .left, .leftMargin, .right, .rightMargin:
-            return true
-        default:
-            return false
-        }
-    }
-    private static func isY(_ attribute: NSLayoutConstraint.Attribute) -> Bool {
-        switch attribute {
-        case .centerY, .centerYWithinMargins, .top, .topMargin, .bottom, .bottomMargin, .firstBaseline, .lastBaseline:
-            return true
-        default:
-            return false
-        }
-    }
-    private static func isDimension(_ attribute: NSLayoutConstraint.Attribute) -> Bool {
-        switch attribute {
-        case .width, .height:
-            return true
-        default:
-            return false
-        }
-    }
-    
     enum AnchorsLineDescriber {
         private static func describeRelationFunction(_ token: AnchorToken) -> String {
             var functionDescription: String = ""
@@ -97,7 +69,7 @@ enum AnchorsDescriber {
                 functionDescription.append("greaterThanOrEqualTo")
             }
            
-            if token.secondTagIsSuperview {
+            if token.secondTagIsSuperview && token.firstAttributeType != .dimension {
                 functionDescription.append("Super(")
             } else {
                 functionDescription.append("(")
@@ -108,7 +80,7 @@ enum AnchorsDescriber {
                 parameters.append(token.secondTag)
             }
             if !token.firstAttributeIsSecondAttribute, token.secondAttribute != .notAnAttribute {
-                parameters.append("attribute: \(token.secondAttribute)")
+                parameters.append("attribute: .\(token.secondAttribute)")
             }
             if token.constant != 0.0 {
                 parameters.append("constant: \(token.constant)")

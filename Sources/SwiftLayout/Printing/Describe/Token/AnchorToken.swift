@@ -25,7 +25,6 @@ struct AnchorToken: Hashable {
         firstTag = tagger.tagFromItem(constraint.firstItem)
         firstAttribute = constraint.firstAttribute
         secondTag = tagger.tagFromItem(constraint.secondItem)
-        secondTagIsSuperview = secondTag == superTag
         secondAttribute = constraint.secondAttribute
         relation = constraint.relation
         constant = constraint.constant
@@ -36,7 +35,6 @@ struct AnchorToken: Hashable {
     let firstTag: String
     let firstAttribute: NSLayoutConstraint.Attribute
     let secondTag: String
-    let secondTagIsSuperview: Bool
     let secondAttribute: NSLayoutConstraint.Attribute
     let relation: NSLayoutConstraint.Relation
     let constant: CGFloat
@@ -46,8 +44,12 @@ struct AnchorToken: Hashable {
         firstAttribute == secondAttribute
     }
     
-    var secondTagIsSuperTag: Bool {
+    var secondTagIsSuperview: Bool {
         secondTag == superTag
+    }
+    
+    var firstAttributeType: AttributeType {
+        AttributeType(firstAttribute)
     }
     
     enum Parser {
@@ -104,6 +106,26 @@ struct AnchorToken: Hashable {
                 return tagFromItem(view)
             } else {
                 return tagFromItem(item)
+            }
+        }
+    }
+    
+    enum AttributeType: Equatable {
+        case xAxis
+        case yAxis
+        case dimension
+        case unknown
+        
+        init(_ attribute: NSLayoutConstraint.Attribute) {
+            switch attribute {
+            case .centerX, .centerXWithinMargins, .leading, .leadingMargin, .trailing, .trailingMargin, .left, .leftMargin, .right, .rightMargin:
+                self = .xAxis
+            case .centerY, .centerYWithinMargins, .top, .topMargin, .bottom, .bottomMargin, .firstBaseline, .lastBaseline:
+                self = .yAxis
+            case .width, .height:
+                self = .dimension
+            default:
+                self = .unknown
             }
         }
     }
