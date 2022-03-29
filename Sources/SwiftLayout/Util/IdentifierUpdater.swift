@@ -31,6 +31,17 @@ public final class IdentifierUpdater {
         }
     }
     
+    func update(_ target: Any, prefix: String = "", viewTags: ViewTags) -> ViewTags {
+        var viewTags = viewTags
+        let fixedTags = Set(viewTags.customTags.keys.map(\.description))
+        let digger = MirrorDigger(enablePrefixChain: option == .referenceAndName || option == .referenceAndNameWithTypeOfView )
+        digger.digging(Mirror(reflecting: target), prefix: prefix)
+        for identified in digger.identifieds where !fixedTags.contains(AddressDescriptor(identified.view).description) {
+            identified.prepare(enableViewType: option == .withTypeOfView || option == .referenceAndNameWithTypeOfView, viewTags: &viewTags)
+        }
+        return viewTags
+    }
+    
     final class Identified: Hashable, CustomDebugStringConvertible {
         static func == (lhs: IdentifierUpdater.Identified, rhs: IdentifierUpdater.Identified) -> Bool {
             lhs.hashValue == rhs.hashValue
@@ -46,6 +57,11 @@ public final class IdentifierUpdater {
         let identifier: String
         let view: UIView
         
+        func prepare(enableViewType: Bool = false, viewTags: inout ViewTags) {
+            prepare(enableViewType: enableViewType)
+            viewTags.updateView(view)
+        }
+        
         func prepare(enableViewType: Bool = false) {
             if enableViewType {
                 if prefix.isEmpty {
@@ -54,7 +70,6 @@ public final class IdentifierUpdater {
                     view.accessibilityIdentifier = "\(prefix).\(identifier):\(type(of: view))"
                 }
             } else {
-                
                 if prefix.isEmpty {
                     view.accessibilityIdentifier = identifier
                 } else {

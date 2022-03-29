@@ -23,7 +23,12 @@ struct ViewTags {
     }
     
     let customTags: [AddressDescriptor: String]
-    let viewTags: [AddressDescriptor: String]
+    private(set) var viewTags: [AddressDescriptor: String]
+    
+    mutating func updateView<I: UIAccessibilityIdentification>(_ view: I) {
+        guard let identifier = view.accessibilityIdentifier else { return }
+        self.viewTags[AddressDescriptor(view)] = identifier
+    }
     
     subscript(address: AddressDescriptor) -> String? {
         if let tag = customTags[address] {

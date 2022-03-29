@@ -65,8 +65,9 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
     ///  - options: ``PrintOptions``
     /// - Returns: String of SwiftLayout syntax
     public func print(_ updater: IdentifierUpdater? = nil, options: PrintOptions = []) -> String {
+        var viewTags = viewTags
         if let updater = updater {
-            updater.update(view, fixedTags: Set(viewTags.customTags.keys.map(\.description)))
+            viewTags = updater.update(view, viewTags: viewTags)
         }
         
         guard let viewToken = ViewToken.Parser.from(view, viewTags: viewTags, options: options) else { return "" }
