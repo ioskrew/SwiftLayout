@@ -40,7 +40,7 @@ struct ViewTags {
         }
     }
     
-    func tag(object: AnyObject?) -> String? {
+    func tag<O: AnyObject>(object: O?) -> String? {
         guard let object = object else {
             return nil
         }
