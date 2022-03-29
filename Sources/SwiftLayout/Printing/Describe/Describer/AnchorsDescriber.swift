@@ -76,7 +76,7 @@ enum AnchorsDescriber {
             }
             
             var parameters: [String] = []
-            if !token.secondTagIsSuperview, !token.secondTag.isEmpty {
+            if !(token.secondTagIsSuperview && token.firstAttributeType != .dimension), !token.secondTag.isEmpty {
                 parameters.append(token.secondTag)
             }
             if !token.firstAttributeIsSecondAttribute, token.secondAttribute != .notAnAttribute {
