@@ -104,10 +104,10 @@ enum AnchorsDescriber {
             }
             
             var parameters: [String] = []
-            if !token.secondTagIsSuperview {
+            if !token.secondTagIsSuperview, !token.secondTag.isEmpty {
                 parameters.append(token.secondTag)
             }
-            if !token.firstAttributeIsSecondAttribute {
+            if !token.firstAttributeIsSecondAttribute, token.secondAttribute != .notAnAttribute {
                 parameters.append("attribute: \(token.secondAttribute)")
             }
             if token.constant != 0.0 {
