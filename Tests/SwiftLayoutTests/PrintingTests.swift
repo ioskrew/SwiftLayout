@@ -113,7 +113,8 @@ extension PrintingTests {
         func layout() -> some Layout {
             root {
                 one.anchors {
-                    Anchors.shoe()
+                    Anchors.bottom
+                    Anchors.leading.trailing
                 }
                 two.anchors {
                     Anchors.top.equalTo(one.bottomAnchor)
@@ -137,11 +138,13 @@ extension PrintingTests {
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
         root {
             one.anchors {
-                Anchors(.bottom, .leading, .trailing)
+                Anchors.bottom
+                Anchors.leading.trailing
             }
             two.anchors {
-                Anchors(.top).equalTo(one, attribute: .bottom)
-                Anchors(.width, .centerX).equalTo(one)
+                Anchors.top.equalTo(one, attribute: .bottom)
+                Anchors.width.equalTo(one)
+                Anchors.centerX.equalTo(one)
             }
         }
         """.tabbed)
@@ -153,14 +156,14 @@ extension PrintingTests {
         
         root {
             one.anchors {
-                Anchors.width.equalTo(root, constant: -20)
+                Anchors.width.equalTo(root, constant: -20.0)
             }
         }.finalActive()
         
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
         root {
             one.anchors {
-                Anchors(.width).equalTo(root, constant: -20.0)
+                Anchors.width.equalTo(root, constant: -20.0)
             }
         }
         """.tabbed)
@@ -174,7 +177,7 @@ extension PrintingTests {
         
         let expect = """
         root.anchors {
-            Anchors(.width, .height)
+            Anchors.width.height
         }
         """.tabbed
         
@@ -197,8 +200,8 @@ extension PrintingTests {
         let expect = """
         root {
             child.anchors {
-                Anchors(.top)
-                Anchors(.bottom).equalTo(constant: -10.0)
+                Anchors.top
+                Anchors.bottom.equalToSuper(constant: -10.0)
             }
         }
         """.tabbed
@@ -226,11 +229,11 @@ extension PrintingTests {
         let expect = """
         root {
             child.anchors {
-                Anchors(.top)
-                Anchors(.bottom).equalTo(constant: -10.0)
+                Anchors.top
+                Anchors.bottom.equalToSuper(constant: -10.0)
             }
             friend.anchors {
-                Anchors(.top).equalTo(child, attribute: .bottom)
+                Anchors.top.equalTo(child, attribute: .bottom)
             }
         }
         """.tabbed
@@ -250,7 +253,8 @@ extension PrintingTests {
         let expect = """
         root {
             label.anchors {
-                Anchors(.top, .bottom, .leading, .trailing)
+                Anchors.top.bottom
+                Anchors.leading.trailing
             }
         }
         """.tabbed
@@ -278,10 +282,12 @@ extension PrintingTests {
         let expect = """
         root {
             child.anchors {
-                Anchors(.top, .bottom, .leading, .trailing)
+                Anchors.top.bottom
+                Anchors.leading.trailing
             }.sublayout {
                 grandchild.anchors {
-                    Anchors(.top, .bottom, .leading, .trailing)
+                    Anchors.top.bottom
+                    Anchors.leading.trailing
                 }
             }
         }
@@ -308,7 +314,7 @@ extension PrintingTests {
         root {
             child {
                 grandchild.anchors {
-                    Anchors(.top)
+                    Anchors.top
                 }
             }
         }
@@ -331,8 +337,8 @@ extension PrintingTests {
         let expect = """
         root {
             child.anchors {
-                Anchors(.top, .bottom).equalTo(root.safeAreaLayoutGuide)
-                Anchors(.leading)
+                Anchors.top.bottom.equalTo(root.safeAreaLayoutGuide)
+                Anchors.leading
             }
         }
         """.tabbed
@@ -377,12 +383,14 @@ extension PrintingTests {
         let expect = """
         root {
             child.anchors {
-                Anchors(.top, .leading, .trailing)
+                Anchors.top
+                Anchors.leading.trailing
             }
             friend.anchors {
-                Anchors(.top).greaterThanOrEqualTo(child, attribute: .bottom, constant: 8.0)
-                Anchors(.bottom, .leading)
-                Anchors(.trailing).equalTo(child)
+                Anchors.top.greaterThanOrEqualTo(child, attribute: .bottom, constant: 8.0)
+                Anchors.bottom
+                Anchors.leading
+                Anchors.trailing.equalTo(child)
             }
         }
         """.tabbed
@@ -410,12 +418,12 @@ extension PrintingTests {
         let expect = """
         root {
             child.anchors {
-                Anchors(.top).greaterThanOrEqualTo()
-                Anchors(.bottom).lessThanOrEqualTo()
-                Anchors(.height).equalTo(constant: 12.0)
+                Anchors.top.greaterThanOrEqualToSuper()
+                Anchors.bottom.lessThanOrEqualToSuper()
+                Anchors.height.equalTo(constant: 12.0)
             }
             friend.anchors {
-                Anchors(.height).equalTo(child)
+                Anchors.height.equalTo(child)
             }
         }
         """.tabbed
@@ -446,7 +454,7 @@ extension PrintingTests {
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
         root {
             child.anchors {
-                Anchors(.width, .height)
+                Anchors.width.height
             }
         }
         """.tabbed)
@@ -505,25 +513,30 @@ extension PrintingTests {
         """
         gont {
             sea:\(UILabel.self).anchors {
-                Anchors(.top, .bottom, .leading, .trailing)
+                Anchors.top.bottom
+                Anchors.leading.trailing
             }.sublayout {
                 duny:Duny.anchors {
-                    Anchors(.centerX).setMultiplier(1.2000000476837158)
-                    Anchors(.centerY).setMultiplier(0.800000011920929)
+                    Anchors.centerX.multiplier(1.2000000476837158)
+                    Anchors.centerY.multiplier(0.800000011920929)
                 }.sublayout {
                     duny.nickname:\(UILabel.self).anchors {
-                        Anchors(.top, .leading, .trailing)
+                        Anchors.top
+                        Anchors.leading.trailing
                     }.sublayout {
                         sparrowhawk.anchors {
-                            Anchors(.top, .bottom, .leading, .trailing)
+                            Anchors.top.bottom
+                            Anchors.leading.trailing
                         }
                     }
                     duny.truename:\(UILabel.self).anchors {
-                        Anchors(.top).equalTo(duny.nickname:\(UILabel.self), attribute: .bottom)
-                        Anchors(.bottom, .leading, .trailing)
+                        Anchors.top.equalTo(duny.nickname:UILabel, attribute: .bottom)
+                        Anchors.bottom
+                        Anchors.leading.trailing
                     }.sublayout {
                         ged.anchors {
-                            Anchors(.top, .bottom, .leading, .trailing)
+                            Anchors.top.bottom
+                            Anchors.leading.trailing
                         }
                     }
                 }
@@ -633,7 +646,8 @@ extension PrintingTests {
         XCTAssertEqual(SwiftLayoutPrinter(root).print(options: .onlyIdentifier), """
         root {
             label.anchors {
-                Anchors(.top, .bottom, .leading, .trailing)
+                Anchors.top.bottom
+                Anchors.leading.trailing
             }
         }
         """.tabbed)

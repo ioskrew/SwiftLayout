@@ -711,8 +711,7 @@ extension ImplementationTests {
         
         XCTAssertEqual(SwiftLayoutPrinter(fixedView, tags: [fixedView: "fixedView"]).print(), """
         fixedView.anchors {
-            Anchors.width.equalTo(constant: 24.0)
-            Anchors.height.equalTo(constant: 24.0)
+            Anchors.width.height.equalTo(constant: 24.0)
         }
         """.tabbed)
     }
