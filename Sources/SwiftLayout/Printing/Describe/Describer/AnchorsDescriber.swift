@@ -127,9 +127,15 @@ enum AnchorsDescriber {
         static func describeAnchorToken(_ tokens: [AnchorToken]) -> String {
             var descriptions: [String] = ["Anchors"]
             descriptions.append(tokens.map(\.firstAttribute.description).joined(separator: "."))
-            descriptions.append(describeRelationFunction(tokens[0]))
+            if isNeedRelationFunction(tokens[0]) {
+                descriptions.append(describeRelationFunction(tokens[0]))
+            }
             descriptions.append(contentsOf: describeValues(tokens[0]))
             return descriptions.joined(separator: ".")
+        }
+        
+        private static func isNeedRelationFunction(_ token: AnchorToken) -> Bool {
+            !(token.relation == .equal && token.secondTagIsSuperview && token.firstAttributeIsSecondAttribute && token.constant == 0.0)
         }
     }
 }
