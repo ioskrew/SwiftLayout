@@ -420,19 +420,20 @@ extension ImplementationTests {
                 Anchors.shoe()
                 Anchors.height
                 Anchors.width
-                Anchors.width
+                Anchors.width.equalTo(constant: 24.0)
             }
         }.finalActive()
 
-        let expect = """
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
         root {
             child.anchors {
-                Anchors(.top, .bottom, .leading, .trailing, .width, .height)
+                Anchors.top.bottom.equalToSuper()
+                Anchors.leading.trailing.equalToSuper()
+                Anchors.width.height.equalToSuper()
             }
         }
-        """
-
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect.tabbed)
+        """.tabbed)
     }
 
     func testIgnoreAnchorsDuplication2() {

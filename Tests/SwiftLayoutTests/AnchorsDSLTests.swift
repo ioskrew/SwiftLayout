@@ -443,7 +443,8 @@ extension AnchorsDSLTests {
         let expect = """
         root {
             red.anchors {
-                Anchors.allSides()
+                Anchors.top.bottom.equalToSuper()
+                Anchors.leading.trailing.equalToSuper()
             }
         }
         """.tabbed
