@@ -41,7 +41,11 @@ struct AnchorToken: Hashable {
     let multiplier: CGFloat
     
     var firstAttributeIsSecondAttribute: Bool {
-        firstAttribute == secondAttribute
+        if firstAttributeType == .dimension, secondAttribute == .notAnAttribute {
+            return true
+        } else {
+            return firstAttribute == secondAttribute
+        }
     }
     
     var secondTagIsSuperview: Bool {

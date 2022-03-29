@@ -112,8 +112,9 @@ enum AnchorsDescriber {
         }
         
         private static func isEnableHideRelation(_ token: AnchorToken) -> Bool {
-            token.firstAttributeIsSecondAttribute && token.secondTagIsSuperview && token.relation == .equal
+            token.relation == .equal
+            && token.firstAttributeIsSecondAttribute
+            && (token.firstAttributeType != .dimension ? token.secondTagIsSuperview : token.secondTag.isEmpty)
         }
-        
     }
 }
