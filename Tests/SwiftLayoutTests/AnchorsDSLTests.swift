@@ -449,7 +449,7 @@ extension AnchorsDSLTests {
         }
         """.tabbed
         
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(options: .pretty), expect)
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
     }
 }
 
@@ -554,7 +554,7 @@ extension AnchorsDSLTests {
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
         root {
             red.anchors {
-                Anchors.top.constant(24.0)
+                Anchors.top.equalToSuper(constant: 24.0)
             }
         }
         """.tabbed)
