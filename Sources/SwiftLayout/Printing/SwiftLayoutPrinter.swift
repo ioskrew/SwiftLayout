@@ -22,8 +22,8 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
         public static let onlyIdentifier = PrintOptions(rawValue: 1 << 1)
         /// print with view config
         public static let withViewConfig = PrintOptions(rawValue: 1 << 2)
-        /// print pretty
-        public static let pretty = PrintOptions(rawValue: 1 << 3)
+        /// print with short formatted
+        public static let shortForm = PrintOptions(rawValue: 1 << 3)
     }
     
     public init(_ view: UIView, tags: [UIView: String] = [:]) {
