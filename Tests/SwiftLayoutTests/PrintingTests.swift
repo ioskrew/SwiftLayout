@@ -169,23 +169,6 @@ extension PrintingTests {
         }
         """.tabbed)
     }
-  
-    // test 자체가 오류
-//    func testPrintWithSimpleAnchors() {
-//        let root = UIView().viewTag.root
-//        activation = root.anchors {
-//            Anchors.width.height
-//        }.active()
-//
-//        let expect = """
-//        root.anchors {
-//            Anchors.width.height.equalToSuper()
-//        }
-//        """.tabbed
-//
-//        let result = SwiftLayoutPrinter(root).print()
-//        XCTAssertEqual(result, expect)
-//    }
     
     func testPrintWithAnchorsWithOneDepth() {
         let root = UIView().viewTag.root
