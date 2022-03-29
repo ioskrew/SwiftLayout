@@ -50,7 +50,7 @@ struct AnchorToken: Hashable {
         secondTag == superTag
     }
     
-    struct Parser {
+    enum Parser {
         static func from(_ view: UIView, viewTags tags: ViewTags, options: SwiftLayoutPrinter.PrintOptions) -> [AnchorToken] {
             let constraints = view.constraints.sorted { lhs, rhs in
                 func compareTuple(_ value: NSLayoutConstraint) -> (Int, Int, Int, CGFloat, CGFloat, Float) {
@@ -72,7 +72,7 @@ struct AnchorToken: Hashable {
         }
     }
     
-    struct Validator {
+    enum Validator {
         static func isUserCreation(_ constraint: NSLayoutConstraint, options: SwiftLayoutPrinter.PrintOptions) -> Bool {
             let description = constraint.debugDescription
             if options.contains(.withSystemConstraints) {
@@ -106,7 +106,5 @@ struct AnchorToken: Hashable {
                 return tagFromItem(item)
             }
         }
-        
     }
-    
 }

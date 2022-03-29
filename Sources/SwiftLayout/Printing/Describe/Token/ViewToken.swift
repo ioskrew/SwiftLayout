@@ -18,18 +18,11 @@ struct ViewToken {
     let viewTag: String
     let subviews: [ViewToken]
     
-    struct Parser {
+    enum Parser {
         static func from(_ view: UIView, viewTags tags: ViewTags, options: SwiftLayoutPrinter.PrintOptions) -> ViewToken? {
-            if let superviewTag = tags[view.superview] {
-                if let viewTag = tags[view] {
-                    return ViewToken(superviewTag: superviewTag,
-                                     viewTag: viewTag,
-                                     subviews: view.subviews.compactMap({ Parser.from($0, viewTags: tags, options: options) }))
-                } else {
-                    return nil
-                }
-            } else if let viewTag = tags[view] {
-                return ViewToken(superviewTag: nil,
+            let superviewTag = tags[view.superview]
+            if let viewTag = tags[view] {
+                return ViewToken(superviewTag: superviewTag,
                                  viewTag: viewTag,
                                  subviews: view.subviews.compactMap({ Parser.from($0, viewTags: tags, options: options) }))
             } else {

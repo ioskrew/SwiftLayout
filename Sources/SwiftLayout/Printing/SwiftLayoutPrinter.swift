@@ -75,5 +75,3 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
     }
     
 }
-
-// MARK: - ConstraintToken

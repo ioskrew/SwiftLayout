@@ -7,7 +7,6 @@
 
 import Foundation
 
-// MARK: - Describer
 struct Describer: CustomStringConvertible {
     
     init(_ viewToken: ViewToken, _ constraintTokens: [AnchorToken]) {

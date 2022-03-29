@@ -19,7 +19,7 @@ struct ViewDescriber {
                 descriptions.append(viewToken.viewTag)
             } else {
                 descriptions.append(viewToken.viewTag.appending(" {"))
-                descriptions.append(contentsOf: subdescribes.flatMap({ $0.descriptions(indents: indents.appending("\t")) }))
+                descriptions.append(contentsOf: subdescribes.flatMap({ $0.descriptions(indents: "\t") }))
                 descriptions.append("}")
             }
         } else {
@@ -27,11 +27,10 @@ struct ViewDescriber {
             descriptions.append(contentsOf: AnchorsDescriber.descriptionFromConstraints(constraintTokens).map("\t".appending))
             if !subdescribes.isEmpty {
                 descriptions.append("}.sublayout {")
-                descriptions.append(contentsOf: subdescribes.flatMap({ $0.descriptions(indents: indents.appending("\t")) }))
+                descriptions.append(contentsOf: subdescribes.flatMap({ $0.descriptions(indents: "\t") }))
             }
             descriptions.append("}")
         }
         return descriptions.map(indents.appending)
     }
-    
 }
