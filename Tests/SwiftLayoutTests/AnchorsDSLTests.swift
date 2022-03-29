@@ -313,13 +313,13 @@ extension AnchorsDSLTests {
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
         root {
             red.anchors {
-                Anchors.top.equalToSuper()
+                Anchors.top
                 Anchors.bottom.equalTo(blue, attribute: top)
-                Anchors.leading.trailing.equalToSuper()
+                Anchors.leading.trailing
             }
             blue.anchors {
-                Anchors.bottom.equalToSuper()
-                Anchors.leading.trailing.equalToSuper()
+                Anchors.bottom
+                Anchors.leading.trailing
             }
         }
         """.tabbed)
@@ -381,13 +381,13 @@ extension AnchorsDSLTests {
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
         root {
             red.anchors {
-                Anchors.top.bottom.equalToSuper()
-                Anchors.leading.equalToSuper()
+                Anchors.top.bottom
+                Anchors.leading
                 Anchors.trailing.equalTo(blue, attribute: leading)
             }
             blue.anchors {
-                Anchors.top.bottom.equalToSuper()
-                Anchors.trailing.equalToSuper()
+                Anchors.top.bottom
+                Anchors.trailing
             }
         }
         """.tabbed)
@@ -443,8 +443,8 @@ extension AnchorsDSLTests {
         let expect = """
         root {
             red.anchors {
-                Anchors.top.bottom.equalToSuper()
-                Anchors.leading.trailing.equalToSuper()
+                Anchors.top.bottom
+                Anchors.leading.trailing
             }
         }
         """.tabbed
@@ -471,10 +471,10 @@ extension AnchorsDSLTests {
         let expect = """
         root {
             red.anchors {
-                Anchors.top.bottom.centerY.equalToSuper()
-                Anchors.leading.equalToSuper()
+                Anchors.top.bottom.centerY
+                Anchors.leading
                 Anchors.trailing.equalToSuper(constant: -14.0)
-                Anchors.height.equalToSuper()
+                Anchors.height
             }
         }
         """.tabbed

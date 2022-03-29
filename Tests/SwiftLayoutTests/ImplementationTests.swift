@@ -425,12 +425,25 @@ extension ImplementationTests {
         }.finalActive()
 
         
+        XCTAssertEqual(root.constraints.shortDescription, """
+        child.top == root.top
+        child.leading == root.leading
+        child.height == root.height
+        child.width == root.width
+        child.trailing == root.trailing
+        child.bottom == root.bottom
+        """.descriptions)
+        XCTAssertEqual(child.constraints.shortDescription, """
+        child.width == + 24.0
+        """.descriptions)
+        
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
         root {
             child.anchors {
-                Anchors.top.bottom.equalToSuper()
-                Anchors.leading.trailing.equalToSuper()
-                Anchors.width.height.equalToSuper()
+                Anchors.top.bottom
+                Anchors.leading.trailing
+                Anchors.width.equalTo(constant: 24.0)
+                Anchors.width.height
             }
         }
         """.tabbed)
@@ -448,8 +461,9 @@ extension ImplementationTests {
         let expect = """
         root {
             child.anchors {
-                Anchors(.top, .leading, .trailing)
-                Anchors(.height).equalTo(constant: 44.0)
+                Anchors.top
+                Anchors.leading.trailing
+                Anchors.height.equalTo(constant: 44.0)
             }
         }
         """
@@ -665,10 +679,12 @@ extension ImplementationTests {
         let expect = """
         root {
             cap.anchors {
-                Anchors(.top, .leading, .trailing)
+                Anchors.top
+                Anchors.leading.trailing
             }
             shoe.anchors {
-                Anchors(.bottom, .leading, .trailing)
+                Anchors.bottom
+                Anchors.leading.trailing
             }
         }
         """.tabbed
@@ -687,9 +703,16 @@ extension ImplementationTests {
             Anchors.width.height.equalTo(constant: 24.0)
         }.finalActive()
         
+        let identifier = fixedView.tagDescription
+        XCTAssertEqual(fixedView.constraints.shortDescription, """
+        \(identifier).width == + 24.0
+        \(identifier).height == + 24.0
+        """.descriptions)
+        
         XCTAssertEqual(SwiftLayoutPrinter(fixedView, tags: [fixedView: "fixedView"]).print(), """
         fixedView.anchors {
-            Anchors(.width, .height).equalTo(constant: 24.0)
+            Anchors.width.equalTo(constant: 24.0)
+            Anchors.height.equalTo(constant: 24.0)
         }
         """.tabbed)
     }
@@ -724,7 +747,8 @@ extension ImplementationTests {
         let expect = """
         root {
             child.anchors {
-                Anchors(.top, .bottom, .leading, .trailing)
+                Anchors.top.bottom
+                Anchors.leading.trailing
             }
         }
         """.tabbed
@@ -753,14 +777,17 @@ extension ImplementationTests {
         let expect = """
         root {
             hellolabel.anchors {
-                Anchors(.top, .leading, .trailing)
+                Anchors.top
+                Anchors.leading.trailing
             }.sublayout {
                 lastview.anchors {
-                    Anchors(.top, .bottom, .leading, .trailing)
+                    Anchors.top.bottom
+                    Anchors.leading.trailing
                 }
             }
             button.anchors {
-                Anchors(.bottom, .leading, .trailing)
+                Anchors.bottom
+                Anchors.leading.trailing
             }
         }
         """.tabbed
@@ -789,14 +816,17 @@ extension ImplementationTests {
         let expect = """
         root {
             hellolabel.anchors {
-                Anchors(.top, .leading, .trailing)
+                Anchors.top
+                Anchors.leading.trailing
             }.sublayout {
                 lastview.anchors {
-                    Anchors(.top, .bottom, .leading, .trailing)
+                    Anchors.top.bottom
+                    Anchors.leading.trailing
                 }
             }
             button.anchors {
-                Anchors(.bottom, .leading, .trailing)
+                Anchors.bottom
+                Anchors.leading.trailing
             }
         }
         """.tabbed
