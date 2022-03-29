@@ -11,7 +11,7 @@ final class ImplementationTests: XCTestCase {
     var friend = UIView().viewTag.friend
     
     var activation: Activation?
-   
+    
     override func setUpWithError() throws {
         continueAfterFailure = false
         window = UIView(frame: .init(x: 0, y: 0, width: 150, height: 150))
@@ -60,7 +60,7 @@ extension ImplementationTests {
         
         XCTAssertEqual(expectedResult, result)
     }
-   
+    
     
     func testLayoutFlattening() {
         let layout = root {
@@ -82,41 +82,41 @@ extension ImplementationTests {
             child
         }
         let e1 = LayoutElements(layout: f1)
-
+        
         let f2 = root {
-           child
+            child
         }
         let e2 = LayoutElements(layout: f2)
-
+        
         let f3 = root {
             child.anchors { Anchors.allSides() }
         }
         let e3 = LayoutElements(layout: f3)
-
+        
         let f4 = root {
             child.anchors { Anchors.allSides() }
         }
         let e4 = LayoutElements(layout: f4)
-
+        
         let f5 = root {
             child.anchors { Anchors.cap() }
         }
         let e5 = LayoutElements(layout: f5)
-
+        
         let f6 = root {
             friend.anchors { Anchors.allSides() }
         }
         let e6 = LayoutElements(layout: f6)
-
+        
         XCTAssertEqual(e1.viewInformations, e2.viewInformations)
         XCTAssertEqual(e1.viewConstraints.weakens, e2.viewConstraints.weakens)
-
+        
         XCTAssertEqual(e3.viewInformations, e4.viewInformations)
         XCTAssertEqual(e3.viewConstraints.weakens, e4.viewConstraints.weakens)
-
+        
         XCTAssertEqual(e4.viewInformations, e5.viewInformations)
         XCTAssertNotEqual(e4.viewConstraints.weakens, e5.viewConstraints.weakens)
-
+        
         XCTAssertNotEqual(e5.viewInformations, e6.viewInformations)
         XCTAssertNotEqual(e5.viewConstraints.weakens, e6.viewConstraints.weakens)
     }
@@ -171,7 +171,7 @@ extension ImplementationTests {
         lazy var contentView: UIView = UIView()
         lazy var nameLabel: UILabel = UILabel()
         
-        var activation: Activation? 
+        var activation: Activation?
         
         var layout: some Layout {
             contentView {
@@ -209,7 +209,7 @@ extension ImplementationTests {
                 Anchors.cap()
             }
             UIView().identifying("secondView").anchors {
-                Anchors(.top).equalTo("label", attribute: .bottom)
+                Anchors.top.equalTo("label", attribute: .bottom)
                 Anchors.shoe()
             }
         }.active()
@@ -228,7 +228,7 @@ extension ImplementationTests {
         let secondViewConstraints = Set(Anchors.cap().constraints(item: label!, toItem: root).weakens)
         XCTAssertEqual(currents.intersection(secondViewConstraints), secondViewConstraints)
         
-        let constraintsBetweebViews = Set(Anchors(.top).equalTo(label!, attribute: .bottom).constraints(item: secondView!, toItem: label).weakens)
+        let constraintsBetweebViews = Set(AnchorsContainer(Anchors.top.equalTo(label!, attribute: .bottom)).constraints(item: secondView!, toItem: label).weakens)
         XCTAssertEqual(currents.intersection(constraintsBetweebViews), constraintsBetweebViews)
     }
     
@@ -238,31 +238,31 @@ extension ImplementationTests {
         let image: UIImageView = UIImageView().viewTag.image
         let title: UILabel = UILabel().viewTag.title
         let description: UILabel = UILabel().viewTag.description
-
+        
         let layout = root {
             contentView.anchors {
-                Anchors(.leading).equalTo(root.safeAreaLayoutGuide, constant: 16.0)
-                Anchors(.trailing).equalTo(root.safeAreaLayoutGuide, constant: -16.0)
-                Anchors(.centerY).equalTo(root)
-                Anchors(.height).equalTo(constant: 80.0)
+                Anchors.leading.equalTo(root.safeAreaLayoutGuide, constant: 16.0)
+                Anchors.trailing.equalTo(root.safeAreaLayoutGuide, constant: -16.0)
+                Anchors.centerY.equalTo(root)
+                Anchors.height.equalTo(constant: 80.0)
             }.sublayout {
                 image.anchors {
-                    Anchors(.leading).equalTo(constant: 10.0)
-                    Anchors(.centerY)
-                    Anchors(.height, .width).equalTo(constant: 70.0)
+                    Anchors.leading.equalToSuper(constant: 10.0)
+                    Anchors.centerY
+                    Anchors.size(width: 70, height: 70)
                 }
                 
                 title.anchors {
-                    Anchors(.top).equalTo(constant: 8.0)
-                    Anchors(.leading).equalTo(image, attribute: .trailing, constant: 10.0)
-                    Anchors(.height).equalTo(constant: 24.0)
+                    Anchors.top.equalToSuper(constant: 8.0)
+                    Anchors.leading.equalTo(image, attribute: .trailing, constant: 10.0)
+                    Anchors.height.equalTo(constant: 24.0)
                 }.anyLayout
                 
                 description.anchors {
-                    Anchors(.top).equalTo(title, attribute: .bottom, constant: 5.0)
-                    Anchors(.leading).equalTo(image, attribute: .trailing, constant: 10.0)
-                    Anchors(.bottom).equalTo(constant: -8.0)
-                    Anchors(.trailing).equalTo(constant: -10.0)
+                    Anchors.top.equalTo(title, attribute: .bottom, constant: 5.0)
+                    Anchors.leading.equalTo(image, attribute: .trailing, constant: 10.0)
+                    Anchors.bottom.equalToSuper(constant: -8.0)
+                    Anchors.trailing.equalToSuper(constant: -10.0)
                 }
             }
         }
@@ -286,31 +286,31 @@ extension ImplementationTests {
         let image: UIImageView = UIImageView().viewTag.image
         let title: UILabel = UILabel().viewTag.title
         let description: UILabel = UILabel().viewTag.description
-
+        
         let layout = root {
             contentView.anchors {
-                Anchors(.leading).equalTo(root.safeAreaLayoutGuide, constant: 16.0)
-                Anchors(.trailing).equalTo(root.safeAreaLayoutGuide, constant: -16.0)
-                Anchors(.centerY).equalTo(root)
-                Anchors(.height).equalTo(constant: 80.0)
+                Anchors.leading.equalTo(root.safeAreaLayoutGuide, constant: 16.0)
+                Anchors.trailing.equalTo(root.safeAreaLayoutGuide, constant: -16.0)
+                Anchors.centerY.equalTo(root)
+                Anchors.height.equalTo(constant: 80.0)
             }.sublayout {
                 image.anchors {
-                    Anchors(.leading).equalTo(constant: 10.0)
-                    Anchors(.centerY)
-                    Anchors(.height, .width).equalTo(constant: 70.0)
+                    Anchors.leading.equalToSuper(constant: 10.0)
+                    Anchors.centerY
+                    Anchors.size(width: 70, height: 70)
                 }
                 
                 title.anchors {
-                    Anchors(.top).equalTo(constant: 8.0)
-                    Anchors(.leading).equalTo(image, attribute: .trailing, constant: 10.0)
-                    Anchors(.height).equalTo(constant: 24.0)
+                    Anchors.top.equalToSuper(constant: 8.0)
+                    Anchors.leading.equalTo(image, attribute: .trailing, constant: 10.0)
+                    Anchors.height.equalTo(constant: 24.0)
                 }.anyLayout
                 
                 description.anchors {
-                    Anchors(.top).equalTo(title, attribute: .bottom, constant: 5.0)
-                    Anchors(.leading).equalTo(image, attribute: .trailing, constant: 10.0)
-                    Anchors(.bottom).equalTo(constant: -8.0)
-                    Anchors(.trailing).equalTo(constant: -10.0)
+                    Anchors.top.equalTo(title, attribute: .bottom, constant: 5.0)
+                    Anchors.leading.equalTo(image, attribute: .trailing, constant: 10.0)
+                    Anchors.bottom.equalToSuper(constant: -8.0)
+                    Anchors.trailing.equalToSuper(constant: -10.0)
                 }
             }
         }
@@ -326,8 +326,8 @@ extension ImplementationTests {
               ├─ ViewLayout - view: image
               │        .leading == superview.leading + 10.0
               │        .centerY == superview.centerY
-              │        .height == + 70.0
               │        .width == + 70.0
+              │        .height == + 70.0
               ├─ AnyLayout
               │  └─ ViewLayout - view: title
               │           .top == superview.top + 8.0
@@ -348,119 +348,136 @@ extension ImplementationTests {
     func testAnchorConstraint() {
         root.addSubview(child)
         child.translatesAutoresizingMaskIntoConstraints = false
-        
-        let constraints = Anchors(.top, .leading, .trailing, .bottom).constraints(item: child, toItem: root)
-        
+
+        let constraints = Anchors.allSides().constraints(item: child, toItem: root)
+
         NSLayoutConstraint.activate(constraints)
-        
+
         root.frame = CGRect(origin: .zero, size: .init(width: 200, height: 200))
         root.layoutIfNeeded()
         XCTAssertEqual(child.frame.size, .init(width: 200, height: 200))
         root.removeConstraints(constraints)
-        
-        let constraints1 = Anchors(.top, .leading).constraints(item: child, toItem: root)
-        let constraints2 = Anchors(.width, .height).equalTo(constant: 98).constraints(item: child, toItem: nil)
-        
+
+        let constraints1 = AnchorsContainer(Anchors.top).constraints(item: child, toItem: root)
+        let constraints2 = AnchorsContainer(Anchors.leading).constraints(item: child, toItem: root)
+        let constraints3 = AnchorsContainer(Anchors.width.height.equalTo(constant: 98)).constraints(item: child, toItem: nil)
+
         NSLayoutConstraint.activate(constraints1)
         NSLayoutConstraint.activate(constraints2)
-        
+        NSLayoutConstraint.activate(constraints3)
+
         root.layoutIfNeeded()
         child.setNeedsLayout()
         child.layoutIfNeeded()
         XCTAssertEqual(child.frame.size, .init(width: 98, height: 98))
     }
-    
+
     func testSelfContraint() {
         let superview = UIView().viewTag.superview
         let subview = UIView().viewTag.subview
-        
+
         let constraint = subview.widthAnchor.constraint(equalToConstant: 24)
-        
+
         XCTAssertEqual(constraint.firstItem as? NSObject, subview)
         XCTAssertNil(constraint.secondItem)
         XCTAssertEqual(constraint.firstAttribute, .width)
         XCTAssertEqual(constraint.secondAttribute, .notAnAttribute)
         XCTAssertEqual(constraint.constant, 24)
-        
-        let anchor = Anchors(.width).equalTo(constant: 24).constraints(item: subview, toItem: superview).first!
-        
+
+        let anchor = AnchorsContainer(Anchors.width.equalTo(constant: 24)).constraints(item: subview, toItem: superview).first!
+
         XCTAssertEqual(anchor.firstItem as? NSObject, subview)
         XCTAssertNil(anchor.secondItem)
         XCTAssertEqual(anchor.firstAttribute, .width)
         XCTAssertEqual(anchor.secondAttribute, .notAnAttribute)
         XCTAssertEqual(anchor.constant, 24)
     }
-    
+
     func testAnchorsBuilder() {
-        func build(@AnchorsBuilder _ build: () -> Anchors) -> Anchors {
+        func build(@AnchorsBuilder _ build: () -> AnchorsContainer) -> AnchorsContainer {
             build()
         }
-        
-        let anchors: Anchors = build {
-            Anchors(.top).equalTo(constant: 12.0)
-            Anchors(.leading).equalTo(constant: 13.0)
-            Anchors(.trailing).equalTo(constant: -13.0)
-            Anchors(.bottom)
+
+        let anchors: AnchorsContainer = build {
+            Anchors.top.equalToSuper(constant: 12.0)
+            Anchors.leading.equalToSuper(constant: 13.0)
+            Anchors.trailing.equalToSuper(constant: -13.0)
+            Anchors.bottom
         }
-        
+
         child.translatesAutoresizingMaskIntoConstraints = false
         root.addSubview(child)
-        
+
         let constraint = anchors.constraints(item: child, toItem: root)
         XCTAssertEqual(constraint.count, 4)
     }
-    
+
     func testIgnoreAnchorsDuplication() {
         root {
             child.anchors {
                 Anchors.allSides()
                 Anchors.cap()
                 Anchors.shoe()
-                Anchors(.height)
-                Anchors(.width)
-                Anchors(.width)
+                Anchors.height
+                Anchors.width
+                Anchors.width.equalTo(constant: 24.0)
             }
         }.finalActive()
+
         
-        let expect = """
+        XCTAssertEqual(root.constraints.shortDescription, """
+        child.top == root.top
+        child.leading == root.leading
+        child.height == root.height
+        child.width == root.width
+        child.trailing == root.trailing
+        child.bottom == root.bottom
+        """.descriptions)
+        XCTAssertEqual(child.constraints.shortDescription, """
+        child.width == + 24.0
+        """.descriptions)
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
         root {
             child.anchors {
-                Anchors(.top, .bottom, .leading, .trailing, .width, .height)
+                Anchors.top.bottom
+                Anchors.leading.trailing
+                Anchors.width.equalTo(constant: 24.0)
+                Anchors.width.height.equalToSuper()
             }
         }
-        """
-        
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect.tabbed)
+        """.tabbed)
     }
-    
+
     func testIgnoreAnchorsDuplication2() {
         root {
             child.anchors {
                 Anchors.cap()
-                Anchors(.height).equalTo(constant: 44)
-                Anchors(.height).equalTo(constant: 44)
+                Anchors.height.equalTo(constant: 44)
+                Anchors.height.equalTo(constant: 44)
             }
         }.finalActive()
-        
+
         let expect = """
         root {
             child.anchors {
-                Anchors(.top, .leading, .trailing)
-                Anchors(.height).equalTo(constant: 44.0)
+                Anchors.top
+                Anchors.leading.trailing
+                Anchors.height.equalTo(constant: 44.0)
             }
         }
         """
-        
+
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect.tabbed)
     }
-    
+
     func testRules() {
         let root = UIView().viewTag.root
         root.translatesAutoresizingMaskIntoConstraints = false
         window.addSubview(root)
         let child = UIView().viewTag.child
         let friend = UIView().viewTag.friend
-        
+
         enum TestCase {
             case topEqualToNameless
             case topEqualToSuper
@@ -471,7 +488,7 @@ extension ImplementationTests {
             case topLessThanOrEqualToNameless
             case topLessThanOrEqualToSuper
             case topLessThanOrEqualToSuperWithConstant
-            
+
             case topOfFriendEqualToBottomOfChild
             case widthOfFriendEqualToNameless
             case widthOfFriendEqualToSuper
@@ -480,7 +497,7 @@ extension ImplementationTests {
             case widthOfFriendEqualToConstant
             case widthOfFriendEqualToChildWithConstant
         }
-        
+
         var test = TestCase.topEqualToNameless
         @LayoutBuilder
         func layout() -> Layout {
@@ -488,23 +505,23 @@ extension ImplementationTests {
                 child.anchors {
                     switch test {
                     case .topEqualToNameless:
-                        Anchors(.top)
+                        Anchors.top
                     case .topEqualToSuper:
-                        Anchors(.top).equalTo(root)
+                        Anchors.top.equalTo(root)
                     case .topEqualToSuperWithConstant:
-                        Anchors(.top).equalTo(root, constant: 78.0)
+                        Anchors.top.equalTo(root, constant: 78.0)
                     case .topGreaterThanOrEqualToNameless:
-                        Anchors(.top).greaterThanOrEqualTo()
+                        Anchors.top.greaterThanOrEqualToSuper()
                     case .topGreaterThanOrEqualToSuper:
-                        Anchors(.top).greaterThanOrEqualTo(root)
+                        Anchors.top.greaterThanOrEqualTo(root)
                     case .topGreaterThanOrEqualToSuperWithConstant:
-                        Anchors(.top).greaterThanOrEqualTo(root, constant: 78.0)
+                        Anchors.top.greaterThanOrEqualTo(root, constant: 78.0)
                     case .topLessThanOrEqualToNameless:
-                        Anchors(.top).lessThanOrEqualTo()
+                        Anchors.top.lessThanOrEqualToSuper()
                     case .topLessThanOrEqualToSuper:
-                        Anchors(.top).lessThanOrEqualTo(root)
+                        Anchors.top.lessThanOrEqualTo(root)
                     case .topLessThanOrEqualToSuperWithConstant:
-                        Anchors(.top).lessThanOrEqualTo(root, constant: 78.0)
+                        Anchors.top.lessThanOrEqualTo(root, constant: 78.0)
                     default:
                         Anchors.cap()
                     }
@@ -512,33 +529,34 @@ extension ImplementationTests {
                 friend.anchors {
                     switch test {
                     case .topOfFriendEqualToBottomOfChild:
-                        Anchors(.top).equalTo(child, attribute: .bottom)
+                        Anchors.top.equalTo(child, attribute: .bottom)
                         Anchors.shoe()
                     case .widthOfFriendEqualToNameless:
-                        Anchors(.width)
+                        Anchors.width
                         Anchors.shoe()
                     case .widthOfFriendEqualToSuper:
-                        Anchors(.width).equalTo(root)
+                        Anchors.width.equalTo(root)
                         Anchors.shoe()
                     case .widthOfFriendEqualToChild:
-                        Anchors(.width).equalTo(child)
+                        Anchors.width.equalTo(child)
                         Anchors.shoe()
                     case .widthOfFriendEqualToHeightOfChild:
-                        Anchors(.width).equalTo(child, attribute: .height)
+                        Anchors.width.equalTo(child, attribute: .height)
                         Anchors.shoe()
                     case .widthOfFriendEqualToConstant:
-                        Anchors(.width).equalTo(constant: 78.0)
+                        Anchors.width.equalTo(constant: 78.0)
                         Anchors.shoe()
                     case .widthOfFriendEqualToChildWithConstant:
-                        Anchors(.width).equalTo(child, constant: 78.0)
-                        Anchors(.leading, .bottom)
+                        Anchors.width.equalTo(child, constant: 78.0)
+                        Anchors.leading
+                        Anchors.bottom
                     default:
                         Anchors.shoe()
                     }
                 }
             }
         }
-        
+
         context("top equal to nameless") {
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .equal).count, 1)
@@ -555,13 +573,13 @@ extension ImplementationTests {
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .equal, constant: 78.0).count, 1)
         }
-        
+
         context("top greater than or equal to nameless") {
             test = .topGreaterThanOrEqualToNameless
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .greaterThanOrEqual).count, 1)
         }
-        
+
         context("top greater than or equal to nameless with constant of 78.0") {
             test = .topGreaterThanOrEqualToSuperWithConstant
             activation = layout().active()
@@ -585,62 +603,62 @@ extension ImplementationTests {
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .lessThanOrEqual).count, 1)
         }
-        
+
         context("top less than or equal to super with constant of 78.0") {
             test = .topLessThanOrEqualToSuperWithConstant
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (child, root), attributes: (.top, .top), relation: .lessThanOrEqual, constant: 78.0).count, 1)
         }
-        
+
         context("top of friend equal to bottom of child") {
             test = .topOfFriendEqualToBottomOfChild
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (friend, child), attributes: (.top, .bottom), relation: .equal).count, 1)
         }
-        
+
         context("top of friend equal to bottom of child") {
             test = .topOfFriendEqualToBottomOfChild
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (friend, child), attributes: (.top, .bottom), relation: .equal).count, 1)
         }
-        
+
         context("width of friend equal to width of nameless") {
             test = .widthOfFriendEqualToNameless
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (friend, root), attributes: (.width, .width), relation: .equal).count, 1)
         }
-        
+
         context("width of friend equal to width of super") {
             test = .widthOfFriendEqualToSuper
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (friend, root), attributes: (.width, .width), relation: .equal).count, 1)
         }
-        
+
         context("width of friend equal to width of child") {
             test = .widthOfFriendEqualToChild
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (friend, child), attributes: (.width, .width), relation: .equal).count, 1)
         }
-        
+
         context("width of friend equal to height of child") {
             test = .widthOfFriendEqualToHeightOfChild
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (friend, child), attributes: (.width, .height), relation: .equal).count, 1)
         }
-        
+
         context("width of friend equal to constant of 78.0") {
             test = .widthOfFriendEqualToConstant
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (friend, nil), attributes: (.width, .notAnAttribute), relation: .equal, constant: 78.0).count, 1)
         }
-        
+
         context("width of friend equal to child with constant of 78.0") {
             test = .widthOfFriendEqualToChildWithConstant
             activation = layout().active()
             XCTAssertEqual(root.findConstraints(items: (friend, child), attributes: (.width, .width), relation: .equal, constant: 78.0).count, 1)
         }
     }
-    
+
 }
 
 extension ImplementationTests {
@@ -648,7 +666,7 @@ extension ImplementationTests {
         let root = UIView().viewTag.root
         let cap = UIView().viewTag.cap
         let shoe = UIView().viewTag.shoe
-        
+
         root {
             cap.anchors {
                 Anchors.cap()
@@ -657,18 +675,20 @@ extension ImplementationTests {
                 Anchors.shoe()
             }
         }.finalActive()
-        
+
         let expect = """
         root {
             cap.anchors {
-                Anchors(.top, .leading, .trailing)
+                Anchors.top
+                Anchors.leading.trailing
             }
             shoe.anchors {
-                Anchors(.bottom, .leading, .trailing)
+                Anchors.bottom
+                Anchors.leading.trailing
             }
         }
         """.tabbed
-        
+
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
     }
 }
@@ -680,12 +700,18 @@ extension ImplementationTests {
         fixedView.translatesAutoresizingMaskIntoConstraints = false
         window.addSubview(fixedView)
         fixedView.anchors {
-            Anchors(.width, .height).equalTo(constant: 24.0)
+            Anchors.width.height.equalTo(constant: 24.0)
         }.finalActive()
+        
+        let identifier = fixedView.tagDescription
+        XCTAssertEqual(fixedView.constraints.shortDescription, """
+        \(identifier).width == + 24.0
+        \(identifier).height == + 24.0
+        """.descriptions)
         
         XCTAssertEqual(SwiftLayoutPrinter(fixedView, tags: [fixedView: "fixedView"]).print(), """
         fixedView.anchors {
-            Anchors(.width, .height).equalTo(constant: 24.0)
+            Anchors.width.height.equalTo(constant: 24.0)
         }
         """.tabbed)
     }
@@ -695,7 +721,7 @@ extension ImplementationTests {
         fixedView.translatesAutoresizingMaskIntoConstraints = false
         window.addSubview(fixedView)
         fixedView.anchors {
-            Anchors.size(length: 32.0)
+            Anchors.size(width: 32.0, height: 32.0)
         }.finalActive()
         
         let size = fixedView.systemLayoutSizeFitting(.zero)
@@ -705,7 +731,7 @@ extension ImplementationTests {
 
 // MARK: - Decorations
 extension ImplementationTests {
-    
+
     func testFeatureCompose() {
         activation = root.config({ root in
             root.backgroundColor = .yellow
@@ -716,18 +742,19 @@ extension ImplementationTests {
                 Anchors.allSides()
             }
         }.active()
-        
+
         let expect = """
         root {
             child.anchors {
-                Anchors(.top, .bottom, .leading, .trailing)
+                Anchors.top.bottom
+                Anchors.leading.trailing
             }
         }
         """.tabbed
-        
+
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
     }
-    
+
     func testFeatureComposeComplex() {
         activation = root.config({ root in
             root.backgroundColor = .yellow
@@ -745,25 +772,28 @@ extension ImplementationTests {
                 Anchors.shoe()
             }
         }.active()
-        
+
         let expect = """
         root {
             hellolabel.anchors {
-                Anchors(.top, .leading, .trailing)
+                Anchors.top
+                Anchors.leading.trailing
             }.sublayout {
                 lastview.anchors {
-                    Anchors(.top, .bottom, .leading, .trailing)
+                    Anchors.top.bottom
+                    Anchors.leading.trailing
                 }
             }
             button.anchors {
-                Anchors(.bottom, .leading, .trailing)
+                Anchors.bottom
+                Anchors.leading.trailing
             }
         }
         """.tabbed
-        
+
         XCTAssertEqual(SwiftLayoutPrinter(root).print(options: .onlyIdentifier), expect)
     }
-    
+
     func testFeatureComposeComplexWithAnimationHandling() {
         activation = root.config({ root in
             root.backgroundColor = .yellow
@@ -781,22 +811,25 @@ extension ImplementationTests {
                 Anchors.shoe()
             }
         }.active()
-        
+
         let expect = """
         root {
             hellolabel.anchors {
-                Anchors(.top, .leading, .trailing)
+                Anchors.top
+                Anchors.leading.trailing
             }.sublayout {
                 lastview.anchors {
-                    Anchors(.top, .bottom, .leading, .trailing)
+                    Anchors.top.bottom
+                    Anchors.leading.trailing
                 }
             }
             button.anchors {
-                Anchors(.bottom, .leading, .trailing)
+                Anchors.bottom
+                Anchors.leading.trailing
             }
         }
         """.tabbed
-        
+
         XCTAssertEqual(SwiftLayoutPrinter(root).print(options: .onlyIdentifier), expect)
     }
 

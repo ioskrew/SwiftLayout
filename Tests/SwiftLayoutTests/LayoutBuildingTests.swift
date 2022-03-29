@@ -16,10 +16,12 @@ final class LayoutBuildingTests: XCTestCase {
         XCTAssertEqual(SwiftLayoutPrinter(view).print(), """
         view {
             root.anchors {
-                Anchors(.top, .bottom, .leading, .trailing)
+                Anchors.top.bottom
+                Anchors.leading.trailing
             }.sublayout {
                 child.anchors {
-                    Anchors(.top, .bottom, .leading, .trailing)
+                    Anchors.top.bottom
+                    Anchors.leading.trailing
                 }
             }
         }
@@ -32,10 +34,12 @@ final class LayoutBuildingTests: XCTestCase {
         XCTAssertEqual(SwiftLayoutPrinter(view).print(), """
         view {
             root.anchors {
-                Anchors(.top, .bottom, .leading, .trailing)
+                Anchors.top.bottom
+                Anchors.leading.trailing
             }.sublayout {
                 child.anchors {
-                    Anchors(.top, .bottom, .leading, .trailing)
+                    Anchors.top.bottom
+                    Anchors.leading.trailing
                 }
             }
         }
@@ -53,10 +57,12 @@ final class LayoutBuildingTests: XCTestCase {
         XCTAssertEqual(SwiftLayoutPrinter(view).print(), """
         view {
             root.anchors {
-                Anchors(.top, .bottom, .leading, .trailing)
+                Anchors.top.bottom
+                Anchors.leading.trailing
             }.sublayout {
                 friend.anchors {
-                    Anchors(.top, .bottom, .leading, .trailing)
+                    Anchors.top.bottom
+                    Anchors.leading.trailing
                 }
             }
         }

@@ -49,7 +49,7 @@ extension _UIViewExtension where Self: UIView {
     /// - Parameter build: A ``AnchorsBuilder`` that  create ``Anchors`` to be applied to this layout
     /// - Returns: An ``ViewLayout`` that wraps this view and contains the anchors  coordinator.
     ///
-    public func anchors(@AnchorsBuilder _ build: () -> Anchors) -> ViewLayout<Self> {
+    public func anchors(@AnchorsBuilder _ build: () -> AnchorsContainer) -> ViewLayout<Self> {
         ViewLayout(self, anchors: build())
     }
     

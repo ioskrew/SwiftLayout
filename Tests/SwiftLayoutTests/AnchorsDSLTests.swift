@@ -38,138 +38,113 @@ final class AnchorsDSLTests: XCTestCase {
 
 extension AnchorsDSLTests {
     func testAnchorsEqualToSuperview() {
-        let attributes: [NSLayoutConstraint.Attribute] = [.top, .bottom, .leading, .trailing, .left, .right, .centerX, .centerY, .width, .height, .firstBaseline, .lastBaseline]
-        for attribute in attributes {
-            context("anchor for \(attribute.description) \(constantDescription)") {
+        let xaxis = ["centerX": Anchors.centerX,
+                     "leading": Anchors.leading,
+                     "trailing": Anchors.trailing,
+                     "left": Anchors.left,
+                     "right": Anchors.right]
+        for (key, x) in xaxis {
+            context("x anchor for \(key) \(constantDescription)") {
                 root {
                     red.anchors {
-                        Anchors(attribute).setConstant(constant)
+                        x.constant(constant)
                     }
                 }.finalActive()
                 
                 XCTAssertEqual(root.constraints.shortDescription, """
-                red.\(attribute.description) == root.\(attribute.description) \(constantDescription)
+                red.\(key) == root.\(key) \(constantDescription)
                 """.descriptions)
             }
         }
         
-        context("anchor for ") {
-            let attributes: [NSLayoutConstraint.Attribute] = [.topMargin, .bottomMargin, .leadingMargin, .trailingMargin, .leftMargin, .rightMargin, .centerXWithinMargins, .centerYWithinMargins]
-            for attribute in attributes {
-                context("\(attribute.description)  \(constantDescription)") {
-                    root {
-                        red.anchors {
-                            Anchors(attribute).setConstant(constant)
-                        }
-                    }.finalActive()
-                    XCTAssertEqual(root.constraints.shortDescription, """
-                    red.\(attribute) == root.\(attribute) \(constantDescription)
-                    root.bottom == root.layoutMarginsGuide.bottom + 8.0
-                    root.layoutMarginsGuide.left == root.left + 8.0
-                    root.right == root.layoutMarginsGuide.right + 8.0
-                    root.layoutMarginsGuide.top == root.top + 8.0
-                    """.descriptions)
-                }
-            }
-        }
-    }
-    
-    func testAnchorsGreaterThanOrEqualToSuperview() {
-        let attributes: [NSLayoutConstraint.Attribute] = [.top, .bottom, .leading, .trailing, .left, .right, .centerX, .centerY, .firstBaseline, .lastBaseline]
-        for attribute in attributes {
-            context("anchor for \(attribute.description) \(constantDescription)") {
+        let yaxis = ["centerY": Anchors.centerY,
+                     "top": Anchors.top,
+                     "bottom": Anchors.bottom,
+                     "firstBaseline": Anchors.firstBaseline,
+                     "lastBaseline": Anchors.lastBaseline]
+        for (key, y) in yaxis {
+            context("y anchor for \(key) \(constantDescription)") {
                 root {
                     red.anchors {
-                        Anchors(attribute).greaterThanOrEqualTo(constant: constant)
+                        y.constant(constant)
                     }
                 }.finalActive()
                 
                 XCTAssertEqual(root.constraints.shortDescription, """
-                red.\(attribute.description) >= root.\(attribute.description) \(constantDescription)
+                red.\(key) == root.\(key) \(constantDescription)
                 """.descriptions)
             }
         }
         
-        context("anchor for width and height") {
-            root {
-                red.anchors {
-                    Anchors(.width, .height).greaterThanOrEqualTo(root, constant: constant)
-                }
-            }.finalActive()
-            
-            XCTAssertEqual(root.constraints.shortDescription, """
-            red.width >= root.width \(constantDescription)
-            red.height >= root.height \(constantDescription)
-            """.descriptions)
-        }
-        
-        context("anchor for ") {
-            let attributes: [NSLayoutConstraint.Attribute] = [.topMargin, .bottomMargin, .leadingMargin, .trailingMargin, .leftMargin, .rightMargin, .centerXWithinMargins, .centerYWithinMargins]
-            for attribute in attributes {
-                context(attribute.description) {
-                    root {
-                        red.anchors {
-                            Anchors(attribute).greaterThanOrEqualTo().setConstant(constant)
-                        }
-                    }.finalActive()
-                    XCTAssertEqual(root.constraints.shortDescription, """
-                    red.\(attribute) >= root.\(attribute) \(constantDescription)
-                    root.bottom == root.layoutMarginsGuide.bottom + 8.0
-                    root.layoutMarginsGuide.left == root.left + 8.0
-                    root.right == root.layoutMarginsGuide.right + 8.0
-                    root.layoutMarginsGuide.top == root.top + 8.0
-                    """.descriptions)
-                }
+        let dimensions = ["width": Anchors.width,
+                          "height": Anchors.height]
+        for (key, dimension) in dimensions {
+            context("dimension anchor for \(key) \(constantDescription)") {
+                root {
+                    red.anchors {
+                        dimension.constant(constant)
+                    }
+                }.finalActive()
+                
+                XCTAssertEqual(root.constraints.shortDescription, """
+                red.\(key) == root.\(key) \(constantDescription)
+                """.descriptions)
             }
         }
     }
     
     func testAnchorsLessThanOrEqualToSuperview() {
-        let attributes: [NSLayoutConstraint.Attribute] = [.top, .bottom, .leading, .trailing, .left, .right, .centerX, .centerY, .firstBaseline, .lastBaseline]
-        for attribute in attributes {
-            context("anchor for \(attribute.description)") {
+        let xaxis = ["centerX": Anchors.centerX,
+                     "leading": Anchors.leading,
+                     "trailing": Anchors.trailing,
+                     "left": Anchors.left,
+                     "right": Anchors.right]
+        for (key, x) in xaxis {
+            context("x anchor for \(key) \(constantDescription)") {
                 root {
                     red.anchors {
-                        Anchors(attribute).lessThanOrEqualTo().setConstant(constant)
+                        x.lessThanOrEqualToSuper().constant(constant)
                     }
                 }.finalActive()
                 
                 XCTAssertEqual(root.constraints.shortDescription, """
-                red.\(attribute.description) <= root.\(attribute.description) \(constantDescription)
+                red.\(key) <= root.\(key) \(constantDescription)
                 """.descriptions)
             }
         }
         
-        context("anchor for width and height") {
-            root {
-                red.anchors {
-                    Anchors(.width, .height).lessThanOrEqualTo(root, constant: constant)
-                }
-            }.finalActive()
-            
-            XCTAssertEqual(root.constraints.shortDescription, """
-            red.width <= root.width \(constantDescription)
-            red.height <= root.height \(constantDescription)
-            """.descriptions)
+        let yaxis = ["centerY": Anchors.centerY,
+                     "top": Anchors.top,
+                     "bottom": Anchors.bottom,
+                     "firstBaseline": Anchors.firstBaseline,
+                     "lastBaseline": Anchors.lastBaseline]
+        for (key, y) in yaxis {
+            context("y anchor for \(key) \(constantDescription)") {
+                root {
+                    red.anchors {
+                        y.lessThanOrEqualToSuper().constant(constant)
+                    }
+                }.finalActive()
+                
+                XCTAssertEqual(root.constraints.shortDescription, """
+                red.\(key) <= root.\(key) \(constantDescription)
+                """.descriptions)
+            }
         }
         
-        context("anchor for ") {
-            let attributes: [NSLayoutConstraint.Attribute] = [.topMargin, .bottomMargin, .leadingMargin, .trailingMargin, .leftMargin, .rightMargin, .centerXWithinMargins, .centerYWithinMargins]
-            for attribute in attributes {
-                context(attribute.description) {
-                    root {
-                        red.anchors {
-                            Anchors(attribute).lessThanOrEqualTo().setConstant(constant)
-                        }
-                    }.finalActive()
-                    XCTAssertEqual(root.constraints.shortDescription, """
-                    red.\(attribute) <= root.\(attribute) \(constantDescription)
-                    root.bottom == root.layoutMarginsGuide.bottom + 8.0
-                    root.layoutMarginsGuide.left == root.left + 8.0
-                    root.right == root.layoutMarginsGuide.right + 8.0
-                    root.layoutMarginsGuide.top == root.top + 8.0
-                    """.descriptions)
-                }
+        let dimensions = ["width": Anchors.width,
+                          "height": Anchors.height]
+        for (key, dimension) in dimensions {
+            context("dimension anchor for \(key) \(constantDescription)") {
+                root {
+                    red.anchors {
+                        dimension.lessThanOrEqualToSuper().constant(constant)
+                    }
+                }.finalActive()
+                
+                XCTAssertEqual(root.constraints.shortDescription, """
+                red.\(key) <= root.\(key) \(constantDescription)
+                """.descriptions)
             }
         }
     }
@@ -180,7 +155,7 @@ extension AnchorsDSLTests {
                 Anchors.allSides()
             }.sublayout {
                 blue.anchors {
-                    Anchors(.centerX, .centerY)
+                    Anchors.center().multiplier(0.5)
                 }
             }
         }.finalActive()
@@ -192,8 +167,8 @@ extension AnchorsDSLTests {
         red.trailing == root.trailing
         """.descriptions)
         XCTAssertEqual(red.constraints.shortDescription, """
-        blue.centerX == red.centerX
-        blue.centerY == red.centerY
+        blue.centerX == red.centerX x 0.5
+        blue.centerY == red.centerY x 0.5
         """.descriptions)
     }
     
@@ -251,7 +226,7 @@ extension AnchorsDSLTests {
     }
     
     func testOptionalAnchors() {
-        @LayoutBuilder func layout(_ anchors: Anchors?) -> some Layout {
+        @LayoutBuilder func layout(_ anchors: AnchorsExpression<AnchorsXAxisAttribute>?) -> some Layout {
             root {
                 red.anchors {
                     anchors
@@ -265,13 +240,13 @@ extension AnchorsDSLTests {
         }
         
         context("leading anchors") {
-            layout(Anchors(.leading)).finalActive()
+            layout(Anchors.leading).finalActive()
             XCTAssertEqual(root.constraints.shortDescription, "red.leading == root.leading".descriptions)
         }
     }
     
     func testOptionalBindingAnchors() {
-        @LayoutBuilder func layout(_ anchors: Anchors?) -> some Layout {
+        @LayoutBuilder func layout(_ anchors: AnchorsExpression<AnchorsXAxisAttribute>?) -> some Layout {
             root {
                 red.anchors {
                     if let anchors = anchors {
@@ -287,27 +262,33 @@ extension AnchorsDSLTests {
         }
         
         context("leading anchors") {
-            layout(Anchors(.leading)).finalActive()
+            layout(Anchors.leading).finalActive()
             XCTAssertEqual(root.constraints.shortDescription, "red.leading == root.leading".descriptions)
         }
     }
     
     func testAnchorsWithForIn() {
-        let attributes: [NSLayoutConstraint.Attribute] = [
-            .top,
-            .bottom,
-            .leading,
-            .trailing
+        let xAxis = [
+            Anchors.leading,
+            Anchors.trailing
+        ]
+        let yAxis = [
+            Anchors.top,
+            Anchors.bottom
         ]
 
         root {
             red.anchors {
-                for attr in attributes {
-                    Anchors(attr)
+                for anchors in xAxis {
+                    anchors
+                }
+                
+                for anchors in yAxis {
+                    anchors
                 }
             }
         }.finalActive()
-        
+
         XCTAssertEqual(root.constraints.shortDescription, """
         red.top == root.top
         red.bottom == root.bottom
@@ -315,7 +296,7 @@ extension AnchorsDSLTests {
         red.trailing == root.trailing
         """.descriptions)
     }
-    
+
     func testAnchorsFromSeperately() {
         root {
             red.anchors {
@@ -325,18 +306,20 @@ extension AnchorsDSLTests {
                 Anchors.shoe()
             }
             red.anchors {
-                Anchors(.bottom).equalTo(blue, attribute: .top)
+                Anchors.bottom.equalTo(blue, attribute: .top)
             }
         }.finalActive()
         
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
         root {
             red.anchors {
-                Anchors(.top, .leading, .trailing)
-                Anchors(.bottom).equalTo(blue, attribute: .top)
+                Anchors.top
+                Anchors.bottom.equalTo(blue, attribute: .top)
+                Anchors.leading.trailing
             }
             blue.anchors {
-                Anchors(.bottom, .leading, .trailing)
+                Anchors.bottom
+                Anchors.leading.trailing
             }
         }
         """.tabbed)
@@ -351,7 +334,8 @@ extension AnchorsDSLTests {
         
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
         root.anchors {
-            Anchors(.top, .bottom, .leading, .trailing).equalTo(red.safeAreaLayoutGuide)
+            Anchors.top.bottom.equalTo(red.safeAreaLayoutGuide)
+            Anchors.leading.trailing.equalTo(red.safeAreaLayoutGuide)
         }.sublayout {
             red
         }
@@ -367,7 +351,8 @@ extension AnchorsDSLTests {
         
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
         root.anchors {
-            Anchors(.top, .bottom, .leading, .trailing).equalTo(label)
+            Anchors.top.bottom.equalTo(label)
+            Anchors.leading.trailing.equalTo(label)
         }.sublayout {
             label
         }
@@ -377,26 +362,32 @@ extension AnchorsDSLTests {
     func testDuplicateAnchorBuilder() {
         root {
             red.anchors {
-                Anchors(.top, .leading, .bottom)
-                Anchors(.top, .leading, .bottom)
+                Anchors.top.bottom
+                Anchors.leading
+                Anchors.top.bottom
+                Anchors.leading
             }.anchors {
-                Anchors(.trailing).equalTo(blue, attribute: .leading)
-                Anchors(.trailing).equalTo(blue, attribute: .leading)
+                Anchors.trailing.equalTo(blue, attribute: .leading)
+                Anchors.trailing.equalTo(blue, attribute: .leading)
             }
             blue.anchors {
-                Anchors(.top, .trailing, .bottom)
-                Anchors(.top, .trailing, .bottom)
+                Anchors.top.bottom
+                Anchors.trailing
+                Anchors.top.bottom
+                Anchors.trailing
             }
         }.finalActive()
         
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
         root {
             red.anchors {
-                Anchors(.top, .bottom, .leading)
-                Anchors(.trailing).equalTo(blue, attribute: .leading)
+                Anchors.top.bottom
+                Anchors.leading
+                Anchors.trailing.equalTo(blue, attribute: .leading)
             }
             blue.anchors {
-                Anchors(.top, .bottom, .trailing)
+                Anchors.top.bottom
+                Anchors.trailing
             }
         }
         """.tabbed)
@@ -425,8 +416,9 @@ extension AnchorsDSLTests {
         root.frame = .init(origin: .zero, size: .init(width: 100, height: 100))
         activation = root {
             red.anchors {
-                Anchors(.bottom, .trailing)
-                Anchors(.width, .height).equalTo(constant: 30)
+                Anchors.bottom
+                Anchors.trailing
+                Anchors.size(width: 30, height: 30)
             }
         }.active(forceLayout: true)
         
@@ -444,14 +436,15 @@ extension AnchorsDSLTests {
     func testConvenience() {
         activation = root {
             red.anchors {
-                Anchors.allSides(root)
+                Anchors.allSides()
             }
         }.active()
         
         let expect = """
         root {
             red.anchors {
-                Anchors(.top, .bottom, .leading, .trailing)
+                Anchors.top.bottom
+                Anchors.leading.trailing
             }
         }
         """.tabbed
@@ -466,20 +459,22 @@ extension AnchorsDSLTests {
     func testAnchorsEqualToUILayoutAnchor() {
         activation = root {
             red.anchors {
-                Anchors(.top).equalTo(root.topAnchor)
-                Anchors(.leading).equalTo(root.leadingAnchor)
-                Anchors(.trailing).equalTo(root.trailingAnchor).setConstant(-14.0)
-                Anchors(.bottom).equalTo(root.bottomAnchor)
-                Anchors(.height).equalTo(root.heightAnchor)
-                Anchors(.centerY).equalTo(root.centerYAnchor)
+                Anchors.top.equalTo(root.topAnchor)
+                Anchors.leading.equalTo(root.leadingAnchor)
+                Anchors.trailing.equalTo(root.trailingAnchor).constant(-14.0)
+                Anchors.bottom.equalTo(root.bottomAnchor)
+                Anchors.height.equalTo(root.heightAnchor)
+                Anchors.centerY.equalTo(root.centerYAnchor)
             }
         }.active()
         
         let expect = """
         root {
             red.anchors {
-                Anchors(.top, .bottom, .leading, .height, .centerY)
-                Anchors(.trailing).equalTo(constant: -14.0)
+                Anchors.top.bottom.centerY
+                Anchors.leading
+                Anchors.trailing.equalToSuper(constant: -14.0)
+                Anchors.height.equalToSuper()
             }
         }
         """.tabbed
@@ -491,22 +486,24 @@ extension AnchorsDSLTests {
         
         activation = root {
             red.anchors {
-                Anchors(.top).greaterThanOrEqualTo(root.topAnchor)
-                Anchors(.leading).greaterThanOrEqualTo(root.leadingAnchor)
-                Anchors(.trailing).greaterThanOrEqualTo(root.trailingAnchor)
-                Anchors(.bottom).greaterThanOrEqualTo(root.bottomAnchor).setConstant(13.0)
-                Anchors(.width).greaterThanOrEqualTo(root.widthAnchor)
-                Anchors(.height).greaterThanOrEqualTo(root.heightAnchor)
-                Anchors(.centerX).greaterThanOrEqualTo(root.centerXAnchor)
-                Anchors(.centerY).greaterThanOrEqualTo(root.centerYAnchor)
+                Anchors.top.greaterThanOrEqualTo(root.topAnchor)
+                Anchors.leading.greaterThanOrEqualTo(root.leadingAnchor)
+                Anchors.trailing.greaterThanOrEqualTo(root.trailingAnchor)
+                Anchors.bottom.greaterThanOrEqualTo(root.bottomAnchor).constant(13.0)
+                Anchors.width.greaterThanOrEqualTo(root.widthAnchor)
+                Anchors.height.greaterThanOrEqualTo(root.heightAnchor)
+                Anchors.centerX.greaterThanOrEqualTo(root.centerXAnchor)
+                Anchors.centerY.greaterThanOrEqualTo(root.centerYAnchor)
             }
         }.active()
         
         let expect = """
         root {
             red.anchors {
-                Anchors(.top, .leading, .trailing, .width, .height, .centerX, .centerY).greaterThanOrEqualTo()
-                Anchors(.bottom).greaterThanOrEqualTo(constant: 13.0)
+                Anchors.top.centerY.greaterThanOrEqualToSuper()
+                Anchors.bottom.greaterThanOrEqualToSuper(constant: 13.0)
+                Anchors.leading.trailing.centerX.greaterThanOrEqualToSuper()
+                Anchors.width.height.greaterThanOrEqualToSuper()
             }
         }
         """.tabbed
@@ -518,22 +515,24 @@ extension AnchorsDSLTests {
         
         activation = root {
             red.anchors {
-                Anchors(.top).lessThanOrEqualTo(root.topAnchor)
-                Anchors(.leading).lessThanOrEqualTo(root.leadingAnchor)
-                Anchors(.trailing).lessThanOrEqualTo(root.trailingAnchor)
-                Anchors(.bottom).lessThanOrEqualTo(root.bottomAnchor)
-                Anchors(.width).lessThanOrEqualTo(root.widthAnchor)
-                Anchors(.height).lessThanOrEqualTo(root.heightAnchor).setConstant(12.0)
-                Anchors(.centerX).lessThanOrEqualTo(root.centerXAnchor)
-                Anchors(.centerY).lessThanOrEqualTo(root.centerYAnchor)
+                Anchors.top.lessThanOrEqualTo(root.topAnchor)
+                Anchors.leading.lessThanOrEqualTo(root.leadingAnchor)
+                Anchors.trailing.lessThanOrEqualTo(root.trailingAnchor)
+                Anchors.bottom.lessThanOrEqualTo(root.bottomAnchor)
+                Anchors.width.lessThanOrEqualTo(root.widthAnchor)
+                Anchors.height.lessThanOrEqualTo(root.heightAnchor).constant(12.0)
+                Anchors.centerX.lessThanOrEqualTo(root.centerXAnchor)
+                Anchors.centerY.lessThanOrEqualTo(root.centerYAnchor)
             }
         }.active()
         
         let expect = """
         root {
             red.anchors {
-                Anchors(.top, .bottom, .leading, .trailing, .width, .centerX, .centerY).lessThanOrEqualTo()
-                Anchors(.height).lessThanOrEqualTo(root, constant: 12.0)
+                Anchors.top.bottom.centerY.lessThanOrEqualToSuper()
+                Anchors.leading.trailing.centerX.lessThanOrEqualToSuper()
+                Anchors.width.lessThanOrEqualToSuper()
+                Anchors.height.lessThanOrEqualToSuper(constant: 12.0)
             }
         }
         """.tabbed
@@ -541,4 +540,43 @@ extension AnchorsDSLTests {
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
     }
     
+    func testAnchorsHideEqualToSuper() {
+        root {
+            red.anchors {
+                Anchors.top.constant(24.0)
+            }
+        }.finalActive()
+        
+        XCTAssertEqual(root.constraints.shortDescription, """
+        red.top == root.top + 24.0
+        """.descriptions)
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+        root {
+            red.anchors {
+                Anchors.top.equalToSuper(constant: 24.0)
+            }
+        }
+        """.tabbed)
+    }
+    
+    func testAnchorsLessThanOrEqualToSuper() {
+        root {
+            red.anchors {
+                Anchors.top.lessThanOrEqualToSuper(constant: 24.0)
+            }
+        }.finalActive()
+        
+        XCTAssertEqual(root.constraints.shortDescription, """
+        red.top <= root.top + 24.0
+        """.descriptions)
+        
+        XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+        root {
+            red.anchors {
+                Anchors.top.lessThanOrEqualToSuper(constant: 24.0)
+            }
+        }
+        """.tabbed)
+    }
 }

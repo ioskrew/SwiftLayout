@@ -14,11 +14,11 @@ final class ItemFromView<View> where View: ConstraintableItem {
     
     let view: View?
     
-    var item: Anchors.Item {
+    var item: Item {
         guard let view = view else {
             return .transparent
         }
-        return Anchors.Item(view)
+        return Item(view)
     }
 }
 
