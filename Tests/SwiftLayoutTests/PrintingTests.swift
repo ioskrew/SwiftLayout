@@ -201,7 +201,7 @@ extension PrintingTests {
         root {
             child.anchors {
                 Anchors.top
-                Anchors.bottom.constant(-10.0)
+                Anchors.bottom.equalToSuper(constant: -10.0)
             }
         }
         """.tabbed
@@ -230,7 +230,7 @@ extension PrintingTests {
         root {
             child.anchors {
                 Anchors.top
-                Anchors.bottom.constant(-10.0)
+                Anchors.bottom.equalToSuper(constant: -10.0)
             }
             friend.anchors {
                 Anchors.top.equalTo(child, attribute: .bottom)
