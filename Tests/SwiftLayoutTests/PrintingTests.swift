@@ -518,8 +518,8 @@ extension PrintingTests {
                 Anchors.leading.trailing
             }.sublayout {
                 duny:Duny.anchors {
-                    Anchors.centerX.multiplier(1.2000000476837158)
-                    Anchors.centerY.multiplier(0.800000011920929)
+                    Anchors.centerX.equalToSuper().multiplier(1.2000000476837158)
+                    Anchors.centerY.equalToSuper().multiplier(0.800000011920929)
                 }.sublayout {
                     duny.nickname:\(UILabel.self).anchors {
                         Anchors.top

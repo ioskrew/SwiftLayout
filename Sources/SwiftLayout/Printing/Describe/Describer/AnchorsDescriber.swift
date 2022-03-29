@@ -33,7 +33,9 @@ enum AnchorsDescriber {
     }
     
     private static func isEqualRelation(lt: AnchorToken, rt: AnchorToken) -> Bool {
-        lt.firstAttributeType != .unknown
+        lt.firstTag == rt.firstTag
+        && lt.secondTag == rt.secondTag
+        && lt.firstAttributeType != .unknown
         && lt.firstAttributeType == rt.firstAttributeType
         && lt.relation == rt.relation
         && lt.constant == rt.constant

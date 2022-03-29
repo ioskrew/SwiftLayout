@@ -26,19 +26,24 @@ class SwiftLayoutPrinterTests: XCTestCase {
 
     func testSwiftLayoutPrinter() throws {
         parent {
-            child.anchors {
-                Anchors.height.equalTo(constant: 120.0)
+            child
+            friend.anchors {
+                Anchors.leading
+                Anchors.trailing.equalTo(child)
             }
         }.finalActive()
         
-        XCTAssertEqual(child.constraints.shortDescription, """
-        child.height == + 120.0
+        XCTAssertEqual(parent.constraints.shortDescription, """
+        friend.leading == parent.leading
+        friend.trailing == child.trailing
         """.descriptions)
         
         XCTAssertEqual(SwiftLayoutPrinter(parent).print(), """
         parent {
-            child.anchors {
-                Anchors.height.equalTo(constant: 120.0)
+            child
+            friend.anchors {
+                Anchors.leading
+                Anchors.trailing.equalTo(child)
             }
         }
         """.tabbed)
