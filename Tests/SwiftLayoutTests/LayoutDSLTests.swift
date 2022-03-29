@@ -191,15 +191,18 @@ extension LayoutDSLTests {
         let expect = """
         root {
             red.anchors {
-                Anchors(.top, .bottom, .leading, .trailing)
+                Anchors.top.bottom
+                Anchors.leading.trailing
             }.sublayout {
                 blue.anchors {
-                    Anchors(.top, .bottom, .leading, .trailing)
-                    Anchors(.height).equalTo(constant: 44.0)
+                    Anchors.top.bottom
+                    Anchors.leading.trailing
+                    Anchors.height.equalTo(constant: 44.0)
                 }.sublayout {
                     green.anchors {
-                        Anchors(.top, .bottom, .leading, .trailing)
-                        Anchors(.width).equalTo(constant: 88.0)
+                        Anchors.top.bottom
+                        Anchors.leading.trailing
+                        Anchors.width.equalTo(constant: 88.0)
                     }
                 }
             }
@@ -446,10 +449,12 @@ extension LayoutDSLTests {
         XCTAssertEqual(SwiftLayoutPrinter(view).print(), """
         view {
             root.anchors {
-                Anchors(.top, .bottom, .leading, .trailing)
+                Anchors.top.bottom
+                Anchors.leading.trailing
             }.sublayout {
                 child.anchors {
-                    Anchors(.top, .bottom, .leading, .trailing)
+                    Anchors.top.bottom
+                    Anchors.leading.trailing
                 }
             }
         }
@@ -462,10 +467,12 @@ extension LayoutDSLTests {
         XCTAssertEqual(SwiftLayoutPrinter(view).print(), """
         view {
             root.anchors {
-                Anchors(.top, .bottom, .leading, .trailing)
+                Anchors.top.bottom
+                Anchors.leading.trailing
             }.sublayout {
                 child.anchors {
-                    Anchors(.top, .bottom, .leading, .trailing)
+                    Anchors.top.bottom
+                    Anchors.leading.trailing
                 }
             }
         }
@@ -482,10 +489,12 @@ extension LayoutDSLTests {
         XCTAssertEqual(SwiftLayoutPrinter(view).print(), """
         view {
             root.anchors {
-                Anchors(.top, .bottom, .leading, .trailing)
+                Anchors.top.bottom
+                Anchors.leading.trailing
             }.sublayout {
                 friend.anchors {
-                    Anchors(.top, .bottom, .leading, .trailing)
+                    Anchors.top.bottom
+                    Anchors.leading.trailing
                 }
             }
         }
@@ -577,25 +586,27 @@ extension LayoutDSLTests {
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
         root {
             group1_1.anchors {
-                Anchors(.top, .leading, .trailing)
+                Anchors.top
+                Anchors.leading.trailing
             }
             group1_2.anchors {
-                Anchors(.top).equalTo(group1_1, attribute: .bottom)
-                Anchors(.leading, .trailing)
+                Anchors.top.equalTo(group1_1, attribute: .bottom)
+                Anchors.leading.trailing
             }
             group1_3.anchors {
-                Anchors(.top).equalTo(group1_1, attribute: .bottom)
-                Anchors(.leading).equalTo(constant: 8.0)
-                Anchors(.trailing).equalTo(constant: -8.0)
+                Anchors.top.equalTo(group1_1, attribute: .bottom)
+                Anchors.leading.equalToSuper(constant: 8.0)
+                Anchors.trailing.equalToSuper(constant: -8.0)
             }
             group2_1.anchors {
-                Anchors(.top).equalTo(group1_3, attribute: .bottom)
-                Anchors(.leading).equalTo(constant: 12.0)
-                Anchors(.trailing).equalTo(constant: -12.0)
+                Anchors.top.equalTo(group1_3, attribute: .bottom)
+                Anchors.leading.equalToSuper(constant: 12.0)
+                Anchors.trailing.equalToSuper(constant: -12.0)
             }
             group2_2.anchors {
-                Anchors(.bottom, .leading, .trailing)
-                Anchors(.top).equalTo(group2_2, attribute: .bottom)
+                Anchors.bottom
+                Anchors.leading.trailing
+                Anchors.top.equalTo(group2_2, attribute: .bottom)
             }
         }
         """.tabbed)
@@ -666,30 +677,36 @@ extension LayoutDSLTests {
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
         root {
             module1view1.anchors {
-                Anchors(.top, .leading)
-                Anchors(.width, .height).setMultiplier(0.5)
+                Anchors.top
+                Anchors.leading
+                Anchors.width.height.multiplier(0.5)
             }.sublayout {
                 module1view2.anchors {
-                    Anchors(.leading, .centerY)
-                    Anchors(.width, .height).equalTo(constant: 50.0)
+                    Anchors.leading
+                    Anchors.centerY
+                    Anchors.width.height.equalTo(constant: 50.0)
                 }
             }
             module1view3.anchors {
-                Anchors(.bottom, .leading)
-                Anchors(.height).equalTo(constant: 20.0)
+                Anchors.bottom
+                Anchors.leading
+                Anchors.height.equalTo(constant: 20.0)
             }
             module2view1.anchors {
-                Anchors(.top, .trailing)
-                Anchors(.width, .height).setMultiplier(0.5)
+                Anchors.top
+                Anchors.trailing
+                Anchors.width.height.multiplier(0.5)
             }.sublayout {
                 module2view2.anchors {
-                    Anchors(.trailing, .centerY)
-                    Anchors(.width, .height).equalTo(constant: 50.0)
+                    Anchors.trailing
+                    Anchors.centerY
+                    Anchors.width.height.equalTo(constant: 50.0)
                 }
             }
             module2view3.anchors {
-                Anchors(.bottom, .trailing)
-                Anchors(.height).equalTo(constant: 20.0)
+                Anchors.bottom
+                Anchors.trailing
+                Anchors.height.equalTo(constant: 20.0)
             }
         }
         """.tabbed)
