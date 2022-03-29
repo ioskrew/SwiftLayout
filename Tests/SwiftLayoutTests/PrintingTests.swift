@@ -177,7 +177,7 @@ extension PrintingTests {
         
         let expect = """
         root.anchors {
-            Anchors.width.height
+            Anchors.width.height.equalToSuper()
         }
         """.tabbed
         
@@ -454,7 +454,7 @@ extension PrintingTests {
         XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
         root {
             child.anchors {
-                Anchors.width.height
+                Anchors.width.height.equalToSuper()
             }
         }
         """.tabbed)
