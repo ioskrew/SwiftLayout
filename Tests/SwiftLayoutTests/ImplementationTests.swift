@@ -1,5 +1,5 @@
 import XCTest
-import SwiftLayoutUtil
+@testable import SwiftLayoutUtil
 @testable import SwiftLayout
 
 

@@ -36,22 +36,22 @@ struct TagDescriptor<Value>: CustomDebugStringConvertible where Value: TagDescri
     
 }
 
-public protocol TagDescriptable {
+protocol TagDescriptable {
     var accessibilityIdentifier: String? { get }
 }
 
 extension TagDescriptable where Self: UIView {
-    public var tagDescription: String {
+    var tagDescription: String {
         TagDescriptor(self).debugDescription
     }
 }
 
 extension TagDescriptable where Self: UILayoutGuide {
-    public var tagDescription: String {
+    var tagDescription: String {
         TagDescriptor(self).debugDescription
     }
     
-    public var accessibilityIdentifier: String? { owningView?.accessibilityIdentifier }
+    var accessibilityIdentifier: String? { owningView?.accessibilityIdentifier }
 }
 
 extension UIView: TagDescriptable {}
