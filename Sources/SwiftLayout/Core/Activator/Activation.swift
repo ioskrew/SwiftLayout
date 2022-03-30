@@ -5,7 +5,6 @@
 //  Created by aiden_h on 2022/02/16.
 //
 import UIKit
-import _SwiftLayoutUtil
 
 public final class Activation: Hashable {
     
