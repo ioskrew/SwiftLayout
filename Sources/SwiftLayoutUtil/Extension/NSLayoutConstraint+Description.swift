@@ -47,7 +47,7 @@ extension NSLayoutConstraint {
         }
     }
     
-    public var shortDescription: String {
+    var shortDescription: String {
         var shorts: [String] = []
         if let firstShort = firstShort {
             shorts.append("\(firstShort).\(firstAttribute.description)")

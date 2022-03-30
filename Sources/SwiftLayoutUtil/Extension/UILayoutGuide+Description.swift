@@ -8,7 +8,7 @@
 import UIKit
 
 extension UILayoutGuide {
-    public var propertyDescription: String {
+    var propertyDescription: String {
         guard let description = owningView?.tagDescription else { return "unknown" }
         switch identifier {
         case "UIViewLayoutMarginsGuide":
