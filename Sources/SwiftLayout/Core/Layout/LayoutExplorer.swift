@@ -57,9 +57,9 @@ extension LayoutExplorer {
             } else {
                 anchorsIndent = sublayoutIndent.appending("│     ")
             }
-            let items = layout.anchors.constraints
-            if !items.isEmpty {
-                result.append(contentsOf: items.map({ item in anchorsIndent.appending(item.description) }))
+            let descriptions = layout.anchors.constraints.flatMap { $0.descriptions }
+            if !descriptions.isEmpty {
+                result.append(contentsOf: descriptions.map({ description in anchorsIndent.appending(description) }))
             }
         }
         

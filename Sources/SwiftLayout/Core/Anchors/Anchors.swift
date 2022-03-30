@@ -37,7 +37,7 @@ public enum Anchors {
         return container
     }
     
-    public static func horizontal<I>(_ item: I, offset: CGFloat = .zero) -> AnchorsContainer where I: ConstraintableItem {
+    public static func horizontal<I>(_ item: I, offset: CGFloat = .zero) -> AnchorsContainer where I: AnchorsItemable {
         let container = AnchorsContainer()
         container.append(AnchorsExpression(xAxis: .leading).equalTo(item, constant: offset))
         container.append(AnchorsExpression(xAxis: .trailing).equalTo(item, constant: -1.0 * offset))
@@ -51,7 +51,7 @@ public enum Anchors {
         return container
     }
     
-    public static func vertical<I>(_ item: I, offset: CGFloat = .zero) -> AnchorsContainer where I: ConstraintableItem {
+    public static func vertical<I>(_ item: I, offset: CGFloat = .zero) -> AnchorsContainer where I: AnchorsItemable {
         let container = AnchorsContainer()
         container.append(AnchorsExpression(yAxis: .top).equalTo(item, constant: offset))
         container.append(AnchorsExpression(yAxis: .bottom).equalTo(item, constant: -1.0 * offset))
@@ -67,7 +67,7 @@ public enum Anchors {
         return container
     }
     
-    public static func allSides<I>(_ item: I, offset: CGFloat = .zero) -> AnchorsContainer where I: ConstraintableItem {
+    public static func allSides<I>(_ item: I, offset: CGFloat = .zero) -> AnchorsContainer where I: AnchorsItemable {
         let container = AnchorsContainer()
         container.append(AnchorsExpression(yAxis: .top).equalTo(item, constant: offset))
         container.append(AnchorsExpression(yAxis: .bottom).equalTo(item, constant: -1.0 * offset))
@@ -84,7 +84,7 @@ public enum Anchors {
         return container
     }
     
-    public static func cap<I>(_ item: I, offset: CGFloat = .zero) -> AnchorsContainer where I: ConstraintableItem {
+    public static func cap<I>(_ item: I, offset: CGFloat = .zero) -> AnchorsContainer where I: AnchorsItemable {
         let container = AnchorsContainer()
         container.append(AnchorsExpression(yAxis: .top).equalTo(item, constant: offset))
         container.append(AnchorsExpression(xAxis: .leading).equalTo(item, constant: offset))
@@ -100,7 +100,7 @@ public enum Anchors {
         return container
     }
     
-    public static func shoe<I>(_ item: I, offset: CGFloat = .zero) -> AnchorsContainer where I: ConstraintableItem {
+    public static func shoe<I>(_ item: I, offset: CGFloat = .zero) -> AnchorsContainer where I: AnchorsItemable {
         let container = AnchorsContainer()
         container.append(AnchorsExpression(yAxis: .bottom).equalTo(item, constant: -1.0 * offset))
         container.append(AnchorsExpression(xAxis: .leading).equalTo(item, constant: offset))
@@ -115,7 +115,7 @@ public enum Anchors {
         return container
     }
     
-    public static func size<I>(_ item: I, width: CGFloat, height: CGFloat) -> AnchorsContainer where I: ConstraintableItem {
+    public static func size<I>(_ item: I, width: CGFloat, height: CGFloat) -> AnchorsContainer where I: AnchorsItemable {
         let container = AnchorsContainer()
         container.append(AnchorsExpression(dimensions: .width).equalTo(item, constant: width))
         container.append(AnchorsExpression(dimensions: .height).equalTo(item, constant: height))
@@ -129,7 +129,7 @@ public enum Anchors {
         return container
     }
     
-    public static func center<I>(_ item: I, offsetX: CGFloat = .zero, offsetY: CGFloat = .zero) -> AnchorsContainer where I: ConstraintableItem {
+    public static func center<I>(_ item: I, offsetX: CGFloat = .zero, offsetY: CGFloat = .zero) -> AnchorsContainer where I: AnchorsItemable {
         let container = AnchorsContainer()
         container.append(AnchorsExpression(xAxis: .centerX).equalTo(item, constant: offsetX))
         container.append(AnchorsExpression(yAxis: .centerY).equalTo(item, constant: offsetY))

@@ -49,7 +49,7 @@ extension ViewLayout {
     ///
     public func anchors(@AnchorsBuilder _ build: () -> AnchorsContainer) -> Self {
         let anchors = self.anchors
-        anchors.append(contentsOf: build().constraints)
+        anchors.append(build())
         return Self.init(innerView, sublayouts: sublayouts, anchors: anchors)
     }
     
