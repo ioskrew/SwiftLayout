@@ -107,7 +107,7 @@ extension NSLayoutConstraint.Relation: CustomStringConvertible, CustomDebugStrin
             return "NSLayoutConstraint.Relation.unknown"
         }
     }
-    public var shortDescription: String {
+    var shortDescription: String {
         switch self {
         case .equal:
             return "=="
