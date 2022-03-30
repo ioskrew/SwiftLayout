@@ -7,7 +7,7 @@
 
 import UIKit
 
-public protocol Layout: CustomStringConvertible, CustomDebugStringConvertible {
+public protocol Layout {
     var view: UIView? { get }
     var anchors: AnchorsContainer { get }
     var sublayouts: [Layout] { get }
@@ -54,31 +54,5 @@ extension Layout {
     ///
     public var anyLayout: AnyLayout {
         AnyLayout(self)
-    }
-}
-
-extension Layout {
-    public var description: String {
-        let typeName = String(describing: type(of: self))
-        let typeNameWithoutGeneric: String
-        if let typeName = typeName.split(separator: "<").first {
-            typeNameWithoutGeneric = typeName.description
-        } else {
-            typeNameWithoutGeneric = "Unknown"
-        }
-
-        if let view = self.view {
-            return "\(typeNameWithoutGeneric) - view: \(view.tagDescription)"
-        } else {
-            return typeNameWithoutGeneric
-        }
-    }
-    
-    public var debugDescription: String {
-        LayoutExplorer.debugLayoutStructure(layout: self).joined(separator: "\n")
-    }
-    
-    public var debugDetailDescription: String {
-        LayoutExplorer.debugLayoutStructure(layout: self, withAnchors: true).joined(separator: "\n")
     }
 }

@@ -1,5 +1,4 @@
 import XCTest
-import _SwiftLayoutUtil
 import SwiftLayoutPrinter
 @testable import SwiftLayout
 
@@ -281,7 +280,7 @@ extension ImplementationTests {
               └─ ViewLayout - view: description
         """
         
-        XCTAssertEqual(layout.debugDescription, expectedResult)
+        XCTAssertEqual(LayoutPrinter.print(layout), expectedResult)
     }
     
     func testDebugLayoutStructurePrintWithAnchors() {
@@ -344,7 +343,7 @@ extension ImplementationTests {
                        .trailing == superview.trailing - 10.0
         """
         
-        XCTAssertEqual(layout.debugDetailDescription, expectedResult)
+        XCTAssertEqual(LayoutPrinter.print(layout, withAnchors: true), expectedResult)
     }
 }
 

@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import _SwiftLayoutUtil
 
 public final class IdentifierUpdater {
     /// update identifiers with property name

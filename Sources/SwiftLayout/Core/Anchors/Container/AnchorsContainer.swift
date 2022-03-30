@@ -9,7 +9,7 @@ import UIKit
 
 public final class AnchorsContainer {
     
-    private(set) var constraints: [AnchorsContainable] = []
+    private var constraints: [AnchorsContainable] = []
     
     init() {
         self.constraints = []
@@ -38,5 +38,21 @@ public final class AnchorsContainer {
             constraints[i].setMultiplier(multiplier)
         }
         return self
+    }
+}
+
+// MARK: - Support SwiftLayoutPrinter
+public struct AnchorsConstraintProperty {
+    public let attribute: NSLayoutConstraint.Attribute
+    public let relation: NSLayoutConstraint.Relation
+    public let toItem: AnchorsItem
+    public let toAttribute: NSLayoutConstraint.Attribute?
+    public let constant: CGFloat
+    public let multiplier: CGFloat
+}
+
+extension AnchorsContainer {
+    public func getConstraintProperties() -> [AnchorsConstraintProperty] {
+        constraints.flatMap { $0.getConstraintProperties() }
     }
 }

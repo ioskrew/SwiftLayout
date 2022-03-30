@@ -7,10 +7,6 @@ let package = Package(
     platforms: [.iOS(.v13)],
     products: [
         .library(
-            name: "_SwiftLayoutUtil",
-            targets: ["_SwiftLayoutUtil"]
-        ),
-        .library(
             name: "SwiftLayout",
             targets: ["SwiftLayout"]
         ),
@@ -22,19 +18,13 @@ let package = Package(
     dependencies: [],
     targets: [
         .target(
-            name: "_SwiftLayoutUtil",
-            dependencies: []
-        ),
-        .target(
             name: "SwiftLayout",
-            dependencies: [
-                "_SwiftLayoutUtil"
-            ]
+            dependencies: []
         ),
         .target(
             name: "SwiftLayoutPrinter",
             dependencies: [
-                "_SwiftLayoutUtil"
+                "SwiftLayout"
             ]
         ),
         .testTarget(

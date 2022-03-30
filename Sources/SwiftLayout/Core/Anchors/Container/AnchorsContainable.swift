@@ -8,7 +8,10 @@
 import UIKit
 
 protocol AnchorsContainable {
-    mutating func setMultiplier(_ multiplier: CGFloat)
     func nsLayoutConstraint(item fromItem: NSObject, toItem: NSObject?, viewDic: [String: UIView]) -> [NSLayoutConstraint]
-    var descriptions: [String] { get }
+    mutating func setMultiplier(_ multiplier: CGFloat)
+    
+    //  Support SwiftLayoutPrinter
+    func getConstraintProperties() -> [AnchorsConstraintProperty]
 }
+

@@ -6,14 +6,13 @@
 //
 
 import UIKit
-import _SwiftLayoutUtil
 
 public protocol AnchorsItemable {}
 extension UIView: AnchorsItemable {}
 extension UILayoutGuide: AnchorsItemable {}
 extension String: AnchorsItemable {}
 
-enum AnchorsItem: Hashable {
+public enum AnchorsItem: Hashable {
     case object(NSObject)
     case identifier(String)
     case transparent
@@ -26,25 +25,6 @@ enum AnchorsItem: Hashable {
             self = .object(object)
         } else {
             self = .transparent
-        }
-    }
-    
-    var shortDescription: String? {
-        switch self {
-        case .object(let object):
-            if let view = object as? UIView {
-                return view.tagDescription
-            } else if let guide = object as? UILayoutGuide {
-                return guide.propertyDescription
-            } else {
-                return "unknown"
-            }
-        case .identifier(let string):
-            return string
-        case .transparent:
-            return "superview"
-        case .deny:
-            return nil
         }
     }
 }

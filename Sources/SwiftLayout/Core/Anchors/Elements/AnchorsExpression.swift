@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import _SwiftLayoutUtil
 
 public struct AnchorsExpression<Attribute: AnchorsAttribute> {
     private var attributes: [Attribute]
@@ -94,48 +93,19 @@ extension AnchorsExpression: AnchorsContainable {
             }
         }
     }
-
-    var descriptions: [String] {
-        let valuesDescription = valuesDescription()
-        return attributes.map {
-            var elements = attributeDescription(attribute: $0)
-            elements.append(contentsOf: valuesDescription)
-            return elements.joined(separator: " ")
-        }
-    }
     
-    private func attributeDescription(attribute: Attribute) -> [String] {
-        var elements = Array<String>()
-        elements.append(".".appending(attribute.attribute.description))
-        elements.append(relation.shortDescription)
-        if let itemDescription = toItem.shortDescription {
-            if let toAttribute = toAttribute {
-                elements.append(itemDescription.appending(".").appending(toAttribute.attribute.description))
-            } else {
-                elements.append(itemDescription.appending(".").appending(attribute.attribute.description))
-            }
-        } else if Attribute.self != AnchorsDimensionAttribute.self {
-            if let toAttribute = toAttribute {
-                elements.append("superview.".appending(toAttribute.attribute.description))
-            } else {
-                elements.append("superview.".appending(attribute.attribute.description))
-            }
+    // Support SwiftLayoutPrinter
+    func getConstraintProperties() -> [AnchorsConstraintProperty] {
+        attributes.map {
+            AnchorsConstraintProperty(
+                attribute: $0.attribute,
+                relation: relation,
+                toItem: toItem,
+                toAttribute: toAttribute?.attribute,
+                constant: constant,
+                multiplier: multiplier
+            )
         }
-        return elements
-    }
-    
-    private func valuesDescription() -> [String] {
-        var elements = Array<String>()
-        if multiplier != 1.0 {
-            elements.append("x ".appending(multiplier.description))
-        }
-
-        if constant < 0.0 {
-            elements.append("- ".appending(abs(constant).description))
-        } else if constant > 0.0 {
-            elements.append("+ ".appending(constant.description))
-        }
-        return elements
     }
 }
 
