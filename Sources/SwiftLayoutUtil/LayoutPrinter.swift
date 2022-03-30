@@ -25,7 +25,7 @@ extension LayoutPrinter {
             } else {
                 anchorsIndent = sublayoutIndent.appending("│     ")
             }
-            let properties = layout.anchors.getConstraintProperties()
+            let properties = layout.anchors.constraints
             properties.map {
                 anchorsDescription($0)
             }.forEach {
@@ -79,7 +79,7 @@ extension LayoutPrinter {
             } else {
                 return [itemDescription.appending(".").appending(property.attribute.description)]
             }
-        } else if property.attribute != .height && property.attribute != .width {
+        } else if !property.isDimension {
             if let toAttribute = property.toAttribute {
                 return ["superview.".appending(toAttribute.description)]
             } else {

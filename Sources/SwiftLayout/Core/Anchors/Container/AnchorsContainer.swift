@@ -9,50 +9,34 @@ import UIKit
 
 public final class AnchorsContainer {
     
-    private var constraints: [AnchorsContainable] = []
+    public private(set) var constraints: [AnchorsConstraintProperty] = []
     
-    init() {
-        self.constraints = []
+    init(_ constraints: [AnchorsConstraintProperty] = []) {
+        self.constraints = constraints
     }
     
-    init(_ containable: AnchorsContainable) {
-        self.constraints = [containable]
+    init<A>(_ expression: AnchorsExpression<A>) where A: AnchorsAttribute {
+        self.constraints = expression.constraintProperties
     }
     
     func append(_ container: AnchorsContainer) {
         self.constraints.append(contentsOf: container.constraints)
     }
     
-    func append(_ containable: AnchorsContainable) {
-        self.constraints.append(containable)
+    func append<A>(_ expression: AnchorsExpression<A>) where A: AnchorsAttribute {
+        self.constraints.append(contentsOf: expression.constraintProperties)
     }
     
     func constraints(item fromItem: NSObject, toItem: NSObject?, viewDic: [String: UIView] = [:]) -> [NSLayoutConstraint] {
-        constraints.flatMap {
+        constraints.map {
             $0.nsLayoutConstraint(item: fromItem, toItem: toItem, viewDic: viewDic)
         }
     }
     
     public func multiplier(_ multiplier: CGFloat) -> Self {
         for i in 0..<constraints.count {
-            constraints[i].setMultiplier(multiplier)
+            constraints[i].multiplier = multiplier
         }
         return self
-    }
-}
-
-// MARK: - Support SwiftLayoutUtil
-public struct AnchorsConstraintProperty {
-    public let attribute: NSLayoutConstraint.Attribute
-    public let relation: NSLayoutConstraint.Relation
-    public let toItem: AnchorsItem
-    public let toAttribute: NSLayoutConstraint.Attribute?
-    public let constant: CGFloat
-    public let multiplier: CGFloat
-}
-
-extension AnchorsContainer {
-    public func getConstraintProperties() -> [AnchorsConstraintProperty] {
-        constraints.flatMap { $0.getConstraintProperties() }
     }
 }

@@ -41,61 +41,7 @@ public struct AnchorsExpression<Attribute: AnchorsAttribute> {
         self.multiplier = anchors.multiplier
     }
     
-    private func targetFromConstraint(_ constraint: NSLayoutConstraint) -> (toItem: AnchorsItem, toAttribute: Attribute?) {
-        if let object = constraint.secondItem as? NSObject {
-            return (toItem: .object(object), toAttribute: Attribute(attribute: constraint.secondAttribute))
-        } else {
-            return (toItem: self.toItem, toAttribute: Attribute(attribute: constraint.secondAttribute))
-        }
-    }
-}
-
-extension AnchorsExpression: AnchorsContainable {
-    mutating func setMultiplier(_ multiplier: CGFloat) {
-        self.multiplier = multiplier
-    }
-    
-    func nsLayoutConstraint(item fromItem: NSObject, toItem: NSObject?, viewDic: [String: UIView]) -> [NSLayoutConstraint] {
-        let to = self.toItem(toItem, viewDic: viewDic)
-        assert(to is UIView || to is UILayoutGuide || to == nil, "to: \(to.debugDescription) is not item")
-        
-        let toAttribute = self.toAttribute?.attribute
-        
-        return attributes.map { attribute in
-            let attribute = attribute.attribute
-            let constraint = NSLayoutConstraint(
-                item: fromItem,
-                attribute: attribute,
-                relatedBy: relation,
-                toItem: to,
-                attribute: toAttribute ?? attribute,
-                multiplier: multiplier,
-                constant: constant
-            )
-            constraint.priority = .required
-            return constraint
-        }
-    }
-    
-    private func toItem(_ toItem: NSObject?, viewDic: [String: UIView]) -> NSObject? {
-        switch self.toItem {
-        case let .object(object):
-            return object
-        case let .identifier(identifier):
-            return viewDic[identifier] ?? toItem
-        case .transparent:
-            return toItem
-        case .deny:
-            if  Attribute.self == AnchorsDimensionAttribute.self {
-                return nil
-            } else {
-                return toItem
-            }
-        }
-    }
-    
-    // Support SwiftLayoutUtil
-    func getConstraintProperties() -> [AnchorsConstraintProperty] {
+    var constraintProperties: [AnchorsConstraintProperty] {
         attributes.map {
             AnchorsConstraintProperty(
                 attribute: $0.attribute,
@@ -105,6 +51,14 @@ extension AnchorsExpression: AnchorsContainable {
                 constant: constant,
                 multiplier: multiplier
             )
+        }
+    }
+    
+    private func targetFromConstraint(_ constraint: NSLayoutConstraint) -> (toItem: AnchorsItem, toAttribute: Attribute?) {
+        if let object = constraint.secondItem as? NSObject {
+            return (toItem: .object(object), toAttribute: Attribute(attribute: constraint.secondAttribute))
+        } else {
+            return (toItem: self.toItem, toAttribute: Attribute(attribute: constraint.secondAttribute))
         }
     }
 }
