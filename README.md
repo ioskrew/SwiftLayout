@@ -453,7 +453,7 @@ contentView {
 
 - From a debugging point, if you set identifier, the corresponding string is output together in the description of NSLayoutConstraint.
 
-### SwiftLayoutPrinter
+### SwiftLayoutUtil
 
 for several reasons, you want current view state migration to SwiftLayout. 
 
@@ -465,9 +465,9 @@ for several reasons, you want current view state migration to SwiftLayout.
   contentView.addSubview(firstNameLabel)
   ```
 
-- You can use SwiftLayoutPrinter in source or debug console:
+- You can use SwiftLayoutUtil in source or debug console:
   
-  > (lldb) po SwiftLayoutPrinter(contentView)
+  > (lldb) po SwiftLayoutUtil(contentView)
   
   ```swift
   0x01234567890:UIView {
@@ -486,7 +486,7 @@ for several reasons, you want current view state migration to SwiftLayout.
   let someView = SomeView()
   ```
   
-  > po SwiftLayoutPrinter(someView, tags: [someView: "SomeView"]).print(.nameOnly)
+  > po SwiftLayoutUtil(someView, tags: [someView: "SomeView"]).print(.nameOnly)
   
   ```swift
   SomeView {

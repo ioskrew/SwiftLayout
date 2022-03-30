@@ -94,7 +94,7 @@ extension AnchorsExpression: AnchorsContainable {
         }
     }
     
-    // Support SwiftLayoutPrinter
+    // Support SwiftLayoutUtil
     func getConstraintProperties() -> [AnchorsConstraintProperty] {
         attributes.map {
             AnchorsConstraintProperty(

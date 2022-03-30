@@ -1,6 +1,6 @@
 import XCTest
 import SwiftLayout
-import SwiftLayoutPrinter
+import SwiftLayoutUtil
 
 final class LayoutBuildingTests: XCTestCase {
     
@@ -14,7 +14,7 @@ final class LayoutBuildingTests: XCTestCase {
         view.layoutIfNeeded()
 
         XCTAssertEqual(view.child.bounds.size, CGSize(width: 90, height: 90))
-        XCTAssertEqual(SwiftLayoutPrinter(view).print(), """
+        XCTAssertEqual(ViewPrinter(view).print(), """
         view {
             root.anchors {
                 Anchors.top.bottom
@@ -32,7 +32,7 @@ final class LayoutBuildingTests: XCTestCase {
 
         XCTAssertEqual(view.root.count(view.child), 1)
         XCTAssertEqual(view.root.count(view.friend), 0)
-        XCTAssertEqual(SwiftLayoutPrinter(view).print(), """
+        XCTAssertEqual(ViewPrinter(view).print(), """
         view {
             root.anchors {
                 Anchors.top.bottom
@@ -55,7 +55,7 @@ final class LayoutBuildingTests: XCTestCase {
         view.friend.setNeedsLayout()
         view.friend.layoutIfNeeded()
         XCTAssertEqual(view.friend.bounds.size, .init(width: 90, height: 90))
-        XCTAssertEqual(SwiftLayoutPrinter(view).print(), """
+        XCTAssertEqual(ViewPrinter(view).print(), """
         view {
             root.anchors {
                 Anchors.top.bottom

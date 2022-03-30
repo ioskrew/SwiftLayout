@@ -1,5 +1,5 @@
 import XCTest
-import SwiftLayoutPrinter
+import SwiftLayoutUtil
 @testable import SwiftLayout
 
 
@@ -199,7 +199,7 @@ extension ImplementationTests {
     
     func testAccessibilityIdentifierOption() {
         let view = IdentifiedView()
-        SwiftLayoutPrinter(view).updateIdentifiers()
+        ViewPrinter(view).updateIdentifiers()
         XCTAssertEqual(view.contentView.accessibilityIdentifier, "contentView")
         XCTAssertEqual(view.nameLabel.accessibilityIdentifier, "nameLabel")
     }
@@ -440,7 +440,7 @@ extension ImplementationTests {
         child.width == + 24.0
         """.descriptions)
         
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+        XCTAssertEqual(ViewPrinter(root).print(), """
         root {
             child.anchors {
                 Anchors.top.bottom
@@ -471,7 +471,7 @@ extension ImplementationTests {
         }
         """
 
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect.tabbed)
+        XCTAssertEqual(ViewPrinter(root).print(), expect.tabbed)
     }
 
     func testRules() {
@@ -692,7 +692,7 @@ extension ImplementationTests {
         }
         """.tabbed
 
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
+        XCTAssertEqual(ViewPrinter(root).print(), expect)
     }
 }
 
@@ -712,7 +712,7 @@ extension ImplementationTests {
         \(identifier).height == + 24.0
         """.descriptions)
         
-        XCTAssertEqual(SwiftLayoutPrinter(fixedView, tags: [fixedView: "fixedView"]).print(), """
+        XCTAssertEqual(ViewPrinter(fixedView, tags: [fixedView: "fixedView"]).print(), """
         fixedView.anchors {
             Anchors.width.height.equalTo(constant: 24.0)
         }
@@ -755,7 +755,7 @@ extension ImplementationTests {
         }
         """.tabbed
 
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
+        XCTAssertEqual(ViewPrinter(root).print(), expect)
     }
 
     func testFeatureComposeComplex() {
@@ -794,7 +794,7 @@ extension ImplementationTests {
         }
         """.tabbed
 
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(options: .onlyIdentifier), expect)
+        XCTAssertEqual(ViewPrinter(root).print(options: .onlyIdentifier), expect)
     }
 
     func testFeatureComposeComplexWithAnimationHandling() {
@@ -833,7 +833,7 @@ extension ImplementationTests {
         }
         """.tabbed
 
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(options: .onlyIdentifier), expect)
+        XCTAssertEqual(ViewPrinter(root).print(options: .onlyIdentifier), expect)
     }
 
 }

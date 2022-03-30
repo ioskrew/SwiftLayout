@@ -11,8 +11,8 @@ let package = Package(
             targets: ["SwiftLayout"]
         ),
         .library(
-            name: "SwiftLayoutPrinter",
-            targets: ["SwiftLayoutPrinter"]
+            name: "SwiftLayoutUtil",
+            targets: ["SwiftLayoutUtil"]
         )
     ],
     dependencies: [],
@@ -22,7 +22,7 @@ let package = Package(
             dependencies: []
         ),
         .target(
-            name: "SwiftLayoutPrinter",
+            name: "SwiftLayoutUtil",
             dependencies: [
                 "SwiftLayout"
             ]
@@ -31,7 +31,7 @@ let package = Package(
             name: "SwiftLayoutTests",
             dependencies: [
                 "SwiftLayout",
-                "SwiftLayoutPrinter"
+                "SwiftLayoutUtil"
             ]
         )
     ]

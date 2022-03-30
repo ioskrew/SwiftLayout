@@ -57,7 +57,7 @@ struct AnchorToken: Hashable {
     }
     
     enum Parser {
-        static func from(_ view: UIView, viewTags tags: ViewTags, options: SwiftLayoutPrinter.PrintOptions) -> [AnchorToken] {
+        static func from(_ view: UIView, viewTags tags: ViewTags, options: ViewPrinter.PrintOptions) -> [AnchorToken] {
             let constraints = view.constraints.sorted { lhs, rhs in
                 func compareTuple(_ value: NSLayoutConstraint) -> (Int, Int, Int, CGFloat, CGFloat, Float) {
                     (
@@ -79,7 +79,7 @@ struct AnchorToken: Hashable {
     }
     
     enum Validator {
-        static func isUserCreation(_ constraint: NSLayoutConstraint, options: SwiftLayoutPrinter.PrintOptions) -> Bool {
+        static func isUserCreation(_ constraint: NSLayoutConstraint, options: ViewPrinter.PrintOptions) -> Bool {
             let description = constraint.debugDescription
             if options.contains(.withSystemConstraints) {
                 return true

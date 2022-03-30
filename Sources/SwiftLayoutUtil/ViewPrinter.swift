@@ -1,13 +1,13 @@
 //
-//  SwiftLayoutPrinter.swift
-//  
+//  ViewPrinter.swift
+//
 //
 //  Created by oozoofrog on 2022/02/16.
 //
 
 import UIKit
 
-public struct SwiftLayoutPrinter: CustomStringConvertible {
+public struct ViewPrinter: CustomStringConvertible {
     
     public struct PrintOptions: OptionSet {
         public let rawValue: Int

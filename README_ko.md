@@ -455,7 +455,7 @@ contentView {
 
 - 디버깅의 관점에서 보면 identifying을 설정한 경우 NSLayoutConstraint의 description에 해당 문자열이 함께 출력됩니다.
 
-### SwiftLayoutPrinter
+### SwiftLayoutUtil
 
 xib혹은 UIKit으로 직접 구현되어 있는 뷰를 SwiftLayout으로 마이그레이션하게 될 때 유용하게 사용할 수 있는 유틸리티 객체입니다.
 
@@ -467,9 +467,9 @@ xib혹은 UIKit으로 직접 구현되어 있는 뷰를 SwiftLayout으로 마이
   contentView.addSubview(firstNameLabel)
   ```
 
-- SwiftLayoutPrinter는 소스안에서는 물론 디버그 콘솔에서 사용할 수 있습니다.
+- SwiftLayoutUtil는 소스안에서는 물론 디버그 콘솔에서 사용할 수 있습니다.
   
-  > (lldb) po SwiftLayoutPrinter(contentView)
+  > (lldb) po SwiftLayoutUtil(contentView)
   
   ```swift
   // 별도의 identifiying 설정이 없는 경우 주소값:View타입의 형태로 뷰를 표시합니다.
@@ -489,7 +489,7 @@ xib혹은 UIKit으로 직접 구현되어 있는 뷰를 SwiftLayout으로 마이
   let someView = SomeView()
   ```
   
-  > po SwiftLayoutPrinter(someView, tags: [someView: "SomeView"]).print(.nameOnly)
+  > po SwiftLayoutUtil(someView, tags: [someView: "SomeView"]).print(.nameOnly)
   
   ```swift
   SomeView {

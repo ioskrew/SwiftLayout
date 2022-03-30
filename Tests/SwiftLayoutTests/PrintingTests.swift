@@ -1,6 +1,6 @@
 import XCTest
 import SwiftLayout
-import SwiftLayoutPrinter
+import SwiftLayoutUtil
 
 class PrintingTests: XCTestCase {
     
@@ -33,7 +33,7 @@ extension PrintingTests {
         }
         """.tabbed
         
-        let result = SwiftLayoutPrinter(root).print()
+        let result = ViewPrinter(root).print()
         XCTAssertEqual(result, expect)
     }
     
@@ -54,7 +54,7 @@ extension PrintingTests {
         }
         """.tabbed
         
-        let result = SwiftLayoutPrinter(root).print()
+        let result = ViewPrinter(root).print()
         XCTAssertEqual(result, expect)
     }
     
@@ -77,7 +77,7 @@ extension PrintingTests {
         }
         """.tabbed
         
-        let result = SwiftLayoutPrinter(root).print()
+        let result = ViewPrinter(root).print()
         XCTAssertEqual(result, expect)
     }
     
@@ -102,7 +102,7 @@ extension PrintingTests {
             friend
         }
         """.tabbed
-        let result = SwiftLayoutPrinter(root).print()
+        let result = ViewPrinter(root).print()
         XCTAssertEqual(result, expect)
     }
     
@@ -136,7 +136,7 @@ extension PrintingTests {
         two.width == one.width
         """.descriptions)
         
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+        XCTAssertEqual(ViewPrinter(root).print(), """
         root {
             one.anchors {
                 Anchors.bottom
@@ -161,7 +161,7 @@ extension PrintingTests {
             }
         }.finalActive()
         
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+        XCTAssertEqual(ViewPrinter(root).print(), """
         root {
             one.anchors {
                 Anchors.width.equalToSuper(constant: -20.0)
@@ -191,7 +191,7 @@ extension PrintingTests {
         }
         """.tabbed
         
-        let result = SwiftLayoutPrinter(root).print()
+        let result = ViewPrinter(root).print()
         XCTAssertEqual(result, expect)
     }
     
@@ -223,7 +223,7 @@ extension PrintingTests {
         }
         """.tabbed
         
-        let result = SwiftLayoutPrinter(root).print()
+        let result = ViewPrinter(root).print()
         XCTAssertEqual(result, expect)
     }
 
@@ -244,7 +244,7 @@ extension PrintingTests {
         }
         """.tabbed
         
-        let result = SwiftLayoutPrinter(root).print()
+        let result = ViewPrinter(root).print()
         
         XCTAssertEqual(result, expect)
     }
@@ -278,7 +278,7 @@ extension PrintingTests {
         }
         """.tabbed
         
-        let result = SwiftLayoutPrinter(root).print()
+        let result = ViewPrinter(root).print()
         XCTAssertEqual(result, expect)
     }
     
@@ -305,7 +305,7 @@ extension PrintingTests {
         }
         """.tabbed
         
-        let result = SwiftLayoutPrinter(root, tags: [child: "child", grand: "grandchild"]).print()
+        let result = ViewPrinter(root, tags: [child: "child", grand: "grandchild"]).print()
         XCTAssertEqual(result, expect)
     }
     
@@ -328,7 +328,7 @@ extension PrintingTests {
         }
         """.tabbed
        
-        let result = SwiftLayoutPrinter(root).print()
+        let result = ViewPrinter(root).print()
         
         XCTAssertEqual(result, expect)
     }
@@ -342,7 +342,7 @@ extension PrintingTests {
         }
         """.tabbed
         
-        let result = SwiftLayoutPrinter(cell, tags: [cell: "contentView"]).updateIdentifiers(.withTypeOfView).print()
+        let result = ViewPrinter(cell, tags: [cell: "contentView"]).updateIdentifiers(.withTypeOfView).print()
         XCTAssertEqual(result, expect)
     }
     
@@ -380,7 +380,7 @@ extension PrintingTests {
         }
         """.tabbed
         
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
+        XCTAssertEqual(ViewPrinter(root).print(), expect)
     }
     
     func testGreaterThanAndLessThan() {
@@ -413,7 +413,7 @@ extension PrintingTests {
         }
         """.tabbed
         
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
+        XCTAssertEqual(ViewPrinter(root).print(), expect)
     }
     
     func testPrintSize() {
@@ -436,7 +436,7 @@ extension PrintingTests {
         child.height == root.height
         """.descriptions)
         
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+        XCTAssertEqual(ViewPrinter(root).print(), """
         root {
             child.anchors {
                 Anchors.width.height.equalToSuper()
@@ -453,7 +453,7 @@ extension PrintingTests {
     
     func testautomaticIdentifierAssignmentOption() {
         let cell = Cell()
-        SwiftLayoutPrinter(cell).updateIdentifiers()
+        ViewPrinter(cell).updateIdentifiers()
         
         XCTAssertEqual(cell.profileView.accessibilityIdentifier, "profileView")
         XCTAssertEqual(cell.nameLabel.accessibilityIdentifier, "nameLabel")
@@ -495,7 +495,7 @@ extension PrintingTests {
     func testDeepAssignIdentifier() {
         let gont = Gont()
         
-        XCTAssertEqual(SwiftLayoutPrinter(gont, tags: [gont: "gont"]).updateIdentifiers(.referenceAndNameWithTypeOfView).print(),
+        XCTAssertEqual(ViewPrinter(gont, tags: [gont: "gont"]).updateIdentifiers(.referenceAndNameWithTypeOfView).print(),
         """
         gont {
             sea:\(UILabel.self).anchors {
@@ -629,7 +629,7 @@ extension PrintingTests {
         }
         
         layout().finalActive()
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(options: .onlyIdentifier), """
+        XCTAssertEqual(ViewPrinter(root).print(options: .onlyIdentifier), """
         root {
             label.anchors {
                 Anchors.top.bottom
@@ -682,10 +682,10 @@ extension PrintingTests {
 
 // MARK: - performance
 extension PrintingTests {
-    func testSwiftLayoutPrinterPerformance() {
+    func testViewPrinterPerformance() {
         measure {
             let gont = Gont()
-            _ = SwiftLayoutPrinter(gont, tags: [gont: "gont"]).updateIdentifiers(.referenceAndNameWithTypeOfView).print()
+            _ = ViewPrinter(gont, tags: [gont: "gont"]).updateIdentifiers(.referenceAndNameWithTypeOfView).print()
         }
     }
 }
