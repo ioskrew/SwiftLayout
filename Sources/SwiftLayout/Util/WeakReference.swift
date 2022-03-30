@@ -7,28 +7,28 @@
 
 import UIKit
 
-public protocol CustomHashable: AnyObject {
+protocol CustomHashable: AnyObject {
     func customHash(_ hasher: inout Hasher)
 }
 
-public final class WeakReference<Origin>: Hashable where Origin: CustomHashable {
-    public static func == (lhs: WeakReference<Origin>, rhs: WeakReference<Origin>) -> Bool {
+final class WeakReference<Origin>: Hashable where Origin: CustomHashable {
+    static func == (lhs: WeakReference<Origin>, rhs: WeakReference<Origin>) -> Bool {
         lhs.hashValue == rhs.hashValue
     }
     
-    public init(origin: Origin? = nil) {
+    init(origin: Origin? = nil) {
         self.origin = origin
     }
     
-    public weak var origin: Origin?
+    weak var origin: Origin?
     
-    public func hash(into hasher: inout Hasher) {
+    func hash(into hasher: inout Hasher) {
         origin?.customHash(&hasher)
     }
 }
 
 extension NSLayoutConstraint: CustomHashable {
-    public func customHash(_ hasher: inout Hasher) {
+    func customHash(_ hasher: inout Hasher) {
         hasher.combine(firstItem as? NSObject)
         hasher.combine(firstAttribute)
         hasher.combine(secondItem as? NSObject)
@@ -41,7 +41,7 @@ extension NSLayoutConstraint: CustomHashable {
 }
 
 extension WeakReference: CustomDebugStringConvertible where Origin: NSLayoutConstraint {
-    public var debugDescription: String {
+    var debugDescription: String {
         guard let origin = origin else { return "WK constraint: unknown: \(UUID().uuidString)" }
         guard let first = origin.firstItem as? UIView else { return "WK constraint: unknown: \(UUID().uuidString)" }
         if let second = origin.secondItem as? UIView {
@@ -55,7 +55,7 @@ extension WeakReference: CustomDebugStringConvertible where Origin: NSLayoutCons
 }
 
 extension Collection where Element: CustomHashable {
-    public var weakens: [WeakReference<Element>] {
+    var weakens: [WeakReference<Element>] {
         map(WeakReference.init)
     }
 }
