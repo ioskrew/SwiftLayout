@@ -33,6 +33,11 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
         self.viewTags = ViewTags.viewTagsFromView(view, customTags: customTags)
     }
     
+    private init(_ view: UIView, viewTages: ViewTags) {
+        self.view = view
+        self.viewTags = viewTages
+    }
+    
     let view: UIView
     let viewTags: ViewTags
     
@@ -57,7 +62,7 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
         if printOnlyIdentifier {
             options.insert(.onlyIdentifier)
         }
-        return print(updater, options: options)
+        return print(options: options)
     }
     
     /// print ``SwiftLayout`` syntax from view structures
@@ -65,12 +70,7 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
     ///  - updater: ``IdentifierUpdater``
     ///  - options: ``PrintOptions``
     /// - Returns: String of SwiftLayout syntax
-    public func print(_ updater: IdentifierUpdater? = nil, options: PrintOptions = []) -> String {
-        var viewTags = viewTags
-        if let updater = updater {
-            viewTags = updater.update(view, viewTags: viewTags)
-        }
-        
+    public func print(options: PrintOptions = []) -> String {
         guard let viewToken = ViewToken.Parser.from(view, viewTags: viewTags, options: options) else { return "" }
         let constraints = AnchorToken.Parser.from(view, viewTags: viewTags, options: options)
         return Describer(viewToken, constraints).description
@@ -83,9 +83,9 @@ public struct SwiftLayoutPrinter: CustomStringConvertible {
     /// - Returns: The view itself with the **accessibilityIdentifier** applied
     ///
     @discardableResult
-    public func updateIdentifiers(rootObject: AnyObject? = nil) -> Self {
-        IdentifierUpdater.nameOnly.update(rootObject ?? self.view)
-        return self
+    public func updateIdentifiers(_ updater: IdentifierUpdater = .nameOnly, rootObject: AnyObject? = nil) -> Self {
+        let viewTags = updater.update(rootObject ?? self.view, viewTags: self.viewTags)
+        return Self.init(self.view, viewTages: viewTags)
     }
     
 }

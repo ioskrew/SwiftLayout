@@ -277,10 +277,9 @@ extension LayoutDSLTests {
         }
         """.tabbed
         
-        SwiftLayoutPrinter(container.root).updateIdentifiers(rootObject: container)
-        
         XCTAssertEqual(
             SwiftLayoutPrinter(container.root)
+                .updateIdentifiers(rootObject: container)
                 .print(options: .onlyIdentifier),
             expect
         )

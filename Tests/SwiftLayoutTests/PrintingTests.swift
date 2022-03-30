@@ -342,7 +342,7 @@ extension PrintingTests {
         }
         """.tabbed
         
-        let result = SwiftLayoutPrinter(cell, tags: [cell: "contentView"]).print(.withTypeOfView)
+        let result = SwiftLayoutPrinter(cell, tags: [cell: "contentView"]).updateIdentifiers(.withTypeOfView).print()
         XCTAssertEqual(result, expect)
     }
     
@@ -495,7 +495,7 @@ extension PrintingTests {
     func testDeepAssignIdentifier() {
         let gont = Gont()
         
-        XCTAssertEqual(SwiftLayoutPrinter(gont, tags: [gont: "gont"]).print(.referenceAndNameWithTypeOfView),
+        XCTAssertEqual(SwiftLayoutPrinter(gont, tags: [gont: "gont"]).updateIdentifiers(.referenceAndNameWithTypeOfView).print(),
         """
         gont {
             sea:\(UILabel.self).anchors {
