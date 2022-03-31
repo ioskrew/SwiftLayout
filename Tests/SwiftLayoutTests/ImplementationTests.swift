@@ -1,5 +1,7 @@
 import XCTest
+@testable import SwiftLayoutUtil
 @testable import SwiftLayout
+
 
 /// test cases for api rules except DSL syntax
 final class ImplementationTests: XCTestCase {
@@ -196,7 +198,8 @@ extension ImplementationTests {
     }
     
     func testAccessibilityIdentifierOption() {
-        let view = IdentifiedView().updateIdentifiers()
+        let view = IdentifiedView()
+        ViewPrinter(view).updateIdentifiers()
         XCTAssertEqual(view.contentView.accessibilityIdentifier, "contentView")
         XCTAssertEqual(view.nameLabel.accessibilityIdentifier, "nameLabel")
     }
@@ -277,7 +280,7 @@ extension ImplementationTests {
               └─ ViewLayout - view: description
         """
         
-        XCTAssertEqual(layout.debugDescription, expectedResult)
+        XCTAssertEqual(LayoutPrinter(layout).description, expectedResult)
     }
     
     func testDebugLayoutStructurePrintWithAnchors() {
@@ -340,7 +343,7 @@ extension ImplementationTests {
                        .trailing == superview.trailing - 10.0
         """
         
-        XCTAssertEqual(layout.debugDetailDescription, expectedResult)
+        XCTAssertEqual(LayoutPrinter(layout, withAnchors: true).description, expectedResult)
     }
 }
 
@@ -437,7 +440,7 @@ extension ImplementationTests {
         child.width == + 24.0
         """.descriptions)
         
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+        XCTAssertEqual(ViewPrinter(root).description, """
         root {
             child.anchors {
                 Anchors.top.bottom
@@ -468,7 +471,7 @@ extension ImplementationTests {
         }
         """
 
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect.tabbed)
+        XCTAssertEqual(ViewPrinter(root).description, expect.tabbed)
     }
 
     func testRules() {
@@ -689,7 +692,7 @@ extension ImplementationTests {
         }
         """.tabbed
 
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
+        XCTAssertEqual(ViewPrinter(root).description, expect)
     }
 }
 
@@ -709,7 +712,7 @@ extension ImplementationTests {
         \(identifier).height == + 24.0
         """.descriptions)
         
-        XCTAssertEqual(SwiftLayoutPrinter(fixedView, tags: [fixedView: "fixedView"]).print(), """
+        XCTAssertEqual(ViewPrinter(fixedView, tags: [fixedView: "fixedView"]).description, """
         fixedView.anchors {
             Anchors.width.height.equalTo(constant: 24.0)
         }
@@ -752,7 +755,7 @@ extension ImplementationTests {
         }
         """.tabbed
 
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
+        XCTAssertEqual(ViewPrinter(root).description, expect)
     }
 
     func testFeatureComposeComplex() {
@@ -791,7 +794,7 @@ extension ImplementationTests {
         }
         """.tabbed
 
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(options: .onlyIdentifier), expect)
+        XCTAssertEqual(ViewPrinter(root, options: .onlyIdentifier).description, expect)
     }
 
     func testFeatureComposeComplexWithAnimationHandling() {
@@ -830,7 +833,7 @@ extension ImplementationTests {
         }
         """.tabbed
 
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(options: .onlyIdentifier), expect)
+        XCTAssertEqual(ViewPrinter(root, options: .onlyIdentifier).description, expect)
     }
 
 }

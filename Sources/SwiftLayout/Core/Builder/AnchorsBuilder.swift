@@ -12,7 +12,11 @@ public struct AnchorsBuilder {
     }
     
     public static func buildExpression<A>(_ anchors: AnchorsExpression<A>?) -> AnchorsContainer {
-        AnchorsContainer(anchors?.constraints ?? [])
+        if let anchors = anchors {
+            return AnchorsContainer(anchors)
+        } else {
+            return AnchorsContainer()
+        }
     }
     
     public static func buildExpression(_ container: AnchorsContainer) -> AnchorsContainer {
@@ -26,9 +30,7 @@ public struct AnchorsBuilder {
 
 extension AnchorsBuilder {
     public static func buildBlock(_ components: AnchorsContainer...) -> AnchorsContainer {
-        components.reduce(into: AnchorsContainer()) {
-            $0.append(contentsOf: $1.constraints)
-        }
+        components.reduce(into: AnchorsContainer()) { $0.append($1) }
     }
     
     public static func buildEither(first component: AnchorsContainer) -> AnchorsContainer {
@@ -40,9 +42,7 @@ extension AnchorsBuilder {
     }
    
     public static func buildArray(_ components: [AnchorsContainer]) -> AnchorsContainer {
-        components.reduce(into: AnchorsContainer()) {
-            $0.append(contentsOf: $1.constraints)
-        }
+        components.reduce(into: AnchorsContainer()) { $0.append($1) }
     }
     
     public static func buildOptional(_ component: AnchorsContainer?) -> AnchorsContainer {

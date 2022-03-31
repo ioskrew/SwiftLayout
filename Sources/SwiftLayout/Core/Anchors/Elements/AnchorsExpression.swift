@@ -6,21 +6,20 @@
 //
 
 import UIKit
-import SwiftUI
 
 public struct AnchorsExpression<Attribute: AnchorsAttribute> {
-    var attributes: [Attribute]
-    var relation: NSLayoutConstraint.Relation = .equal
-    var toItem: Item = .transparent
-    var toAttribute: Attribute? = nil
+    private var attributes: [Attribute]
+    private var relation: NSLayoutConstraint.Relation = .equal
+    private var toItem: AnchorsItem = .transparent
+    private var toAttribute: Attribute? = nil
     
-    var constant: CGFloat = 0.0
-    var multiplier: CGFloat = 1.0
+    private var constant: CGFloat = 0.0
+    private var multiplier: CGFloat = 1.0
     
     init(
         from anchors: AnchorsExpression<Attribute>,
         relation: NSLayoutConstraint.Relation,
-        toItem: Item,
+        toItem: AnchorsItem,
         toAttribute: Attribute? = nil,
         constant: CGFloat = 0.0,
         multiplier: CGFloat = 1.0
@@ -42,9 +41,9 @@ public struct AnchorsExpression<Attribute: AnchorsAttribute> {
         self.multiplier = anchors.multiplier
     }
     
-    var constraints: [Constraint] {
+    var constraintProperties: [AnchorsConstraintProperty] {
         attributes.map {
-            Constraint(
+            AnchorsConstraintProperty(
                 attribute: $0.attribute,
                 relation: relation,
                 toItem: toItem,
@@ -55,7 +54,7 @@ public struct AnchorsExpression<Attribute: AnchorsAttribute> {
         }
     }
     
-    func targetFromConstraint(_ constraint: NSLayoutConstraint) -> (toItem: Item, toAttribute: Attribute?) {
+    private func targetFromConstraint(_ constraint: NSLayoutConstraint) -> (toItem: AnchorsItem, toAttribute: Attribute?) {
         if let object = constraint.secondItem as? NSObject {
             return (toItem: .object(object), toAttribute: Attribute(attribute: constraint.secondAttribute))
         } else {
@@ -78,16 +77,16 @@ extension AnchorsExpression {
         Self.init(from: self, relation: .lessThanOrEqual, toItem: .transparent, toAttribute: attribute, constant: constant)
     }
 
-    public func equalTo<I>(_ toItem: I, attribute: Attribute? = nil, constant: CGFloat = .zero) -> Self where I: ConstraintableItem {
-        Self.init(from: self, relation: .equal, toItem: ItemFromView(toItem).item, toAttribute: attribute, constant: constant)
+    public func equalTo<I>(_ toItem: I, attribute: Attribute? = nil, constant: CGFloat = .zero) -> Self where I: AnchorsItemable {
+        Self.init(from: self, relation: .equal, toItem: AnchorsItem(toItem), toAttribute: attribute, constant: constant)
     }
     
-    public func greaterThanOrEqualTo<I>(_ toItem: I, attribute: Attribute? = nil, constant: CGFloat = .zero) -> Self where I: ConstraintableItem {
-        Self.init(from: self, relation: .greaterThanOrEqual, toItem: ItemFromView(toItem).item, toAttribute: attribute, constant: constant)
+    public func greaterThanOrEqualTo<I>(_ toItem: I, attribute: Attribute? = nil, constant: CGFloat = .zero) -> Self where I: AnchorsItemable {
+        Self.init(from: self, relation: .greaterThanOrEqual, toItem: AnchorsItem(toItem), toAttribute: attribute, constant: constant)
     }
     
-    public func lessThanOrEqualTo<I>(_ toItem: I, attribute: Attribute? = nil, constant: CGFloat = .zero) -> Self where I: ConstraintableItem {
-        Self.init(from: self, relation: .lessThanOrEqual, toItem: ItemFromView(toItem).item, toAttribute: attribute, constant: constant)
+    public func lessThanOrEqualTo<I>(_ toItem: I, attribute: Attribute? = nil, constant: CGFloat = .zero) -> Self where I: AnchorsItemable {
+        Self.init(from: self, relation: .lessThanOrEqual, toItem: AnchorsItem(toItem), toAttribute: attribute, constant: constant)
     }
     
     public func constant(_ constant: CGFloat) -> Self {

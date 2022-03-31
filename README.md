@@ -68,13 +68,13 @@ dependencies: [
 - can updates only required in view states.
 - using conditional and loop statements like `if else`, `swift case`, `for` in view hierarhcy and autolayout constraints.
 - offer propertyWrapper for automatically updating of layout
-- offering varierty features for relations of constraints. 
+- offering varierty features for relations of constraints.
 
 # Usage
 
 ## LayoutBuilder
 
-`LayoutBuilder` is DSL builder for UIView hierarchy. it presents simple doing add subview to superview. 
+`LayoutBuilder` is DSL builder for UIView hierarchy. it presents simple doing add subview to superview.
 
 ```swift
 @LayoutBuilder var layout: some Layout {
@@ -101,7 +101,7 @@ subview.addSubview(subsub2view)
 
 ### Anchors
 
- `Anchors` have attributes for NSLayoutConstraint and can creates.
+`Anchors` have attributes for NSLayoutConstraint and can creates.
 
 > summary of NSLayoutConstraint
 > 
@@ -453,9 +453,62 @@ contentView {
 
 - From a debugging point, if you set identifier, the corresponding string is output together in the description of NSLayoutConstraint.
 
-### SwiftLayoutPrinter
+### SwiftLayoutUtil
 
-for several reasons, you want current view state migration to SwiftLayout. 
+#### LayoutPrinter
+
+This can be useful when you want to make sure the current layout is configured the way you want it to.
+
+- prints the tree created by the hierarchy of layouts and anchors.
+  
+  ```swift
+    var layout: some Layout {
+    root {
+      child.anchors {
+        Anchors.top
+        Anchors.leading.trailing
+      }
+      friend.anchors {
+        Anchors.top.equalTo(child, attribute: .bottom)
+        Anchors.bottom
+        Anchors.leading.trailing
+      }
+    }
+  }
+  ```
+
+- You can use LayoutPrinter in source or debug console.
+  
+  > (lldb)  po import SwiftLayoutUtil; LayoutPrinter(layout).print()
+  
+  ```
+  ViewLayout - view: root
+  └─ TupleLayout
+     ├─ ViewLayout - view: child
+     └─ ViewLayout - view: friend
+  ```
+
+- If necessary, you can also print Anchors applied to the layout.
+  
+  > (lldb)  po import SwiftLayoutUtil; LayoutPrinter(layout, withAnchors: true).print()
+  
+  ```
+  ViewLayout - view: root
+  └─ TupleLayout
+     ├─ ViewLayout - view: child
+     │        .top == superview.top
+     │        .leading == superview.leading
+     │        .trailing == superview.trailing
+     └─ ViewLayout - view: friend
+              .top == child.bottom
+              .bottom == superview.bottom
+              .leading == superview.leading
+              .trailing == superview.trailing
+  ```
+
+#### ViewPrinter
+
+This can be useful when you want to migrate your current view to SwiftLayout for several reasons.
 
 - printing UIView hierarchy and autolayout constraint relationship to SwiftLayout syntax
   
@@ -465,11 +518,12 @@ for several reasons, you want current view state migration to SwiftLayout.
   contentView.addSubview(firstNameLabel)
   ```
 
-- You can use SwiftLayoutPrinter in source or debug console:
+- You can use ViewPrinter in source or debug console.
   
-  > (lldb) po SwiftLayoutPrinter(contentView)
+  > (lldb) po import SwiftLayoutUtil; ViewPrinter(contentView).print()
   
   ```swift
+  // If there is no separate identification setting, the view is displayed in the form of addressValue:View type.
   0x01234567890:UIView {
     0x01234567891:UILabel
   }
@@ -486,7 +540,7 @@ for several reasons, you want current view state migration to SwiftLayout.
   let someView = SomeView()
   ```
   
-  > po SwiftLayoutPrinter(someView, tags: [someView: "SomeView"]).print(.nameOnly)
+  > (lldb) po import SwiftLayoutUtil; ViewPrinter(someView, tags: [someView: "SomeView"]).updateIdentifiers().print()
   
   ```swift
   SomeView {
