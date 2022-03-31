@@ -13,7 +13,7 @@ enum LayoutExplorer {
         var view: UIView
         var anchors: AnchorsContainer
         
-        var keyValueTupe: (String, UIView)? {
+        var keyValueTuple: (String, UIView)? {
             guard let identifier = view.accessibilityIdentifier else {
                 return nil
             }
