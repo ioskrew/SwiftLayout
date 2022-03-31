@@ -9,43 +9,45 @@ import UIKit
 import SwiftUI
 
 public extension LayoutableMethodWrapper where L: Layoutable&UIView {
-    var swiftUI: SwiftLayoutSwiftUIRepresentable<L>? {
-        guard let layoutable = self.layoutable else { return nil }
-        return SwiftLayoutSwiftUIRepresentable(layoutable: layoutable)
+    var swiftUI: SLViewRepresentable<L> {
+        return SLViewRepresentable(layoutable)
     }
 }
 
 public extension LayoutableMethodWrapper where L: Layoutable&UIViewController {
-    var swiftUI: SwiftLayoutSwiftUIRepresentable<L>? {
-        guard let layoutable = self.layoutable else { return nil }
-        return SwiftLayoutSwiftUIRepresentable(layoutable: layoutable)
+    var swiftUI: SLViewControllerRepresentable<L> {
+        return SLViewControllerRepresentable(layoutable)
     }
 }
 
-public struct SwiftLayoutSwiftUIRepresentable<L: Layoutable>: SwiftUI.View {
-    public typealias Body = Never
-    
-    public var body: Never {
-        fatalError()
-    }
-    
+public struct SLViewRepresentable<L: Layoutable&UIView>: UIViewRepresentable {
+ 
     let layoutable: L
-}
+    
+    init(_ layoutable: L) {
+        self.layoutable = layoutable
+    }
 
-extension SwiftLayoutSwiftUIRepresentable: UIViewRepresentable where L: Layoutable&UIView {
     public func makeUIView(context: UIViewRepresentableContext<Self>) -> L {
-        layoutable
+        return layoutable
     }
     public func updateUIView(_ uiView: L, context: UIViewRepresentableContext<Self>) {
         layoutable.sl.updateLayout()
     }
 }
 
-extension SwiftLayoutSwiftUIRepresentable: UIViewControllerRepresentable where L: Layoutable&UIViewController {
+public struct SLViewControllerRepresentable<L: Layoutable&UIViewController>: UIViewControllerRepresentable {
+ 
+    let layoutable: L
+    
+    init(_ layoutable: L) {
+        self.layoutable = layoutable
+    }
+
     public func makeUIViewController(context: UIViewControllerRepresentableContext<Self>) -> L {
-        layoutable
+        return layoutable
     }
     public func updateUIViewController(_ uiViewController: L, context: UIViewControllerRepresentableContext<Self>) {
-        layoutable.sl.updateLayout()
+        uiViewController.sl.updateLayout()
     }
 }
