@@ -6,9 +6,9 @@ public struct ViewLayout<V: UIView>: Layout {
     
     public private(set) var sublayouts: [Layout]
     
-    public private(set) var anchors: Anchors
+    public private(set) var anchors: AnchorsContainer
     
-    init(_ view: V, sublayouts: [Layout] = [], anchors: Anchors = Anchors()) {
+    init(_ view: V, sublayouts: [Layout] = [], anchors: AnchorsContainer = AnchorsContainer()) {
         self.innerView = view
         self.sublayouts = sublayouts
         self.anchors = anchors
@@ -47,8 +47,9 @@ extension ViewLayout {
     /// - Parameter build: A ``AnchorsBuilder`` that  create ``Anchors`` to be applied to this layout
     /// - Returns: The layout itself  with anchors coordinator added
     ///
-    public func anchors(@AnchorsBuilder _ build: () -> Anchors) -> Self {
-        let anchors = self.anchors.union(build())
+    public func anchors(@AnchorsBuilder _ build: () -> AnchorsContainer) -> Self {
+        let anchors = self.anchors
+        anchors.append(build())
         return Self.init(innerView, sublayouts: sublayouts, anchors: anchors)
     }
     

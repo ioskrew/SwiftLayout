@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class ViewInformation: Hashable, CustomDebugStringConvertible {
+final class ViewInformation: Hashable {
     
     init(superview: UIView?, view: UIView?) {
         self.superview = superview
@@ -23,17 +23,17 @@ final class ViewInformation: Hashable, CustomDebugStringConvertible {
             return
         }
         if superview != view.superview {
-            superview?.addSubview(view)
+            if let stackSuperView = superview as? UIStackView {
+                stackSuperView.addArrangedSubview(view)
+            } else {
+                superview?.addSubview(view)
+            }
         }
     }
     
     func removeFromSuperview() {
         guard superview == view?.superview else { return }
         view?.removeFromSuperview()
-    }
-    
-    var debugDescription: String {
-        "\(superview?.tagDescription ?? "nil"):\(view?.tagDescription ?? "nil")"
     }
 }
 

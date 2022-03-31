@@ -1,5 +1,6 @@
 import XCTest
 import SwiftLayout
+import SwiftLayoutUtil
 
 final class LayoutBuildingTests: XCTestCase {
     
@@ -13,13 +14,15 @@ final class LayoutBuildingTests: XCTestCase {
         view.layoutIfNeeded()
 
         XCTAssertEqual(view.child.bounds.size, CGSize(width: 90, height: 90))
-        XCTAssertEqual(SwiftLayoutPrinter(view).print(), """
+        XCTAssertEqual(ViewPrinter(view).description, """
         view {
             root.anchors {
-                Anchors(.top, .bottom, .leading, .trailing)
+                Anchors.top.bottom
+                Anchors.leading.trailing
             }.sublayout {
                 child.anchors {
-                    Anchors(.top, .bottom, .leading, .trailing)
+                    Anchors.top.bottom
+                    Anchors.leading.trailing
                 }
             }
         }
@@ -29,13 +32,15 @@ final class LayoutBuildingTests: XCTestCase {
 
         XCTAssertEqual(view.root.count(view.child), 1)
         XCTAssertEqual(view.root.count(view.friend), 0)
-        XCTAssertEqual(SwiftLayoutPrinter(view).print(), """
+        XCTAssertEqual(ViewPrinter(view).description, """
         view {
             root.anchors {
-                Anchors(.top, .bottom, .leading, .trailing)
+                Anchors.top.bottom
+                Anchors.leading.trailing
             }.sublayout {
                 child.anchors {
-                    Anchors(.top, .bottom, .leading, .trailing)
+                    Anchors.top.bottom
+                    Anchors.leading.trailing
                 }
             }
         }
@@ -50,13 +55,15 @@ final class LayoutBuildingTests: XCTestCase {
         view.friend.setNeedsLayout()
         view.friend.layoutIfNeeded()
         XCTAssertEqual(view.friend.bounds.size, .init(width: 90, height: 90))
-        XCTAssertEqual(SwiftLayoutPrinter(view).print(), """
+        XCTAssertEqual(ViewPrinter(view).description, """
         view {
             root.anchors {
-                Anchors(.top, .bottom, .leading, .trailing)
+                Anchors.top.bottom
+                Anchors.leading.trailing
             }.sublayout {
                 friend.anchors {
-                    Anchors(.top, .bottom, .leading, .trailing)
+                    Anchors.top.bottom
+                    Anchors.leading.trailing
                 }
             }
         }
@@ -83,11 +90,7 @@ extension LayoutBuildingTests {
     }
     
     class LayoutView: UIView, Layoutable {
-        var flag = true {
-            didSet {
-                sl.updateLayout()
-            }
-        }
+        @LayoutProperty var flag = true
         
         let root = MockView().viewTag.root
         let child = UIView().viewTag.child

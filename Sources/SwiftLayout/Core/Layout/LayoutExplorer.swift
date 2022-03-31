@@ -11,9 +11,9 @@ enum LayoutExplorer {
     struct Component {
         var superView: UIView? 
         var view: UIView
-        var anchors: Anchors
+        var anchors: AnchorsContainer
         
-        var keyValueTupe: (String, UIView)? {
+        var keyValueTuple: (String, UIView)? {
             guard let identifier = view.accessibilityIdentifier else {
                 return nil
             }
@@ -43,43 +43,5 @@ enum LayoutExplorer {
         layout.sublayouts.forEach { layout in
             traversal(layout: layout, superview: nextSuperview, handler: handler)
         }
-    }
-}
-
-extension LayoutExplorer {
-    static func debugLayoutStructure(layout: Layout, withAnchors: Bool = false, _ indent: String = "", _ sublayoutIndent: String = "") -> [String] {
-        var result: [String] = ["\(indent)\(layout.description)"]
-        
-        if withAnchors {
-            let anchorsIndent: String
-            if layout.sublayouts.isEmpty {
-                anchorsIndent = sublayoutIndent.appending("      ")
-            } else {
-                anchorsIndent = sublayoutIndent.appending("│     ")
-            }
-            let items = layout.anchors.items
-            if !items.isEmpty {
-                result.append(contentsOf: items.map({ item in anchorsIndent.appending(item.description) }))
-            }
-        }
-        
-        var sublayouts = layout.sublayouts
-        if sublayouts.isEmpty {
-            return result
-        } else {
-            let last: Layout = sublayouts.removeLast()
-            for sublayout in sublayouts {
-                result.append(contentsOf: debugLayoutStructure(layout: sublayout,
-                                                               withAnchors: withAnchors,
-                                                               sublayoutIndent.appending("├─ "),
-                                                               sublayoutIndent.appending("│  ")))
-            }
-            result.append(contentsOf: debugLayoutStructure(layout: last,
-                                                           withAnchors: withAnchors,
-                                                           sublayoutIndent.appending("└─ "),
-                                                           sublayoutIndent.appending("   ")))
-        }
-        
-        return result
     }
 }

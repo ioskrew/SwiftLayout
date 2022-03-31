@@ -5,10 +5,10 @@
 //  Created by oozoofrog on 2022/02/17.
 //
 
-struct AddressDescriptor<O: AnyObject>: CustomStringConvertible {
+struct AddressDescriptor: Hashable, CustomStringConvertible {
     let description: String
     
-    init(_ object: O) {
+    init<O: AnyObject>(_ object: O) {
         self.description = Unmanaged<O>.passUnretained(object).toOpaque()
             .debugDescription
             .appending(":")

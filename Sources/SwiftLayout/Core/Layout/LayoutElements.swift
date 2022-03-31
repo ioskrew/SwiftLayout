@@ -19,7 +19,7 @@ final class LayoutElements<L: Layout> {
         }
         
         let viewDic = Dictionary(
-            components.compactMap { $0.keyValueTupe },
+            components.compactMap { $0.keyValueTuple },
             uniquingKeysWith: { first, _ in first}
         )
         

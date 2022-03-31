@@ -7,35 +7,45 @@
 
 @resultBuilder
 public struct AnchorsBuilder {
-    public static func buildBlock(_ components: Anchors...) -> Anchors {
-        let anchors = Anchors()
-        for component in components {
-            anchors.formUnion(component)
-        }
-        return anchors
+    public static func buildExpression<A>(_ anchors: AnchorsExpression<A>) -> AnchorsContainer {
+        AnchorsContainer(anchors)
     }
     
-    public static func buildEither(first component: Anchors) -> Anchors {
+    public static func buildExpression<A>(_ anchors: AnchorsExpression<A>?) -> AnchorsContainer {
+        if let anchors = anchors {
+            return AnchorsContainer(anchors)
+        } else {
+            return AnchorsContainer()
+        }
+    }
+    
+    public static func buildExpression(_ container: AnchorsContainer) -> AnchorsContainer {
+        container
+    }
+    
+    public static func buildExpression(_ container: AnchorsContainer?) -> AnchorsContainer {
+        container ?? AnchorsContainer()
+    }
+}
+
+extension AnchorsBuilder {
+    public static func buildBlock(_ components: AnchorsContainer...) -> AnchorsContainer {
+        components.reduce(into: AnchorsContainer()) { $0.append($1) }
+    }
+    
+    public static func buildEither(first component: AnchorsContainer) -> AnchorsContainer {
         component
     }
     
-    public static func buildEither(second component: Anchors) -> Anchors {
+    public static func buildEither(second component: AnchorsContainer) -> AnchorsContainer {
         component
     }
    
-    public static func buildArray(_ components: [Anchors]) -> Anchors {
-        let anchors = Anchors()
-        for component in components {
-            anchors.formUnion(component)
-        }
-        return anchors
+    public static func buildArray(_ components: [AnchorsContainer]) -> AnchorsContainer {
+        components.reduce(into: AnchorsContainer()) { $0.append($1) }
     }
     
-    public static func buildOptional(_ component: Anchors?) -> Anchors {
-        component ?? Anchors()
-    }
-    
-    public static func buildExpression(_ expression: Anchors?) -> Anchors {
-        expression ?? Anchors()
+    public static func buildOptional(_ component: AnchorsContainer?) -> AnchorsContainer {
+        component ?? AnchorsContainer()
     }
 }

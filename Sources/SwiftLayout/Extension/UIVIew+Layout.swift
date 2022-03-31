@@ -49,7 +49,7 @@ extension _UIViewExtension where Self: UIView {
     /// - Parameter build: A ``AnchorsBuilder`` that  create ``Anchors`` to be applied to this layout
     /// - Returns: An ``ViewLayout`` that wraps this view and contains the anchors  coordinator.
     ///
-    public func anchors(@AnchorsBuilder _ build: () -> Anchors) -> ViewLayout<Self> {
+    public func anchors(@AnchorsBuilder _ build: () -> AnchorsContainer) -> ViewLayout<Self> {
         ViewLayout(self, anchors: build())
     }
     
@@ -104,18 +104,6 @@ extension _UIViewExtension where Self: UIView {
     ///
     public func identifying(_ accessibilityIdentifier: String) -> Self {
         self.accessibilityIdentifier = accessibilityIdentifier
-        return self
-    }
-    
-    ///
-    /// Set the **accessibilityIdentifier** of all view objects included in the layout hierarchy to the property name of the object that has each views.
-    ///
-    /// - Parameter rootObject: root object for referencing property names
-    /// - Returns: The view itself with the **accessibilityIdentifier** applied
-    ///
-    @discardableResult
-    public func updateIdentifiers(rootObject: AnyObject? = nil) -> Self {
-        IdentifierUpdater.nameOnly.update(rootObject ?? self)
         return self
     }
 }

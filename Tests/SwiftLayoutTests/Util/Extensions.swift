@@ -1,4 +1,5 @@
 @testable import SwiftLayout
+@testable import SwiftLayoutUtil
 import UIKit
 
 extension UIView {

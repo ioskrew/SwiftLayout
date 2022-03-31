@@ -1,5 +1,6 @@
 import XCTest
 import SwiftLayout
+import SwiftLayoutUtil
 
 /// test cases for DSL syntax
 final class LayoutDSLTests: XCTestCase {
@@ -60,7 +61,7 @@ extension LayoutDSLTests {
         }
         """.tabbed
         
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(options: .onlyIdentifier), expect)
+        XCTAssertEqual(ViewPrinter(root, options: .onlyIdentifier).description, expect)
     }
     
     func testDeactive() {
@@ -80,7 +81,7 @@ extension LayoutDSLTests {
         root
         """
         
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect)
+        XCTAssertEqual(ViewPrinter(root).description, expect)
     }
     
     func testFinalActive() {
@@ -106,7 +107,7 @@ extension LayoutDSLTests {
         }
         """.tabbed
         
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(options: .onlyIdentifier), expect)
+        XCTAssertEqual(ViewPrinter(root, options: .onlyIdentifier).description, expect)
     }
     
     func testDuplicateLayoutBuilder() {
@@ -133,7 +134,7 @@ extension LayoutDSLTests {
         }
         """.tabbed
         
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(options: .onlyIdentifier), expect)
+        XCTAssertEqual(ViewPrinter(root, options: .onlyIdentifier).description, expect)
     }
     
     func testAllSides() {
@@ -154,22 +155,27 @@ extension LayoutDSLTests {
         let expect = """
         root {
             red.anchors {
-                Anchors(.top, .bottom, .leading, .trailing)
+                Anchors.top.bottom
+                Anchors.leading.trailing
             }.sublayout {
                 blue.anchors {
-                    Anchors(.top, .leading).equalTo(constant: 8.0)
-                    Anchors(.bottom, .trailing).equalTo(constant: -8.0)
+                    Anchors.top.equalToSuper(constant: 8.0)
+                    Anchors.bottom.equalToSuper(constant: -8.0)
+                    Anchors.leading.equalToSuper(constant: 8.0)
+                    Anchors.trailing.equalToSuper(constant: -8.0)
                 }.sublayout {
                     green.anchors {
-                        Anchors(.top, .leading).equalTo(constant: 16.0)
-                        Anchors(.bottom, .trailing).equalTo(constant: -16.0)
+                        Anchors.top.equalToSuper(constant: 16.0)
+                        Anchors.bottom.equalToSuper(constant: -16.0)
+                        Anchors.leading.equalToSuper(constant: 16.0)
+                        Anchors.trailing.equalToSuper(constant: -16.0)
                     }
                 }
             }
         }
         """
         
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect.tabbed)
+        XCTAssertEqual(ViewPrinter(root).description, expect.tabbed)
     }
     
 }
@@ -186,21 +192,24 @@ extension LayoutDSLTests {
         let expect = """
         root {
             red.anchors {
-                Anchors(.top, .bottom, .leading, .trailing)
+                Anchors.top.bottom
+                Anchors.leading.trailing
             }.sublayout {
                 blue.anchors {
-                    Anchors(.top, .bottom, .leading, .trailing)
-                    Anchors(.height).equalTo(constant: 44.0)
+                    Anchors.top.bottom
+                    Anchors.leading.trailing
+                    Anchors.height.equalTo(constant: 44.0)
                 }.sublayout {
                     green.anchors {
-                        Anchors(.top, .bottom, .leading, .trailing)
-                        Anchors(.width).equalTo(constant: 88.0)
+                        Anchors.top.bottom
+                        Anchors.leading.trailing
+                        Anchors.width.equalTo(constant: 88.0)
                     }
                 }
             }
         }
         """
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), expect.tabbed)
+        XCTAssertEqual(ViewPrinter(root).description, expect.tabbed)
     }
     
     private final class TestView: UIView, Layoutable {
@@ -225,10 +234,10 @@ extension LayoutDSLTests {
                 }
             }
             blue.anchors {
-                Anchors(.height).equalTo(constant: 44.0)
+                Anchors.height.equalTo(constant: 44.0)
             }
             green.anchors {
-                Anchors(.width).equalTo(constant: 88.0)
+                Anchors.width.equalTo(constant: 88.0)
             }
         }
     }
@@ -253,7 +262,6 @@ extension LayoutDSLTests {
                 }
             }
         }
-        .updateIdentifiers(rootObject: container)
         .active()
         .store(&activation)
         
@@ -269,7 +277,12 @@ extension LayoutDSLTests {
         }
         """.tabbed
         
-        XCTAssertEqual(SwiftLayoutPrinter(container.root).print(options: .onlyIdentifier), expect)
+        XCTAssertEqual(
+            ViewPrinter(container.root, options: .onlyIdentifier)
+                .updateIdentifiers(rootObject: container)
+                .description,
+            expect
+        )
         
         XCTAssertEqual(container.root.accessibilityIdentifier, "root")
         XCTAssertEqual(container.red.accessibilityIdentifier, "red")
@@ -311,7 +324,7 @@ extension LayoutDSLTests {
         context("if true") {
             root = UIView().viewTag.root
             layout(true).finalActive()
-            XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+            XCTAssertEqual(ViewPrinter(root).description, """
             root {
                 red {
                     button
@@ -324,7 +337,7 @@ extension LayoutDSLTests {
         context("if false") {
             root = UIView().viewTag.root
             layout(false).finalActive()
-            XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+            XCTAssertEqual(ViewPrinter(root).description, """
             root {
                 red {
                     button
@@ -362,7 +375,7 @@ extension LayoutDSLTests {
             context("enum Test.\(test)") {
                 activation = []
                 layout(test).active().store(&activation)
-                XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+                XCTAssertEqual(ViewPrinter(root).description, """
                 root {
                     child {
                         \(test)
@@ -387,7 +400,7 @@ extension LayoutDSLTests {
         context("view is nil") {
             activation = []
             layout(nil).active().store(&activation)
-            XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+            XCTAssertEqual(ViewPrinter(root).description, """
             root {
                 red
             }
@@ -397,7 +410,7 @@ extension LayoutDSLTests {
         context("view is optional") {
             activation = []
             layout(UIView()).active().store(&activation)
-            XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+            XCTAssertEqual(ViewPrinter(root).description, """
             root {
                 red {
                     optional
@@ -419,7 +432,7 @@ extension LayoutDSLTests {
         }
         
         layout().active().store(&activation)
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+        XCTAssertEqual(ViewPrinter(root).description, """
         root {
             view_0
             view_1
@@ -438,13 +451,15 @@ extension LayoutDSLTests {
         var activation = view.layout.active(forceLayout: true)
         
         XCTAssertEqual(view.child.bounds.size, CGSize(width: 90, height: 90))
-        XCTAssertEqual(SwiftLayoutPrinter(view).print(), """
+        XCTAssertEqual(ViewPrinter(view).description, """
         view {
             root.anchors {
-                Anchors(.top, .bottom, .leading, .trailing)
+                Anchors.top.bottom
+                Anchors.leading.trailing
             }.sublayout {
                 child.anchors {
-                    Anchors(.top, .bottom, .leading, .trailing)
+                    Anchors.top.bottom
+                    Anchors.leading.trailing
                 }
             }
         }
@@ -454,13 +469,15 @@ extension LayoutDSLTests {
 
         XCTAssertEqual(view.root.count(view.child), 1)
         XCTAssertEqual(view.root.count(view.friend), 0)
-        XCTAssertEqual(SwiftLayoutPrinter(view).print(), """
+        XCTAssertEqual(ViewPrinter(view).description, """
         view {
             root.anchors {
-                Anchors(.top, .bottom, .leading, .trailing)
+                Anchors.top.bottom
+                Anchors.leading.trailing
             }.sublayout {
                 child.anchors {
-                    Anchors(.top, .bottom, .leading, .trailing)
+                    Anchors.top.bottom
+                    Anchors.leading.trailing
                 }
             }
         }
@@ -474,13 +491,15 @@ extension LayoutDSLTests {
         XCTAssertEqual(view.friend.superview, view.root)
         XCTAssertEqual(view.root.bounds.size, .init(width: 90, height: 90))
         XCTAssertEqual(view.friend.bounds.size, .init(width: 90, height: 90))
-        XCTAssertEqual(SwiftLayoutPrinter(view).print(), """
+        XCTAssertEqual(ViewPrinter(view).description, """
         view {
             root.anchors {
-                Anchors(.top, .bottom, .leading, .trailing)
+                Anchors.top.bottom
+                Anchors.leading.trailing
             }.sublayout {
                 friend.anchors {
-                    Anchors(.top, .bottom, .leading, .trailing)
+                    Anchors.top.bottom
+                    Anchors.leading.trailing
                 }
             }
         }
@@ -549,48 +568,150 @@ extension LayoutDSLTests {
                     Anchors.cap()
                 }
                 group1_2.anchors {
-                    Anchors(.top).equalTo(group1_1, attribute: .bottom)
+                    Anchors.top.equalTo(group1_1, attribute: .bottom)
                     Anchors.horizontal(root)
                 }
                 group1_3.anchors {
-                    Anchors(.top).equalTo(group1_1, attribute: .bottom)
+                    Anchors.top.equalTo(group1_1, attribute: .bottom)
                     Anchors.horizontal(root, offset: 8.0)
                 }
             }
             GroupLayout {
                 group2_1.anchors {
-                    Anchors(.top).equalTo(group1_3, attribute: .bottom)
+                    Anchors.top.equalTo(group1_3, attribute: .bottom)
                     Anchors.horizontal(offset: 12)
                 }
                 group2_2.anchors {
-                    Anchors(.top).equalTo(group2_2, attribute: .bottom)
+                    Anchors.top.equalTo(group2_2, attribute: .bottom)
                     Anchors.shoe()
                 }
             }
         }.finalActive()
         
-        XCTAssertEqual(SwiftLayoutPrinter(root).print(), """
+        XCTAssertEqual(ViewPrinter(root).description, """
         root {
             group1_1.anchors {
-                Anchors(.top, .leading, .trailing)
+                Anchors.top
+                Anchors.leading.trailing
             }
             group1_2.anchors {
-                Anchors(.top).equalTo(group1_1, attribute: .bottom)
-                Anchors(.leading, .trailing)
+                Anchors.top.equalTo(group1_1, attribute: .bottom)
+                Anchors.leading.trailing
             }
             group1_3.anchors {
-                Anchors(.top).equalTo(group1_1, attribute: .bottom)
-                Anchors(.leading).equalTo(constant: 8.0)
-                Anchors(.trailing).equalTo(constant: -8.0)
+                Anchors.top.equalTo(group1_1, attribute: .bottom)
+                Anchors.leading.equalToSuper(constant: 8.0)
+                Anchors.trailing.equalToSuper(constant: -8.0)
             }
             group2_1.anchors {
-                Anchors(.top).equalTo(group1_3, attribute: .bottom)
-                Anchors(.leading).equalTo(constant: 12.0)
-                Anchors(.trailing).equalTo(constant: -12.0)
+                Anchors.top.equalTo(group1_3, attribute: .bottom)
+                Anchors.leading.equalToSuper(constant: 12.0)
+                Anchors.trailing.equalToSuper(constant: -12.0)
             }
             group2_2.anchors {
-                Anchors(.bottom, .leading, .trailing)
-                Anchors(.top).equalTo(group2_2, attribute: .bottom)
+                Anchors.top.equalTo(group2_2, attribute: .bottom)
+                Anchors.bottom
+                Anchors.leading.trailing
+            }
+        }
+        """.tabbed)
+    }
+}
+
+// MARK: - ModularLayout
+
+extension LayoutDSLTests {
+    struct Module1: ModularLayout {
+        let module1view1 = UIView().viewTag.module1view1
+        let module1view2 = UIView().viewTag.module1view2
+        let module1view3 = UIView().viewTag.module1view3
+        
+        @LayoutBuilder var layout: some Layout {
+            module1view1.anchors {
+                Anchors.leading
+                Anchors.top
+                Anchors.height.width.multiplier(0.5)
+            }.sublayout {
+                module1view2.anchors {
+                    Anchors.centerY
+                    Anchors.leading
+                    Anchors.size(width: 50, height: 50)
+                }
+            }
+            
+            module1view3.anchors {
+                Anchors.height.equalTo(constant: 20)
+                Anchors.leading
+                Anchors.bottom
+            }
+        }
+    }
+    
+    struct Module2: ModularLayout {
+        let module2view1 = UIView().viewTag.module2view1
+        let module2view2 = UIView().viewTag.module2view2
+        let module2view3 = UIView().viewTag.module2view3
+        
+        @LayoutBuilder var layout: some Layout {
+            module2view1.anchors {
+                Anchors.top
+                Anchors.trailing
+                Anchors.height.width.multiplier(0.5)
+            }.sublayout {
+                module2view2.anchors {
+                    Anchors.centerY
+                    Anchors.trailing
+                    Anchors.size(width: 50, height: 50)
+                }
+            }
+            
+            module2view3.anchors {
+                Anchors.height.equalTo(constant: 20)
+                Anchors.bottom
+                Anchors.trailing
+            }
+        }
+    }
+    
+    func testModularLayout() {
+        root {
+            Module1()
+            Module2()
+        }.finalActive()
+        
+        XCTAssertEqual(ViewPrinter(root).description, """
+        root {
+            module1view1.anchors {
+                Anchors.top
+                Anchors.leading
+                Anchors.width.height.equalToSuper().multiplier(0.5)
+            }.sublayout {
+                module1view2.anchors {
+                    Anchors.leading
+                    Anchors.width.height.equalTo(constant: 50.0)
+                    Anchors.centerY
+                }
+            }
+            module1view3.anchors {
+                Anchors.bottom
+                Anchors.leading
+                Anchors.height.equalTo(constant: 20.0)
+            }
+            module2view1.anchors {
+                Anchors.top
+                Anchors.trailing
+                Anchors.width.height.equalToSuper().multiplier(0.5)
+            }.sublayout {
+                module2view2.anchors {
+                    Anchors.trailing
+                    Anchors.width.height.equalTo(constant: 50.0)
+                    Anchors.centerY
+                }
+            }
+            module2view3.anchors {
+                Anchors.bottom
+                Anchors.trailing
+                Anchors.height.equalTo(constant: 20.0)
             }
         }
         """.tabbed)
