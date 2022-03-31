@@ -114,7 +114,7 @@ subview.addSubview(subsub2view)
 
 > you can read details [here](https://developer.apple.com/documentation/uikit/nslayoutconstraint).
 
-- The first part is to get the necessary attributes using static values ​​defined in Anchors.
+- the first part is to get the necessary attributes using static values ​​defined in Anchors.
   
   ```swift
   Anchors.top.bottom
@@ -182,7 +182,7 @@ subview.addSubview(subsub2view)
 
 ### *ah, finally*
 
-Now you can combine `LayoutBuilder` and `AnchorsBuilder` for add subview and make constraint between views, and make applying to view
+now you can combine `LayoutBuilder` and `AnchorsBuilder` for add subview and make constraint between views, and make applying to view
 
 - add subview to selfview after `anchors` needs `sublayout`
   
@@ -219,7 +219,7 @@ Now you can combine `LayoutBuilder` and `AnchorsBuilder` for add subview and mak
 
 ### active and finalActive
 
-The `Layout` types created with `LayoutBuilder` and `AnchorsBuilder` only contain information to actually work.  
+the `Layout` types created with `LayoutBuilder` and `AnchorsBuilder` only contain information to actually work.  
 so, for do addSubview and active constraints needs following works:
 
 - you can call `finalActive` of `Layout` for instantly do all stuff in case of no needs to updates.
@@ -269,9 +269,9 @@ so, for do addSubview and active constraints needs following works:
 
 ### Layoutable
 
-In **SwiftLayout**, `Layoutable` plays a role similar to that of `View` in **SwiftUI**.
+in **SwiftLayout**, `Layoutable` plays a role similar to that of `View` in **SwiftUI**.
 
-For implementing `Layoutable`, you needs be write following codes
+for implementing `Layoutable`, you needs be write following codes
 
 - `var activation: Activation?`
 
@@ -437,7 +437,7 @@ contentView {
 
 ### `identifying` of `UIView` and `Layout`
 
-You can set `accessibilityIdentifier` and use that instead of the view reference.
+you can set `accessibilityIdentifier` and use that instead of the view reference.
 
 ```swift
 contentView {
@@ -451,7 +451,39 @@ contentView {
 }
 ```
 
-- From a debugging point, if you set identifier, the corresponding string is output together in the description of NSLayoutConstraint.
+- from a debugging point, if you set identifier, the corresponding string is output together in the description of NSLayoutConstraint.
+
+### using in `SwiftUI`
+
+implement `Layoutable` on `UIView` or `UIViewController` you can easily using it in `SwiftUI`.
+
+```swift
+class ViewUIView: UIView, Layoutable {
+  var layout: some Layout { 
+    ...
+  }
+}
+
+...
+
+struct SomeView: View {
+  var body: some View {
+    VStack {
+      ...
+	    ViewUIView().sl.swiftUI
+      ...
+    }
+  }
+}
+
+struct ViewUIView_Previews: PreviewProvider {
+  static var previews: some Previews {
+    ViewUIView().sl.swiftUI
+  }
+}
+```
+
+
 
 ### SwiftLayoutUtil
 
