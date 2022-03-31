@@ -61,7 +61,7 @@ dependencies: [
 
 - `addSubview` 와 `removeFromSuperview`를 대체하는 DSL이 제공됩니다
 - `NSLayoutConstraint`, `NSLayoutAnchor` 를 대체하는 DSL이 제공됩니다.
-- view와 constraint에 대한 선택적 갱신이 가능합니다. 
+- view와 constraint에 대한 선택적 갱신이 가능합니다.
 - `if else`, `swift case`, `for` 등 조건문, 반복문을 통한 view, constraint 설정이 가능합니다.
 - 값의 변경을 통한 layout 개신을 자동으로 할 수 있게 도와주는 propertyWrapper를 제공합니다.
 - constraint의 연결을 돕는 다양한 API 제공합니다.
@@ -105,7 +105,7 @@ Layout의 메소드인 `anchors` 안에서 주로 사용됩니다.
 
 `Anchors`는 NSLayoutConstraint를 생성할 수 있으며, 해당 제약조건에 필요한 여러 속성값을 가질 수 있습니다.
 
-> NSLayoutConstraint 요약  
+> NSLayoutConstraint 요약
 > 
 > - first: Item1 and attribute1
 > - second: item2 and attribute2
@@ -299,7 +299,7 @@ addSubview와 constraint의 적용을 위해서는 아래의 메소드를 호출
 
 SwiftLayout의 빌더들은 DSL을 구현하며, 그 덕에 사용자는 if, switch case 등을 구현할 수 있습니다.
 
-다만, 상태 변화를 view의 레이아웃에 반영하기 위해서는 필요한 시점에 `Layoutable`에서 제공하는 `sl`프로퍼티의  `updateLayout`메소드를 직접 호출해야 합니다.
+다만, 상태 변화를 view의 레이아웃에 반영하기 위해서는 필요한 시점에 `Layoutable`에서 제공하는 `sl`프로퍼티의 `updateLayout`메소드를 직접 호출해야 합니다.
 
 ```swift
 var showMiddleName: Bool = false {
@@ -439,7 +439,7 @@ contentView {
 
 ### `UIView` 와 `Layout`의 `identifying`
 
- `accessibilityIdentifier`을 설정하고 view reference 대신 해당 문자열을 이용할 수 있습니다.
+`accessibilityIdentifier`을 설정하고 view reference 대신 해당 문자열을 이용할 수 있습니다.
 
 ```swift
 contentView {
@@ -457,7 +457,60 @@ contentView {
 
 ### SwiftLayoutUtil
 
-xib혹은 UIKit으로 직접 구현되어 있는 뷰를 SwiftLayout으로 마이그레이션하게 될 때 유용하게 사용할 수 있는 유틸리티 객체입니다.
+#### LayoutPrinter
+
+개발하는 과정에서 조건문이나 반복문 등의 사용으로 LayoutBuilder로 구성된 Layout이 원하는 바와 같은지 확인할 필요 때 유용하게 사용할 수 있는 유틸리티 객체입니다.
+
+- Layout의 계층과 anchors로 작성된 트리를 출력해줍니다.
+  
+  ```swift
+  var layout: some Layout {
+    root {
+      child.anchors {
+        Anchors.top
+        Anchors.leading.trailing
+      }
+      friend.anchors {
+        Anchors.top.equalTo(child, attribute: .bottom)
+        Anchors.bottom
+        Anchors.leading.trailing
+      }
+    }
+  }
+  ```
+
+- LayoutPrinter는 소스 안에서는 물론 디버그 콘솔에서 사용할 수 있습니다.
+  
+  > (lldb)  po import SwiftLayoutUtil; LayoutPrinter(layout).print()
+  
+  ```
+  ViewLayout - view: root
+  └─ TupleLayout
+     ├─ ViewLayout - view: child
+     └─ ViewLayout - view: friend
+  ```
+
+- 필요하다면 layout에 적용된 Anchors도 함께 출력할 수 있습니다.
+  
+  > (lldb)  po import SwiftLayoutUtil; LayoutPrinter(layout, withAnchors: true).print()
+  
+  ```
+  ViewLayout - view: root
+  └─ TupleLayout
+     ├─ ViewLayout - view: child
+     │        .top == superview.top
+     │        .leading == superview.leading
+     │        .trailing == superview.trailing
+     └─ ViewLayout - view: friend
+              .top == child.bottom
+              .bottom == superview.bottom
+              .leading == superview.leading
+              .trailing == superview.trailing
+  ```
+
+#### ViewPrinter
+
+xib혹은 UIKit으로 직접 구현되어 있는 뷰를 SwiftLayout으로 마이그레이션 할 때 유용하게 사용할 수 있는 유틸리티 객체입니다.
 
 - UIView의 계층과 오토레이아웃 관계를 SwiftLayout의 문법으로 출력해줍니다.
   
@@ -467,9 +520,9 @@ xib혹은 UIKit으로 직접 구현되어 있는 뷰를 SwiftLayout으로 마이
   contentView.addSubview(firstNameLabel)
   ```
 
-- SwiftLayoutUtil는 소스안에서는 물론 디버그 콘솔에서 사용할 수 있습니다.
+- ViewPrinter는 소스 안에서는 물론 디버그 콘솔에서 사용할 수 있습니다.
   
-  > (lldb) po SwiftLayoutUtil(contentView)
+  > (lldb) po import SwiftLayoutUtil; ViewPrinter(contentView).print()
   
   ```swift
   // 별도의 identifiying 설정이 없는 경우 주소값:View타입의 형태로 뷰를 표시합니다.
@@ -489,7 +542,7 @@ xib혹은 UIKit으로 직접 구현되어 있는 뷰를 SwiftLayout으로 마이
   let someView = SomeView()
   ```
   
-  > po SwiftLayoutUtil(someView, tags: [someView: "SomeView"]).print(.nameOnly)
+  > (lldb) po import SwiftLayoutUtil; ViewPrinter(someView, tags: [someView: "SomeView"]).updateIdentifiers().print()
   
   ```swift
   SomeView {
