@@ -6,7 +6,7 @@
 //
 
 public final class LayoutableMethodWrapper<L: Layoutable> {
-    private weak var layoutable: L?
+    weak var layoutable: L?
     
     init(_ layoutable: L) {
         self.layoutable = layoutable
