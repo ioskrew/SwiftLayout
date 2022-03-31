@@ -26,53 +26,36 @@ public struct ViewPrinter: CustomStringConvertible {
         public static let shortForm = PrintOptions(rawValue: 1 << 3)
     }
     
-    public init(_ view: UIView, tags: [UIView: String] = [:]) {
+    public init(_ view: UIView, tags: [UIView: String] = [:], options: PrintOptions = []) {
         self.view = view
         let customTags = Dictionary(uniqueKeysWithValues: tags.map({ (AddressDescriptor($0.key), $0.value) }))
         self.viewTags = ViewTags.viewTagsFromView(view, customTags: customTags)
+        self.options = options
     }
     
-    private init(_ view: UIView, viewTages: ViewTags) {
+    private init(_ view: UIView, viewTages: ViewTags, options: PrintOptions) {
         self.view = view
         self.viewTags = viewTages
+        self.options = options
     }
     
     let view: UIView
     let viewTags: ViewTags
+    let options: PrintOptions
     
     public var description: String {
-        print()
-    }
-    
-    /// print ``SwiftLayout`` syntax from view structures
-    /// - Parameters:
-    ///  - updater: ``IdentifierUpdater``
-    ///  - systemConstraintsHidden: automatically assigned constraints from system hidden, default value is `true`
-    ///  - printOnlyIdentifier: print view only having accessibility identifier
-    /// - Returns: String of SwiftLayout syntax
-    @available(*, deprecated, message: "use PrintOptions")
-    public func print(_ updater: IdentifierUpdater? = nil,
-                      systemConstraintsHidden: Bool = true,
-                      printOnlyIdentifier: Bool = false) -> String {
-        var options: PrintOptions = []
-        if !systemConstraintsHidden {
-            options.insert(.withSystemConstraints)
-        }
-        if printOnlyIdentifier {
-            options.insert(.onlyIdentifier)
-        }
-        return print(options: options)
-    }
-    
-    /// print ``SwiftLayout`` syntax from view structures
-    /// - Parameters:
-    ///  - updater: ``IdentifierUpdater``
-    ///  - options: ``PrintOptions``
-    /// - Returns: String of SwiftLayout syntax
-    public func print(options: PrintOptions = []) -> String {
         guard let viewToken = ViewToken.Parser.from(view, viewTags: viewTags, options: options) else { return "" }
         let constraints = AnchorToken.Parser.from(view, viewTags: viewTags, options: options)
         return Describer(viewToken, constraints).description
+    }
+    
+    /// print ``SwiftLayout`` syntax from view structures
+    public func print() {
+        Swift.print(description)
+    }
+    
+    public func copyToPasteboard() {
+        UIPasteboard.general.string = self.description
     }
     
     ///
@@ -84,7 +67,7 @@ public struct ViewPrinter: CustomStringConvertible {
     @discardableResult
     public func updateIdentifiers(_ updater: IdentifierUpdater = .nameOnly, rootObject: AnyObject? = nil) -> Self {
         let viewTags = updater.update(rootObject ?? self.view, viewTags: self.viewTags)
-        return Self.init(self.view, viewTages: viewTags)
+        return Self.init(self.view, viewTages: viewTags, options: self.options)
     }
     
 }

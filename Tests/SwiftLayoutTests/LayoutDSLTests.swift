@@ -61,7 +61,7 @@ extension LayoutDSLTests {
         }
         """.tabbed
         
-        XCTAssertEqual(ViewPrinter(root).print(options: .onlyIdentifier), expect)
+        XCTAssertEqual(ViewPrinter(root, options: .onlyIdentifier).description, expect)
     }
     
     func testDeactive() {
@@ -81,7 +81,7 @@ extension LayoutDSLTests {
         root
         """
         
-        XCTAssertEqual(ViewPrinter(root).print(), expect)
+        XCTAssertEqual(ViewPrinter(root).description, expect)
     }
     
     func testFinalActive() {
@@ -107,7 +107,7 @@ extension LayoutDSLTests {
         }
         """.tabbed
         
-        XCTAssertEqual(ViewPrinter(root).print(options: .onlyIdentifier), expect)
+        XCTAssertEqual(ViewPrinter(root, options: .onlyIdentifier).description, expect)
     }
     
     func testDuplicateLayoutBuilder() {
@@ -134,7 +134,7 @@ extension LayoutDSLTests {
         }
         """.tabbed
         
-        XCTAssertEqual(ViewPrinter(root).print(options: .onlyIdentifier), expect)
+        XCTAssertEqual(ViewPrinter(root, options: .onlyIdentifier).description, expect)
     }
     
     func testAllSides() {
@@ -175,7 +175,7 @@ extension LayoutDSLTests {
         }
         """
         
-        XCTAssertEqual(ViewPrinter(root).print(), expect.tabbed)
+        XCTAssertEqual(ViewPrinter(root).description, expect.tabbed)
     }
     
 }
@@ -209,7 +209,7 @@ extension LayoutDSLTests {
             }
         }
         """
-        XCTAssertEqual(ViewPrinter(root).print(), expect.tabbed)
+        XCTAssertEqual(ViewPrinter(root).description, expect.tabbed)
     }
     
     private final class TestView: UIView, Layoutable {
@@ -278,9 +278,9 @@ extension LayoutDSLTests {
         """.tabbed
         
         XCTAssertEqual(
-            ViewPrinter(container.root)
+            ViewPrinter(container.root, options: .onlyIdentifier)
                 .updateIdentifiers(rootObject: container)
-                .print(options: .onlyIdentifier),
+                .description,
             expect
         )
         
@@ -324,7 +324,7 @@ extension LayoutDSLTests {
         context("if true") {
             root = UIView().viewTag.root
             layout(true).finalActive()
-            XCTAssertEqual(ViewPrinter(root).print(), """
+            XCTAssertEqual(ViewPrinter(root).description, """
             root {
                 red {
                     button
@@ -337,7 +337,7 @@ extension LayoutDSLTests {
         context("if false") {
             root = UIView().viewTag.root
             layout(false).finalActive()
-            XCTAssertEqual(ViewPrinter(root).print(), """
+            XCTAssertEqual(ViewPrinter(root).description, """
             root {
                 red {
                     button
@@ -375,7 +375,7 @@ extension LayoutDSLTests {
             context("enum Test.\(test)") {
                 activation = []
                 layout(test).active().store(&activation)
-                XCTAssertEqual(ViewPrinter(root).print(), """
+                XCTAssertEqual(ViewPrinter(root).description, """
                 root {
                     child {
                         \(test)
@@ -400,7 +400,7 @@ extension LayoutDSLTests {
         context("view is nil") {
             activation = []
             layout(nil).active().store(&activation)
-            XCTAssertEqual(ViewPrinter(root).print(), """
+            XCTAssertEqual(ViewPrinter(root).description, """
             root {
                 red
             }
@@ -410,7 +410,7 @@ extension LayoutDSLTests {
         context("view is optional") {
             activation = []
             layout(UIView()).active().store(&activation)
-            XCTAssertEqual(ViewPrinter(root).print(), """
+            XCTAssertEqual(ViewPrinter(root).description, """
             root {
                 red {
                     optional
@@ -432,7 +432,7 @@ extension LayoutDSLTests {
         }
         
         layout().active().store(&activation)
-        XCTAssertEqual(ViewPrinter(root).print(), """
+        XCTAssertEqual(ViewPrinter(root).description, """
         root {
             view_0
             view_1
@@ -451,7 +451,7 @@ extension LayoutDSLTests {
         var activation = view.layout.active(forceLayout: true)
         
         XCTAssertEqual(view.child.bounds.size, CGSize(width: 90, height: 90))
-        XCTAssertEqual(ViewPrinter(view).print(), """
+        XCTAssertEqual(ViewPrinter(view).description, """
         view {
             root.anchors {
                 Anchors.top.bottom
@@ -469,7 +469,7 @@ extension LayoutDSLTests {
 
         XCTAssertEqual(view.root.count(view.child), 1)
         XCTAssertEqual(view.root.count(view.friend), 0)
-        XCTAssertEqual(ViewPrinter(view).print(), """
+        XCTAssertEqual(ViewPrinter(view).description, """
         view {
             root.anchors {
                 Anchors.top.bottom
@@ -491,7 +491,7 @@ extension LayoutDSLTests {
         XCTAssertEqual(view.friend.superview, view.root)
         XCTAssertEqual(view.root.bounds.size, .init(width: 90, height: 90))
         XCTAssertEqual(view.friend.bounds.size, .init(width: 90, height: 90))
-        XCTAssertEqual(ViewPrinter(view).print(), """
+        XCTAssertEqual(ViewPrinter(view).description, """
         view {
             root.anchors {
                 Anchors.top.bottom
@@ -588,7 +588,7 @@ extension LayoutDSLTests {
             }
         }.finalActive()
         
-        XCTAssertEqual(ViewPrinter(root).print(), """
+        XCTAssertEqual(ViewPrinter(root).description, """
         root {
             group1_1.anchors {
                 Anchors.top
@@ -679,7 +679,7 @@ extension LayoutDSLTests {
             Module2()
         }.finalActive()
         
-        XCTAssertEqual(ViewPrinter(root).print(), """
+        XCTAssertEqual(ViewPrinter(root).description, """
         root {
             module1view1.anchors {
                 Anchors.top

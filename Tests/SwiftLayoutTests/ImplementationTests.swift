@@ -280,7 +280,7 @@ extension ImplementationTests {
               └─ ViewLayout - view: description
         """
         
-        XCTAssertEqual(LayoutPrinter.print(layout), expectedResult)
+        XCTAssertEqual(LayoutPrinter(layout).description, expectedResult)
     }
     
     func testDebugLayoutStructurePrintWithAnchors() {
@@ -343,7 +343,7 @@ extension ImplementationTests {
                        .trailing == superview.trailing - 10.0
         """
         
-        XCTAssertEqual(LayoutPrinter.print(layout, withAnchors: true), expectedResult)
+        XCTAssertEqual(LayoutPrinter(layout, withAnchors: true).description, expectedResult)
     }
 }
 
@@ -440,7 +440,7 @@ extension ImplementationTests {
         child.width == + 24.0
         """.descriptions)
         
-        XCTAssertEqual(ViewPrinter(root).print(), """
+        XCTAssertEqual(ViewPrinter(root).description, """
         root {
             child.anchors {
                 Anchors.top.bottom
@@ -471,7 +471,7 @@ extension ImplementationTests {
         }
         """
 
-        XCTAssertEqual(ViewPrinter(root).print(), expect.tabbed)
+        XCTAssertEqual(ViewPrinter(root).description, expect.tabbed)
     }
 
     func testRules() {
@@ -692,7 +692,7 @@ extension ImplementationTests {
         }
         """.tabbed
 
-        XCTAssertEqual(ViewPrinter(root).print(), expect)
+        XCTAssertEqual(ViewPrinter(root).description, expect)
     }
 }
 
@@ -712,7 +712,7 @@ extension ImplementationTests {
         \(identifier).height == + 24.0
         """.descriptions)
         
-        XCTAssertEqual(ViewPrinter(fixedView, tags: [fixedView: "fixedView"]).print(), """
+        XCTAssertEqual(ViewPrinter(fixedView, tags: [fixedView: "fixedView"]).description, """
         fixedView.anchors {
             Anchors.width.height.equalTo(constant: 24.0)
         }
@@ -755,7 +755,7 @@ extension ImplementationTests {
         }
         """.tabbed
 
-        XCTAssertEqual(ViewPrinter(root).print(), expect)
+        XCTAssertEqual(ViewPrinter(root).description, expect)
     }
 
     func testFeatureComposeComplex() {
@@ -794,7 +794,7 @@ extension ImplementationTests {
         }
         """.tabbed
 
-        XCTAssertEqual(ViewPrinter(root).print(options: .onlyIdentifier), expect)
+        XCTAssertEqual(ViewPrinter(root, options: .onlyIdentifier).description, expect)
     }
 
     func testFeatureComposeComplexWithAnimationHandling() {
@@ -833,7 +833,7 @@ extension ImplementationTests {
         }
         """.tabbed
 
-        XCTAssertEqual(ViewPrinter(root).print(options: .onlyIdentifier), expect)
+        XCTAssertEqual(ViewPrinter(root, options: .onlyIdentifier).description, expect)
     }
 
 }

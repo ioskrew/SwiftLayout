@@ -8,14 +8,30 @@
 import UIKit
 import SwiftLayout
 
-public enum LayoutPrinter {
-    public static func print(_ layout: Layout, withAnchors: Bool = false) -> String {
-        layoutStructureDescriptions(layout: layout, withAnchors: withAnchors).joined(separator: "\n")
+public struct LayoutPrinter: CustomStringConvertible {
+    let layout: Layout
+    let withAnchors: Bool
+    
+    init(_ layout: Layout, withAnchors: Bool = false) {
+        self.layout = layout
+        self.withAnchors = withAnchors
+    }
+    
+    public var description: String {
+        layoutStructureDescriptions(layout: self.layout, withAnchors: self.withAnchors).joined(separator: "\n")
+    }
+    
+    public func print() {
+        Swift.print(self.description)
+    }
+    
+    public func copyToPasteboard() {
+        UIPasteboard.general.string = self.description
     }
 }
 
 extension LayoutPrinter {
-    private static func layoutStructureDescriptions(layout: Layout, withAnchors: Bool = false, _ indent: String = "", _ sublayoutIndent: String = "") -> [String] {
+    private func layoutStructureDescriptions(layout: Layout, withAnchors: Bool = false, _ indent: String = "", _ sublayoutIndent: String = "") -> [String] {
         var result: [String] = ["\(indent)\(layout.description)"]
         
         if withAnchors {
@@ -63,7 +79,7 @@ extension LayoutPrinter {
 }
 
 extension LayoutPrinter {
-    private static func anchorsDescription(_ property: AnchorsConstraintProperty) -> String {
+    private func anchorsDescription(_ property: AnchorsConstraintProperty) -> String {
         var elements = Array<String>()
         elements.append(".".appending(property.attribute.description))
         elements.append(property.relation.shortDescription)
@@ -72,7 +88,7 @@ extension LayoutPrinter {
         return elements.joined(separator: " ")
     }
     
-    private static func anchorsToItemDescriptions(_ property: AnchorsConstraintProperty) -> [String] {
+    private func anchorsToItemDescriptions(_ property: AnchorsConstraintProperty) -> [String] {
         if let itemDescription = property.toItem.description {
             if let toAttribute = property.toAttribute {
                 return [itemDescription.appending(".").appending(toAttribute.description)]
@@ -90,7 +106,7 @@ extension LayoutPrinter {
         return []
     }
     
-    private static func anchorsValuesDescriptions(_ property: AnchorsConstraintProperty) -> [String] {
+    private func anchorsValuesDescriptions(_ property: AnchorsConstraintProperty) -> [String] {
         var elements = Array<String>()
         if property.multiplier != 1.0 {
             elements.append("x ".appending(property.multiplier.description))

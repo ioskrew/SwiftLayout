@@ -33,7 +33,7 @@ extension PrintingTests {
         }
         """.tabbed
         
-        let result = ViewPrinter(root).print()
+        let result = ViewPrinter(root).description
         XCTAssertEqual(result, expect)
     }
     
@@ -54,7 +54,7 @@ extension PrintingTests {
         }
         """.tabbed
         
-        let result = ViewPrinter(root).print()
+        let result = ViewPrinter(root).description
         XCTAssertEqual(result, expect)
     }
     
@@ -77,7 +77,7 @@ extension PrintingTests {
         }
         """.tabbed
         
-        let result = ViewPrinter(root).print()
+        let result = ViewPrinter(root).description
         XCTAssertEqual(result, expect)
     }
     
@@ -102,7 +102,7 @@ extension PrintingTests {
             friend
         }
         """.tabbed
-        let result = ViewPrinter(root).print()
+        let result = ViewPrinter(root).description
         XCTAssertEqual(result, expect)
     }
     
@@ -136,7 +136,7 @@ extension PrintingTests {
         two.width == one.width
         """.descriptions)
         
-        XCTAssertEqual(ViewPrinter(root).print(), """
+        XCTAssertEqual(ViewPrinter(root).description, """
         root {
             one.anchors {
                 Anchors.bottom
@@ -161,7 +161,7 @@ extension PrintingTests {
             }
         }.finalActive()
         
-        XCTAssertEqual(ViewPrinter(root).print(), """
+        XCTAssertEqual(ViewPrinter(root).description, """
         root {
             one.anchors {
                 Anchors.width.equalToSuper(constant: -20.0)
@@ -191,7 +191,7 @@ extension PrintingTests {
         }
         """.tabbed
         
-        let result = ViewPrinter(root).print()
+        let result = ViewPrinter(root).description
         XCTAssertEqual(result, expect)
     }
     
@@ -223,7 +223,7 @@ extension PrintingTests {
         }
         """.tabbed
         
-        let result = ViewPrinter(root).print()
+        let result = ViewPrinter(root).description
         XCTAssertEqual(result, expect)
     }
 
@@ -244,7 +244,7 @@ extension PrintingTests {
         }
         """.tabbed
         
-        let result = ViewPrinter(root).print()
+        let result = ViewPrinter(root).description
         
         XCTAssertEqual(result, expect)
     }
@@ -278,7 +278,7 @@ extension PrintingTests {
         }
         """.tabbed
         
-        let result = ViewPrinter(root).print()
+        let result = ViewPrinter(root).description
         XCTAssertEqual(result, expect)
     }
     
@@ -305,7 +305,7 @@ extension PrintingTests {
         }
         """.tabbed
         
-        let result = ViewPrinter(root, tags: [child: "child", grand: "grandchild"]).print()
+        let result = ViewPrinter(root, tags: [child: "child", grand: "grandchild"]).description
         XCTAssertEqual(result, expect)
     }
     
@@ -328,7 +328,7 @@ extension PrintingTests {
         }
         """.tabbed
        
-        let result = ViewPrinter(root).print()
+        let result = ViewPrinter(root).description
         
         XCTAssertEqual(result, expect)
     }
@@ -342,7 +342,7 @@ extension PrintingTests {
         }
         """.tabbed
         
-        let result = ViewPrinter(cell, tags: [cell: "contentView"]).updateIdentifiers(.withTypeOfView).print()
+        let result = ViewPrinter(cell, tags: [cell: "contentView"]).updateIdentifiers(.withTypeOfView).description
         XCTAssertEqual(result, expect)
     }
     
@@ -380,7 +380,7 @@ extension PrintingTests {
         }
         """.tabbed
         
-        XCTAssertEqual(ViewPrinter(root).print(), expect)
+        XCTAssertEqual(ViewPrinter(root).description, expect)
     }
     
     func testGreaterThanAndLessThan() {
@@ -413,7 +413,7 @@ extension PrintingTests {
         }
         """.tabbed
         
-        XCTAssertEqual(ViewPrinter(root).print(), expect)
+        XCTAssertEqual(ViewPrinter(root).description, expect)
     }
     
     func testPrintSize() {
@@ -436,7 +436,7 @@ extension PrintingTests {
         child.height == root.height
         """.descriptions)
         
-        XCTAssertEqual(ViewPrinter(root).print(), """
+        XCTAssertEqual(ViewPrinter(root).description, """
         root {
             child.anchors {
                 Anchors.width.height.equalToSuper()
@@ -495,7 +495,7 @@ extension PrintingTests {
     func testDeepAssignIdentifier() {
         let gont = Gont()
         
-        XCTAssertEqual(ViewPrinter(gont, tags: [gont: "gont"]).updateIdentifiers(.referenceAndNameWithTypeOfView).print(),
+        XCTAssertEqual(ViewPrinter(gont, tags: [gont: "gont"]).updateIdentifiers(.referenceAndNameWithTypeOfView).description,
         """
         gont {
             sea:\(UILabel.self).anchors {
@@ -629,7 +629,7 @@ extension PrintingTests {
         }
         
         layout().finalActive()
-        XCTAssertEqual(ViewPrinter(root).print(options: .onlyIdentifier), """
+        XCTAssertEqual(ViewPrinter(root, options: .onlyIdentifier).description, """
         root {
             label.anchors {
                 Anchors.top.bottom
@@ -685,7 +685,7 @@ extension PrintingTests {
     func testViewPrinterPerformance() {
         measure {
             let gont = Gont()
-            _ = ViewPrinter(gont, tags: [gont: "gont"]).updateIdentifiers(.referenceAndNameWithTypeOfView).print()
+            _ = ViewPrinter(gont, tags: [gont: "gont"]).updateIdentifiers(.referenceAndNameWithTypeOfView).description
         }
     }
 }

@@ -311,7 +311,7 @@ extension AnchorsDSLTests {
             }
         }.finalActive()
         
-        XCTAssertEqual(ViewPrinter(root).print(), """
+        XCTAssertEqual(ViewPrinter(root).description, """
         root {
             red.anchors {
                 Anchors.top
@@ -333,7 +333,7 @@ extension AnchorsDSLTests {
             red
         }.finalActive()
         
-        XCTAssertEqual(ViewPrinter(root).print(), """
+        XCTAssertEqual(ViewPrinter(root).description, """
         root.anchors {
             Anchors.top.bottom.equalTo(red.safeAreaLayoutGuide)
             Anchors.leading.trailing.equalTo(red.safeAreaLayoutGuide)
@@ -350,7 +350,7 @@ extension AnchorsDSLTests {
             UILabel().identifying("label")
         }.finalActive()
         
-        XCTAssertEqual(ViewPrinter(root).print(), """
+        XCTAssertEqual(ViewPrinter(root).description, """
         root.anchors {
             Anchors.top.bottom.equalTo(label)
             Anchors.leading.trailing.equalTo(label)
@@ -379,7 +379,7 @@ extension AnchorsDSLTests {
             }
         }.finalActive()
         
-        XCTAssertEqual(ViewPrinter(root).print(), """
+        XCTAssertEqual(ViewPrinter(root).description, """
         root {
             red.anchors {
                 Anchors.top.bottom
@@ -450,7 +450,7 @@ extension AnchorsDSLTests {
         }
         """.tabbed
         
-        XCTAssertEqual(ViewPrinter(root).print(), expect)
+        XCTAssertEqual(ViewPrinter(root).description, expect)
     }
 }
 
@@ -480,7 +480,7 @@ extension AnchorsDSLTests {
         }
         """.tabbed
         
-        XCTAssertEqual(ViewPrinter(root).print(), expect)
+        XCTAssertEqual(ViewPrinter(root).description, expect)
     }
     
     func testAnchorsGreaterThanOrEqualToUILayoutAnchor() {
@@ -509,7 +509,7 @@ extension AnchorsDSLTests {
         }
         """.tabbed
         
-        XCTAssertEqual(ViewPrinter(root).print(), expect)
+        XCTAssertEqual(ViewPrinter(root).description, expect)
     }
     
     func testAnchorsLessThanOrEqualToUILayoutAnchor() {
@@ -538,7 +538,7 @@ extension AnchorsDSLTests {
         }
         """.tabbed
         
-        XCTAssertEqual(ViewPrinter(root).print(), expect)
+        XCTAssertEqual(ViewPrinter(root).description, expect)
     }
     
     func testAnchorsHideEqualToSuper() {
@@ -552,7 +552,7 @@ extension AnchorsDSLTests {
         red.top == root.top + 24.0
         """.descriptions)
         
-        XCTAssertEqual(ViewPrinter(root).print(), """
+        XCTAssertEqual(ViewPrinter(root).description, """
         root {
             red.anchors {
                 Anchors.top.equalToSuper(constant: 24.0)
@@ -572,7 +572,7 @@ extension AnchorsDSLTests {
         red.top <= root.top + 24.0
         """.descriptions)
         
-        XCTAssertEqual(ViewPrinter(root).print(), """
+        XCTAssertEqual(ViewPrinter(root).description, """
         root {
             red.anchors {
                 Anchors.top.lessThanOrEqualToSuper(constant: 24.0)
