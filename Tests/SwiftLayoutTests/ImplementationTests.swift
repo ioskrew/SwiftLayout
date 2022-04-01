@@ -8,18 +8,18 @@ final class ImplementationTests: XCTestCase {
     
     var window: UIView!
     
-    var root = UIView().viewTag.root
-    var child = UIView().viewTag.child
-    var friend = UIView().viewTag.friend
+    var root = UIView().identifying("root")
+    var child = UIView().identifying("child")
+    var friend = UIView().identifying("friend")
     
     var activation: Activation?
     
     override func setUpWithError() throws {
         continueAfterFailure = false
         window = UIView(frame: .init(x: 0, y: 0, width: 150, height: 150))
-        root = UIView().viewTag.root
-        child = UIView().viewTag.child
-        friend = UIView().viewTag.friend
+        root = UIView().identifying("root")
+        child = UIView().identifying("child")
+        friend = UIView().identifying("friend")
         window.addSubview(root)
     }
     
@@ -30,11 +30,11 @@ final class ImplementationTests: XCTestCase {
 
 extension ImplementationTests {
     func testLayoutTraversal() {
-        let root: UIView = UIView().viewTag.root
-        let button: UIButton = UIButton().viewTag.button
-        let label: UILabel = UILabel().viewTag.label
-        let redView: UIView = UIView().viewTag.redView
-        let image: UIImageView = UIImageView().viewTag.image
+        let root: UIView = UIView().identifying("root")
+        let button: UIButton = UIButton().identifying("button")
+        let label: UILabel = UILabel().identifying("label")
+        let redView: UIView = UIView().identifying("redView")
+        let image: UIImageView = UIImageView().identifying("image")
         
         let layout = root {
             redView
@@ -145,9 +145,9 @@ extension ImplementationTests {
     }
     
     func testDontTouchRootViewByDeactive() {
-        let root = UIView().viewTag.root
-        let red = UIView().viewTag.red
-        let old = UIView().viewTag.old
+        let root = UIView().identifying("root")
+        let red = UIView().identifying("red")
+        let old = UIView().identifying("old")
         old.addSubview(root)
         root.translatesAutoresizingMaskIntoConstraints = true
         
@@ -236,11 +236,11 @@ extension ImplementationTests {
     }
     
     func testDebugLayoutStructurePrint() {
-        let root: UIView = UIView().viewTag.root
-        let contentView: UIView = UIView().viewTag.contentView
-        let image: UIImageView = UIImageView().viewTag.image
-        let title: UILabel = UILabel().viewTag.title
-        let description: UILabel = UILabel().viewTag.description
+        let root: UIView = UIView().identifying("root")
+        let contentView: UIView = UIView().identifying("contentView")
+        let image: UIImageView = UIImageView().identifying("image")
+        let title: UILabel = UILabel().identifying("title")
+        let description: UILabel = UILabel().identifying("description")
         
         let layout = root {
             contentView.anchors {
@@ -284,11 +284,11 @@ extension ImplementationTests {
     }
     
     func testDebugLayoutStructurePrintWithAnchors() {
-        let root: UIView = UIView().viewTag.root
-        let contentView: UIView = UIView().viewTag.contentView
-        let image: UIImageView = UIImageView().viewTag.image
-        let title: UILabel = UILabel().viewTag.title
-        let description: UILabel = UILabel().viewTag.description
+        let root: UIView = UIView().identifying("root")
+        let contentView: UIView = UIView().identifying("contentView")
+        let image: UIImageView = UIImageView().identifying("image")
+        let title: UILabel = UILabel().identifying("title")
+        let description: UILabel = UILabel().identifying("description")
         
         let layout = root {
             contentView.anchors {
@@ -376,8 +376,8 @@ extension ImplementationTests {
     }
 
     func testSelfContraint() {
-        let superview = UIView().viewTag.superview
-        let subview = UIView().viewTag.subview
+        let superview = UIView().identifying("superview")
+        let subview = UIView().identifying("subview")
 
         let constraint = subview.widthAnchor.constraint(equalToConstant: 24)
 
@@ -475,11 +475,11 @@ extension ImplementationTests {
     }
 
     func testRules() {
-        let root = UIView().viewTag.root
+        let root = UIView().identifying("root")
         root.translatesAutoresizingMaskIntoConstraints = false
         window.addSubview(root)
-        let child = UIView().viewTag.child
-        let friend = UIView().viewTag.friend
+        let child = UIView().identifying("child")
+        let friend = UIView().identifying("friend")
 
         enum TestCase {
             case topEqualToNameless
@@ -666,9 +666,9 @@ extension ImplementationTests {
 
 extension ImplementationTests {
     func testFinalActive() {
-        let root = UIView().viewTag.root
-        let cap = UIView().viewTag.cap
-        let shoe = UIView().viewTag.shoe
+        let root = UIView().identifying("root")
+        let cap = UIView().identifying("cap")
+        let shoe = UIView().identifying("shoe")
 
         root {
             cap.anchors {
@@ -720,7 +720,7 @@ extension ImplementationTests {
     }
     
     func testConveniencesOfAnchors() {
-        let fixedView = UIView().viewTag.fixedView
+        let fixedView = UIView().identifying("fixedView")
         fixedView.translatesAutoresizingMaskIntoConstraints = false
         window.addSubview(fixedView)
         fixedView.anchors {
@@ -842,7 +842,7 @@ extension ImplementationTests {
 extension ImplementationTests {
     
     func testLayoutProperty() {
-        let test = TestView().viewTag.test
+        let test = TestView().identifying("test")
         
         XCTAssertEqual(test.trueView.superview, test)
         XCTAssertNil(test.falseView.superview)
@@ -856,8 +856,8 @@ extension ImplementationTests {
         
         @LayoutProperty var flag = true
         
-        var trueView = UIView().viewTag.true
-        var falseView = UIView().viewTag.false
+        var trueView = UIView().identifying("true")
+        var falseView = UIView().identifying("false")
         
         var activation: Activation?
         
