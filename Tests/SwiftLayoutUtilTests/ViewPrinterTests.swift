@@ -2,7 +2,7 @@ import XCTest
 import SwiftLayout
 import SwiftLayoutUtil
 
-class PrintingTests: XCTestCase {
+class ViewPrinterTests: XCTestCase {
     
     var window: UIView!
     
@@ -18,7 +18,7 @@ class PrintingTests: XCTestCase {
     }
 }
 
-extension PrintingTests {
+extension ViewPrinterTests {
     func testPrintWithViewsSimple() throws {
         let root = UIView().identifying("root")
         let child = UIView().identifying("child")
@@ -126,15 +126,6 @@ extension PrintingTests {
         }
         
         layout().finalActive()
-        
-        XCTAssertEqual(root.constraints.shortDescription, """
-        one.leading == root.leading
-        one.bottom == root.bottom
-        two.top == one.bottom
-        two.centerX == one.centerX
-        one.trailing == root.trailing
-        two.width == one.width
-        """.descriptions)
         
         XCTAssertEqual(ViewPrinter(root).description, """
         root {
@@ -431,11 +422,6 @@ extension PrintingTests {
         
         layout().finalActive()
         
-        XCTAssertEqual(root.constraints.shortDescription, """
-        child.width == root.width
-        child.height == root.height
-        """.descriptions)
-        
         XCTAssertEqual(ViewPrinter(root).description, """
         root {
             child.anchors {
@@ -449,7 +435,7 @@ extension PrintingTests {
 }
 
 // MARK: - automatic identifier assignment
-extension PrintingTests {
+extension ViewPrinterTests {
     
     func testautomaticIdentifierAssignmentOption() {
         let cell = Cell()
@@ -486,7 +472,7 @@ extension PrintingTests {
 }
 
 // MARK: - identifier assignment deeply
-extension PrintingTests {
+extension ViewPrinterTests {
     
     class One: UIView {}
     class Two: One {}
@@ -611,7 +597,7 @@ extension PrintingTests {
 }
 
 // MARK: - print system constraint
-extension PrintingTests {
+extension ViewPrinterTests {
     
     func testSystemConstraint() {
         
@@ -641,47 +627,8 @@ extension PrintingTests {
     
 }
 
-// MARK: - options for IdentifierUpdater
-extension PrintingTests {
-    func testNameOnly() {
-        let id = ID()
-        IdentifierUpdater.nameOnly.update(id)
-        XCTAssertEqual(id.name.accessibilityIdentifier, "name")
-        XCTAssertEqual(id.name.label.accessibilityIdentifier ?? "", "")
-    }
-    
-    func testWithTypeOfView() {
-        let id = ID()
-        IdentifierUpdater.withTypeOfView.update(id)
-        XCTAssertEqual(id.name.accessibilityIdentifier, "name:Name")
-        XCTAssertEqual(id.name.label.accessibilityIdentifier ?? "", "")
-    }
-    
-    func testReferenceAndName() {
-        let id = ID()
-        IdentifierUpdater.referenceAndName.update(id)
-        XCTAssertEqual(id.name.accessibilityIdentifier, "name")
-        XCTAssertEqual(id.name.label.accessibilityIdentifier, "name.label")
-    }
-    
-    func testReferenceAndNameWithTypeOfView() {
-        let id = ID()
-        IdentifierUpdater.referenceAndNameWithTypeOfView.update(id)
-        XCTAssertEqual(id.name.accessibilityIdentifier, "name:Name")
-        XCTAssertEqual(id.name.label.accessibilityIdentifier, "name.label:\(UILabel.self)")
-    }
-
-    class Name: UIView {
-        let label = UILabel()
-    }
-    
-    class ID: UIView {
-        let name = Name()
-    }
-}
-
 // MARK: - performance
-extension PrintingTests {
+extension ViewPrinterTests {
     func testViewPrinterPerformance() {
         measure {
             let gont = Gont()
