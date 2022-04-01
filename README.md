@@ -114,7 +114,7 @@ subview.addSubview(subsub2view)
 
 > you can read details [here](https://developer.apple.com/documentation/uikit/nslayoutconstraint).
 
-- The first part is to get the necessary attributes using static values ​​defined in Anchors.
+- the first part is to get the necessary attributes using static values ​​defined in Anchors.
   
   ```swift
   Anchors.top.bottom
@@ -337,9 +337,9 @@ var layout: some Layout {
 
 ### Animations
 
-you can start animation by updating constraint in `Layoutable`, And the method is as easy as the following
+You can start animation by updating constraint in `Layoutable`, And the method is as easy as the following
 
-- In the animation block of `UIView`, call `updateLayout` with `forceLayout` parameter set to true.
+- in the animation block of `UIView`, call `updateLayout` with `forceLayout` parameter set to true.
 
 ```swift
 final class PreviewView: UIView, Layoutable {
@@ -418,11 +418,11 @@ final class PreviewView: UIView, Layoutable {
 
 [![animation in update layout](https://user-images.githubusercontent.com/3011832/156908073-d4089c26-928f-41d9-961b-8b04d7dcde37.png)](https://user-images.githubusercontent.com/3011832/156908065-8d6bcebd-553b-490b-903b-6e375d4c97a3.mp4)
 
-## other useful features
+## Other useful features
 
 ### `config(_:)` of UIView
 
-you can decorate view in Layout with config function (*and using outside freely*)
+You can decorate view in Layout with config function (*and using outside freely*)
 
 ```swift
 contentView {
@@ -451,9 +451,9 @@ contentView {
 }
 ```
 
-- From a debugging point, if you set identifier, the corresponding string is output together in the description of NSLayoutConstraint.
+- from a debugging point, if you set identifier, the corresponding string is output together in the description of NSLayoutConstraint.
 
-### using in `SwiftUI`
+### Using in `SwiftUI`
 
 implement `Layoutable` on `UIView` or `UIViewController` you can easily using it in `SwiftUI`.
 
@@ -509,7 +509,7 @@ This can be useful when you want to make sure the current layout is configured t
   }
   ```
 
-- You can use LayoutPrinter in source or debug console.
+- you can use LayoutPrinter in source or debug console.
   
   > (lldb)  po import SwiftLayoutUtil; LayoutPrinter(layout).print()
   
@@ -520,7 +520,7 @@ This can be useful when you want to make sure the current layout is configured t
      └─ ViewLayout - view: friend
   ```
 
-- If necessary, you can also print Anchors applied to the layout.
+- if necessary, you can also print Anchors applied to the layout.
   
   > (lldb)  po import SwiftLayoutUtil; LayoutPrinter(layout, withAnchors: true).print()
   
@@ -550,7 +550,7 @@ This can be useful when you want to migrate your current view to SwiftLayout for
   contentView.addSubview(firstNameLabel)
   ```
 
-- You can use ViewPrinter in source or debug console.
+- you can use ViewPrinter in source or debug console.
   
   > (lldb) po import SwiftLayoutUtil; ViewPrinter(contentView).print()
   
@@ -592,7 +592,7 @@ This can be useful when you want to migrate your current view to SwiftLayout for
 
 <img src="https://user-images.githubusercontent.com/3011832/157275626-c5f5672f-0a4a-4f45-8800-5ea3871c9dac.png" alt="thateasy" style="zoom:25%;" />
 
-# credits
+# Credits
 
 - oozoofrog([@oozoofrog](https://twitter.com/oozoofrog))
 - gmlwhdtjd([gmlwhdtjd](https://github.com/gmlwhdtjd))
