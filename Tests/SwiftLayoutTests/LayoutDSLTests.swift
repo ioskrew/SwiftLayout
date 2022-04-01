@@ -7,28 +7,28 @@ final class LayoutDSLTests: XCTestCase {
     
     var window: UIView!
     
-    var root: UIView = UIView().viewTag.root
-    var child: UIView = UIView().viewTag.child
-    var button: UIButton = UIButton().viewTag.button
-    var label: UILabel = UILabel().viewTag.label
-    var red: UIView = UIView().viewTag.red
-    var blue: UIView = UIView().viewTag.blue
-    var green: UIView = UIView().viewTag.green
-    var image: UIImageView = UIImageView().viewTag.image
+    var root: UIView = UIView().identifying("root")
+    var child: UIView = UIView().identifying("child")
+    var button: UIButton = UIButton().identifying("button")
+    var label: UILabel = UILabel().identifying("label")
+    var red: UIView = UIView().identifying("red")
+    var blue: UIView = UIView().identifying("blue")
+    var green: UIView = UIView().identifying("green")
+    var image: UIImageView = UIImageView().identifying("image")
     
     var activation: Set<Activation> = []
     
     override func setUp() {
         window = UIView(frame: .init(x: 0, y: 0, width: 150, height: 150))
-        root = UIView().viewTag.root
+        root = UIView().identifying("root")
         root.translatesAutoresizingMaskIntoConstraints = false
         window.addSubview(root)
-        child = UIView().viewTag.child
-        button = UIButton().viewTag.button
-        label = UILabel().viewTag.label
-        red = UIView().viewTag.red
-        blue = UIView().viewTag.blue
-        image = UIImageView().viewTag.image
+        child = UIView().identifying("child")
+        button = UIButton().identifying("button")
+        label = UILabel().identifying("label")
+        red = UIView().identifying("red")
+        blue = UIView().identifying("blue")
+        image = UIImageView().identifying("image")
     }
     
     override func tearDown() {
@@ -184,7 +184,7 @@ extension LayoutDSLTests {
 extension LayoutDSLTests {
     
     func testLayoutsSameFirstLevel() {
-        let root = TestView().viewTag.root
+        let root = TestView().identifying("root")
         root.translatesAutoresizingMaskIntoConstraints = false
         window.addSubview(root)
         root.sl.updateLayout()
@@ -213,9 +213,9 @@ extension LayoutDSLTests {
     }
     
     private final class TestView: UIView, Layoutable {
-        lazy var red = UIView().viewTag.red
-        lazy var blue = UIView().viewTag.blue
-        lazy var green = UIView().viewTag.green
+        lazy var red = UIView().identifying("red")
+        lazy var blue = UIView().identifying("blue")
+        lazy var green = UIView().identifying("green")
         
         var activation: Activation? 
         @LayoutBuilder
@@ -314,15 +314,15 @@ extension LayoutDSLTests {
                 }
                 
                 if flag {
-                    UIView().viewTag.true
+                    UIView().identifying("true")
                 } else {
-                    UIView().viewTag.false
+                    UIView().identifying("false")
                 }
             }
         }
         
         context("if true") {
-            root = UIView().viewTag.root
+            root = UIView().identifying("root")
             layout(true).finalActive()
             XCTAssertEqual(ViewPrinter(root).description, """
             root {
@@ -335,7 +335,7 @@ extension LayoutDSLTests {
         }
         
         context("if false") {
-            root = UIView().viewTag.root
+            root = UIView().identifying("root")
             layout(false).finalActive()
             XCTAssertEqual(ViewPrinter(root).description, """
             root {
@@ -361,11 +361,11 @@ extension LayoutDSLTests {
                 child {
                     switch test {
                     case .first:
-                        UIView().viewTag.first
+                        UIView().identifying("first")
                     case .second:
-                        UIView().viewTag.second
+                        UIView().identifying("second")
                     case .third:
-                        UIView().viewTag.third
+                        UIView().identifying("third")
                     }
                 }
             }
@@ -445,7 +445,7 @@ extension LayoutDSLTests {
 
 extension LayoutDSLTests {
     func testUpdateLayout() {
-        let view = LayoutView().viewTag.view
+        let view = LayoutView().identifying("view")
         view.frame = .init(x: 0, y: 0, width: 90, height: 90)
         
         var activation = view.layout.active(forceLayout: true)
@@ -526,9 +526,9 @@ extension LayoutDSLTests {
     class LayoutView: UIView {
         var flag = true
         
-        let root = MockView().viewTag.root
-        let child = UIView().viewTag.child
-        let friend = UILabel().viewTag.friend
+        let root = MockView().identifying("root")
+        let child = UIView().identifying("child")
+        let friend = UILabel().identifying("friend")
         
         var activation: Activation?
         
@@ -556,11 +556,11 @@ extension LayoutDSLTests {
 
 extension LayoutDSLTests {
     func testGroupLayout() {
-        let group1_1 = UIView().viewTag.group1_1
-        let group1_2 = UIView().viewTag.group1_2
-        let group1_3 = UIView().viewTag.group1_3
-        let group2_1 = UIView().viewTag.group2_1
-        let group2_2 = UIView().viewTag.group2_2
+        let group1_1 = UIView().identifying("group1_1")
+        let group1_2 = UIView().identifying("group1_2")
+        let group1_3 = UIView().identifying("group1_3")
+        let group2_1 = UIView().identifying("group2_1")
+        let group2_2 = UIView().identifying("group2_2")
         
         root {
             GroupLayout {
@@ -622,9 +622,9 @@ extension LayoutDSLTests {
 
 extension LayoutDSLTests {
     struct Module1: ModularLayout {
-        let module1view1 = UIView().viewTag.module1view1
-        let module1view2 = UIView().viewTag.module1view2
-        let module1view3 = UIView().viewTag.module1view3
+        let module1view1 = UIView().identifying("module1view1")
+        let module1view2 = UIView().identifying("module1view2")
+        let module1view3 = UIView().identifying("module1view3")
         
         @LayoutBuilder var layout: some Layout {
             module1view1.anchors {
@@ -648,9 +648,9 @@ extension LayoutDSLTests {
     }
     
     struct Module2: ModularLayout {
-        let module2view1 = UIView().viewTag.module2view1
-        let module2view2 = UIView().viewTag.module2view2
-        let module2view3 = UIView().viewTag.module2view3
+        let module2view1 = UIView().identifying("module2view1")
+        let module2view2 = UIView().identifying("module2view2")
+        let module2view3 = UIView().identifying("module2view3")
         
         @LayoutBuilder var layout: some Layout {
             module2view1.anchors {

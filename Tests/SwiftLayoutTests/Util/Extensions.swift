@@ -28,16 +28,6 @@ extension String {
     var tabbed: String { replacingOccurrences(of: "    ", with: "\t") }
 }
 
-extension Optional {
-    func or(_ value: Wrapped) -> Wrapped {
-        if let unwrapped = self {
-            return unwrapped
-        } else {
-            return value
-        }
-    }
-}
-
 extension Array where Element: NSLayoutConstraint {
     var shortDescription: Set<String> {
         Set(map(\.shortDescription))
