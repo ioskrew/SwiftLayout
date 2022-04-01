@@ -453,6 +453,38 @@ contentView {
 
 - From a debugging point, if you set identifier, the corresponding string is output together in the description of NSLayoutConstraint.
 
+### using in `SwiftUI`
+
+implement `Layoutable` on `UIView` or `UIViewController` you can easily using it in `SwiftUI`.
+
+```swift
+class ViewUIView: UIView, Layoutable {
+  var layout: some Layout { 
+    ...
+  }
+}
+
+...
+
+struct SomeView: View {
+  var body: some View {
+    VStack {
+      ...
+	    ViewUIView().sl.swiftUI
+      ...
+    }
+  }
+}
+
+struct ViewUIView_Previews: PreviewProvider {
+  static var previews: some Previews {
+    ViewUIView().sl.swiftUI
+  }
+}
+```
+
+
+
 ### SwiftLayoutUtil
 
 #### LayoutPrinter
