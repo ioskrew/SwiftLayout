@@ -65,7 +65,7 @@ public struct ViewPrinter: CustomStringConvertible {
     /// - Returns: The view itself with the **accessibilityIdentifier** applied
     ///
     @discardableResult
-    public func updateIdentifiers<RO>(_ updater: IdentifierUpdater = .nameOnly, rootObject: RO?) -> Self {
+    public func updateIdentifiers<RO>(_ updater: IdentifierUpdater = .nameOnly, rootObject: RO) -> Self {
         if let rootObject = rootObject {
             let viewTags = updater.update(rootObject, viewTags: self.viewTags)
             return Self.init(self.view, viewTages: viewTags, options: self.options)
