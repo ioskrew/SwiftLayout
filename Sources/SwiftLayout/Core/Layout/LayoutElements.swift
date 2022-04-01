@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class LayoutElements<L: Layout> {
+struct LayoutElements<L: Layout> {
     let viewInformations: [ViewInformation]
     let viewConstraints: [NSLayoutConstraint]
     
