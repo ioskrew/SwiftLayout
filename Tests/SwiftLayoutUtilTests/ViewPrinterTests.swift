@@ -627,6 +627,63 @@ extension ViewPrinterTests {
     
 }
 
+extension ViewPrinterTests {
+    
+    func testUpdateIdentifiers() {
+        let rootView = UIView(frame: .init(x: 0, y: 0, width: 150, height: 150))
+        let container = TestViewContainer()
+        container.root.translatesAutoresizingMaskIntoConstraints = false
+        rootView.addSubview(container.root)
+        
+        container.root {
+            container.red {
+                container.button
+                container.label
+                container.blue {
+                    container.image
+                }
+            }
+        }
+        .finalActive()
+        
+        let expect = """
+        root {
+            red {
+                button
+                label
+                blue {
+                    image
+                }
+            }
+        }
+        """.tabbed
+        
+        XCTAssertEqual(
+            ViewPrinter(container.root, options: .onlyIdentifier)
+                .updateIdentifiers(rootObject: container)
+                .description,
+            expect
+        )
+        
+        XCTAssertEqual(container.root.accessibilityIdentifier, "root")
+        XCTAssertEqual(container.red.accessibilityIdentifier, "red")
+        XCTAssertEqual(container.button.accessibilityIdentifier, "button")
+        XCTAssertEqual(container.label.accessibilityIdentifier, "label")
+        XCTAssertEqual(container.blue.accessibilityIdentifier, "blue")
+        XCTAssertEqual(container.image.accessibilityIdentifier, "image")
+    }
+    
+    // This can be a UIViewController or a UIView.
+    private final class TestViewContainer {
+        let root = UIView()
+        let red = UIView()
+        let blue = UIView()
+        let button = UIButton()
+        let label = UILabel()
+        let image = UIImageView()
+    }
+}
+
 // MARK: - performance
 extension ViewPrinterTests {
     func testViewPrinterPerformance() {

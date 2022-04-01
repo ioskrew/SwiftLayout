@@ -8,6 +8,7 @@ final class AnchorsDSLTests: XCTestCase {
     var root: UIView = UIView().identifying("root")
     var red: UIView = UIView().identifying("red")
     var blue: UIView = UIView().identifying("blue")
+    var green: UIView = UIView().identifying("green")
     
     var constant: CGFloat = 0.0
     
@@ -17,6 +18,7 @@ final class AnchorsDSLTests: XCTestCase {
         root = UIView(frame: .init(x: 0, y: 0, width: 120, height: 120)).identifying("root")
         red = UIView().identifying("red")
         blue = UIView().identifying("blue")
+        green = UIView().identifying("green")
         constant = CGFloat.random(in: -5...5)
         continueAfterFailure = false
     }
@@ -579,5 +581,46 @@ extension AnchorsDSLTests {
             }
         }
         """.tabbed)
+    }
+    
+    func testAllSides() {
+        root {
+            red.anchors {
+                Anchors.allSides()
+            }.sublayout {
+                blue.anchors {
+                    Anchors.allSides(offset: 8)
+                }.sublayout {
+                    green.anchors {
+                        Anchors.allSides(blue, offset: 16)
+                    }
+                }
+            }
+        }.finalActive()
+        
+        let expect = """
+        root {
+            red.anchors {
+                Anchors.top.bottom
+                Anchors.leading.trailing
+            }.sublayout {
+                blue.anchors {
+                    Anchors.top.equalToSuper(constant: 8.0)
+                    Anchors.bottom.equalToSuper(constant: -8.0)
+                    Anchors.leading.equalToSuper(constant: 8.0)
+                    Anchors.trailing.equalToSuper(constant: -8.0)
+                }.sublayout {
+                    green.anchors {
+                        Anchors.top.equalToSuper(constant: 16.0)
+                        Anchors.bottom.equalToSuper(constant: -16.0)
+                        Anchors.leading.equalToSuper(constant: 16.0)
+                        Anchors.trailing.equalToSuper(constant: -16.0)
+                    }
+                }
+            }
+        }
+        """
+        
+        XCTAssertEqual(ViewPrinter(root).description, expect.tabbed)
     }
 }

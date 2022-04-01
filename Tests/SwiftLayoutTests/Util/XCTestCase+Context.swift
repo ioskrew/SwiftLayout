@@ -13,4 +13,9 @@ extension XCTestCase {
         })
     }
     
+    func assertView(_ view: UIView, superview: UIView?, subviews: [UIView]) {
+        XCTAssertEqual(view.superview, superview)
+        XCTAssertEqual(view.subviews.count, subviews.count)
+        XCTAssertEqual(Set(view.subviews), Set(subviews))
+    }
 }

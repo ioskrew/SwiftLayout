@@ -1,34 +1,32 @@
 import XCTest
 import SwiftLayout
-import SwiftLayoutUtil
 
-/// test cases for DSL syntax
 final class LayoutDSLTests: XCTestCase {
     
     var window: UIView!
     
-    var root: UIView = UIView().identifying("root")
-    var child: UIView = UIView().identifying("child")
-    var button: UIButton = UIButton().identifying("button")
-    var label: UILabel = UILabel().identifying("label")
-    var red: UIView = UIView().identifying("red")
-    var blue: UIView = UIView().identifying("blue")
-    var green: UIView = UIView().identifying("green")
-    var image: UIImageView = UIImageView().identifying("image")
+    var root: UIView = UIView()
+    var child: UIView = UIView()
+    var button: UIButton = UIButton()
+    var label: UILabel = UILabel()
+    var red: UIView = UIView()
+    var blue: UIView = UIView()
+    var green: UIView = UIView()
+    var image: UIImageView = UIImageView()
     
     var activation: Set<Activation> = []
     
     override func setUp() {
         window = UIView(frame: .init(x: 0, y: 0, width: 150, height: 150))
-        root = UIView().identifying("root")
+        root = UIView()
         root.translatesAutoresizingMaskIntoConstraints = false
         window.addSubview(root)
-        child = UIView().identifying("child")
-        button = UIButton().identifying("button")
-        label = UILabel().identifying("label")
-        red = UIView().identifying("red")
-        blue = UIView().identifying("blue")
-        image = UIImageView().identifying("image")
+        child = UIView()
+        button = UIButton()
+        label = UILabel()
+        red = UIView()
+        blue = UIView()
+        image = UIImageView()
     }
     
     override func tearDown() {
@@ -36,315 +34,194 @@ final class LayoutDSLTests: XCTestCase {
     }
 }
 
-// MARK: - normal syntax
+// MARK: - activation
 extension LayoutDSLTests {
     func testActive() {
-        root {
-            red {
-                button
-                label
-                blue {
-                    image
-                }
-            }
-        }.active().store(&activation)
-        
-        let expect = """
-        root {
-            red {
-                button
-                label
-                blue {
-                    image
+        @LayoutBuilder
+        var layout: some Layout {
+            root {
+                red {
+                    button
+                    label
+                    blue {
+                        image
+                    }
                 }
             }
         }
-        """.tabbed
         
-        XCTAssertEqual(ViewPrinter(root, options: .onlyIdentifier).description, expect)
+        layout.active().store(&activation)
+        
+        assertView(root, superview: window, subviews: [red])
+        assertView(red, superview: root, subviews: [button, label, blue])
+        assertView(button, superview: red, subviews: [])
+        assertView(label, superview: red, subviews: [])
+        assertView(blue, superview: red, subviews: [image])
+        assertView(image, superview: blue, subviews: [])
     }
     
     func testDeactive() {
-        root {
-            red {
-                button
-                label
-                blue {
-                    image
+        @LayoutBuilder
+        var layout: some Layout {
+            root {
+                red {
+                    button
+                    label
+                    blue {
+                        image
+                    }
                 }
             }
-        }.active().store(&activation)
+        }
+        
+        layout.active().store(&activation)
         
         activation = []
         
-        let expect = """
-        root
-        """
-        
-        XCTAssertEqual(ViewPrinter(root).description, expect)
+        assertView(root, superview: window, subviews: [])
+        assertView(red, superview: nil, subviews: [])
+        assertView(button, superview: nil, subviews: [])
+        assertView(label, superview: nil, subviews: [])
+        assertView(blue, superview: nil, subviews: [])
+        assertView(image, superview: nil, subviews: [])
     }
     
     func testFinalActive() {
-        root {
-            red {
-                button
-                label
-                blue {
-                    image
-                }
-            }
-        }.finalActive()
-        
-        let expect = """
-        root {
-            red {
-                button
-                label
-                blue {
-                    image
-                }
-            }
-        }
-        """.tabbed
-        
-        XCTAssertEqual(ViewPrinter(root, options: .onlyIdentifier).description, expect)
-    }
-    
-    func testDuplicateLayoutBuilder() {
-        root {
-            red {
-                button
-                label
-            }.sublayout {
-                blue {
-                    image
-                }
-            }
-        }.finalActive()
-        
-        let expect = """
-        root {
-            red {
-                button
-                label
-                blue {
-                    image
-                }
-            }
-        }
-        """.tabbed
-        
-        XCTAssertEqual(ViewPrinter(root, options: .onlyIdentifier).description, expect)
-    }
-    
-    func testAllSides() {
-        root {
-            red.anchors {
-                Anchors.allSides()
-            }.sublayout {
-                blue.anchors {
-                    Anchors.allSides(offset: 8)
-                }.sublayout {
-                    green.anchors {
-                        Anchors.allSides(blue, offset: 16)
-                    }
-                }
-            }
-        }.active().store(&activation)
-        
-        let expect = """
-        root {
-            red.anchors {
-                Anchors.top.bottom
-                Anchors.leading.trailing
-            }.sublayout {
-                blue.anchors {
-                    Anchors.top.equalToSuper(constant: 8.0)
-                    Anchors.bottom.equalToSuper(constant: -8.0)
-                    Anchors.leading.equalToSuper(constant: 8.0)
-                    Anchors.trailing.equalToSuper(constant: -8.0)
-                }.sublayout {
-                    green.anchors {
-                        Anchors.top.equalToSuper(constant: 16.0)
-                        Anchors.bottom.equalToSuper(constant: -16.0)
-                        Anchors.leading.equalToSuper(constant: 16.0)
-                        Anchors.trailing.equalToSuper(constant: -16.0)
-                    }
-                }
-            }
-        }
-        """
-        
-        XCTAssertEqual(ViewPrinter(root).description, expect.tabbed)
-    }
-    
-}
-
-// MARK: - layouts in same first level
-extension LayoutDSLTests {
-    
-    func testLayoutsSameFirstLevel() {
-        let root = TestView().identifying("root")
-        root.translatesAutoresizingMaskIntoConstraints = false
-        window.addSubview(root)
-        root.sl.updateLayout()
-        
-        let expect = """
-        root {
-            red.anchors {
-                Anchors.top.bottom
-                Anchors.leading.trailing
-            }.sublayout {
-                blue.anchors {
-                    Anchors.top.bottom
-                    Anchors.leading.trailing
-                    Anchors.height.equalTo(constant: 44.0)
-                }.sublayout {
-                    green.anchors {
-                        Anchors.top.bottom
-                        Anchors.leading.trailing
-                        Anchors.width.equalTo(constant: 88.0)
-                    }
-                }
-            }
-        }
-        """
-        XCTAssertEqual(ViewPrinter(root).description, expect.tabbed)
-    }
-    
-    private final class TestView: UIView, Layoutable {
-        lazy var red = UIView().identifying("red")
-        lazy var blue = UIView().identifying("blue")
-        lazy var green = UIView().identifying("green")
-        
-        var activation: Activation? 
         @LayoutBuilder
         var layout: some Layout {
-            self {
-                red.anchors {
-                    Anchors.allSides()
-                }.sublayout {
-                    blue.anchors {
-                        Anchors.allSides()
-                    }.sublayout {
-                        green.anchors {
-                            Anchors.allSides()
-                        }
+            root {
+                red {
+                    button
+                    label
+                    blue {
+                        image
                     }
                 }
             }
-            blue.anchors {
-                Anchors.height.equalTo(constant: 44.0)
-            }
-            green.anchors {
-                Anchors.width.equalTo(constant: 88.0)
-            }
         }
-    }
-}
-
-
-// MARK: - layouts in same first level
-extension LayoutDSLTests {
-    
-    func testUpdateIdentifiers() {
-        let rootView = UIView(frame: .init(x: 0, y: 0, width: 150, height: 150))
-        let container = TestViewContainer()
-        container.root.translatesAutoresizingMaskIntoConstraints = false
-        rootView.addSubview(container.root)
         
-        container.root {
-            container.red {
-                container.button
-                container.label
-                container.blue {
-                    container.image
+        layout.finalActive()
+        
+        assertView(root, superview: window, subviews: [red])
+        assertView(red, superview: root, subviews: [button, label, blue])
+        assertView(button, superview: red, subviews: [])
+        assertView(label, superview: red, subviews: [])
+        assertView(blue, superview: red, subviews: [image])
+        assertView(image, superview: blue, subviews: [])
+    }
+    
+    func testUpdateLayout() {
+        var flag = true
+        let parentView = CallCountView()
+        let childView_0 = CallCountView()
+        let childView_1 = CallCountView()
+        
+        var activation: Activation?
+        
+        @LayoutBuilder
+        var layout: some Layout {
+            parentView {
+                if flag {
+                    childView_0
+                } else {
+                    childView_1
                 }
             }
         }
-        .active()
-        .store(&activation)
         
-        let expect = """
-        root {
-            red {
-                button
-                label
-                blue {
-                    image
-                }
-            }
+        context("active") {
+            activation = layout.active(forceLayout: true)
+            
+            assertView(parentView, superview: nil, subviews: [childView_0])
+            assertView(childView_0, superview: parentView, subviews: [])
+            assertView(childView_1, superview: nil, subviews: [])
+            XCTAssertEqual(parentView.addSubviewCallCount(childView_0), 1)
+            XCTAssertEqual(parentView.addSubviewCallCount(childView_1), 0)
+            XCTAssertEqual(childView_0.removeFromSuperviewCount, 0)
+            XCTAssertEqual(childView_1.removeFromSuperviewCount, 0)
         }
-        """.tabbed
         
-        XCTAssertEqual(
-            ViewPrinter(container.root, options: .onlyIdentifier)
-                .updateIdentifiers(rootObject: container)
-                .description,
-            expect
-        )
+        context("update without change") {
+            activation = layout.update(fromActivation: activation!, forceLayout: true)
+            
+            assertView(parentView, superview: nil, subviews: [childView_0])
+            assertView(childView_0, superview: parentView, subviews: [])
+            assertView(childView_1, superview: nil, subviews: [])
+            XCTAssertEqual(parentView.addSubviewCallCount(childView_0), 1)
+            XCTAssertEqual(parentView.addSubviewCallCount(childView_1), 0)
+            XCTAssertEqual(childView_0.removeFromSuperviewCount, 0)
+            XCTAssertEqual(childView_1.removeFromSuperviewCount, 0)
+        }
         
-        XCTAssertEqual(container.root.accessibilityIdentifier, "root")
-        XCTAssertEqual(container.red.accessibilityIdentifier, "red")
-        XCTAssertEqual(container.button.accessibilityIdentifier, "button")
-        XCTAssertEqual(container.label.accessibilityIdentifier, "label")
-        XCTAssertEqual(container.blue.accessibilityIdentifier, "blue")
-        XCTAssertEqual(container.image.accessibilityIdentifier, "image")
-    }
-    
-    // This can be a UIViewController or a UIView.
-    private final class TestViewContainer {
-        let root = UIView()
-        let red = UIView()
-        let blue = UIView()
-        let button = UIButton()
-        let label = UILabel()
-        let image = UIImageView()
+        context("update without change") {
+            flag.toggle()
+            
+            activation = layout.update(fromActivation: activation!, forceLayout: true)
+            
+            assertView(parentView, superview: nil, subviews: [childView_1])
+            assertView(childView_0, superview: nil, subviews: [])
+            assertView(childView_1, superview: parentView, subviews: [])
+            XCTAssertEqual(parentView.addSubviewCallCount(childView_0), 1)
+            XCTAssertEqual(parentView.addSubviewCallCount(childView_1), 1)
+            XCTAssertEqual(childView_0.removeFromSuperviewCount, 1)
+            XCTAssertEqual(childView_1.removeFromSuperviewCount, 0)
+        }
+        
+        context("deactive") {
+            activation?.deactive()
+            activation = nil
+            
+            assertView(parentView, superview: nil, subviews: [])
+            assertView(childView_0, superview: nil, subviews: [])
+            assertView(childView_1, superview: nil, subviews: [])
+            XCTAssertEqual(parentView.addSubviewCallCount(childView_0), 1)
+            XCTAssertEqual(parentView.addSubviewCallCount(childView_1), 1)
+            XCTAssertEqual(childView_0.removeFromSuperviewCount, 1)
+            XCTAssertEqual(childView_1.removeFromSuperviewCount, 1)
+        }
     }
 }
 
 // MARK: - conditional syntax
 extension LayoutDSLTests {
-    func testIF() {
+    func testIf() {
+        var flag = true
+        let trueView = UIView()
+        let falseView = UIView()
+        
         @LayoutBuilder
-        func layout(_ flag: Bool) -> some Layout {
+        var layout: some Layout {
             root {
                 red {
                     button
                 }
                 
                 if flag {
-                    UIView().identifying("true")
+                    trueView
                 } else {
-                    UIView().identifying("false")
+                    falseView
                 }
             }
         }
         
         context("if true") {
-            root = UIView().identifying("root")
-            layout(true).finalActive()
-            XCTAssertEqual(ViewPrinter(root).description, """
-            root {
-                red {
-                    button
-                }
-                true
-            }
-            """.tabbed)
+            flag = true
+            layout.active().store(&activation)
+            
+            assertView(root, superview: window, subviews: [red, trueView])
+            assertView(red, superview: root, subviews: [button])
+            assertView(trueView, superview: root, subviews: [])
+            assertView(falseView, superview: nil, subviews: [])
         }
         
         context("if false") {
-            root = UIView().identifying("root")
-            layout(false).finalActive()
-            XCTAssertEqual(ViewPrinter(root).description, """
-            root {
-                red {
-                    button
-                }
-                false
-            }
-            """.tabbed)
+            flag = false
+            layout.active().store(&activation)
+            
+            assertView(root, superview: window, subviews: [red, falseView])
+            assertView(red, superview: root, subviews: [button])
+            assertView(trueView, superview: nil, subviews: [])
+            assertView(falseView, superview: root, subviews: [])
         }
         
     }
@@ -355,365 +232,299 @@ extension LayoutDSLTests {
             case second
             case third
         }
+        
+        let first = UIView()
+        let second = UIView()
+        let third = UIView()
+        
         @LayoutBuilder
         func layout(_ test: Test) -> some Layout {
             root {
                 child {
                     switch test {
                     case .first:
-                        UIView().identifying("first")
+                        first
                     case .second:
-                        UIView().identifying("second")
+                        second
                     case .third:
-                        UIView().identifying("third")
+                        third
                     }
                 }
             }
         }
         
-        for test in Test.allCases {
-            context("enum Test.\(test)") {
-                activation = []
-                layout(test).active().store(&activation)
-                XCTAssertEqual(ViewPrinter(root).description, """
-                root {
-                    child {
-                        \(test)
-                    }
-                }
-                """.tabbed)
-            }
+        context("enum test first") {
+            layout(.first).active().store(&activation)
+            
+            assertView(root, superview: window, subviews: [child])
+            assertView(child, superview: root, subviews: [first])
+            assertView(first, superview: child, subviews: [])
+            assertView(second, superview: nil, subviews: [])
+            assertView(third, superview: nil, subviews: [])
+        }
+        
+        context("enum test second") {
+            layout(.second).active().store(&activation)
+            
+            assertView(root, superview: window, subviews: [child])
+            assertView(child, superview: root, subviews: [second])
+            assertView(first, superview: nil, subviews: [])
+            assertView(second, superview: child, subviews: [])
+            assertView(third, superview: nil, subviews: [])
+        }
+        
+        context("enum test third") {
+            layout(.third).active().store(&activation)
+            
+            assertView(root, superview: window, subviews: [child])
+            assertView(child, superview: root, subviews: [third])
+            assertView(first, superview: nil, subviews: [])
+            assertView(second, superview: nil, subviews: [])
+            assertView(third, superview: child, subviews: [])
         }
     }
     
-    func testLayoutWithOptionalViews() {
+    func testOptional() {
+        var optional: UIView?
         
         @LayoutBuilder
-        func layout(_ view: UIView?) -> some Layout {
-            root {
-                red {
-                    view?.identifying("optional")
-                }
-            }
-        }
-        
-        context("view is nil") {
-            activation = []
-            layout(nil).active().store(&activation)
-            XCTAssertEqual(ViewPrinter(root).description, """
-            root {
-                red
-            }
-            """.tabbed)
-        }
-        
-        context("view is optional") {
-            activation = []
-            layout(UIView()).active().store(&activation)
-            XCTAssertEqual(ViewPrinter(root).description, """
+        var layout: some Layout {
             root {
                 red {
                     optional
                 }
             }
-            """.tabbed)
+        }
+        
+        context("view is nil") {
+            optional = nil
+            layout.active().store(&activation)
+            
+            assertView(root, superview: window, subviews: [red])
+            assertView(red, superview: root, subviews: [])
+        }
+        
+        context("view is optional") {
+            optional = UIView()
+            layout.active().store(&activation)
+            
+            assertView(root, superview: window, subviews: [red])
+            assertView(red, superview: root, subviews: [optional!])
+            assertView(optional!, superview: red, subviews: [])
         }
     }
     
-    func testLayoutWithForIn() {
+    func testForIn() {
+        let view_0 = UIView()
+        let view_1 = UIView()
+        let view_2 = UIView()
+        let view_3 = UIView()
+        
+        let views = [view_0, view_1, view_2, view_3]
        
         @LayoutBuilder
-        func layout() -> some Layout {
+        var layout: some Layout {
             root {
-                for index in 0..<3 {
-                    UIView().identifying("view_\(index)")
+                for view in views {
+                    view
                 }
             }
         }
         
-        layout().active().store(&activation)
-        XCTAssertEqual(ViewPrinter(root).description, """
-        root {
-            view_0
-            view_1
-            view_2
-        }
-        """.tabbed)
+        layout.active().store(&activation)
+        
+        assertView(root, superview: window, subviews: views)
+        assertView(view_0, superview: root, subviews: [])
+        assertView(view_1, superview: root, subviews: [])
+        assertView(view_2, superview: root, subviews: [])
+        assertView(view_3, superview: root, subviews: [])
     }
-    
 }
 
+// MARK: - complex usage
 extension LayoutDSLTests {
-    func testUpdateLayout() {
-        let view = LayoutView().identifying("view")
-        view.frame = .init(x: 0, y: 0, width: 90, height: 90)
-        
-        var activation = view.layout.active(forceLayout: true)
-        
-        XCTAssertEqual(view.child.bounds.size, CGSize(width: 90, height: 90))
-        XCTAssertEqual(ViewPrinter(view).description, """
-        view {
-            root.anchors {
-                Anchors.top.bottom
-                Anchors.leading.trailing
-            }.sublayout {
-                child.anchors {
-                    Anchors.top.bottom
-                    Anchors.leading.trailing
-                }
-            }
-        }
-        """.tabbed)
-        
-        activation = view.layout.update(fromActivation: activation, forceLayout: true)
-
-        XCTAssertEqual(view.root.count(view.child), 1)
-        XCTAssertEqual(view.root.count(view.friend), 0)
-        XCTAssertEqual(ViewPrinter(view).description, """
-        view {
-            root.anchors {
-                Anchors.top.bottom
-                Anchors.leading.trailing
-            }.sublayout {
-                child.anchors {
-                    Anchors.top.bottom
-                    Anchors.leading.trailing
-                }
-            }
-        }
-        """.tabbed)
-
-        view.flag.toggle()
-        activation = view.layout.update(fromActivation: activation, forceLayout: true)
-        
-        XCTAssertEqual(view.root.count(view.child), 1)
-        XCTAssertEqual(view.root.count(view.friend), 1)
-        XCTAssertEqual(view.friend.superview, view.root)
-        XCTAssertEqual(view.root.bounds.size, .init(width: 90, height: 90))
-        XCTAssertEqual(view.friend.bounds.size, .init(width: 90, height: 90))
-        XCTAssertEqual(ViewPrinter(view).description, """
-        view {
-            root.anchors {
-                Anchors.top.bottom
-                Anchors.leading.trailing
-            }.sublayout {
-                friend.anchors {
-                    Anchors.top.bottom
-                    Anchors.leading.trailing
-                }
-            }
-        }
-        """.tabbed)
-    }
-    
-    class MockView: UIView {
-        var addSubviewCounts: [UIView: Int] = [:]
-        
-        func count(_ view: UIView) -> Int {
-            addSubviewCounts[view] ?? 0
-        }
-        
-        override func addSubview(_ view: UIView) {
-            if let count = addSubviewCounts[view] {
-                addSubviewCounts[view] = count + 1
-            } else {
-                addSubviewCounts[view] = 1
-            }
-            super.addSubview(view)
-        }
-    }
-    
-    class LayoutView: UIView {
-        var flag = true
-        
-        let root = MockView().identifying("root")
-        let child = UIView().identifying("child")
-        let friend = UILabel().identifying("friend")
-        
-        var activation: Activation?
-        
+    func testConfig() {
+        @LayoutBuilder
         var layout: some Layout {
-            self {
-                root.anchors({
-                    Anchors.allSides()
-                }).sublayout {
-                    if flag {
-                        child.anchors {
-                            Anchors.allSides()
-                        }
-                    } else {
-                        friend.anchors {
-                            Anchors.allSides()
-                        }
+            root {
+                child.config {
+                    $0.backgroundColor = .yellow
+                }.sublayout {
+                    label.config {
+                        $0.text = "test config"
+                        $0.textColor = .green
                     }
                 }
             }
         }
+        
+        layout.finalActive()
+        
+        assertView(root, superview: window, subviews: [child])
+        assertView(child, superview: root, subviews: [label])
+        assertView(label, superview: child, subviews: [])
+        XCTAssertEqual(child.backgroundColor, UIColor.yellow)
+        XCTAssertEqual(label.text, "test config")
+        XCTAssertEqual(label.textColor, UIColor.green)
+    }
+    
+    func testDuplicateLayoutBuilder() {
+        @LayoutBuilder
+        var layout: some Layout {
+            root {
+                red {
+                    button
+                }.sublayout {
+                    label
+                }.sublayout {
+                    blue {
+                        image
+                    }
+                }
+            }
+        }
+        
+        layout.finalActive()
+        
+        assertView(root, superview: window, subviews: [red])
+        assertView(red, superview: root, subviews: [button, label, blue])
+        assertView(button, superview: red, subviews: [])
+        assertView(label, superview: red, subviews: [])
+        assertView(blue, superview: red, subviews: [image])
+        assertView(image, superview: blue, subviews: [])
+    }
+    
+    func testSeparatedFromFirstLevel() {
+        @LayoutBuilder
+        var layout: some Layout {
+            root {
+                child
+                red
+                image
+            }
+            
+            child {
+                button
+                label
+            }
+            
+            red {
+                blue
+                green
+            }
+        }
+        
+        layout.finalActive()
+        
+        assertView(root, superview: window, subviews: [child, red, image])
+        assertView(child, superview: root, subviews: [button, label])
+        assertView(red, superview: root, subviews: [blue, green])
+        assertView(image, superview: root, subviews: [])
+        assertView(button, superview: child, subviews: [])
+        assertView(label, superview: child, subviews: [])
+        assertView(blue, superview: red, subviews: [])
+        assertView(green, superview: red, subviews: [])
     }
 }
 
 // MARK: GroupLayout
-
 extension LayoutDSLTests {
     func testGroupLayout() {
-        let group1_1 = UIView().identifying("group1_1")
-        let group1_2 = UIView().identifying("group1_2")
-        let group1_3 = UIView().identifying("group1_3")
-        let group2_1 = UIView().identifying("group2_1")
-        let group2_2 = UIView().identifying("group2_2")
+        let group1_1 = UIView()
+        let group1_2 = UIView()
+        let group1_3 = UIView()
+        let group2_1 = UIView()
+        let group2_2 = UIView()
         
-        root {
-            GroupLayout {
-                group1_1.anchors {
-                    Anchors.cap()
+        @LayoutBuilder
+        var layout: some Layout {
+            root {
+                GroupLayout {
+                    group1_1
+                    group1_2
+                    group1_3
                 }
-                group1_2.anchors {
-                    Anchors.top.equalTo(group1_1, attribute: .bottom)
-                    Anchors.horizontal(root)
+                GroupLayout {
+                    group2_1
+                    group2_2
                 }
-                group1_3.anchors {
-                    Anchors.top.equalTo(group1_1, attribute: .bottom)
-                    Anchors.horizontal(root, offset: 8.0)
-                }
-            }
-            GroupLayout {
-                group2_1.anchors {
-                    Anchors.top.equalTo(group1_3, attribute: .bottom)
-                    Anchors.horizontal(offset: 12)
-                }
-                group2_2.anchors {
-                    Anchors.top.equalTo(group2_2, attribute: .bottom)
-                    Anchors.shoe()
-                }
-            }
-        }.finalActive()
-        
-        XCTAssertEqual(ViewPrinter(root).description, """
-        root {
-            group1_1.anchors {
-                Anchors.top
-                Anchors.leading.trailing
-            }
-            group1_2.anchors {
-                Anchors.top.equalTo(group1_1, attribute: .bottom)
-                Anchors.leading.trailing
-            }
-            group1_3.anchors {
-                Anchors.top.equalTo(group1_1, attribute: .bottom)
-                Anchors.leading.equalToSuper(constant: 8.0)
-                Anchors.trailing.equalToSuper(constant: -8.0)
-            }
-            group2_1.anchors {
-                Anchors.top.equalTo(group1_3, attribute: .bottom)
-                Anchors.leading.equalToSuper(constant: 12.0)
-                Anchors.trailing.equalToSuper(constant: -12.0)
-            }
-            group2_2.anchors {
-                Anchors.top.equalTo(group2_2, attribute: .bottom)
-                Anchors.bottom
-                Anchors.leading.trailing
             }
         }
-        """.tabbed)
+        
+        layout.finalActive()
+        
+        assertView(root, superview: window, subviews: [group1_1, group1_2, group1_3, group2_1, group2_2])
+        assertView(group1_1, superview: root, subviews: [])
+        assertView(group1_2, superview: root, subviews: [])
+        assertView(group1_3, superview: root, subviews: [])
+        assertView(group2_1, superview: root, subviews: [])
+        assertView(group2_2, superview: root, subviews: [])
     }
 }
 
 // MARK: - ModularLayout
-
 extension LayoutDSLTests {
     struct Module1: ModularLayout {
-        let module1view1 = UIView().identifying("module1view1")
-        let module1view2 = UIView().identifying("module1view2")
-        let module1view3 = UIView().identifying("module1view3")
+        let view1 = UIView()
+        let view2 = UIView()
+        let view3 = UIView()
         
         @LayoutBuilder var layout: some Layout {
-            module1view1.anchors {
-                Anchors.leading
-                Anchors.top
-                Anchors.height.width.multiplier(0.5)
-            }.sublayout {
-                module1view2.anchors {
-                    Anchors.centerY
-                    Anchors.leading
-                    Anchors.size(width: 50, height: 50)
-                }
+            view1 {
+                view2
             }
             
-            module1view3.anchors {
-                Anchors.height.equalTo(constant: 20)
-                Anchors.leading
-                Anchors.bottom
-            }
+            view3
         }
     }
     
     struct Module2: ModularLayout {
-        let module2view1 = UIView().identifying("module2view1")
-        let module2view2 = UIView().identifying("module2view2")
-        let module2view3 = UIView().identifying("module2view3")
+        let view1 = UIView()
+        let view2 = UIView()
+        let view3 = UIView()
         
         @LayoutBuilder var layout: some Layout {
-            module2view1.anchors {
-                Anchors.top
-                Anchors.trailing
-                Anchors.height.width.multiplier(0.5)
-            }.sublayout {
-                module2view2.anchors {
-                    Anchors.centerY
-                    Anchors.trailing
-                    Anchors.size(width: 50, height: 50)
-                }
-            }
+            view1
             
-            module2view3.anchors {
-                Anchors.height.equalTo(constant: 20)
-                Anchors.bottom
-                Anchors.trailing
+            view2 {
+                view3
             }
         }
     }
     
     func testModularLayout() {
-        root {
-            Module1()
-            Module2()
-        }.finalActive()
+        let module1: Module1 = Module1()
+        var module2: Module2?
         
-        XCTAssertEqual(ViewPrinter(root).description, """
-        root {
-            module1view1.anchors {
-                Anchors.top
-                Anchors.leading
-                Anchors.width.height.equalToSuper().multiplier(0.5)
-            }.sublayout {
-                module1view2.anchors {
-                    Anchors.leading
-                    Anchors.width.height.equalTo(constant: 50.0)
-                    Anchors.centerY
-                }
-            }
-            module1view3.anchors {
-                Anchors.bottom
-                Anchors.leading
-                Anchors.height.equalTo(constant: 20.0)
-            }
-            module2view1.anchors {
-                Anchors.top
-                Anchors.trailing
-                Anchors.width.height.equalToSuper().multiplier(0.5)
-            }.sublayout {
-                module2view2.anchors {
-                    Anchors.trailing
-                    Anchors.width.height.equalTo(constant: 50.0)
-                    Anchors.centerY
-                }
-            }
-            module2view3.anchors {
-                Anchors.bottom
-                Anchors.trailing
-                Anchors.height.equalTo(constant: 20.0)
+        @LayoutBuilder
+        var layout: some Layout {
+            root {
+                module1
+                module2
             }
         }
-        """.tabbed)
+        
+        context("module2 is nil") {
+            module2 = nil
+            layout.active().store(&activation)
+            
+            assertView(root, superview: window, subviews: [module1.view1, module1.view3])
+            assertView(module1.view1, superview: root, subviews: [module1.view2])
+            assertView(module1.view2, superview: module1.view1, subviews: [])
+            assertView(module1.view3, superview: root, subviews: [])
+        }
+        
+        context("module2 is optional") {
+            module2 = Module2()
+            layout.active().store(&activation)
+            
+            assertView(root, superview: window, subviews: [module1.view1, module1.view3, module2!.view1, module2!.view2])
+            assertView(module1.view1, superview: root, subviews: [module1.view2])
+            assertView(module1.view2, superview: module1.view1, subviews: [])
+            assertView(module1.view3, superview: root, subviews: [])
+            assertView(module2!.view1, superview: root, subviews: [])
+            assertView(module2!.view2, superview: root, subviews: [module2!.view3])
+            assertView(module2!.view3, superview: module2!.view2, subviews: [])
+        }
     }
 }
