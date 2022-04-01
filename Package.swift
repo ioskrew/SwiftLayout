@@ -33,6 +33,13 @@ let package = Package(
                 "SwiftLayout",
                 "SwiftLayoutUtil"
             ]
+        ),
+        .testTarget(
+            name: "SwiftLayoutUtilTests",
+            dependencies: [
+                "SwiftLayout",
+                "SwiftLayoutUtil"
+            ]
         )
     ]
 )
