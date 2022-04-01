@@ -65,9 +65,20 @@ public struct ViewPrinter: CustomStringConvertible {
     /// - Returns: The view itself with the **accessibilityIdentifier** applied
     ///
     @discardableResult
-    public func updateIdentifiers(_ updater: IdentifierUpdater = .nameOnly, rootObject: AnyObject? = nil) -> Self {
-        let viewTags = updater.update(rootObject ?? self.view, viewTags: self.viewTags)
+    public func updateIdentifiers<RO>(_ updater: IdentifierUpdater = .nameOnly, rootObject: RO) -> Self {
+        let viewTags = updater.update(rootObject, viewTags: self.viewTags)
         return Self.init(self.view, viewTages: viewTags, options: self.options)
     }
     
+    ///
+    /// Set the **accessibilityIdentifier** of all view objects included in the layout hierarchy to the property name of the object that has each views.
+    ///
+    /// - Parameter rootObject: root object for referencing property names
+    /// - Returns: The view itself with the **accessibilityIdentifier** applied
+    ///
+    @discardableResult
+    public func updateIdentifiers(_ updater: IdentifierUpdater = .nameOnly) -> Self {
+        let viewTags = updater.update(self.view, viewTags: self.viewTags)
+        return Self.init(self.view, viewTages: viewTags, options: self.options)
+    }
 }

@@ -23,7 +23,7 @@ public final class IdentifierUpdater {
         self.option = option
     }
     
-    public func update(_ target: Any, prefix: String = "", fixedTags: Set<String> = []) {
+    public func update<Target>(_ target: Target, prefix: String = "", fixedTags: Set<String> = []) {
         let digger = MirrorDigger(enablePrefixChain: option == .referenceAndName || option == .referenceAndNameWithTypeOfView )
         digger.digging(Mirror(reflecting: target), prefix: prefix)
         for identified in digger.identifieds where !fixedTags.contains(AddressDescriptor(identified.view).description) {
@@ -31,7 +31,7 @@ public final class IdentifierUpdater {
         }
     }
     
-    func update(_ target: Any, prefix: String = "", viewTags: ViewTags) -> ViewTags {
+    func update<Target>(_ target: Target, prefix: String = "", viewTags: ViewTags) -> ViewTags {
         var viewTags = viewTags
         let fixedTags = Set(viewTags.customTags.keys.map(\.description))
         let digger = MirrorDigger(enablePrefixChain: option == .referenceAndName || option == .referenceAndNameWithTypeOfView )
@@ -107,12 +107,17 @@ public final class IdentifierUpdater {
             }
             for child in mirror.children {
                 guard let label = child.label?.replacingOccurrences(of: "$__lazy_storage_$_", with: "") else { continue }
-                guard let view = child.value as? UIView else { continue }
-                let identified = Identified(prefix: enablePrefixChain ? prefix : "", identifier: label, view: view)
-                if self.identifieds.contains(identified) { continue }
-                self.identifieds.insert(identified)
-                if enablePrefixChain {
-                    digging(Mirror(reflecting: view), prefix: identifier(prefix: prefix, identifier: label))
+                if let view = child.value as? UIView {
+                    let identified = Identified(prefix: enablePrefixChain ? prefix : "", identifier: label, view: view)
+                    if self.identifieds.contains(identified) { continue }
+                    self.identifieds.insert(identified)
+                    if enablePrefixChain {
+                        digging(Mirror(reflecting: view), prefix: identifier(prefix: prefix, identifier: label))
+                    }
+                } else {
+                    if enablePrefixChain {
+                        digging(Mirror(reflecting: child.value), prefix: identifier(prefix: prefix, identifier: label))
+                    }
                 }
             }
         }
