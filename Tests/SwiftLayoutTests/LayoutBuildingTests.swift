@@ -9,7 +9,7 @@ final class LayoutBuildingTests: XCTestCase {
     }
     
     func testUpdateLayout() {
-        let view = LayoutView().viewTag.view
+        let view = LayoutView().identifying("view")
         view.frame = .init(x: 0, y: 0, width: 90, height: 90)
         view.layoutIfNeeded()
 
@@ -92,9 +92,9 @@ extension LayoutBuildingTests {
     class LayoutView: UIView, Layoutable {
         @LayoutProperty var flag = true
         
-        let root = MockView().viewTag.root
-        let child = UIView().viewTag.child
-        let friend = UILabel().viewTag.friend
+        let root = MockView().identifying("root")
+        let child = UIView().identifying("child")
+        let friend = UILabel().identifying("friend")
         
         var activation: Activation? 
         

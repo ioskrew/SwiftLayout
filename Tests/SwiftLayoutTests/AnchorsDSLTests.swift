@@ -5,18 +5,18 @@ import SwiftLayoutUtil
 /// test cases for constraint DSL syntax
 final class AnchorsDSLTests: XCTestCase {
         
-    var root: UIView = UIView().viewTag.root
-    var red: UIView = UIView().viewTag.red
-    var blue: UIView = UIView().viewTag.blue
+    var root: UIView = UIView().identifying("root")
+    var red: UIView = UIView().identifying("red")
+    var blue: UIView = UIView().identifying("blue")
     
     var constant: CGFloat = 0.0
     
     var activation: Activation?
     
     override func setUp() {
-        root = UIView(frame: .init(x: 0, y: 0, width: 120, height: 120)).viewTag.root
-        red = UIView().viewTag.red
-        blue = UIView().viewTag.blue
+        root = UIView(frame: .init(x: 0, y: 0, width: 120, height: 120)).identifying("root")
+        red = UIView().identifying("red")
+        blue = UIView().identifying("blue")
         constant = CGFloat.random(in: -5...5)
         continueAfterFailure = false
     }
