@@ -12,7 +12,7 @@ public struct LayoutPrinter: CustomStringConvertible {
     let layout: Layout
     let withAnchors: Bool
     
-    init(_ layout: Layout, withAnchors: Bool = false) {
+    public init(_ layout: Layout, withAnchors: Bool = false) {
         self.layout = layout
         self.withAnchors = withAnchors
     }
