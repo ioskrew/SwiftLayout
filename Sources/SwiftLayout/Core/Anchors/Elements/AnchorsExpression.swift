@@ -90,11 +90,11 @@ extension AnchorsExpression {
     }
     
     public func constant(_ constant: CGFloat) -> Self {
-        Self.init(from: self, relation: self.relation, toItem: self.toItem, constant: constant)
+        Self.init(from: self, relation: self.relation, toItem: self.toItem, toAttribute: toAttribute, constant: constant, multiplier: multiplier)
     }
     
     public func multiplier(_ multiplier: CGFloat) -> Self {
-        Self.init(from: self, relation: self.relation, toItem: self.toItem, multiplier: multiplier)
+        Self.init(from: self, relation: self.relation, toItem: self.toItem, toAttribute: toAttribute, constant: constant, multiplier: multiplier)
     }
 }
 
