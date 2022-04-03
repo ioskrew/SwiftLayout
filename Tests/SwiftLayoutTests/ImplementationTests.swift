@@ -551,6 +551,104 @@ extension ImplementationTests {
         }
     }
 
+    func testSetConstantOrMultiplierKeepsToAttributeAndEachOther() {
+        let color = UIView().identifying("color")
+        let red = UIView().identifying("red")
+        let blue = UIView().identifying("blue")
+        
+        color {
+            red.anchors {
+                Anchors.top
+            }
+            blue.anchors {
+                Anchors.top.equalTo(red, attribute: .bottom, constant: 1.0)
+                Anchors.bottom
+            }
+        }.finalActive()
+        
+        XCTAssertEqual(color.constraints.shortDescription, """
+        blue.bottom == color.bottom
+        blue.top == red.bottom + 1.0
+        red.top == color.top
+        """.descriptions, color.constraints.shortDescription.sorted().joined(separator: "\n"))
+        
+        red.removeFromSuperview()
+        blue.removeFromSuperview()
+        
+        color {
+            red.anchors {
+                Anchors.top
+            }
+            blue.anchors {
+                Anchors.top.equalTo(red, attribute: .bottom).constant(1.0)
+                Anchors.bottom
+            }
+        }.finalActive()
+        
+        XCTAssertEqual(color.constraints.shortDescription, """
+        blue.bottom == color.bottom
+        blue.top == red.bottom + 1.0
+        red.top == color.top
+        """.descriptions, color.constraints.shortDescription.sorted().joined(separator: "\n"))
+        
+        red.removeFromSuperview()
+        blue.removeFromSuperview()
+        
+        color {
+            red.anchors {
+                Anchors.top
+            }
+            blue.anchors {
+                Anchors.top.equalTo(red.bottomAnchor).constant(1.0)
+                Anchors.bottom
+            }
+        }.finalActive()
+        
+        XCTAssertEqual(color.constraints.shortDescription, """
+        blue.bottom == color.bottom
+        blue.top == red.bottom + 1.0
+        red.top == color.top
+        """.descriptions, color.constraints.shortDescription.sorted().joined(separator: "\n"))
+        
+        red.removeFromSuperview()
+        blue.removeFromSuperview()
+        
+        color {
+            red.anchors {
+                Anchors.top
+            }
+            blue.anchors {
+                Anchors.top.equalTo(red.bottomAnchor).constant(1.0).multiplier(2.0)
+                Anchors.bottom
+            }
+        }.finalActive()
+        
+        XCTAssertEqual(color.constraints.shortDescription, """
+        blue.bottom == color.bottom
+        blue.top == red.bottom + 1.0 x 2.0
+        red.top == color.top
+        """.descriptions, color.constraints.shortDescription.sorted().joined(separator: "\n"))
+        
+        red.removeFromSuperview()
+        blue.removeFromSuperview()
+        
+        color {
+            red.anchors {
+                Anchors.top
+            }
+            blue.anchors {
+                Anchors.top.equalTo(red.bottomAnchor).multiplier(2.0).constant(2.0)
+                Anchors.bottom
+            }
+        }.finalActive()
+        
+        XCTAssertEqual(color.constraints.shortDescription, """
+        blue.bottom == color.bottom
+        blue.top == red.bottom + 2.0 x 2.0
+        red.top == color.top
+        """.descriptions, color.constraints.shortDescription.sorted().joined(separator: "\n"))
+        
+    }
 }
 
 extension ImplementationTests {
