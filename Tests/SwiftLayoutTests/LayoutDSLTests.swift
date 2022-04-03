@@ -427,7 +427,7 @@ extension LayoutDSLTests {
     }
 }
 
-// MARK: GroupLayout
+// MARK: - GroupLayout
 extension LayoutDSLTests {
     func testGroupLayout() {
         let group1_1 = UIView()
