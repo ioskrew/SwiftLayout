@@ -30,8 +30,7 @@ let package = Package(
         .testTarget(
             name: "SwiftLayoutTests",
             dependencies: [
-                "SwiftLayout",
-                "SwiftLayoutUtil"
+                "SwiftLayout"
             ]
         ),
         .testTarget(

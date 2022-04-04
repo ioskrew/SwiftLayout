@@ -54,4 +54,25 @@ extension IdentifierUpdaterTests {
     class ID: UIView {
         let name = Name()
     }
+    
+    func testSetAccessibilityIdentifier() {
+        class TestView: UIView {
+            let contentView = UIView()
+            let nameLabel = UILabel()
+        }
+        
+        let view = TestView()
+        IdentifierUpdater.withTypeOfView.update(view)
+        
+        XCTAssertEqual(view.contentView.accessibilityIdentifier, "contentView:\(UIView.self)")
+        XCTAssertEqual(view.nameLabel.accessibilityIdentifier, "nameLabel:\(UILabel.self)")
+        
+        class Test2View: TestView {}
+        
+        let view2 = Test2View()
+        IdentifierUpdater.withTypeOfView.update(view2)
+        
+        XCTAssertEqual(view2.contentView.accessibilityIdentifier, "contentView:\(UIView.self)")
+        XCTAssertEqual(view2.nameLabel.accessibilityIdentifier, "nameLabel:\(UILabel.self)")
+    }
 }
