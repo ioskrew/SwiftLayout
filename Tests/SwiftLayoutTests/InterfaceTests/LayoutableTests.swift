@@ -14,19 +14,100 @@ final class LayoutableTests: XCTestCase {
         
         XCTAssertEqual(view.root.frame, CGRect(x: .zero, y: .zero, width: 90, height: 90))
         XCTAssertEqual(view.child.frame, CGRect(x: .zero, y: .zero, width: 90, height: 90))
-        assertTrueCase(view)
+        
+        contextInActivity("if true") { _ in
+            SLTAssertView(view, superview: nil, subviews: [view.root])
+            SLTAssertView(view.root, superview: view, subviews: [view.child])
+            SLTAssertView(view.child, superview: view.root, subviews: [])
+            SLTAssertView(view.friend, superview: nil, subviews: [])
+            
+            XCTAssertEqual(view.root.addSubviewCallCount(view.child), 1)
+            XCTAssertEqual(view.root.addSubviewCallCount(view.friend), 0)
+            XCTAssertEqual(view.root.removeFromSuperviewCallCount, 0)
+            XCTAssertEqual(view.child.removeFromSuperviewCallCount, 0)
+            XCTAssertEqual(view.root.removeFromSuperviewCallCount, 0)
+            
+            assertConstrints(view.constraints, [
+                NSLayoutConstraint(item: view.root, attribute: .top, relatedBy: .equal, toItem: view, attribute: .top, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: view.root, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: view.root, attribute: .leading, relatedBy: .equal, toItem: view, attribute: .leading, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: view.root, attribute: .trailing, relatedBy: .equal, toItem: view, attribute: .trailing, multiplier: 1.0, constant: 0),
+            ])
+            assertConstrints(view.root.constraints, [
+                NSLayoutConstraint(item: view.child, attribute: .top, relatedBy: .equal, toItem: view.root, attribute: .top, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: view.child, attribute: .bottom, relatedBy: .equal, toItem: view.root, attribute: .bottom, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: view.child, attribute: .leading, relatedBy: .equal, toItem: view.root, attribute: .leading, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: view.child, attribute: .trailing, relatedBy: .equal, toItem: view.root, attribute: .trailing, multiplier: 1.0, constant: 0),
+            ])
+            assertConstrints(view.child.constraints, [])
+            assertConstrints(view.friend.constraints, [])
+        }
         
         view.flag.toggle()
         
         XCTAssertEqual(view.root.frame, CGRect(x: .zero, y: .zero, width: 90, height: 90))
         XCTAssertEqual(view.friend.frame, CGRect.zero)
-        assertFalseCase(view)
+        contextInActivity("if false") { _ in
+            SLTAssertView(view, superview: nil, subviews: [view.root])
+            SLTAssertView(view.root, superview: view, subviews: [view.friend])
+            SLTAssertView(view.child, superview: nil, subviews: [])
+            SLTAssertView(view.friend, superview: view.root, subviews: [])
+            
+            XCTAssertEqual(view.root.addSubviewCallCount(view.child), 1)
+            XCTAssertEqual(view.root.addSubviewCallCount(view.friend), 1)
+            XCTAssertEqual(view.root.removeFromSuperviewCallCount, 0)
+            XCTAssertEqual(view.child.removeFromSuperviewCallCount, 1)
+            XCTAssertEqual(view.root.removeFromSuperviewCallCount, 0)
+            
+            assertConstrints(view.constraints, [
+                NSLayoutConstraint(item: view.root, attribute: .centerX, relatedBy: .equal, toItem: view, attribute: .centerX, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: view.root, attribute: .centerY, relatedBy: .equal, toItem: view, attribute: .centerY, multiplier: 1.0, constant: 0),
+            ])
+            assertConstrints(view.root.constraints, [
+                NSLayoutConstraint(item: view.root, attribute: .width, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: 50),
+                NSLayoutConstraint(item: view.root, attribute: .height, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: 50),
+                
+                NSLayoutConstraint(item: view.friend, attribute: .top, relatedBy: .equal, toItem: view.root, attribute: .top, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: view.friend, attribute: .bottom, relatedBy: .equal, toItem: view.root, attribute: .bottom, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: view.friend, attribute: .leading, relatedBy: .equal, toItem: view.root, attribute: .leading, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: view.friend, attribute: .trailing, relatedBy: .equal, toItem: view.root, attribute: .trailing, multiplier: 1.0, constant: 0),
+            ])
+            assertConstrints(view.child.constraints, [])
+            assertConstrints(view.friend.constraints, [])
+        }
         
         view.sl.updateLayout(forceLayout: true)
         
         XCTAssertEqual(view.root.frame, CGRect(x: 20, y: 20, width: 50, height: 50))
         XCTAssertEqual(view.friend.frame, CGRect(x: .zero, y: .zero, width: 50, height: 50))
-        assertFalseCase(view)
+        contextInActivity("if false after update layout") { _ in
+            SLTAssertView(view, superview: nil, subviews: [view.root])
+            SLTAssertView(view.root, superview: view, subviews: [view.friend])
+            SLTAssertView(view.child, superview: nil, subviews: [])
+            SLTAssertView(view.friend, superview: view.root, subviews: [])
+            
+            XCTAssertEqual(view.root.addSubviewCallCount(view.child), 1)
+            XCTAssertEqual(view.root.addSubviewCallCount(view.friend), 1)
+            XCTAssertEqual(view.root.removeFromSuperviewCallCount, 0)
+            XCTAssertEqual(view.child.removeFromSuperviewCallCount, 1)
+            XCTAssertEqual(view.root.removeFromSuperviewCallCount, 0)
+            
+            assertConstrints(view.constraints, [
+                NSLayoutConstraint(item: view.root, attribute: .centerX, relatedBy: .equal, toItem: view, attribute: .centerX, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: view.root, attribute: .centerY, relatedBy: .equal, toItem: view, attribute: .centerY, multiplier: 1.0, constant: 0),
+            ])
+            assertConstrints(view.root.constraints, [
+                NSLayoutConstraint(item: view.root, attribute: .width, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: 50),
+                NSLayoutConstraint(item: view.root, attribute: .height, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: 50),
+                
+                NSLayoutConstraint(item: view.friend, attribute: .top, relatedBy: .equal, toItem: view.root, attribute: .top, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: view.friend, attribute: .bottom, relatedBy: .equal, toItem: view.root, attribute: .bottom, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: view.friend, attribute: .leading, relatedBy: .equal, toItem: view.root, attribute: .leading, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: view.friend, attribute: .trailing, relatedBy: .equal, toItem: view.root, attribute: .trailing, multiplier: 1.0, constant: 0),
+            ])
+            assertConstrints(view.child.constraints, [])
+            assertConstrints(view.friend.constraints, [])
+        }
     }
 }
 
@@ -74,60 +155,4 @@ extension LayoutableTests {
         }
     }
     
-    private func assertTrueCase(_ view: LayoutableView) {
-        SLTAssertView(view, superview: nil, subviews: [view.root])
-        SLTAssertView(view.root, superview: view, subviews: [view.child])
-        SLTAssertView(view.child, superview: view.root, subviews: [])
-        SLTAssertView(view.friend, superview: nil, subviews: [])
-        
-        XCTAssertEqual(view.root.addSubviewCallCount(view.child), 1)
-        XCTAssertEqual(view.root.addSubviewCallCount(view.friend), 0)
-        XCTAssertEqual(view.root.removeFromSuperviewCallCount, 0)
-        XCTAssertEqual(view.child.removeFromSuperviewCallCount, 0)
-        XCTAssertEqual(view.root.removeFromSuperviewCallCount, 0)
-        
-        assertConstrints(view.constraints, [
-            NSLayoutConstraint(item: view.root, attribute: .top, relatedBy: .equal, toItem: view, attribute: .top, multiplier: 1.0, constant: 0),
-            NSLayoutConstraint(item: view.root, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1.0, constant: 0),
-            NSLayoutConstraint(item: view.root, attribute: .leading, relatedBy: .equal, toItem: view, attribute: .leading, multiplier: 1.0, constant: 0),
-            NSLayoutConstraint(item: view.root, attribute: .trailing, relatedBy: .equal, toItem: view, attribute: .trailing, multiplier: 1.0, constant: 0),
-        ])
-        assertConstrints(view.root.constraints, [
-            NSLayoutConstraint(item: view.child, attribute: .top, relatedBy: .equal, toItem: view.root, attribute: .top, multiplier: 1.0, constant: 0),
-            NSLayoutConstraint(item: view.child, attribute: .bottom, relatedBy: .equal, toItem: view.root, attribute: .bottom, multiplier: 1.0, constant: 0),
-            NSLayoutConstraint(item: view.child, attribute: .leading, relatedBy: .equal, toItem: view.root, attribute: .leading, multiplier: 1.0, constant: 0),
-            NSLayoutConstraint(item: view.child, attribute: .trailing, relatedBy: .equal, toItem: view.root, attribute: .trailing, multiplier: 1.0, constant: 0),
-        ])
-        assertConstrints(view.child.constraints, [])
-        assertConstrints(view.friend.constraints, [])
-    }
-    
-    private func assertFalseCase(_ view: LayoutableView) {
-        SLTAssertView(view, superview: nil, subviews: [view.root])
-        SLTAssertView(view.root, superview: view, subviews: [view.friend])
-        SLTAssertView(view.child, superview: nil, subviews: [])
-        SLTAssertView(view.friend, superview: view.root, subviews: [])
-        
-        XCTAssertEqual(view.root.addSubviewCallCount(view.child), 1)
-        XCTAssertEqual(view.root.addSubviewCallCount(view.friend), 1)
-        XCTAssertEqual(view.root.removeFromSuperviewCallCount, 0)
-        XCTAssertEqual(view.child.removeFromSuperviewCallCount, 1)
-        XCTAssertEqual(view.root.removeFromSuperviewCallCount, 0)
-        
-        assertConstrints(view.constraints, [
-            NSLayoutConstraint(item: view.root, attribute: .centerX, relatedBy: .equal, toItem: view, attribute: .centerX, multiplier: 1.0, constant: 0),
-            NSLayoutConstraint(item: view.root, attribute: .centerY, relatedBy: .equal, toItem: view, attribute: .centerY, multiplier: 1.0, constant: 0),
-        ])
-        assertConstrints(view.root.constraints, [
-            NSLayoutConstraint(item: view.root, attribute: .width, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: 50),
-            NSLayoutConstraint(item: view.root, attribute: .height, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: 50),
-            
-            NSLayoutConstraint(item: view.friend, attribute: .top, relatedBy: .equal, toItem: view.root, attribute: .top, multiplier: 1.0, constant: 0),
-            NSLayoutConstraint(item: view.friend, attribute: .bottom, relatedBy: .equal, toItem: view.root, attribute: .bottom, multiplier: 1.0, constant: 0),
-            NSLayoutConstraint(item: view.friend, attribute: .leading, relatedBy: .equal, toItem: view.root, attribute: .leading, multiplier: 1.0, constant: 0),
-            NSLayoutConstraint(item: view.friend, attribute: .trailing, relatedBy: .equal, toItem: view.root, attribute: .trailing, multiplier: 1.0, constant: 0),
-        ])
-        assertConstrints(view.child.constraints, [])
-        assertConstrints(view.friend.constraints, [])
-    }
 }

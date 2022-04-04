@@ -3,7 +3,6 @@ import XCTest
 extension XCTestCase {
 
     func context(_ description: String, _ block: () -> Void) {
-        print("[TEST] start \(description)")
         try! XCTContext.runActivity(named: description, block: { _ in
             try setUpWithError()
             setUp()
@@ -11,6 +10,10 @@ extension XCTestCase {
             tearDown()
             try tearDownWithError()
         })
+    }
+    
+    func contextInActivity(_ description: String, _ block: (XCTActivity) throws -> Void) {
+        try! XCTContext.runActivity(named: description, block: block)
     }
     
 //    func assertView(_ view: UIView, superview: UIView?, subviews: [UIView]) {
