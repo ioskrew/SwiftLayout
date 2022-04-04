@@ -137,8 +137,8 @@ extension LayoutDSLTests {
             assertView(childView_1, superview: nil, subviews: [])
             XCTAssertEqual(parentView.addSubviewCallCount(childView_0), 1)
             XCTAssertEqual(parentView.addSubviewCallCount(childView_1), 0)
-            XCTAssertEqual(childView_0.removeFromSuperviewCount, 0)
-            XCTAssertEqual(childView_1.removeFromSuperviewCount, 0)
+            XCTAssertEqual(childView_0.removeFromSuperviewCallCount, 0)
+            XCTAssertEqual(childView_1.removeFromSuperviewCallCount, 0)
         }
         
         context("update without change") {
@@ -149,8 +149,8 @@ extension LayoutDSLTests {
             assertView(childView_1, superview: nil, subviews: [])
             XCTAssertEqual(parentView.addSubviewCallCount(childView_0), 1)
             XCTAssertEqual(parentView.addSubviewCallCount(childView_1), 0)
-            XCTAssertEqual(childView_0.removeFromSuperviewCount, 0)
-            XCTAssertEqual(childView_1.removeFromSuperviewCount, 0)
+            XCTAssertEqual(childView_0.removeFromSuperviewCallCount, 0)
+            XCTAssertEqual(childView_1.removeFromSuperviewCallCount, 0)
         }
         
         context("update without change") {
@@ -163,8 +163,8 @@ extension LayoutDSLTests {
             assertView(childView_1, superview: parentView, subviews: [])
             XCTAssertEqual(parentView.addSubviewCallCount(childView_0), 1)
             XCTAssertEqual(parentView.addSubviewCallCount(childView_1), 1)
-            XCTAssertEqual(childView_0.removeFromSuperviewCount, 1)
-            XCTAssertEqual(childView_1.removeFromSuperviewCount, 0)
+            XCTAssertEqual(childView_0.removeFromSuperviewCallCount, 1)
+            XCTAssertEqual(childView_1.removeFromSuperviewCallCount, 0)
         }
         
         context("deactive") {
@@ -176,8 +176,8 @@ extension LayoutDSLTests {
             assertView(childView_1, superview: nil, subviews: [])
             XCTAssertEqual(parentView.addSubviewCallCount(childView_0), 1)
             XCTAssertEqual(parentView.addSubviewCallCount(childView_1), 1)
-            XCTAssertEqual(childView_0.removeFromSuperviewCount, 1)
-            XCTAssertEqual(childView_1.removeFromSuperviewCount, 1)
+            XCTAssertEqual(childView_0.removeFromSuperviewCallCount, 1)
+            XCTAssertEqual(childView_1.removeFromSuperviewCallCount, 1)
         }
     }
 }

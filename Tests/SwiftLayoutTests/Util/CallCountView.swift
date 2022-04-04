@@ -14,7 +14,7 @@ class CallCountView: UIView {
         addSubviewCounts[view] ?? 0
     }
     
-    var removeFromSuperviewCount: Int = 0
+    var removeFromSuperviewCallCount: Int = 0
     
     override func addSubview(_ view: UIView) {
         if let count = addSubviewCounts[view] {
@@ -26,7 +26,7 @@ class CallCountView: UIView {
     }
     
     override func removeFromSuperview() {
-        removeFromSuperviewCount += 1
+        removeFromSuperviewCallCount += 1
         super.removeFromSuperview()
     }
 }
