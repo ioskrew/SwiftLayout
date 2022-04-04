@@ -17,12 +17,12 @@ final class LayoutDSLTests: XCTestCase {
     var activation: Set<Activation> = []
     
     override func setUp() {
-        window = UIView(frame: .init(x: 0, y: 0, width: 150, height: 150))
-        root = UIView()
+        window = UIView(frame: .init(x: 0, y: 0, width: 150, height: 150)).identifying("window")
+        root = UIView().identifying("root")
         root.translatesAutoresizingMaskIntoConstraints = false
         window.addSubview(root)
-        child = UIView()
-        button = UIButton()
+        child = UIView().identifying("child")
+        button = UIButton().identifying("button")
         label = UILabel()
         red = UIView()
         blue = UIView()
@@ -52,7 +52,7 @@ extension LayoutDSLTests {
         
         layout.active().store(&activation)
         
-        assertView(root, superview: window, subviews: [red])
+        SLTAssertView(view: red, superview: window, subviews: red, blue)
         assertView(red, superview: root, subviews: [button, label, blue])
         assertView(button, superview: red, subviews: [])
         assertView(label, superview: red, subviews: [])
