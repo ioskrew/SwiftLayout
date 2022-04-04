@@ -166,12 +166,12 @@ extension AnchorsImplementationTests {
                     ]
                 default:
                     expected += [
-                        NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: siblingview, attribute: toAttribute(attribute: attribute).attribute, multiplier: 1.0, constant: 0.0),
-                        NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: siblingview, attribute: toAttribute(attribute: attribute).attribute, multiplier: 1.0, constant: constant),
-                        NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: siblingview, attribute: toAttribute(attribute: attribute).attribute, multiplier: 1.0, constant: 0.0),
-                        NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: siblingview, attribute: toAttribute(attribute: attribute).attribute, multiplier: 1.0, constant: constant),
-                        NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: siblingview, attribute: toAttribute(attribute: attribute).attribute, multiplier: 1.0, constant: 0.0),
-                        NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: siblingview, attribute: toAttribute(attribute: attribute).attribute, multiplier: 1.0, constant: constant),
+                        NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: siblingview, attribute: .leading, multiplier: 1.0, constant: 0.0),
+                        NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: siblingview, attribute: .leading, multiplier: 1.0, constant: constant),
+                        NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: siblingview, attribute: .leading, multiplier: 1.0, constant: 0.0),
+                        NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: siblingview, attribute: .leading, multiplier: 1.0, constant: constant),
+                        NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: siblingview, attribute: .leading, multiplier: 1.0, constant: 0.0),
+                        NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: siblingview, attribute: .leading, multiplier: 1.0, constant: constant),
                     ]
                 }
                 
@@ -484,6 +484,32 @@ extension AnchorsImplementationTests {
             assertConstrints(constrints, expected, sorted: false)
         }
 
+    }
+    
+    func testExpressionSafeArea() {
+        @AnchorsBuilder
+        var anchors: AnchorsContainer {
+            for attribute in AnchorsXAxisAttribute.allCases {
+                AnchorsExpression(xAxis: attribute).equalTo(superview.safeAreaLayoutGuide)
+            }
+            for attribute in AnchorsYAxisAttribute.allCases {
+                AnchorsExpression(yAxis: attribute).equalTo(superview.safeAreaLayoutGuide)
+            }
+            for attribute in AnchorsDimensionAttribute.allCases {
+                AnchorsExpression(dimensions: attribute).equalTo(superview.safeAreaLayoutGuide)
+            }
+        }
+        
+        let constrints = anchors.constraints(item: subview, toItem: superview)
+        let expected = AnchorsXAxisAttribute.allCases.map {
+            NSLayoutConstraint(item: subview, attribute: $0.attribute, relatedBy: .equal, toItem: superview.safeAreaLayoutGuide, attribute: $0.attribute, multiplier: 1.0, constant: 0.0)
+        } + AnchorsYAxisAttribute.allCases.map {
+            NSLayoutConstraint(item: subview, attribute: $0.attribute, relatedBy: .equal, toItem: superview.safeAreaLayoutGuide, attribute: $0.attribute, multiplier: 1.0, constant: 0.0)
+        } + AnchorsDimensionAttribute.allCases.map {
+            NSLayoutConstraint(item: subview, attribute: $0.attribute, relatedBy: .equal, toItem: superview.safeAreaLayoutGuide, attribute: $0.attribute, multiplier: 1.0, constant: 0.0)
+        }
+        
+        assertConstrints(constrints, expected, sorted: false)
     }
 }
 
