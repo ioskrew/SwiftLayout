@@ -3,9 +3,7 @@ import XCTest
 
 /// test cases for api rules except DSL syntax
 final class ImplementationTests: XCTestCase {
-    
-    var window: UIView!
-    
+        
     var root = UIView().identifying("root")
     var child = UIView().identifying("child")
     var friend = UIView().identifying("friend")
@@ -14,11 +12,9 @@ final class ImplementationTests: XCTestCase {
     
     override func setUpWithError() throws {
         continueAfterFailure = false
-        window = UIView(frame: .init(x: 0, y: 0, width: 150, height: 150))
         root = UIView().identifying("root")
         child = UIView().identifying("child")
         friend = UIView().identifying("friend")
-        window.addSubview(root)
     }
     
     override func tearDownWithError() throws {
