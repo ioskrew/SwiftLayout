@@ -12,6 +12,10 @@ extension XCTestCase {
         })
     }
     
+    func contextContinuous(_ description: String, _ block: () throws -> Void) {
+        try! XCTContext.runActivity(named: description, block: { _ in try block() })
+    }
+    
     func contextInActivity(_ description: String, _ block: (XCTActivity) throws -> Void) {
         try! XCTContext.runActivity(named: description, block: block)
     }

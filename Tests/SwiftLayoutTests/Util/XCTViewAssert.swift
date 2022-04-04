@@ -47,21 +47,29 @@ func SLTAssertConstraintsEqual(_ constraints: [NSLayoutConstraint],
 }
 
 func SLTAssertConstraintsEqual(_ constraints: [NSLayoutConstraint],
-                               @TestAnchorsBuilder anchors: () -> [NSLayoutConstraint],
+                               firstView: UIView, tags: [UIView: String] = [:],
+                               @AnchorsBuilder anchors: () -> AnchorsContainer,
+                               file: StaticString = #filePath, line: UInt = #line) {
+    SLTAssertConstraintsEqual(constraints, anchors().constraints(item: firstView, toItem: nil), tags: tags, file: file, line: line)
+}
+
+func SLTAssertConstraintsEqual(_ constraints: [NSLayoutConstraint],
                                tags: [UIView: String] = [:],
+                               @TestAnchorsBuilder anchors: () -> [NSLayoutConstraint],
                                file: StaticString = #filePath, line: UInt = #line) {
     SLTAssertConstraintsEqual(constraints, anchors(), tags: tags, file: file, line: line)
+}
+
+func SLTAssertConstraintsIsEmpty(_ constraints: [NSLayoutConstraint], tags: [UIView: String] = [:], file: StaticString = #filePath, line: UInt = #line) {
+    SLTAssertConstraintsEqual(constraints, [], tags: tags, file: file, line: line)
 }
 
 func SLTAssertConstraintsEqual(_ constraints1: [NSLayoutConstraint],
                                _ constraints2: [NSLayoutConstraint],
                                tags: [UIView: String] = [:],
                                file: StaticString = #filePath, line: UInt = #line) {
-    for tag in tags {
-        tag.key.accessibilityIdentifier = tag.value
-    }
-    let descriptions1 = constraints1.map(extractViewInfoOnly).sorted()
-    let descriptions2 = constraints2.map(extractViewInfoOnly).sorted()
+    let descriptions1 = constraints1.map(testDescriptionFromConstraint(tags)).sorted()
+    let descriptions2 = constraints2.map(testDescriptionFromConstraint(tags)).sorted()
     let diffs = descriptions2.difference(from: descriptions1)
     var failInsertDescriptions: [String] = []
     var failRemoveDescriptions: [String] = []
@@ -84,51 +92,22 @@ func SLTAssertConstraintsEqual(_ constraints1: [NSLayoutConstraint],
             line: line)
 }
 
-func SLTAssertConstraintsIsEmpty(_ constraints: [NSLayoutConstraint], file: StaticString = #filePath, line: UInt = #line) {
-    let descriptions = constraints.map(extractViewInfoOnly).map({ "[\($0)] should be removed" }).sorted()
-    if descriptions.isEmpty {
-        return
-    }
-    XCTFail("+\(descriptions.count) constraints\n"
-                .appending(descriptions.joined(separator: "\n")),
-            file: file,
-            line: line)
-}
-
-func SLTAssertConstraintsContains(_ constraints: [NSLayoutConstraint],
-                                  firstView: UIView, secondView: UIView? = nil, tags: [UIView: String] = [:],
-                                  @AnchorsBuilder anchors: () -> AnchorsContainer,
-                                  file: StaticString = #filePath, line: UInt = #line) {
-    for tag in tags {
-        tag.key.accessibilityIdentifier = tag.value
-    }
-    let descriptions1 = constraints.map(extractViewInfoOnly).sorted()
-    let descriptions2 = anchors().constraints(item: firstView, toItem: secondView).map(extractViewInfoOnly).sorted()
-    let diffs = descriptions2.difference(from: descriptions1)
-    var failInsertDescriptions: [String] = []
-    for diff in diffs {
-        switch diff {
-        case let .insert(_, element: description, _):
-            failInsertDescriptions.append("[\(description)] not in <\(tags[firstView] ?? firstView.testDescription)>")
-        default:
-            continue
+private func testDescriptionFromConstraint(_ tags: [UIView: String] = [:]) -> (_ constraint: NSLayoutConstraint) -> String {
+    { constraint in
+        var description = constraint.debugDescription
+        for tag in tags {
+            let typeAndAddress = typeAndAddressFromView(tag.key)
+            description = description.replacingOccurrences(of: typeAndAddress, with: tag.value)
         }
+        let typeErased = description.replacingRegex(of: "NSLayoutConstraint:0x[0-9a-f]+ ")
+        let stateErased = typeErased.replacingRegex(of: "(inactive|active)").dropFirst().description
+        let namesErased = stateErased.replacingRegex(of: "[:space:]+\\([:print:]+")
+        return namesErased
     }
-    if failInsertDescriptions.isEmpty {
-        return
-    }
-    XCTFail("\(failInsertDescriptions.count) constraints\n".appending(failInsertDescriptions.joined(separator: "\n")),
-            file: file,
-            line: line)
 }
 
-private func extractViewInfoOnly(_ constraint: NSLayoutConstraint) -> String {
-    let description = constraint.debugDescription
-    let addressErased = description.replacingRegex(of: "[:]?0x[0-9a-f]+")
-    let typeErased = addressErased.replacingRegex(of: "NSLayoutConstraint ")
-    let stateErased = typeErased.replacingRegex(of: "(inactive|active), ").dropFirst().description
-    let namesErased = stateErased.replacingRegex(of: "[:space:]+\\(names[:print:]+")
-    return namesErased
+private func typeAndAddressFromView(_ view: UIView) -> String {
+    view.debugDescription.dropFirst().description.replacingRegex(of: ";[:print:]+").replacingOccurrences(of: " ", with: "")
 }
 
 private extension String {
