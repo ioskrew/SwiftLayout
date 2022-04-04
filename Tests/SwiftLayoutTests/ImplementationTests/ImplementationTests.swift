@@ -1,7 +1,5 @@
 import XCTest
-@testable import SwiftLayoutUtil
 @testable import SwiftLayout
-
 
 /// test cases for api rules except DSL syntax
 final class ImplementationTests: XCTestCase {
@@ -45,9 +43,13 @@ extension ImplementationTests {
         }
         
         var result: [String] = []
-        for viewInformation in LayoutElements(layout: layout).viewInformations {
-            let superDescription = viewInformation.superview?.accessibilityIdentifier ?? "nil"
-            let currentDescription = viewInformation.view?.accessibilityIdentifier ?? "nil"
+        LayoutExplorer.traversal(layout: layout, superview: nil) { layout, superview in
+            guard let view = layout.view else {
+                return
+            }
+            
+            let superDescription = superview?.accessibilityIdentifier ?? "nil"
+            let currentDescription = view.accessibilityIdentifier ?? "nil"
             let description = "\(superDescription), \(currentDescription)"
             result.append(description)
         }
@@ -62,7 +64,6 @@ extension ImplementationTests {
         
         XCTAssertEqual(expectedResult, result)
     }
-    
     
     func testLayoutFlattening() {
         let layout = root {
@@ -123,27 +124,6 @@ extension ImplementationTests {
         XCTAssertNotEqual(e5.viewConstraints.weakens, e6.viewConstraints.weakens)
     }
     
-    func testSetAccessibilityIdentifier() {
-        class TestView: UIView {
-            let contentView = UIView()
-            let nameLabel = UILabel()
-        }
-        
-        let view = TestView()
-        IdentifierUpdater.withTypeOfView.update(view)
-        
-        XCTAssertEqual(view.contentView.accessibilityIdentifier, "contentView:\(UIView.self)")
-        XCTAssertEqual(view.nameLabel.accessibilityIdentifier, "nameLabel:\(UILabel.self)")
-        
-        class Test2View: TestView {}
-        
-        let view2 = Test2View()
-        IdentifierUpdater.withTypeOfView.update(view2)
-        
-        XCTAssertEqual(view2.contentView.accessibilityIdentifier, "contentView:\(UIView.self)")
-        XCTAssertEqual(view2.nameLabel.accessibilityIdentifier, "nameLabel:\(UILabel.self)")
-    }
-    
     func testDontTouchRootViewByDeactive() {
         let root = UIView().identifying("root")
         let red = UIView().identifying("red")
@@ -163,45 +143,6 @@ extension ImplementationTests {
         activation = nil
         
         XCTAssertEqual(root.superview, old)
-    }
-    
-}
-
-extension ImplementationTests {
-    final class IdentifiedView: UIView, Layoutable {
-        
-        lazy var contentView: UIView = UIView()
-        lazy var nameLabel: UILabel = UILabel()
-        
-        var activation: Activation?
-        
-        var layout: some Layout {
-            contentView {
-                nameLabel
-            }
-        }
-        
-        init() {
-            super.init(frame: .zero)
-            sl.updateLayout()
-        }
-        
-        required init?(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-    }
-    
-    func testNoAccessibilityIdentifierOption() {
-        let view = IdentifiedView()
-        XCTAssertEqual(view.contentView.accessibilityIdentifier ?? "", "")
-        XCTAssertEqual(view.nameLabel.accessibilityIdentifier ?? "", "")
-    }
-    
-    func testAccessibilityIdentifierOption() {
-        let view = IdentifiedView()
-        ViewPrinter(view).updateIdentifiers()
-        XCTAssertEqual(view.contentView.accessibilityIdentifier, "contentView")
-        XCTAssertEqual(view.nameLabel.accessibilityIdentifier, "nameLabel")
     }
 }
 
@@ -233,249 +174,5 @@ extension ImplementationTests {
         
         let constraintsBetweebViews = Set(AnchorsContainer(Anchors.top.equalTo(label!, attribute: .bottom)).constraints(item: secondView!, toItem: label).weakens)
         XCTAssertEqual(currents.intersection(constraintsBetweebViews), constraintsBetweebViews)
-    }
-}
-
-extension ImplementationTests {
-    func testIgnoreAnchorsDuplication() {
-        root {
-            child.anchors {
-                Anchors.allSides()
-                Anchors.cap()
-                Anchors.shoe()
-                Anchors.height
-                Anchors.width
-                Anchors.width.equalTo(constant: 24.0)
-            }
-        }.finalActive()
-
-        
-        XCTAssertEqual(root.constraints.shortDescription, """
-        child.top == root.top
-        child.leading == root.leading
-        child.height == root.height
-        child.width == root.width
-        child.trailing == root.trailing
-        child.bottom == root.bottom
-        """.descriptions)
-        XCTAssertEqual(child.constraints.shortDescription, """
-        child.width == + 24.0
-        """.descriptions)
-        
-        XCTAssertEqual(ViewPrinter(root).description, """
-        root {
-            child.anchors {
-                Anchors.top.bottom
-                Anchors.leading.trailing
-                Anchors.width.equalTo(constant: 24.0)
-                Anchors.width.height.equalToSuper()
-            }
-        }
-        """.tabbed)
-    }
-
-    func testIgnoreAnchorsDuplication2() {
-        root {
-            child.anchors {
-                Anchors.cap()
-                Anchors.height.equalTo(constant: 44)
-                Anchors.height.equalTo(constant: 44)
-            }
-        }.finalActive()
-
-        let expect = """
-        root {
-            child.anchors {
-                Anchors.top
-                Anchors.leading.trailing
-                Anchors.height.equalTo(constant: 44.0)
-            }
-        }
-        """
-
-        XCTAssertEqual(ViewPrinter(root).description, expect.tabbed)
-    }
-}
-
-extension ImplementationTests {
-    func testFinalActive() {
-        let root = UIView().identifying("root")
-        let cap = UIView().identifying("cap")
-        let shoe = UIView().identifying("shoe")
-
-        root {
-            cap.anchors {
-                Anchors.cap()
-            }
-            shoe.anchors {
-                Anchors.shoe()
-            }
-        }.finalActive()
-
-        let expect = """
-        root {
-            cap.anchors {
-                Anchors.top
-                Anchors.leading.trailing
-            }
-            shoe.anchors {
-                Anchors.bottom
-                Anchors.leading.trailing
-            }
-        }
-        """.tabbed
-
-        XCTAssertEqual(ViewPrinter(root).description, expect)
-    }
-}
-
-// MARK: - Decorations
-extension ImplementationTests {
-
-    func testFeatureCompose() {
-        activation = root.config({ root in
-            root.backgroundColor = .yellow
-        }).identifying("root").anchors({ }).sublayout {
-            UILabel().config({ label in
-                label.text = "hello"
-            }).identifying("child").anchors {
-                Anchors.allSides()
-            }
-        }.active()
-
-        let expect = """
-        root {
-            child.anchors {
-                Anchors.top.bottom
-                Anchors.leading.trailing
-            }
-        }
-        """.tabbed
-
-        XCTAssertEqual(ViewPrinter(root).description, expect)
-    }
-
-    func testFeatureComposeComplex() {
-        activation = root.config({ root in
-            root.backgroundColor = .yellow
-        }).sublayout {
-            UILabel().config { label in
-                label.text = "HELLO"
-            }.identifying("hellolabel").anchors {
-                Anchors.cap()
-            }.sublayout {
-                UIView().identifying("lastview").anchors {
-                    Anchors.allSides()
-                }
-            }
-            UIButton().identifying("button").anchors {
-                Anchors.shoe()
-            }
-        }.active()
-
-        let expect = """
-        root {
-            hellolabel.anchors {
-                Anchors.top
-                Anchors.leading.trailing
-            }.sublayout {
-                lastview.anchors {
-                    Anchors.top.bottom
-                    Anchors.leading.trailing
-                }
-            }
-            button.anchors {
-                Anchors.bottom
-                Anchors.leading.trailing
-            }
-        }
-        """.tabbed
-
-        XCTAssertEqual(ViewPrinter(root, options: .onlyIdentifier).description, expect)
-    }
-
-    func testFeatureComposeComplexWithAnimationHandling() {
-        activation = root.config({ root in
-            root.backgroundColor = .yellow
-        }).sublayout {
-            UILabel().config { label in
-                label.text = "HELLO"
-            }.identifying("hellolabel").anchors {
-                Anchors.cap()
-            }.sublayout {
-                UIView().identifying("lastview").anchors {
-                    Anchors.allSides()
-                }
-            }
-            UIButton().identifying("button").anchors {
-                Anchors.shoe()
-            }
-        }.active()
-
-        let expect = """
-        root {
-            hellolabel.anchors {
-                Anchors.top
-                Anchors.leading.trailing
-            }.sublayout {
-                lastview.anchors {
-                    Anchors.top.bottom
-                    Anchors.leading.trailing
-                }
-            }
-            button.anchors {
-                Anchors.bottom
-                Anchors.leading.trailing
-            }
-        }
-        """.tabbed
-
-        XCTAssertEqual(ViewPrinter(root, options: .onlyIdentifier).description, expect)
-    }
-
-}
-
-// MARK: - LayoutProperty
-extension ImplementationTests {
-    
-    func testLayoutProperty() {
-        let test = TestView().identifying("test")
-        
-        XCTAssertEqual(test.trueView.superview, test)
-        XCTAssertNil(test.falseView.superview)
-        
-        test.flag = false
-        XCTAssertEqual(test.falseView.superview, test)
-        XCTAssertNil(test.trueView.superview)
-    }
-    
-    private class TestView: UIView, Layoutable {
-        
-        @LayoutProperty var flag = true
-        
-        var trueView = UIView().identifying("true")
-        var falseView = UIView().identifying("false")
-        
-        var activation: Activation?
-        
-        var layout: some Layout {
-            self {
-                if flag {
-                    trueView
-                } else {
-                    falseView
-                }
-            }
-        }
-        
-        override init(frame: CGRect) {
-            super.init(frame: frame)
-            sl.updateLayout()
-        }
-        
-        required init?(coder: NSCoder) {
-            super.init(coder: coder)
-            sl.updateLayout()
-        }
     }
 }

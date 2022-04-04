@@ -131,3 +131,47 @@ extension LayoutBuildingTests {
         }
     }
 }
+
+extension LayoutBuildingTests {
+    
+    func testLayoutProperty() {
+        let test = TestView().identifying("test")
+        
+        XCTAssertEqual(test.trueView.superview, test)
+        XCTAssertNil(test.falseView.superview)
+        
+        test.flag = false
+        XCTAssertEqual(test.falseView.superview, test)
+        XCTAssertNil(test.trueView.superview)
+    }
+    
+    private class TestView: UIView, Layoutable {
+        
+        @LayoutProperty var flag = true
+        
+        var trueView = UIView().identifying("true")
+        var falseView = UIView().identifying("false")
+        
+        var activation: Activation?
+        
+        var layout: some Layout {
+            self {
+                if flag {
+                    trueView
+                } else {
+                    falseView
+                }
+            }
+        }
+        
+        override init(frame: CGRect) {
+            super.init(frame: frame)
+            sl.updateLayout()
+        }
+        
+        required init?(coder: NSCoder) {
+            super.init(coder: coder)
+            sl.updateLayout()
+        }
+    }
+}
