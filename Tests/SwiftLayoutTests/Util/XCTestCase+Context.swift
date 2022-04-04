@@ -13,11 +13,11 @@ extension XCTestCase {
         })
     }
     
-    func assertView(_ view: UIView, superview: UIView?, subviews: [UIView]) {
-        XCTAssertEqual(view.superview, superview)
-        XCTAssertEqual(view.subviews.count, subviews.count)
-        XCTAssertEqual(Set(view.subviews), Set(subviews))
-    }
+//    func assertView(_ view: UIView, superview: UIView?, subviews: [UIView]) {
+//        XCTAssertEqual(view.superview, superview)
+//        XCTAssertEqual(view.subviews.count, subviews.count)
+//        XCTAssertEqual(Set(view.subviews), Set(subviews))
+//    }
     
     func assertConstrints(_ constraints1: [NSLayoutConstraint], _ constraints2: [NSLayoutConstraint], sorted: Bool = true) {
         XCTAssertEqual(constraints1.count, constraints2.count)

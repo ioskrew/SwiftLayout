@@ -75,10 +75,10 @@ extension LayoutableTests {
     }
     
     private func assertTrueCase(_ view: LayoutableView) {
-        assertView(view, superview: nil, subviews: [view.root])
-        assertView(view.root, superview: view, subviews: [view.child])
-        assertView(view.child, superview: view.root, subviews: [])
-        assertView(view.friend, superview: nil, subviews: [])
+        SLTAssertView(view, superview: nil, subviews: [view.root])
+        SLTAssertView(view.root, superview: view, subviews: [view.child])
+        SLTAssertView(view.child, superview: view.root, subviews: [])
+        SLTAssertView(view.friend, superview: nil, subviews: [])
         
         XCTAssertEqual(view.root.addSubviewCallCount(view.child), 1)
         XCTAssertEqual(view.root.addSubviewCallCount(view.friend), 0)
@@ -103,10 +103,10 @@ extension LayoutableTests {
     }
     
     private func assertFalseCase(_ view: LayoutableView) {
-        assertView(view, superview: nil, subviews: [view.root])
-        assertView(view.root, superview: view, subviews: [view.friend])
-        assertView(view.child, superview: nil, subviews: [])
-        assertView(view.friend, superview: view.root, subviews: [])
+        SLTAssertView(view, superview: nil, subviews: [view.root])
+        SLTAssertView(view.root, superview: view, subviews: [view.friend])
+        SLTAssertView(view.child, superview: nil, subviews: [])
+        SLTAssertView(view.friend, superview: view.root, subviews: [])
         
         XCTAssertEqual(view.root.addSubviewCallCount(view.child), 1)
         XCTAssertEqual(view.root.addSubviewCallCount(view.friend), 1)
