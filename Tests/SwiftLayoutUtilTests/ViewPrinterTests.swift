@@ -2,7 +2,7 @@ import XCTest
 import SwiftLayout
 import SwiftLayoutUtil
 
-class PrintingTests: XCTestCase {
+class ViewPrinterTests: XCTestCase {
     
     var window: UIView!
     
@@ -18,10 +18,10 @@ class PrintingTests: XCTestCase {
     }
 }
 
-extension PrintingTests {
+extension ViewPrinterTests {
     func testPrintWithViewsSimple() throws {
-        let root = UIView().viewTag.root
-        let child = UIView().viewTag.child
+        let root = UIView().identifying("root")
+        let child = UIView().identifying("child")
         
         activation = root {
             child
@@ -38,9 +38,9 @@ extension PrintingTests {
     }
     
     func testPrintWithTwoViews() throws {
-        let root = UIView().viewTag.root
-        let a = UIView().viewTag.a
-        let b = UIView().viewTag.b
+        let root = UIView().identifying("root")
+        let a = UIView().identifying("a")
+        let b = UIView().identifying("b")
         
         activation = root {
             a
@@ -59,9 +59,9 @@ extension PrintingTests {
     }
     
     func testPrintWithTwoDepthOfViews() throws {
-        let root = UIView().viewTag.root
-        let child = UIView().viewTag.child
-        let grandchild = UIView().viewTag.grandchild
+        let root = UIView().identifying("root")
+        let child = UIView().identifying("child")
+        let grandchild = UIView().identifying("grandchild")
         
         activation = root {
             child {
@@ -82,10 +82,10 @@ extension PrintingTests {
     }
     
     func testPrintWithMultipleDepthOfViews() throws {
-        let root = UIView().viewTag.root
-        let child = UIView().viewTag.child
-        let friend = UIView().viewTag.friend
-        let grandchild = UIView().viewTag.grandchild
+        let root = UIView().identifying("root")
+        let child = UIView().identifying("child")
+        let friend = UIView().identifying("friend")
+        let grandchild = UIView().identifying("grandchild")
         
         activation = root {
             child {
@@ -107,9 +107,9 @@ extension PrintingTests {
     }
     
     func testTopBottomAndEquals() {
-        let root = UIView().viewTag.root
-        let one = UIView().viewTag.one
-        let two = UIView().viewTag.two
+        let root = UIView().identifying("root")
+        let one = UIView().identifying("one")
+        let two = UIView().identifying("two")
         
         func layout() -> some Layout {
             root {
@@ -127,15 +127,6 @@ extension PrintingTests {
         
         layout().finalActive()
         
-        XCTAssertEqual(root.constraints.shortDescription, """
-        one.leading == root.leading
-        one.bottom == root.bottom
-        two.top == one.bottom
-        two.centerX == one.centerX
-        one.trailing == root.trailing
-        two.width == one.width
-        """.descriptions)
-        
         XCTAssertEqual(ViewPrinter(root).description, """
         root {
             one.anchors {
@@ -152,8 +143,8 @@ extension PrintingTests {
     }
     
     func testSizeWithConstant() {
-        let root = UIView().viewTag.root
-        let one = UIView().viewTag.one
+        let root = UIView().identifying("root")
+        let one = UIView().identifying("one")
         
         root {
             one.anchors {
@@ -171,10 +162,10 @@ extension PrintingTests {
     }
     
     func testPrintWithAnchorsWithOneDepth() {
-        let root = UIView().viewTag.root
+        let root = UIView().identifying("root")
         root.translatesAutoresizingMaskIntoConstraints = false
         window.addSubview(root)
-        let child = UIView().viewTag.child
+        let child = UIView().identifying("child")
         activation = root {
             child.anchors {
                 Anchors.top
@@ -196,11 +187,11 @@ extension PrintingTests {
     }
     
     func testPrintWithAnchorsOfTwoViewWithOneDepth() {
-        let root = UIView().viewTag.root
+        let root = UIView().identifying("root")
         root.translatesAutoresizingMaskIntoConstraints = false
         window.addSubview(root)
-        let child = UIView().viewTag.child
-        let friend = UIView().viewTag.friend
+        let child = UIView().identifying("child")
+        let friend = UIView().identifying("friend")
         activation = root {
             child.anchors {
                 Anchors.top
@@ -228,9 +219,9 @@ extension PrintingTests {
     }
 
     func testPrintWithAnonymousTaggedView() {
-        let root = UIView().viewTag.root
+        let root = UIView().identifying("root")
         activation = root {
-            UILabel().viewTag.label.anchors {
+            UILabel().identifying("label").anchors {
                 Anchors.allSides()
             }
         }.active()
@@ -250,9 +241,9 @@ extension PrintingTests {
     }
     
     func testPrintWithTwwDepthsWithSublayout() throws {
-        let root = UIView().viewTag.root
-        let child = UIView().viewTag.child
-        let grandchild = UIView().viewTag.grandchild
+        let root = UIView().identifying("root")
+        let child = UIView().identifying("child")
+        let grandchild = UIView().identifying("grandchild")
         
         activation = root {
             child.anchors{
@@ -283,9 +274,9 @@ extension PrintingTests {
     }
     
     func testPrintWithInstantTags() {
-        let root = UIView().viewTag.root
+        let root = UIView().identifying("root")
         let child = UILabel()
-        let grand = UILabel().viewTag.grand
+        let grand = UILabel().identifying("grand")
         
         activation = root {
             child {
@@ -310,8 +301,8 @@ extension PrintingTests {
     }
     
     func testPrintWithSafeAreaLayoutGuide() {
-        let root = UIView().viewTag.root
-        let child = UIView().viewTag.child
+        let root = UIView().identifying("root")
+        let child = UIView().identifying("child")
         activation = root {
             child.anchors {
                 Anchors.top.bottom.equalTo(root.safeAreaLayoutGuide)
@@ -347,11 +338,11 @@ extension PrintingTests {
     }
     
     func testPrintMoreEfficiently() {
-        let root = UIView().viewTag.root
+        let root = UIView().identifying("root")
         root.translatesAutoresizingMaskIntoConstraints = false
         window.addSubview(root)
-        let child = UIView().viewTag.child
-        let friend = UIView().viewTag.friend
+        let child = UIView().identifying("child")
+        let friend = UIView().identifying("friend")
         
         activation = root {
             child.anchors {
@@ -384,11 +375,11 @@ extension PrintingTests {
     }
     
     func testGreaterThanAndLessThan() {
-        let root = UIView().viewTag.root
+        let root = UIView().identifying("root")
         root.translatesAutoresizingMaskIntoConstraints = false
         window.addSubview(root)
-        let child = UIView().viewTag.child
-        let friend = UIView().viewTag.friend
+        let child = UIView().identifying("child")
+        let friend = UIView().identifying("friend")
         activation = root {
             child.anchors {
                 Anchors.top.greaterThanOrEqualToSuper()
@@ -418,8 +409,8 @@ extension PrintingTests {
     
     func testPrintSize() {
        
-        let root = UIView().viewTag.root
-        let child = UIView().viewTag.child
+        let root = UIView().identifying("root")
+        let child = UIView().identifying("child")
         
         func layout() -> some Layout {
             root {
@@ -430,11 +421,6 @@ extension PrintingTests {
         }
         
         layout().finalActive()
-        
-        XCTAssertEqual(root.constraints.shortDescription, """
-        child.width == root.width
-        child.height == root.height
-        """.descriptions)
         
         XCTAssertEqual(ViewPrinter(root).description, """
         root {
@@ -449,7 +435,7 @@ extension PrintingTests {
 }
 
 // MARK: - automatic identifier assignment
-extension PrintingTests {
+extension ViewPrinterTests {
     
     func testautomaticIdentifierAssignmentOption() {
         let cell = Cell()
@@ -486,7 +472,7 @@ extension PrintingTests {
 }
 
 // MARK: - identifier assignment deeply
-extension PrintingTests {
+extension ViewPrinterTests {
     
     class One: UIView {}
     class Two: One {}
@@ -583,7 +569,7 @@ extension PrintingTests {
                 nickname.anchors({
                     Anchors.cap()
                 }).sublayout {
-                    UIView().viewTag.sparrowhawk.anchors {
+                    UIView().identifying("sparrowhawk").anchors {
                         Anchors.allSides()
                     }
                 }
@@ -591,7 +577,7 @@ extension PrintingTests {
                     Anchors.top.equalTo(nickname.bottomAnchor)
                     Anchors.shoe()
                 }).sublayout {
-                    UIView().viewTag.ged.anchors {
+                    UIView().identifying("ged").anchors {
                         Anchors.allSides()
                     }
                 }
@@ -611,12 +597,12 @@ extension PrintingTests {
 }
 
 // MARK: - print system constraint
-extension PrintingTests {
+extension ViewPrinterTests {
     
     func testSystemConstraint() {
         
-        let root = UIView().viewTag.root
-        let label = UILabel().viewTag.label
+        let root = UIView().identifying("root")
+        let label = UILabel().identifying("label")
         label.font = .systemFont(ofSize: 12)
         label.text = "HELLO"
         @LayoutBuilder
@@ -641,47 +627,65 @@ extension PrintingTests {
     
 }
 
-// MARK: - options for IdentifierUpdater
-extension PrintingTests {
-    func testNameOnly() {
-        let id = ID()
-        IdentifierUpdater.nameOnly.update(id)
-        XCTAssertEqual(id.name.accessibilityIdentifier, "name")
-        XCTAssertEqual(id.name.label.accessibilityIdentifier ?? "", "")
+extension ViewPrinterTests {
+    
+    func testUpdateIdentifiers() {
+        let rootView = UIView(frame: .init(x: 0, y: 0, width: 150, height: 150))
+        let container = TestViewContainer()
+        container.root.translatesAutoresizingMaskIntoConstraints = false
+        rootView.addSubview(container.root)
+        
+        container.root {
+            container.red {
+                container.button
+                container.label
+                container.blue {
+                    container.image
+                }
+            }
+        }
+        .finalActive()
+        
+        let expect = """
+        root {
+            red {
+                button
+                label
+                blue {
+                    image
+                }
+            }
+        }
+        """.tabbed
+        
+        XCTAssertEqual(
+            ViewPrinter(container.root, options: .onlyIdentifier)
+                .updateIdentifiers(rootObject: container)
+                .description,
+            expect
+        )
+        
+        XCTAssertEqual(container.root.accessibilityIdentifier, "root")
+        XCTAssertEqual(container.red.accessibilityIdentifier, "red")
+        XCTAssertEqual(container.button.accessibilityIdentifier, "button")
+        XCTAssertEqual(container.label.accessibilityIdentifier, "label")
+        XCTAssertEqual(container.blue.accessibilityIdentifier, "blue")
+        XCTAssertEqual(container.image.accessibilityIdentifier, "image")
     }
     
-    func testWithTypeOfView() {
-        let id = ID()
-        IdentifierUpdater.withTypeOfView.update(id)
-        XCTAssertEqual(id.name.accessibilityIdentifier, "name:Name")
-        XCTAssertEqual(id.name.label.accessibilityIdentifier ?? "", "")
-    }
-    
-    func testReferenceAndName() {
-        let id = ID()
-        IdentifierUpdater.referenceAndName.update(id)
-        XCTAssertEqual(id.name.accessibilityIdentifier, "name")
-        XCTAssertEqual(id.name.label.accessibilityIdentifier, "name.label")
-    }
-    
-    func testReferenceAndNameWithTypeOfView() {
-        let id = ID()
-        IdentifierUpdater.referenceAndNameWithTypeOfView.update(id)
-        XCTAssertEqual(id.name.accessibilityIdentifier, "name:Name")
-        XCTAssertEqual(id.name.label.accessibilityIdentifier, "name.label:\(UILabel.self)")
-    }
-
-    class Name: UIView {
+    // This can be a UIViewController or a UIView.
+    private final class TestViewContainer {
+        let root = UIView()
+        let red = UIView()
+        let blue = UIView()
+        let button = UIButton()
         let label = UILabel()
-    }
-    
-    class ID: UIView {
-        let name = Name()
+        let image = UIImageView()
     }
 }
 
 // MARK: - performance
-extension PrintingTests {
+extension ViewPrinterTests {
     func testViewPrinterPerformance() {
         measure {
             let gont = Gont()

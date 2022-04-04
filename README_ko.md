@@ -53,7 +53,7 @@
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "2.5.0"),
+  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "2.5.2"),
 ],
 ```
 
@@ -454,6 +454,38 @@ contentView {
 ```
 
 - 디버깅의 관점에서 보면 identifying을 설정한 경우 NSLayoutConstraint의 description에 해당 문자열이 함께 출력됩니다.
+
+### SwiftUI에서 사용하기
+
+`UIView` 혹은, `UIViewController`에서 `Layoutable`을 구현한 경우 `SwiftUI`에서도 쉽게 사용이 가능합니다.
+
+```swift
+class ViewUIView: UIView, Layoutable {
+  var layout: some Layout { 
+    ...
+  }
+}
+
+...
+
+struct SomeView: View {
+  var body: some View {
+    VStack {
+      ...
+	    ViewUIView().sl.swiftUI
+      ...
+    }
+  }
+}
+
+struct ViewUIView_Previews: PreviewProvider {
+  static var previews: some Previews {
+    ViewUIView().sl.swiftUI
+  }
+}
+```
+
+
 
 ### SwiftLayoutUtil
 
