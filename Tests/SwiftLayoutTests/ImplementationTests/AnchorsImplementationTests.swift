@@ -13,6 +13,14 @@ final class AnchorsImplementationTests: XCTestCase {
     var subview: UIView = UIView()
     var siblingview: UIView = UIView()
     
+    var tags: [UIView: String] {
+        [
+            superview: "superview",
+            subview: "subview",
+            siblingview: "siblingview"
+        ]
+    }
+    
     override func setUp() {
         superview = UIView()
         subview = UIView()
@@ -175,7 +183,7 @@ extension AnchorsImplementationTests {
                     ]
                 }
                 
-                assertConstrints(constrints, expected, sorted: false)
+                SLTAssertConstraintsEqualAndSequencial(constrints, expected, tags)
             }
         }
     }
@@ -221,7 +229,7 @@ extension AnchorsImplementationTests {
         
         for attribute in AnchorsYAxisAttribute.allCases {
             context("testExpressionYAxisConstraints \(attribute)") {
-                let constrints = anchors(attribute: attribute).constraints(item: subview, toItem: superview)
+                let constraints = anchors(attribute: attribute).constraints(item: subview, toItem: superview)
                 let expected = [
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: superview, attribute: attribute.attribute, multiplier: 1.0, constant: 0.0),
                     
@@ -257,7 +265,7 @@ extension AnchorsImplementationTests {
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: siblingview, attribute: .top, multiplier: 1.0, constant: constant),
                 ]
                 
-                assertConstrints(constrints, expected, sorted: false)
+                SLTAssertConstraintsEqualAndSequencial(constraints, expected, tags)
             }
         }
     }
@@ -305,7 +313,7 @@ extension AnchorsImplementationTests {
 
         for attribute in AnchorsDimensionAttribute.allCases {
             context("testExpressionDimensionConstraints \(attribute)") {
-                let constrints = anchors(attribute: attribute).constraints(item: subview, toItem: superview)
+                let constraints = anchors(attribute: attribute).constraints(item: subview, toItem: superview)
                 let expected = [
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: superview, attribute: attribute.attribute, multiplier: 1.0, constant: 0.0),
 
@@ -343,7 +351,7 @@ extension AnchorsImplementationTests {
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: siblingview, attribute: .width, multiplier: 1.0, constant: constant),
                 ]
 
-                assertConstrints(constrints, expected, sorted: false)
+                SLTAssertConstraintsEqualAndSequencial(constraints, expected, tags)
             }
         }
     }
@@ -387,7 +395,7 @@ extension AnchorsImplementationTests {
             AnchorsExpression(dimensions: .width).equalTo(siblingview, attribute: .height, constant: constant).constant(newConstant).multiplier(multiplier)
         }
         
-        let constrints = anchors.constraints(item: subview, toItem: superview)
+        let constraints = anchors.constraints(item: subview, toItem: superview)
         let expected = [
             NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1.0, constant: constant),
             NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: multiplier, constant: constant),
@@ -421,7 +429,7 @@ extension AnchorsImplementationTests {
             NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: siblingview, attribute: .height, multiplier: multiplier, constant: newConstant),
         ]
 
-        assertConstrints(constrints, expected, sorted: false)
+        SLTAssertConstraintsEqualAndSequencial(constraints, expected, tags)
     }
     
     func testExpressionChaining() {
@@ -430,7 +438,7 @@ extension AnchorsImplementationTests {
             var anchors: AnchorsContainer {
                 AnchorsExpression<AnchorsXAxisAttribute>().centerX.leading.trailing.left.right.centerXWithinMargins.leftMargin.rightMargin.leadingMargin.trailingMargin
             }
-            let constrints = anchors.constraints(item: subview, toItem: superview)
+            let constraints = anchors.constraints(item: subview, toItem: superview)
             let expected = [
                 NSLayoutConstraint(item: subview, attribute: .centerX, relatedBy: .equal, toItem: superview, attribute: .centerX, multiplier: 1.0, constant: 0.0),
                 NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1.0, constant: 0.0),
@@ -444,7 +452,7 @@ extension AnchorsImplementationTests {
                 NSLayoutConstraint(item: subview, attribute: .trailingMargin, relatedBy: .equal, toItem: superview, attribute: .trailingMargin, multiplier: 1.0, constant: 0.0),
             ]
             
-            assertConstrints(constrints, expected, sorted: false)
+            SLTAssertConstraintsEqualAndSequencial(constraints, expected, tags)
         }
         
         context("testExpressionChaining yAxis") {
@@ -454,7 +462,7 @@ extension AnchorsImplementationTests {
                 
                 
             }
-            let constrints = anchors.constraints(item: subview, toItem: superview)
+            let constraints = anchors.constraints(item: subview, toItem: superview)
             let expected = [
                 NSLayoutConstraint(item: subview, attribute: .centerY, relatedBy: .equal, toItem: superview, attribute: .centerY, multiplier: 1.0, constant: 0.0),
                 NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1.0, constant: 0.0),
@@ -466,7 +474,7 @@ extension AnchorsImplementationTests {
                 NSLayoutConstraint(item: subview, attribute: .bottomMargin, relatedBy: .equal, toItem: superview, attribute: .bottomMargin, multiplier: 1.0, constant: 0.0),
             ]
             
-            assertConstrints(constrints, expected, sorted: false)
+            SLTAssertConstraintsEqualAndSequencial(constraints, expected, tags)
         }
         
         context("testExpressionChaining xAxis") {
@@ -474,14 +482,14 @@ extension AnchorsImplementationTests {
             var anchors: AnchorsContainer {
                 AnchorsExpression<AnchorsDimensionAttribute>().height.width
             }
-            let constrints = anchors.constraints(item: subview, toItem: superview)
+            let constraints = anchors.constraints(item: subview, toItem: superview)
             let expected = [
                 NSLayoutConstraint(item: subview, attribute: .height, relatedBy: .equal, toItem: superview, attribute: .height, multiplier: 1.0, constant: 0.0),
                 NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: superview, attribute: .width, multiplier: 1.0, constant: 0.0),
 
             ]
 
-            assertConstrints(constrints, expected, sorted: false)
+            SLTAssertConstraintsEqualAndSequencial(constraints, expected, tags)
         }
 
     }
@@ -500,7 +508,7 @@ extension AnchorsImplementationTests {
             }
         }
         
-        let constrints = anchors.constraints(item: subview, toItem: superview)
+        let constraints = anchors.constraints(item: subview, toItem: superview)
         let expected = AnchorsXAxisAttribute.allCases.map {
             NSLayoutConstraint(item: subview, attribute: $0.attribute, relatedBy: .equal, toItem: superview.safeAreaLayoutGuide, attribute: $0.attribute, multiplier: 1.0, constant: 0.0)
         } + AnchorsYAxisAttribute.allCases.map {
@@ -509,7 +517,7 @@ extension AnchorsImplementationTests {
             NSLayoutConstraint(item: subview, attribute: $0.attribute, relatedBy: .equal, toItem: superview.safeAreaLayoutGuide, attribute: $0.attribute, multiplier: 1.0, constant: 0.0)
         }
         
-        assertConstrints(constrints, expected, sorted: false)
+        SLTAssertConstraintsEqualAndSequencial(constraints, expected, tags)
     }
 }
 
@@ -539,7 +547,7 @@ extension AnchorsImplementationTests {
             Anchors.height
             Anchors.width
         }
-        let constrints = anchors.constraints(item: subview, toItem: superview)
+        let constraints = anchors.constraints(item: subview, toItem: superview)
         let expected = [
             NSLayoutConstraint(item: subview, attribute: .centerX, relatedBy: .equal, toItem: superview, attribute: .centerX, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1.0, constant: 0.0),
@@ -563,7 +571,7 @@ extension AnchorsImplementationTests {
             NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: superview, attribute: .width, multiplier: 1.0, constant: 0.0),
         ]
         
-        assertConstrints(constrints, expected, sorted: false)
+        SLTAssertConstraintsEqualAndSequencial(constraints, expected, tags)
     }
     
     func testStaticsMultipleHorizontal() {
@@ -576,7 +584,7 @@ extension AnchorsImplementationTests {
             Anchors.horizontal(siblingview)
             Anchors.horizontal(siblingview, offset: 13)
         }
-        let constrints = anchors.constraints(item: subview, toItem: superview)
+        let constraints = anchors.constraints(item: subview, toItem: superview)
         let expected = [
             NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1.0, constant: 0.0),
@@ -588,7 +596,7 @@ extension AnchorsImplementationTests {
             NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: siblingview, attribute: .trailing, multiplier: 1.0, constant: -offset),
         ]
         
-        assertConstrints(constrints, expected, sorted: false)
+        SLTAssertConstraintsEqualAndSequencial(constraints, expected, tags)
     }
     
     func testStaticsMultipleVertical() {
@@ -601,7 +609,7 @@ extension AnchorsImplementationTests {
             Anchors.vertical(siblingview)
             Anchors.vertical(siblingview, offset: offset)
         }
-        let constrints = anchors.constraints(item: subview, toItem: superview)
+        let constraints = anchors.constraints(item: subview, toItem: superview)
         let expected = [
             NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1.0, constant: 0.0),
@@ -613,7 +621,7 @@ extension AnchorsImplementationTests {
             NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: siblingview, attribute: .bottom, multiplier: 1.0, constant: -offset),
         ]
         
-        assertConstrints(constrints, expected, sorted: false)
+        SLTAssertConstraintsEqualAndSequencial(constraints, expected, tags)
     }
     
     func testStaticsMultipleAllSides() {
@@ -626,7 +634,7 @@ extension AnchorsImplementationTests {
             Anchors.allSides(siblingview)
             Anchors.allSides(siblingview, offset: offset)
         }
-        let constrints = anchors.constraints(item: subview, toItem: superview)
+        let constraints = anchors.constraints(item: subview, toItem: superview)
         let expected = [
             NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1.0, constant: 0.0),
@@ -646,7 +654,7 @@ extension AnchorsImplementationTests {
             NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: siblingview, attribute: .trailing, multiplier: 1.0, constant: -offset),
         ]
         
-        assertConstrints(constrints, expected, sorted: false)
+        SLTAssertConstraintsEqualAndSequencial(constraints, expected, tags)
     }
     
     func testStaticsMultipleCap() {
@@ -659,7 +667,7 @@ extension AnchorsImplementationTests {
             Anchors.cap(siblingview)
             Anchors.cap(siblingview, offset: offset)
         }
-        let constrints = anchors.constraints(item: subview, toItem: superview)
+        let constraints = anchors.constraints(item: subview, toItem: superview)
         let expected = [
             NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1.0, constant: 0.0),
@@ -675,7 +683,7 @@ extension AnchorsImplementationTests {
             NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: siblingview, attribute: .trailing, multiplier: 1.0, constant: -offset),
         ]
         
-        assertConstrints(constrints, expected, sorted: false)
+        SLTAssertConstraintsEqualAndSequencial(constraints, expected, tags)
     }
     
     func testStaticsMultipleShoe() {
@@ -688,7 +696,7 @@ extension AnchorsImplementationTests {
             Anchors.shoe(siblingview)
             Anchors.shoe(siblingview, offset: offset)
         }
-        let constrints = anchors.constraints(item: subview, toItem: superview)
+        let constraints = anchors.constraints(item: subview, toItem: superview)
         let expected = [
             NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1.0, constant: 0.0),
@@ -704,7 +712,7 @@ extension AnchorsImplementationTests {
             NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: siblingview, attribute: .trailing, multiplier: 1.0, constant: -offset),
         ]
         
-        assertConstrints(constrints, expected, sorted: false)
+        SLTAssertConstraintsEqualAndSequencial(constraints, expected, tags)
     }
     
     func testStaticsMultipleSize() {
@@ -716,7 +724,7 @@ extension AnchorsImplementationTests {
             Anchors.size(width: width, height: height)
             Anchors.size(siblingview, width: width, height: height)
         }
-        let constrints = anchors.constraints(item: subview, toItem: superview)
+        let constraints = anchors.constraints(item: subview, toItem: superview)
         let expected = [
             NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: width),
             NSLayoutConstraint(item: subview, attribute: .height, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: height),
@@ -724,7 +732,7 @@ extension AnchorsImplementationTests {
             NSLayoutConstraint(item: subview, attribute: .height, relatedBy: .equal, toItem: siblingview, attribute: .height, multiplier: 1.0, constant: height),
         ]
         
-        assertConstrints(constrints, expected, sorted: false)
+        SLTAssertConstraintsEqualAndSequencial(constraints, expected, tags)
     }
     
     func testStaticsMultipleCenter() {
@@ -738,7 +746,7 @@ extension AnchorsImplementationTests {
             Anchors.center(siblingview)
             Anchors.center(siblingview, offsetX: offsetX, offsetY: offsetY)
         }
-        let constrints = anchors.constraints(item: subview, toItem: superview)
+        let constraints = anchors.constraints(item: subview, toItem: superview)
         let expected = [
             NSLayoutConstraint(item: subview, attribute: .centerX, relatedBy: .equal, toItem: superview, attribute: .centerX, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .centerY, relatedBy: .equal, toItem: superview, attribute: .centerY, multiplier: 1.0, constant: 0.0),
@@ -750,7 +758,7 @@ extension AnchorsImplementationTests {
             NSLayoutConstraint(item: subview, attribute: .centerY, relatedBy: .equal, toItem: siblingview, attribute: .centerY, multiplier: 1.0, constant: offsetY),
         ]
         
-        assertConstrints(constrints, expected, sorted: false)
+        SLTAssertConstraintsEqualAndSequencial(constraints, expected, tags)
     }
     
     func testStaticsMultipleWithMultiplier() {
@@ -765,7 +773,7 @@ extension AnchorsImplementationTests {
             Anchors.size(siblingview, width: width, height: height).multiplier(multiplier)
             Anchors.center(offsetX: offsetX, offsetY: offsetY).multiplier(multiplier)
         }
-        let constrints = anchors.constraints(item: subview, toItem: superview)
+        let constraints = anchors.constraints(item: subview, toItem: superview)
         let expected = [
             NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: siblingview, attribute: .width, multiplier: multiplier, constant: width),
             NSLayoutConstraint(item: subview, attribute: .height, relatedBy: .equal, toItem: siblingview, attribute: .height, multiplier: multiplier, constant: height),
@@ -773,6 +781,6 @@ extension AnchorsImplementationTests {
             NSLayoutConstraint(item: subview, attribute: .centerY, relatedBy: .equal, toItem: superview, attribute: .centerY, multiplier: multiplier, constant: offsetY),
         ]
         
-        assertConstrints(constrints, expected, sorted: false)
+        SLTAssertConstraintsEqualAndSequencial(constraints, expected, tags)
     }
 }
