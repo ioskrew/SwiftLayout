@@ -72,15 +72,17 @@ func SLTAssertConstraintsEqual(_ constraints1: [NSLayoutConstraint],
                                tags: [UIView: String] = [:],
                                sorted: Bool = true,
                                file: StaticString = #filePath, line: UInt = #line) {
-    let descriptions1: [String]
-    let descriptions2: [String]
     if sorted {
-        descriptions1 = constraints1.map(testDescriptionFromConstraint(tags)).sorted()
-        descriptions2 = constraints2.map(testDescriptionFromConstraint(tags)).sorted()
+        SLTAssertConstraintsEqualSorted(constraints1, constraints2, tags, file, line)
     } else {
-        descriptions1 = constraints1.map(testDescriptionFromConstraint(tags))
-        descriptions2 = constraints2.map(testDescriptionFromConstraint(tags))
+        SLTAssertConstraintsEqualAndSequencial(constraints1, constraints2, tags, file, line)
     }
+}
+
+func SLTAssertConstraintsEqualSorted(_ constraints1: [NSLayoutConstraint], _ constraints2: [NSLayoutConstraint], _ tags: [UIView : String], _ file: StaticString = #file, _ line: UInt = #line) {
+    let descriptions1: [String] = constraints1.map(testDescriptionFromConstraint(tags)).sorted()
+    let descriptions2: [String] = constraints2.map(testDescriptionFromConstraint(tags)).sorted()
+    
     let diffs = descriptions2.difference(from: descriptions1)
     var failInsertDescriptions: [String] = []
     var failRemoveDescriptions: [String] = []
@@ -99,6 +101,47 @@ func SLTAssertConstraintsEqual(_ constraints1: [NSLayoutConstraint],
                 .appending(failInsertDescriptions.joined(separator: "\n"))
                 .appending("\n")
                 .appending(failRemoveDescriptions.joined(separator: "\n")),
+            file: file,
+            line: line)
+}
+
+func SLTAssertConstraintsEqualAndSequencial(_ constraints1: [NSLayoutConstraint], _ constraints2: [NSLayoutConstraint], _ tags: [UIView : String] = [:], _ file: StaticString = #file, _ line: UInt = #line) {
+    let descriptions1: [String] = constraints1.map(testDescriptionFromConstraint(tags))
+    let descriptions2: [String] = constraints2.map(testDescriptionFromConstraint(tags))
+   
+    if descriptions1.elementsEqual(descriptions2) {
+        return
+    }
+    
+    func middle(_ count: Int, _ lcount: Int, _ rcount: Int, _ state: String) -> String {
+        let count = count - 2
+        let middleCount = count / 2 + count % 2
+        let leftCount = middleCount - lcount
+        let rightCount = middleCount - rcount
+        let leftMiddle = " ".appending([String](repeating: "-", count: leftCount).joined())
+        let rightMiddle = [String](repeating: "-", count: rightCount).joined().appending(" ")
+        return leftMiddle.appending(state).appending(rightMiddle)
+    }
+    
+    let lineLength = (descriptions1.map(\.count).max() ?? 0) + (descriptions2.map(\.count).max() ?? 0) + 5
+    var failInformations: [String] = []
+    let totalCount = max(descriptions1.count, descriptions2.count)
+    let indexFormat = "%\(totalCount / 10 + 1)d"
+    for offset in 0..<totalCount {
+        if offset < descriptions1.count, offset < descriptions2.count {
+            let left = descriptions1[offset]
+            let right = descriptions2[offset]
+            let state = left == right ? "O" : "X"
+            failInformations.append("\(String(format: indexFormat, offset + 1)) \(left)\(middle(lineLength, left.count, right.count, state))\(right)")
+        } else if offset < descriptions1.count {
+            failInformations.append(String(format: indexFormat, offset + 1).appending(descriptions1[offset]).appending(" ").appending([String](repeating: "-", count: lineLength - descriptions1[offset].count).joined()))
+        } else if offset < descriptions2.count {
+            failInformations.append("\(String(format: indexFormat, offset + 1)) ".appending([String](repeating: "-", count: lineLength - descriptions2[offset].count).joined()).appending(" ").appending(descriptions2[offset]))
+        }
+    }
+   
+    XCTFail("\(descriptions2.count - descriptions1.count) constraints\n"
+                .appending(failInformations.joined(separator: "\n")),
             file: file,
             line: line)
 }
