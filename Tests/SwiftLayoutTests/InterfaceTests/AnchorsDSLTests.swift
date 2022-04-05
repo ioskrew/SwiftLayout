@@ -205,9 +205,9 @@ extension AnchorsDSLTests {
                     Anchors.width.constant(37)
                 }
             }
-            assertConstrints(siblingview.constraints, [
+            SLTAssertConstraintsEqual(siblingview.constraints, [
                 NSLayoutConstraint(item: siblingview, attribute: .width, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: 37.0),
-            ])
+            ], tags: tags)
         }
         
         contextContinuous("update with change") {
@@ -319,38 +319,38 @@ extension AnchorsDSLTests {
         context("enum test first") {
             layout(.first).active().store(&activation)
             
-            assertConstrints(superview.constraints, [
+            SLTAssertConstraintsEqual(superview.constraints, [
                 NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1.0, constant: 0.0),
                 NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1.0, constant: 0.0),
                 NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1.0, constant: 0.0),
                 NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1.0, constant: 0.0),
-            ])
-            assertConstrints(subview.constraints, [])
+            ], tags: tags)
+            SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
         }
         
         context("enum test second") {
             layout(.second).active().store(&activation)
             
-            assertConstrints(superview.constraints, [
+            SLTAssertConstraintsEqual(superview.constraints, [
                 NSLayoutConstraint(item: subview, attribute: .centerX, relatedBy: .equal, toItem: superview, attribute: .centerX, multiplier: 1.0, constant: 0.0),
                 NSLayoutConstraint(item: subview, attribute: .centerY, relatedBy: .equal, toItem: superview, attribute: .centerY, multiplier: 1.0, constant: 0.0),
-            ])
-            assertConstrints(subview.constraints, [
+            ], tags: tags)
+            SLTAssertConstraintsEqual(subview.constraints, [
                 NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: 11.0),
                 NSLayoutConstraint(item: subview, attribute: .height, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: 37.0),
-            ])
+            ], tags: tags)
         }
         
         context("enum test third") {
             layout(.third).active().store(&activation)
             
-            assertConstrints(superview.constraints, [
+            SLTAssertConstraintsEqual(superview.constraints, [
                 NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1.0, constant: 11.0),
                 NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1.0, constant: 0.0),
                 NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1.0, constant: 0.0),
                 NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1.0, constant: -11.0),
-            ])
-            assertConstrints(subview.constraints, [])
+            ], tags: tags)
+            SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
         }
     }
     
