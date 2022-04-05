@@ -105,7 +105,7 @@ func SLTAssertConstraintsEqualSorted(_ constraints1: [NSLayoutConstraint], _ con
             line: line)
 }
 
-func SLTAssertConstraintsEqualAndSequencial(_ constraints1: [NSLayoutConstraint], _ constraints2: [NSLayoutConstraint], _ tags: [UIView : String] = [:], _ file: StaticString = #file, _ line: UInt = #line) {
+func SLTAssertConstraintsEqualAndSequencial<S1: Sequence, S2: Sequence>(_ constraints1: S1, _ constraints2: S2, _ tags: [UIView : String] = [:], _ file: StaticString = #file, _ line: UInt = #line) where S1.Element: NSLayoutConstraint, S2.Element: NSLayoutConstraint {
     let descriptions1: [String] = constraints1.map(testDescriptionFromConstraint(tags))
     let descriptions2: [String] = constraints2.map(testDescriptionFromConstraint(tags))
    
