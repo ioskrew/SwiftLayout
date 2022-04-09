@@ -706,7 +706,7 @@ extension ViewPrinterTests {
                 Anchors.leading.trailing
             }
         }
-        """.tabbed)
+        """)
     }
     
     private final class IdentifierView: UIView, Layoutable {
