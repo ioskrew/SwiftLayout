@@ -30,7 +30,7 @@ struct ViewTags {
         self.viewTags[AddressDescriptor(view)] = identifier
     }
     
-    func tag(address: AddressDescriptor) -> String? {
+    func tag(address: AddressDescriptor, options: ViewPrinter.PrintOptions = []) -> String? {
         if let tag = customTags[address] {
             return tag
         } else if let tag = viewTags[address] {
@@ -40,10 +40,10 @@ struct ViewTags {
         }
     }
     
-    func tag<O: AnyObject>(object: O?) -> String? {
+    func tag<O: AnyObject>(object: O?, options: ViewPrinter.PrintOptions = []) -> String? {
         guard let object = object else {
             return nil
         }
-        return tag(address: AddressDescriptor(object))
+        return tag(address: AddressDescriptor(object), options: options)
     }
 }
