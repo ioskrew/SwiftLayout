@@ -31,7 +31,7 @@ extension ViewPrinterTests {
         root {
             child
         }
-        """.tabbed
+        """
         
         let result = ViewPrinter(root).description
         XCTAssertEqual(result, expect)
@@ -52,7 +52,7 @@ extension ViewPrinterTests {
             a
             b
         }
-        """.tabbed
+        """
         
         let result = ViewPrinter(root).description
         XCTAssertEqual(result, expect)
@@ -75,7 +75,7 @@ extension ViewPrinterTests {
                 grandchild
             }
         }
-        """.tabbed
+        """
         
         let result = ViewPrinter(root).description
         XCTAssertEqual(result, expect)
@@ -101,7 +101,7 @@ extension ViewPrinterTests {
             }
             friend
         }
-        """.tabbed
+        """
         let result = ViewPrinter(root).description
         XCTAssertEqual(result, expect)
     }
@@ -139,7 +139,7 @@ extension ViewPrinterTests {
                 Anchors.centerX.equalTo(one)
             }
         }
-        """.tabbed)
+        """)
     }
     
     func testSizeWithConstant() {
@@ -158,7 +158,7 @@ extension ViewPrinterTests {
                 Anchors.width.equalToSuper(constant: -20.0)
             }
         }
-        """.tabbed)
+        """)
     }
     
     func testPrintWithAnchorsWithOneDepth() {
@@ -180,7 +180,7 @@ extension ViewPrinterTests {
                 Anchors.bottom.equalToSuper(constant: -10.0)
             }
         }
-        """.tabbed
+        """
         
         let result = ViewPrinter(root).description
         XCTAssertEqual(result, expect)
@@ -212,7 +212,7 @@ extension ViewPrinterTests {
                 Anchors.top.equalTo(child, attribute: .bottom)
             }
         }
-        """.tabbed
+        """
         
         let result = ViewPrinter(root).description
         XCTAssertEqual(result, expect)
@@ -233,7 +233,7 @@ extension ViewPrinterTests {
                 Anchors.leading.trailing
             }
         }
-        """.tabbed
+        """
         
         let result = ViewPrinter(root).description
         
@@ -267,7 +267,7 @@ extension ViewPrinterTests {
                 }
             }
         }
-        """.tabbed
+        """
         
         let result = ViewPrinter(root).description
         XCTAssertEqual(result, expect)
@@ -294,7 +294,7 @@ extension ViewPrinterTests {
                 }
             }
         }
-        """.tabbed
+        """
         
         let result = ViewPrinter(root, tags: [child: "child", grand: "grandchild"]).description
         XCTAssertEqual(result, expect)
@@ -317,7 +317,7 @@ extension ViewPrinterTests {
                 Anchors.leading
             }
         }
-        """.tabbed
+        """
        
         let result = ViewPrinter(root).description
         
@@ -331,7 +331,7 @@ extension ViewPrinterTests {
             profileView:\(UIImageView.self)
             nameLabel:\(UILabel.self)
         }
-        """.tabbed
+        """
         
         let result = ViewPrinter(cell, tags: [cell: "contentView"]).updateIdentifiers(.withTypeOfView).description
         XCTAssertEqual(result, expect)
@@ -369,7 +369,7 @@ extension ViewPrinterTests {
                 Anchors.trailing.equalTo(child)
             }
         }
-        """.tabbed
+        """
         
         XCTAssertEqual(ViewPrinter(root).description, expect)
     }
@@ -402,7 +402,7 @@ extension ViewPrinterTests {
                 Anchors.height.equalTo(child)
             }
         }
-        """.tabbed
+        """
         
         XCTAssertEqual(ViewPrinter(root).description, expect)
     }
@@ -428,7 +428,7 @@ extension ViewPrinterTests {
                 Anchors.width.height.equalToSuper()
             }
         }
-        """.tabbed)
+        """)
         
     }
     
@@ -514,7 +514,7 @@ extension ViewPrinterTests {
                 }
             }
         }
-        """.tabbed)
+        """)
     }
     
     class Earth: UIView {
@@ -622,7 +622,7 @@ extension ViewPrinterTests {
                 Anchors.leading.trailing
             }
         }
-        """.tabbed)
+        """)
     }
     
 }
@@ -656,7 +656,7 @@ extension ViewPrinterTests {
                 }
             }
         }
-        """.tabbed
+        """
         
         XCTAssertEqual(
             ViewPrinter(container.root, options: .onlyIdentifier)
