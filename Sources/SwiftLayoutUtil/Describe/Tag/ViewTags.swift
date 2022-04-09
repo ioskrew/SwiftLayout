@@ -32,9 +32,9 @@ struct ViewTags {
     
     func tag(address: AddressDescriptor, options: ViewPrinter.PrintOptions = []) -> String? {
         if let tag = customTags[address] {
-            return tag
+            return TagOptionChecking(address: address, tag: tag).checked(with: options)
         } else if let tag = viewTags[address] {
-            return tag
+            return TagOptionChecking(address: address, tag: tag).checked(with: options)
         } else {
             return nil
         }
@@ -45,5 +45,26 @@ struct ViewTags {
             return nil
         }
         return tag(address: AddressDescriptor(object), options: options)
+    }
+    
+    private struct TagOptionChecking {
+        let address: AddressDescriptor
+        let tag: String
+        
+        func checked(with options: ViewPrinter.PrintOptions) -> String? {
+            if options.contains(.onlyIdentifier) {
+                if tagEqualWithAddress() {
+                    return nil
+                } else {
+                    return tag
+                }
+            } else {
+                return tag
+            }
+        }
+        
+        func tagEqualWithAddress() -> Bool {
+            address.description == tag
+        }
     }
 }
