@@ -693,3 +693,47 @@ extension ViewPrinterTests {
         }
     }
 }
+
+// MARK: - options
+extension ViewPrinterTests {
+    func testViewPrinterOptionIdentifierOnly() {
+        let view = IdentifierView(frame: .zero)
+        
+        XCTAssertEqual(ViewPrinter(view,tags: [view: "view"], options: .onlyIdentifier).description, """
+        view {
+            red.anchors {
+                Anchors.top
+                Anchors.leading.trailing
+            }
+        }
+        """)
+    }
+    
+    private final class IdentifierView: UIView, Layoutable {
+        let red = UIView().identifying("red")
+        let blue = UIView()
+        
+        var activation: Activation?
+        
+        var layout: some Layout {
+            self {
+                red.anchors {
+                    Anchors.cap()
+                }
+                blue.anchors {
+                    Anchors.top.equalTo(red.bottomAnchor)
+                    Anchors.shoe()
+                }
+            }
+        }
+        
+        override init(frame: CGRect) {
+            super.init(frame: frame)
+            sl.updateLayout()
+        }
+        
+        required init?(coder: NSCoder) {
+            fatalError()
+        }
+    }
+}
