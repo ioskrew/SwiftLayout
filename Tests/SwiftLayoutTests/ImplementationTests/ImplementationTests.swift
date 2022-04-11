@@ -175,8 +175,8 @@ extension ImplementationTests {
 
 extension ImplementationTests {
     
-    func testStack() {
-        let stack = StackView(frame: .init(x: 0, y: 0, width: 40, height: 80))
+    func testStackViewMaintainOrderingOfArrangedSubviews() {
+        let stack = StackView(frame: .init(x: 0, y: 0, width: 40, height: 80)).identifying("view")
         var a: UIView {
             stack.a
         }
@@ -187,14 +187,15 @@ extension ImplementationTests {
         XCTAssertEqual(a.frame.debugDescription, "(20.0, 0.0, 0.0, 40.0)")
         XCTAssertEqual(b.frame.debugDescription, "(20.0, 40.0, 0.0, 40.0)")
         
-        stack.a.isHidden = true
+        stack.isA = false
         stack.sl.updateLayout(forceLayout: true)
         
         XCTAssertEqual(b.frame.debugDescription, "(20.0, 0.0, 0.0, 80.0)")
         
-        stack.a.isHidden = false
+        stack.isA = true
         stack.sl.updateLayout(forceLayout: true)
         
+        XCTAssertEqual(stack.stack.arrangedSubviews.compactMap(\.accessibilityIdentifier), [a, b].compactMap(\.accessibilityIdentifier))
         XCTAssertEqual(a.frame.debugDescription, "(20.0, 0.0, 0.0, 40.0)")
         XCTAssertEqual(b.frame.debugDescription, "(20.0, 40.0, 0.0, 40.0)")
     }
@@ -206,7 +207,7 @@ extension ImplementationTests {
                 stack.anchors {
                     Anchors.allSides()
                 }.sublayout {
-                    if !a.isHidden {
+                    if isA {
                         a
                     }
                     b
@@ -219,9 +220,11 @@ extension ImplementationTests {
             stack.distribution = .fillEqually
             stack.alignment = .center
             stack.spacing = 0.0
-        }
+        }.identifying("stack")
         
-        let a = UIView()
-        let b = UIView()
+        let a = UIView().identifying("a")
+        let b = UIView().identifying("b")
+        
+        var isA: Bool = true
     }
 }

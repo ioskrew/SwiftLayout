@@ -77,7 +77,7 @@ final class LayoutableTests: XCTestCase {
             SLTAssertView(view.friend, superview: view.root, subviews: [])
             
             XCTAssertEqual(view.root.addSubviewCallCount(view.child), 1)
-            XCTAssertEqual(view.root.addSubviewCallCount(view.friend), 1)
+            XCTAssertEqual(view.root.addSubviewCallCount(view.friend), 2)
             XCTAssertEqual(view.root.removeFromSuperviewCallCount, 0)
             XCTAssertEqual(view.child.removeFromSuperviewCallCount, 1)
             XCTAssertEqual(view.root.removeFromSuperviewCallCount, 0)
