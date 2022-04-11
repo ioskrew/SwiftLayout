@@ -172,3 +172,56 @@ extension ImplementationTests {
         XCTAssertEqual(currents.intersection(constraintsBetweebViews), constraintsBetweebViews)
     }
 }
+
+extension ImplementationTests {
+    
+    func testStack() {
+        let stack = StackView(frame: .init(x: 0, y: 0, width: 40, height: 80))
+        var a: UIView {
+            stack.a
+        }
+        var b: UIView {
+            stack.b
+        }
+        stack.sl.updateLayout(forceLayout: true)
+        XCTAssertEqual(a.frame.debugDescription, "(20.0, 0.0, 0.0, 40.0)")
+        XCTAssertEqual(b.frame.debugDescription, "(20.0, 40.0, 0.0, 40.0)")
+        
+        stack.a.isHidden = true
+        stack.sl.updateLayout(forceLayout: true)
+        
+        XCTAssertEqual(b.frame.debugDescription, "(20.0, 0.0, 0.0, 80.0)")
+        
+        stack.a.isHidden = false
+        stack.sl.updateLayout(forceLayout: true)
+        
+        XCTAssertEqual(a.frame.debugDescription, "(20.0, 0.0, 0.0, 40.0)")
+        XCTAssertEqual(b.frame.debugDescription, "(20.0, 40.0, 0.0, 40.0)")
+    }
+    
+    final class StackView: UIView, Layoutable {
+        var activation: Activation?
+        var layout: some Layout {
+            self {
+                stack.anchors {
+                    Anchors.allSides()
+                }.sublayout {
+                    if !a.isHidden {
+                        a
+                    }
+                    b
+                }
+            }
+        }
+        
+        let stack = UIStackView().config { stack in
+            stack.axis = .vertical
+            stack.distribution = .fillEqually
+            stack.alignment = .center
+            stack.spacing = 0.0
+        }
+        
+        let a = UIView()
+        let b = UIView()
+    }
+}
