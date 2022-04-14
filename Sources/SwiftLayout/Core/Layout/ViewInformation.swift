@@ -22,12 +22,9 @@ final class ViewInformation: Hashable {
         guard let view = view else {
             return
         }
-        if superview != view.superview {
-            if let stackSuperView = superview as? UIStackView {
-                stackSuperView.addArrangedSubview(view)
-            } else {
-                superview?.addSubview(view)
-            }
+        superview?.addSubview(view)
+        if let stackSuperView = superview as? UIStackView {
+            stackSuperView.addArrangedSubview(view)
         }
     }
     

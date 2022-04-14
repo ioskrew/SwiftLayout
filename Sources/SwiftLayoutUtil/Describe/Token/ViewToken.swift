@@ -20,8 +20,8 @@ struct ViewToken {
     
     enum Parser {
         static func from(_ view: UIView, viewTags tags: ViewTags, options: ViewPrinter.PrintOptions) -> ViewToken? {
-            let superviewTag = tags.tag(object: view.superview)
-            if let viewTag = tags.tag(object: view) {
+            let superviewTag = tags.tag(object: view.superview, options: options)
+            if let viewTag = tags.tag(object: view, options: options) {
                 return ViewToken(superviewTag: superviewTag,
                                  viewTag: viewTag,
                                  subviews: view.subviews.compactMap({ Parser.from($0, viewTags: tags, options: options) }))

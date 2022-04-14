@@ -17,16 +17,16 @@ final class LayoutDSLTests: XCTestCase {
     var activation: Set<Activation> = []
     
     override func setUp() {
-        window = UIView(frame: .init(x: 0, y: 0, width: 150, height: 150))
-        root = UIView()
+        window = UIView(frame: .init(x: 0, y: 0, width: 150, height: 150)).identifying("window")
+        root = UIView().identifying("root")
         root.translatesAutoresizingMaskIntoConstraints = false
         window.addSubview(root)
-        child = UIView()
-        button = UIButton()
-        label = UILabel()
-        red = UIView()
-        blue = UIView()
-        image = UIImageView()
+        child = UIView().identifying("child")
+        button = UIButton().identifying("button")
+        label = UILabel().identifying("label")
+        red = UIView().identifying("red")
+        blue = UIView().identifying("blue")
+        image = UIImageView().identifying("image")
     }
     
     override func tearDown() {
@@ -52,12 +52,12 @@ extension LayoutDSLTests {
         
         layout.active().store(&activation)
         
-        assertView(root, superview: window, subviews: [red])
-        assertView(red, superview: root, subviews: [button, label, blue])
-        assertView(button, superview: red, subviews: [])
-        assertView(label, superview: red, subviews: [])
-        assertView(blue, superview: red, subviews: [image])
-        assertView(image, superview: blue, subviews: [])
+        SLTAssertView(root, superview: window, subviews: [red])
+        SLTAssertView(red, superview: root, subviews: [button, label, blue])
+        SLTAssertView(button, superview: red, subviews: [])
+        SLTAssertView(label, superview: red, subviews: [])
+        SLTAssertView(blue, superview: red, subviews: [image])
+        SLTAssertView(image, superview: blue, subviews: [])
     }
     
     func testDeactive() {
@@ -78,12 +78,12 @@ extension LayoutDSLTests {
         
         activation = []
         
-        assertView(root, superview: window, subviews: [])
-        assertView(red, superview: nil, subviews: [])
-        assertView(button, superview: nil, subviews: [])
-        assertView(label, superview: nil, subviews: [])
-        assertView(blue, superview: nil, subviews: [])
-        assertView(image, superview: nil, subviews: [])
+        SLTAssertView(root, superview: window, subviews: [])
+        SLTAssertView(red, superview: nil, subviews: [])
+        SLTAssertView(button, superview: nil, subviews: [])
+        SLTAssertView(label, superview: nil, subviews: [])
+        SLTAssertView(blue, superview: nil, subviews: [])
+        SLTAssertView(image, superview: nil, subviews: [])
     }
     
     func testFinalActive() {
@@ -102,12 +102,12 @@ extension LayoutDSLTests {
         
         layout.finalActive()
         
-        assertView(root, superview: window, subviews: [red])
-        assertView(red, superview: root, subviews: [button, label, blue])
-        assertView(button, superview: red, subviews: [])
-        assertView(label, superview: red, subviews: [])
-        assertView(blue, superview: red, subviews: [image])
-        assertView(image, superview: blue, subviews: [])
+        SLTAssertView(root, superview: window, subviews: [red])
+        SLTAssertView(red, superview: root, subviews: [button, label, blue])
+        SLTAssertView(button, superview: red, subviews: [])
+        SLTAssertView(label, superview: red, subviews: [])
+        SLTAssertView(blue, superview: red, subviews: [image])
+        SLTAssertView(image, superview: blue, subviews: [])
     }
     
     func testUpdateLayout() {
@@ -132,9 +132,9 @@ extension LayoutDSLTests {
         context("active") {
             activation = layout.active(forceLayout: true)
             
-            assertView(parentView, superview: nil, subviews: [childView_0])
-            assertView(childView_0, superview: parentView, subviews: [])
-            assertView(childView_1, superview: nil, subviews: [])
+            SLTAssertView(parentView, superview: nil, subviews: [childView_0])
+            SLTAssertView(childView_0, superview: parentView, subviews: [])
+            SLTAssertView(childView_1, superview: nil, subviews: [])
             XCTAssertEqual(parentView.addSubviewCallCount(childView_0), 1)
             XCTAssertEqual(parentView.addSubviewCallCount(childView_1), 0)
             XCTAssertEqual(childView_0.removeFromSuperviewCallCount, 0)
@@ -144,10 +144,10 @@ extension LayoutDSLTests {
         context("update without change") {
             activation = layout.update(fromActivation: activation!, forceLayout: true)
             
-            assertView(parentView, superview: nil, subviews: [childView_0])
-            assertView(childView_0, superview: parentView, subviews: [])
-            assertView(childView_1, superview: nil, subviews: [])
-            XCTAssertEqual(parentView.addSubviewCallCount(childView_0), 1)
+            SLTAssertView(parentView, superview: nil, subviews: [childView_0])
+            SLTAssertView(childView_0, superview: parentView, subviews: [])
+            SLTAssertView(childView_1, superview: nil, subviews: [])
+            XCTAssertEqual(parentView.addSubviewCallCount(childView_0), 2)
             XCTAssertEqual(parentView.addSubviewCallCount(childView_1), 0)
             XCTAssertEqual(childView_0.removeFromSuperviewCallCount, 0)
             XCTAssertEqual(childView_1.removeFromSuperviewCallCount, 0)
@@ -158,10 +158,10 @@ extension LayoutDSLTests {
             
             activation = layout.update(fromActivation: activation!, forceLayout: true)
             
-            assertView(parentView, superview: nil, subviews: [childView_1])
-            assertView(childView_0, superview: nil, subviews: [])
-            assertView(childView_1, superview: parentView, subviews: [])
-            XCTAssertEqual(parentView.addSubviewCallCount(childView_0), 1)
+            SLTAssertView(parentView, superview: nil, subviews: [childView_1])
+            SLTAssertView(childView_0, superview: nil, subviews: [])
+            SLTAssertView(childView_1, superview: parentView, subviews: [])
+            XCTAssertEqual(parentView.addSubviewCallCount(childView_0), 2)
             XCTAssertEqual(parentView.addSubviewCallCount(childView_1), 1)
             XCTAssertEqual(childView_0.removeFromSuperviewCallCount, 1)
             XCTAssertEqual(childView_1.removeFromSuperviewCallCount, 0)
@@ -171,10 +171,10 @@ extension LayoutDSLTests {
             activation?.deactive()
             activation = nil
             
-            assertView(parentView, superview: nil, subviews: [])
-            assertView(childView_0, superview: nil, subviews: [])
-            assertView(childView_1, superview: nil, subviews: [])
-            XCTAssertEqual(parentView.addSubviewCallCount(childView_0), 1)
+            SLTAssertView(parentView, superview: nil, subviews: [])
+            SLTAssertView(childView_0, superview: nil, subviews: [])
+            SLTAssertView(childView_1, superview: nil, subviews: [])
+            XCTAssertEqual(parentView.addSubviewCallCount(childView_0), 2)
             XCTAssertEqual(parentView.addSubviewCallCount(childView_1), 1)
             XCTAssertEqual(childView_0.removeFromSuperviewCallCount, 1)
             XCTAssertEqual(childView_1.removeFromSuperviewCallCount, 1)
@@ -208,20 +208,20 @@ extension LayoutDSLTests {
             flag = true
             layout.active().store(&activation)
             
-            assertView(root, superview: window, subviews: [red, trueView])
-            assertView(red, superview: root, subviews: [button])
-            assertView(trueView, superview: root, subviews: [])
-            assertView(falseView, superview: nil, subviews: [])
+            SLTAssertView(root, superview: window, subviews: [red, trueView])
+            SLTAssertView(red, superview: root, subviews: [button])
+            SLTAssertView(trueView, superview: root, subviews: [])
+            SLTAssertView(falseView, superview: nil, subviews: [])
         }
         
         context("if false") {
             flag = false
             layout.active().store(&activation)
             
-            assertView(root, superview: window, subviews: [red, falseView])
-            assertView(red, superview: root, subviews: [button])
-            assertView(trueView, superview: nil, subviews: [])
-            assertView(falseView, superview: root, subviews: [])
+            SLTAssertView(root, superview: window, subviews: [red, falseView])
+            SLTAssertView(red, superview: root, subviews: [button])
+            SLTAssertView(trueView, superview: nil, subviews: [])
+            SLTAssertView(falseView, superview: root, subviews: [])
         }
         
     }
@@ -256,31 +256,31 @@ extension LayoutDSLTests {
         context("enum test first") {
             layout(.first).active().store(&activation)
             
-            assertView(root, superview: window, subviews: [child])
-            assertView(child, superview: root, subviews: [first])
-            assertView(first, superview: child, subviews: [])
-            assertView(second, superview: nil, subviews: [])
-            assertView(third, superview: nil, subviews: [])
+            SLTAssertView(root, superview: window, subviews: [child])
+            SLTAssertView(child, superview: root, subviews: [first])
+            SLTAssertView(first, superview: child, subviews: [])
+            SLTAssertView(second, superview: nil, subviews: [])
+            SLTAssertView(third, superview: nil, subviews: [])
         }
         
         context("enum test second") {
             layout(.second).active().store(&activation)
             
-            assertView(root, superview: window, subviews: [child])
-            assertView(child, superview: root, subviews: [second])
-            assertView(first, superview: nil, subviews: [])
-            assertView(second, superview: child, subviews: [])
-            assertView(third, superview: nil, subviews: [])
+            SLTAssertView(root, superview: window, subviews: [child])
+            SLTAssertView(child, superview: root, subviews: [second])
+            SLTAssertView(first, superview: nil, subviews: [])
+            SLTAssertView(second, superview: child, subviews: [])
+            SLTAssertView(third, superview: nil, subviews: [])
         }
         
         context("enum test third") {
             layout(.third).active().store(&activation)
             
-            assertView(root, superview: window, subviews: [child])
-            assertView(child, superview: root, subviews: [third])
-            assertView(first, superview: nil, subviews: [])
-            assertView(second, superview: nil, subviews: [])
-            assertView(third, superview: child, subviews: [])
+            SLTAssertView(root, superview: window, subviews: [child])
+            SLTAssertView(child, superview: root, subviews: [third])
+            SLTAssertView(first, superview: nil, subviews: [])
+            SLTAssertView(second, superview: nil, subviews: [])
+            SLTAssertView(third, superview: child, subviews: [])
         }
     }
     
@@ -300,17 +300,17 @@ extension LayoutDSLTests {
             optional = nil
             layout.active().store(&activation)
             
-            assertView(root, superview: window, subviews: [red])
-            assertView(red, superview: root, subviews: [])
+            SLTAssertView(root, superview: window, subviews: [red])
+            SLTAssertView(red, superview: root, subviews: [])
         }
         
         context("view is optional") {
             optional = UIView()
             layout.active().store(&activation)
             
-            assertView(root, superview: window, subviews: [red])
-            assertView(red, superview: root, subviews: [optional!])
-            assertView(optional!, superview: red, subviews: [])
+            SLTAssertView(root, superview: window, subviews: [red])
+            SLTAssertView(red, superview: root, subviews: [optional!])
+            SLTAssertView(optional!, superview: red, subviews: [])
         }
     }
     
@@ -333,11 +333,11 @@ extension LayoutDSLTests {
         
         layout.active().store(&activation)
         
-        assertView(root, superview: window, subviews: views)
-        assertView(view_0, superview: root, subviews: [])
-        assertView(view_1, superview: root, subviews: [])
-        assertView(view_2, superview: root, subviews: [])
-        assertView(view_3, superview: root, subviews: [])
+        SLTAssertView(root, superview: window, subviews: views)
+        SLTAssertView(view_0, superview: root, subviews: [])
+        SLTAssertView(view_1, superview: root, subviews: [])
+        SLTAssertView(view_2, superview: root, subviews: [])
+        SLTAssertView(view_3, superview: root, subviews: [])
     }
 }
 
@@ -360,9 +360,9 @@ extension LayoutDSLTests {
         
         layout.finalActive()
         
-        assertView(root, superview: window, subviews: [child])
-        assertView(child, superview: root, subviews: [label])
-        assertView(label, superview: child, subviews: [])
+        SLTAssertView(root, superview: window, subviews: [child])
+        SLTAssertView(child, superview: root, subviews: [label])
+        SLTAssertView(label, superview: child, subviews: [])
         XCTAssertEqual(child.backgroundColor, UIColor.yellow)
         XCTAssertEqual(label.text, "test config")
         XCTAssertEqual(label.textColor, UIColor.green)
@@ -386,12 +386,12 @@ extension LayoutDSLTests {
         
         layout.finalActive()
         
-        assertView(root, superview: window, subviews: [red])
-        assertView(red, superview: root, subviews: [button, label, blue])
-        assertView(button, superview: red, subviews: [])
-        assertView(label, superview: red, subviews: [])
-        assertView(blue, superview: red, subviews: [image])
-        assertView(image, superview: blue, subviews: [])
+        SLTAssertView(root, superview: window, subviews: [red])
+        SLTAssertView(red, superview: root, subviews: [button, label, blue])
+        SLTAssertView(button, superview: red, subviews: [])
+        SLTAssertView(label, superview: red, subviews: [])
+        SLTAssertView(blue, superview: red, subviews: [image])
+        SLTAssertView(image, superview: blue, subviews: [])
     }
     
     func testSeparatedFromFirstLevel() {
@@ -416,14 +416,14 @@ extension LayoutDSLTests {
         
         layout.finalActive()
         
-        assertView(root, superview: window, subviews: [child, red, image])
-        assertView(child, superview: root, subviews: [button, label])
-        assertView(red, superview: root, subviews: [blue, green])
-        assertView(image, superview: root, subviews: [])
-        assertView(button, superview: child, subviews: [])
-        assertView(label, superview: child, subviews: [])
-        assertView(blue, superview: red, subviews: [])
-        assertView(green, superview: red, subviews: [])
+        SLTAssertView(root, superview: window, subviews: [child, red, image])
+        SLTAssertView(child, superview: root, subviews: [button, label])
+        SLTAssertView(red, superview: root, subviews: [blue, green])
+        SLTAssertView(image, superview: root, subviews: [])
+        SLTAssertView(button, superview: child, subviews: [])
+        SLTAssertView(label, superview: child, subviews: [])
+        SLTAssertView(blue, superview: red, subviews: [])
+        SLTAssertView(green, superview: red, subviews: [])
     }
 }
 
@@ -453,12 +453,12 @@ extension LayoutDSLTests {
         
         layout.finalActive()
         
-        assertView(root, superview: window, subviews: [group1_1, group1_2, group1_3, group2_1, group2_2])
-        assertView(group1_1, superview: root, subviews: [])
-        assertView(group1_2, superview: root, subviews: [])
-        assertView(group1_3, superview: root, subviews: [])
-        assertView(group2_1, superview: root, subviews: [])
-        assertView(group2_2, superview: root, subviews: [])
+        SLTAssertView(root, superview: window, subviews: [group1_1, group1_2, group1_3, group2_1, group2_2])
+        SLTAssertView(group1_1, superview: root, subviews: [])
+        SLTAssertView(group1_2, superview: root, subviews: [])
+        SLTAssertView(group1_3, superview: root, subviews: [])
+        SLTAssertView(group2_1, superview: root, subviews: [])
+        SLTAssertView(group2_2, superview: root, subviews: [])
     }
 }
 
@@ -508,23 +508,23 @@ extension LayoutDSLTests {
             module2 = nil
             layout.active().store(&activation)
             
-            assertView(root, superview: window, subviews: [module1.view1, module1.view3])
-            assertView(module1.view1, superview: root, subviews: [module1.view2])
-            assertView(module1.view2, superview: module1.view1, subviews: [])
-            assertView(module1.view3, superview: root, subviews: [])
+            SLTAssertView(root, superview: window, subviews: [module1.view1, module1.view3])
+            SLTAssertView(module1.view1, superview: root, subviews: [module1.view2])
+            SLTAssertView(module1.view2, superview: module1.view1, subviews: [])
+            SLTAssertView(module1.view3, superview: root, subviews: [])
         }
         
         context("module2 is optional") {
             module2 = Module2()
             layout.active().store(&activation)
             
-            assertView(root, superview: window, subviews: [module1.view1, module1.view3, module2!.view1, module2!.view2])
-            assertView(module1.view1, superview: root, subviews: [module1.view2])
-            assertView(module1.view2, superview: module1.view1, subviews: [])
-            assertView(module1.view3, superview: root, subviews: [])
-            assertView(module2!.view1, superview: root, subviews: [])
-            assertView(module2!.view2, superview: root, subviews: [module2!.view3])
-            assertView(module2!.view3, superview: module2!.view2, subviews: [])
+            SLTAssertView(root, superview: window, subviews: [module1.view1, module1.view3, module2!.view1, module2!.view2])
+            SLTAssertView(module1.view1, superview: root, subviews: [module1.view2])
+            SLTAssertView(module1.view2, superview: module1.view1, subviews: [])
+            SLTAssertView(module1.view3, superview: root, subviews: [])
+            SLTAssertView(module2!.view1, superview: root, subviews: [])
+            SLTAssertView(module2!.view2, superview: root, subviews: [module2!.view3])
+            SLTAssertView(module2!.view3, superview: module2!.view2, subviews: [])
         }
     }
 }

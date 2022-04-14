@@ -30,20 +30,41 @@ struct ViewTags {
         self.viewTags[AddressDescriptor(view)] = identifier
     }
     
-    func tag(address: AddressDescriptor) -> String? {
+    func tag(address: AddressDescriptor, options: ViewPrinter.PrintOptions = []) -> String? {
         if let tag = customTags[address] {
-            return tag
+            return TagOptionChecking(address: address, tag: tag).checked(with: options)
         } else if let tag = viewTags[address] {
-            return tag
+            return TagOptionChecking(address: address, tag: tag).checked(with: options)
         } else {
             return nil
         }
     }
     
-    func tag<O: AnyObject>(object: O?) -> String? {
+    func tag<O: AnyObject>(object: O?, options: ViewPrinter.PrintOptions = []) -> String? {
         guard let object = object else {
             return nil
         }
-        return tag(address: AddressDescriptor(object))
+        return tag(address: AddressDescriptor(object), options: options)
+    }
+    
+    private struct TagOptionChecking {
+        let address: AddressDescriptor
+        let tag: String
+        
+        func checked(with options: ViewPrinter.PrintOptions) -> String? {
+            if options.contains(.onlyIdentifier) {
+                if tagEqualWithAddress() {
+                    return nil
+                } else {
+                    return tag
+                }
+            } else {
+                return tag
+            }
+        }
+        
+        func tagEqualWithAddress() -> Bool {
+            address.description == tag
+        }
     }
 }
