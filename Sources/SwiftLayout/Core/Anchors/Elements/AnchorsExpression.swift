@@ -15,6 +15,7 @@ public struct AnchorsExpression<Attribute: AnchorsAttribute> {
     
     private var constant: CGFloat = 0.0
     private var multiplier: CGFloat = 1.0
+    private var priority: UILayoutPriority = .required
     
     private init(
         from anchors: AnchorsExpression<Attribute>,
@@ -45,6 +46,11 @@ public struct AnchorsExpression<Attribute: AnchorsAttribute> {
         self.multiplier = multiplier
     }
     
+    private init(from anchors: AnchorsExpression<Attribute>, priority: UILayoutPriority) {
+        self = anchors
+        self.priority = priority
+    }
+    
     var constraintProperties: [AnchorsConstraintProperty] {
         attributes.map {
             AnchorsConstraintProperty(
@@ -53,7 +59,8 @@ public struct AnchorsExpression<Attribute: AnchorsAttribute> {
                 toItem: toItem,
                 toAttribute: toAttribute?.attribute,
                 constant: constant,
-                multiplier: multiplier
+                multiplier: multiplier,
+                priority: priority
             )
         }
     }
@@ -102,6 +109,10 @@ extension AnchorsExpression {
     
     public func multiplier(_ multiplier: CGFloat) -> Self {
         Self.init(from: self, multiplier: multiplier)
+    }
+    
+    public func priority(_ priority: UILayoutPriority) -> Self {
+        Self.init(from: self, priority: priority)
     }
 }
 
