@@ -15,30 +15,40 @@ public struct AnchorsExpression<Attribute: AnchorsAttribute> {
     
     private var constant: CGFloat = 0.0
     private var multiplier: CGFloat = 1.0
+    private var priority: UILayoutPriority = .required
     
-    init(
+    private init(
         from anchors: AnchorsExpression<Attribute>,
         relation: NSLayoutConstraint.Relation,
         toItem: AnchorsItem,
-        toAttribute: Attribute? = nil,
-        constant: CGFloat = 0.0,
-        multiplier: CGFloat = 1.0
+        toAttribute: Attribute?,
+        constant: CGFloat
     ) {
-        self.attributes = anchors.attributes
+        self = anchors
         self.relation = relation
         self.toItem = toItem
         self.toAttribute = toAttribute
         self.constant = constant
+    }
+    
+    private init(from anchors: AnchorsExpression<Attribute>, appendedAttribute: Attribute) {
+        self = anchors
+        self.attributes += [appendedAttribute]
+    }
+    
+    private init(from anchors: AnchorsExpression<Attribute>, constant: CGFloat) {
+        self = anchors
+        self.constant = constant
+    }
+    
+    private init(from anchors: AnchorsExpression<Attribute>, multiplier: CGFloat) {
+        self = anchors
         self.multiplier = multiplier
     }
     
-    init(from anchors: AnchorsExpression<Attribute>, appendedAttribute: Attribute) {
-        self.attributes = anchors.attributes + [appendedAttribute]
-        self.relation = anchors.relation
-        self.toItem = anchors.toItem
-        self.toAttribute = anchors.toAttribute
-        self.constant = anchors.constant
-        self.multiplier = anchors.multiplier
+    private init(from anchors: AnchorsExpression<Attribute>, priority: UILayoutPriority) {
+        self = anchors
+        self.priority = priority
     }
     
     var constraintProperties: [AnchorsConstraintProperty] {
@@ -49,7 +59,8 @@ public struct AnchorsExpression<Attribute: AnchorsAttribute> {
                 toItem: toItem,
                 toAttribute: toAttribute?.attribute,
                 constant: constant,
-                multiplier: multiplier
+                multiplier: multiplier,
+                priority: priority
             )
         }
     }
@@ -88,13 +99,20 @@ extension AnchorsExpression {
     public func lessThanOrEqualTo<I>(_ toItem: I, attribute: Attribute? = nil, constant: CGFloat = .zero) -> Self where I: AnchorsItemable {
         Self.init(from: self, relation: .lessThanOrEqual, toItem: AnchorsItem(toItem), toAttribute: attribute, constant: constant)
     }
+}
+
+extension AnchorsExpression {
     
     public func constant(_ constant: CGFloat) -> Self {
-        Self.init(from: self, relation: self.relation, toItem: self.toItem, toAttribute: toAttribute, constant: constant, multiplier: multiplier)
+        Self.init(from: self, constant: constant)
     }
     
     public func multiplier(_ multiplier: CGFloat) -> Self {
-        Self.init(from: self, relation: self.relation, toItem: self.toItem, toAttribute: toAttribute, constant: constant, multiplier: multiplier)
+        Self.init(from: self, multiplier: multiplier)
+    }
+    
+    public func priority(_ priority: UILayoutPriority) -> Self {
+        Self.init(from: self, priority: priority)
     }
 }
 
@@ -173,13 +191,13 @@ extension AnchorsExpression where Attribute == AnchorsDimensionAttribute {
     init(dimensions attributes: Attribute...) {
         self.attributes = attributes
     }
-
-    public func equalTo(constant: CGFloat) -> Self {
-        Self.init(from: self, relation: .equal, toItem: .deny, constant: constant)
-    }
     
     public var height: Self { Self.init(from: self, appendedAttribute: .height) }
     public var width: Self { Self.init(from: self, appendedAttribute: .width) }
+    
+    public func equalTo(constant: CGFloat) -> Self {
+        Self.init(from: self, relation: .equal, toItem: .deny, toAttribute: nil, constant: constant)
+    }
     
     public func equalTo(_ layoutAnchor: NSLayoutDimension, constant: CGFloat = .zero) -> Self {
         let tmpConstraint = UIView().widthAnchor.constraint(equalTo: layoutAnchor)

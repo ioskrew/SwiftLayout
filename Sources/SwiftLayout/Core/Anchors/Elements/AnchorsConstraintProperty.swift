@@ -14,6 +14,7 @@ public struct AnchorsConstraintProperty {
     public let toAttribute: NSLayoutConstraint.Attribute?
     public let constant: CGFloat
     public internal(set) var multiplier: CGFloat
+    public internal(set) var priority: UILayoutPriority
     
     public var isDimension: Bool {
         attribute == .height || attribute == .width
@@ -23,7 +24,7 @@ public struct AnchorsConstraintProperty {
         let to = self.toItem(toItem, viewDic: viewDic)
         assert(to is UIView || to is UILayoutGuide || to == nil, "to: \(to.debugDescription) is not item")
         
-        return NSLayoutConstraint(
+        let constrint = NSLayoutConstraint(
             item: fromItem,
             attribute: attribute,
             relatedBy: relation,
@@ -32,6 +33,9 @@ public struct AnchorsConstraintProperty {
             multiplier: multiplier,
             constant: constant
         )
+        constrint.priority = priority
+    
+        return constrint
     }
     
     private func toItem(_ toItem: NSObject?, viewDic: [String: UIView]) -> NSObject? {

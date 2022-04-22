@@ -39,4 +39,11 @@ public final class AnchorsContainer {
         }
         return self
     }
+    
+    public func priority(_ priority: UILayoutPriority) -> Self {
+        for i in 0..<constraints.count {
+            constraints[i].priority = priority
+        }
+        return self
+    }
 }
