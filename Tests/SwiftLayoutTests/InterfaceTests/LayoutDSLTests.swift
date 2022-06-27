@@ -39,11 +39,11 @@ extension LayoutDSLTests {
     func testActive() {
         @LayoutBuilder
         var layout: some Layout {
-            root {
-                red {
+            root.sublayout {
+                red.sublayout {
                     button
                     label
-                    blue {
+                    blue.sublayout {
                         image
                     }
                 }
@@ -63,11 +63,11 @@ extension LayoutDSLTests {
     func testDeactive() {
         @LayoutBuilder
         var layout: some Layout {
-            root {
-                red {
+            root.sublayout {
+                red.sublayout {
                     button
                     label
-                    blue {
+                    blue.sublayout {
                         image
                     }
                 }
@@ -89,11 +89,11 @@ extension LayoutDSLTests {
     func testFinalActive() {
         @LayoutBuilder
         var layout: some Layout {
-            root {
-                red {
+            root.sublayout {
+                red.sublayout {
                     button
                     label
-                    blue {
+                    blue.sublayout {
                         image
                     }
                 }
@@ -120,7 +120,7 @@ extension LayoutDSLTests {
         
         @LayoutBuilder
         var layout: some Layout {
-            parentView {
+            parentView.sublayout {
                 if flag {
                     childView_0
                 } else {
@@ -191,8 +191,8 @@ extension LayoutDSLTests {
         
         @LayoutBuilder
         var layout: some Layout {
-            root {
-                red {
+            root.sublayout {
+                red.sublayout {
                     button
                 }
                 
@@ -239,8 +239,8 @@ extension LayoutDSLTests {
         
         @LayoutBuilder
         func layout(_ test: Test) -> some Layout {
-            root {
-                child {
+            root.sublayout {
+                child.sublayout {
                     switch test {
                     case .first:
                         first
@@ -289,8 +289,8 @@ extension LayoutDSLTests {
         
         @LayoutBuilder
         var layout: some Layout {
-            root {
-                red {
+            root.sublayout {
+                red.sublayout {
                     optional
                 }
             }
@@ -324,7 +324,7 @@ extension LayoutDSLTests {
        
         @LayoutBuilder
         var layout: some Layout {
-            root {
+            root.sublayout {
                 for view in views {
                     view
                 }
@@ -346,7 +346,7 @@ extension LayoutDSLTests {
     func testConfig() {
         @LayoutBuilder
         var layout: some Layout {
-            root {
+            root.sublayout {
                 child.config {
                     $0.backgroundColor = .yellow
                 }.sublayout {
@@ -371,13 +371,13 @@ extension LayoutDSLTests {
     func testDuplicateLayoutBuilder() {
         @LayoutBuilder
         var layout: some Layout {
-            root {
-                red {
+            root.sublayout {
+                red.sublayout {
                     button
                 }.sublayout {
                     label
                 }.sublayout {
-                    blue {
+                    blue.sublayout {
                         image
                     }
                 }
@@ -397,18 +397,18 @@ extension LayoutDSLTests {
     func testSeparatedFromFirstLevel() {
         @LayoutBuilder
         var layout: some Layout {
-            root {
+            root.sublayout {
                 child
                 red
                 image
             }
             
-            child {
+            child.sublayout {
                 button
                 label
             }
             
-            red {
+            red.sublayout {
                 blue
                 green
             }
@@ -438,7 +438,7 @@ extension LayoutDSLTests {
         
         @LayoutBuilder
         var layout: some Layout {
-            root {
+            root.sublayout {
                 GroupLayout {
                     group1_1
                     group1_2
@@ -470,7 +470,7 @@ extension LayoutDSLTests {
         let view3 = UIView()
         
         @LayoutBuilder var layout: some Layout {
-            view1 {
+            view1.sublayout {
                 view2
             }
             
@@ -486,7 +486,7 @@ extension LayoutDSLTests {
         @LayoutBuilder var layout: some Layout {
             view1
             
-            view2 {
+            view2.sublayout {
                 view3
             }
         }
@@ -498,7 +498,7 @@ extension LayoutDSLTests {
         
         @LayoutBuilder
         var layout: some Layout {
-            root {
+            root.sublayout {
                 module1
                 module2
             }

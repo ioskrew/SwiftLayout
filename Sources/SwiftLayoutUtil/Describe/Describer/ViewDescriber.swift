@@ -18,7 +18,7 @@ struct ViewDescriber {
             if subdescribes.isEmpty {
                 descriptions.append(viewToken.viewTag)
             } else {
-                descriptions.append(viewToken.viewTag.appending(" {"))
+                descriptions.append(viewToken.viewTag.appending(".sublayout {"))
                 descriptions.append(contentsOf: subdescribes.flatMap({ $0.descriptions(indents: "    ") }))
                 descriptions.append("}")
             }
