@@ -30,9 +30,9 @@ extension ImplementationTests {
         let redView: UIView = UIView().identifying("redView")
         let image: UIImageView = UIImageView().identifying("image")
         
-        let layout = root {
+        let layout = root.sublayout {
             redView
-            label {
+            label.sublayout {
                 button
                 image
             }
@@ -62,7 +62,7 @@ extension ImplementationTests {
     }
     
     func testLayoutFlattening() {
-        let layout = root {
+        let layout = root.sublayout {
             child.anchors {
                 Anchors.allSides()
             }.sublayout {
@@ -77,32 +77,32 @@ extension ImplementationTests {
     }
     
     func testLayoutCompare() {
-        let f1 = root {
+        let f1 = root.sublayout {
             child
         }
         let e1 = LayoutElements(layout: f1)
         
-        let f2 = root {
+        let f2 = root.sublayout {
             child
         }
         let e2 = LayoutElements(layout: f2)
         
-        let f3 = root {
+        let f3 = root.sublayout {
             child.anchors { Anchors.allSides() }
         }
         let e3 = LayoutElements(layout: f3)
         
-        let f4 = root {
+        let f4 = root.sublayout {
             child.anchors { Anchors.allSides() }
         }
         let e4 = LayoutElements(layout: f4)
         
-        let f5 = root {
+        let f5 = root.sublayout {
             child.anchors { Anchors.cap() }
         }
         let e5 = LayoutElements(layout: f5)
         
-        let f6 = root {
+        let f6 = root.sublayout {
             friend.anchors { Anchors.allSides() }
         }
         let e6 = LayoutElements(layout: f6)
@@ -127,7 +127,7 @@ extension ImplementationTests {
         old.addSubview(root)
         root.translatesAutoresizingMaskIntoConstraints = true
         
-        activation = root {
+        activation = root.sublayout {
             red.anchors {
                 Anchors.allSides()
             }
@@ -144,7 +144,7 @@ extension ImplementationTests {
 
 extension ImplementationTests {
     func testIdentifier() {
-        let activation = root {
+        let activation = root.sublayout {
             UILabel().identifying("label").anchors {
                 Anchors.cap()
             }
@@ -203,7 +203,7 @@ extension ImplementationTests {
     final class StackView: UIView, Layoutable {
         var activation: Activation?
         var layout: some Layout {
-            self {
+            self.sublayout {
                 stack.anchors {
                     Anchors.allSides()
                 }.sublayout {

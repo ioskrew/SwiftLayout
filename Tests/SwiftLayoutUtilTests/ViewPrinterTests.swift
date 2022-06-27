@@ -23,7 +23,7 @@ extension ViewPrinterTests {
         let root = UIView().identifying("root")
         let child = UIView().identifying("child")
         
-        activation = root {
+        activation = root.sublayout {
             child
         }.active()
         
@@ -42,7 +42,7 @@ extension ViewPrinterTests {
         let a = UIView().identifying("a")
         let b = UIView().identifying("b")
         
-        activation = root {
+        activation = root.sublayout {
             a
             b
         }.active()
@@ -63,8 +63,8 @@ extension ViewPrinterTests {
         let child = UIView().identifying("child")
         let grandchild = UIView().identifying("grandchild")
         
-        activation = root {
-            child {
+        activation = root.sublayout {
+            child.sublayout {
                 grandchild
             }
         }.active()
@@ -87,8 +87,8 @@ extension ViewPrinterTests {
         let friend = UIView().identifying("friend")
         let grandchild = UIView().identifying("grandchild")
         
-        activation = root {
-            child {
+        activation = root.sublayout {
+            child.sublayout {
                 grandchild
             }
             friend
@@ -112,7 +112,7 @@ extension ViewPrinterTests {
         let two = UIView().identifying("two")
         
         func layout() -> some Layout {
-            root {
+            root.sublayout {
                 one.anchors {
                     Anchors.bottom
                     Anchors.leading.trailing
@@ -146,7 +146,7 @@ extension ViewPrinterTests {
         let root = UIView().identifying("root")
         let one = UIView().identifying("one")
         
-        root {
+        root.sublayout {
             one.anchors {
                 Anchors.width.equalTo(root, constant: -20.0)
             }
@@ -166,7 +166,7 @@ extension ViewPrinterTests {
         root.translatesAutoresizingMaskIntoConstraints = false
         window.addSubview(root)
         let child = UIView().identifying("child")
-        activation = root {
+        activation = root.sublayout {
             child.anchors {
                 Anchors.top
                 Anchors.bottom.equalToSuper(constant: -10.0)
@@ -192,7 +192,7 @@ extension ViewPrinterTests {
         window.addSubview(root)
         let child = UIView().identifying("child")
         let friend = UIView().identifying("friend")
-        activation = root {
+        activation = root.sublayout {
             child.anchors {
                 Anchors.top
                 Anchors.bottom.equalToSuper(constant: -10.0)
@@ -220,7 +220,7 @@ extension ViewPrinterTests {
 
     func testPrintWithAnonymousTaggedView() {
         let root = UIView().identifying("root")
-        activation = root {
+        activation = root.sublayout {
             UILabel().identifying("label").anchors {
                 Anchors.allSides()
             }
@@ -245,7 +245,7 @@ extension ViewPrinterTests {
         let child = UIView().identifying("child")
         let grandchild = UIView().identifying("grandchild")
         
-        activation = root {
+        activation = root.sublayout {
             child.anchors{
                 Anchors.allSides()
             }.sublayout {
@@ -278,8 +278,8 @@ extension ViewPrinterTests {
         let child = UILabel()
         let grand = UILabel().identifying("grand")
         
-        activation = root {
-            child {
+        activation = root.sublayout {
+            child.sublayout {
                 grand.anchors {
                     Anchors.top
                 }
@@ -303,7 +303,7 @@ extension ViewPrinterTests {
     func testPrintWithSafeAreaLayoutGuide() {
         let root = UIView().identifying("root")
         let child = UIView().identifying("child")
-        activation = root {
+        activation = root.sublayout {
             child.anchors {
                 Anchors.top.bottom.equalTo(root.safeAreaLayoutGuide)
                 Anchors.leading
@@ -344,7 +344,7 @@ extension ViewPrinterTests {
         let child = UIView().identifying("child")
         let friend = UIView().identifying("friend")
         
-        activation = root {
+        activation = root.sublayout {
             child.anchors {
                 Anchors.cap()
             }
@@ -380,7 +380,7 @@ extension ViewPrinterTests {
         window.addSubview(root)
         let child = UIView().identifying("child")
         let friend = UIView().identifying("friend")
-        activation = root {
+        activation = root.sublayout {
             child.anchors {
                 Anchors.top.greaterThanOrEqualToSuper()
                 Anchors.bottom.lessThanOrEqualToSuper()
@@ -413,7 +413,7 @@ extension ViewPrinterTests {
         let child = UIView().identifying("child")
         
         func layout() -> some Layout {
-            root {
+            root.sublayout {
                 child.anchors {
                     Anchors.width.height
                 }
@@ -453,7 +453,7 @@ extension ViewPrinterTests {
         var activation: Activation?
         
         var layout: some Layout {
-            self {
+            self.sublayout {
                 profileView
                 nameLabel
             }
@@ -526,7 +526,7 @@ extension ViewPrinterTests {
         
         var activation: Activation?
         var layout: some Layout {
-            self {
+            self.sublayout {
                 sea.anchors({
                     Anchors.allSides()
                 }).sublayout {
@@ -565,7 +565,7 @@ extension ViewPrinterTests {
         
         var activation: Activation? 
         var layout: some Layout {
-            self {
+            self.sublayout {
                 nickname.anchors({
                     Anchors.cap()
                 }).sublayout {
@@ -607,7 +607,7 @@ extension ViewPrinterTests {
         label.text = "HELLO"
         @LayoutBuilder
         func layout() -> some Layout {
-            root {
+            root.sublayout {
                 label.anchors {
                     Anchors.allSides()
                 }
@@ -635,11 +635,11 @@ extension ViewPrinterTests {
         container.root.translatesAutoresizingMaskIntoConstraints = false
         rootView.addSubview(container.root)
         
-        container.root {
-            container.red {
+        container.root.sublayout {
+            container.red.sublayout {
                 container.button
                 container.label
-                container.blue {
+                container.blue.sublayout {
                     container.image
                 }
             }
@@ -716,7 +716,7 @@ extension ViewPrinterTests {
         var activation: Activation?
         
         var layout: some Layout {
-            self {
+            self.sublayout {
                 red.anchors {
                     Anchors.cap()
                 }
