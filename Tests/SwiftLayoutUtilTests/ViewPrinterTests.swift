@@ -28,7 +28,7 @@ extension ViewPrinterTests {
         }.active()
         
         let expect = """
-        root {
+        root.sublayout {
             child
         }
         """
@@ -48,7 +48,7 @@ extension ViewPrinterTests {
         }.active()
         
         let expect = """
-        root {
+        root.sublayout {
             a
             b
         }
@@ -70,8 +70,8 @@ extension ViewPrinterTests {
         }.active()
         
         let expect = """
-        root {
-            child {
+        root.sublayout {
+            child.sublayout {
                 grandchild
             }
         }
@@ -95,8 +95,8 @@ extension ViewPrinterTests {
         }.active()
         
         let expect = """
-        root {
-            child {
+        root.sublayout {
+            child.sublayout {
                 grandchild
             }
             friend
@@ -128,7 +128,7 @@ extension ViewPrinterTests {
         layout().finalActive()
         
         XCTAssertEqual(ViewPrinter(root).description, """
-        root {
+        root.sublayout {
             one.anchors {
                 Anchors.bottom
                 Anchors.leading.trailing
@@ -153,7 +153,7 @@ extension ViewPrinterTests {
         }.finalActive()
         
         XCTAssertEqual(ViewPrinter(root).description, """
-        root {
+        root.sublayout {
             one.anchors {
                 Anchors.width.equalToSuper(constant: -20.0)
             }
@@ -174,7 +174,7 @@ extension ViewPrinterTests {
         }.active()
         
         let expect = """
-        root {
+        root.sublayout {
             child.anchors {
                 Anchors.top
                 Anchors.bottom.equalToSuper(constant: -10.0)
@@ -203,7 +203,7 @@ extension ViewPrinterTests {
         }.active()
         
         let expect = """
-        root {
+        root.sublayout {
             child.anchors {
                 Anchors.top
                 Anchors.bottom.equalToSuper(constant: -10.0)
@@ -227,7 +227,7 @@ extension ViewPrinterTests {
         }.active()
         
         let expect = """
-        root {
+        root.sublayout {
             label.anchors {
                 Anchors.top.bottom
                 Anchors.leading.trailing
@@ -256,7 +256,7 @@ extension ViewPrinterTests {
         }.active()
         
         let expect = """
-        root {
+        root.sublayout {
             child.anchors {
                 Anchors.top.bottom
                 Anchors.leading.trailing
@@ -287,8 +287,8 @@ extension ViewPrinterTests {
         }.active()
         
         let expect = """
-        root {
-            child {
+        root.sublayout {
+            child.sublayout {
                 grandchild.anchors {
                     Anchors.top
                 }
@@ -311,7 +311,7 @@ extension ViewPrinterTests {
         }.active()
         
         let expect = """
-        root {
+        root.sublayout {
             child.anchors {
                 Anchors.top.bottom.equalTo(root.safeAreaLayoutGuide)
                 Anchors.leading
@@ -327,7 +327,7 @@ extension ViewPrinterTests {
     func testPrintWithFindingViewIdentifiers() {
         let cell = Cell()
         let expect = """
-        contentView {
+        contentView.sublayout {
             profileView:\(UIImageView.self)
             nameLabel:\(UILabel.self)
         }
@@ -357,7 +357,7 @@ extension ViewPrinterTests {
         }.active()
         
         let expect = """
-        root {
+        root.sublayout {
             child.anchors {
                 Anchors.top
                 Anchors.leading.trailing
@@ -392,7 +392,7 @@ extension ViewPrinterTests {
         }.active()
         
         let expect = """
-        root {
+        root.sublayout {
             child.anchors {
                 Anchors.top.greaterThanOrEqualToSuper()
                 Anchors.bottom.lessThanOrEqualToSuper()
@@ -423,7 +423,7 @@ extension ViewPrinterTests {
         layout().finalActive()
         
         XCTAssertEqual(ViewPrinter(root).description, """
-        root {
+        root.sublayout {
             child.anchors {
                 Anchors.width.height.equalToSuper()
             }
@@ -483,7 +483,7 @@ extension ViewPrinterTests {
         
         XCTAssertEqual(ViewPrinter(gont, tags: [gont: "gont"]).updateIdentifiers(.referenceAndNameWithTypeOfView).description,
         """
-        gont {
+        gont.sublayout {
             sea:\(UILabel.self).anchors {
                 Anchors.top.bottom
                 Anchors.leading.trailing
@@ -616,7 +616,7 @@ extension ViewPrinterTests {
         
         layout().finalActive()
         XCTAssertEqual(ViewPrinter(root, options: .onlyIdentifier).description, """
-        root {
+        root.sublayout {
             label.anchors {
                 Anchors.top.bottom
                 Anchors.leading.trailing
@@ -647,11 +647,11 @@ extension ViewPrinterTests {
         .finalActive()
         
         let expect = """
-        root {
-            red {
+        root.sublayout {
+            red.sublayout {
                 button
                 label
-                blue {
+                blue.sublayout {
                     image
                 }
             }
@@ -700,7 +700,7 @@ extension ViewPrinterTests {
         let view = IdentifierView(frame: .zero)
         
         XCTAssertEqual(ViewPrinter(view,tags: [view: "view"], options: .onlyIdentifier).description, """
-        view {
+        view.sublayout {
             red.anchors {
                 Anchors.top
                 Anchors.leading.trailing
