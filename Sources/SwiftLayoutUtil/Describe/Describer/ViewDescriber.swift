@@ -8,29 +8,45 @@
 import Foundation
 
 struct ViewDescriber {
+    enum Constant {
+        static var indents: String = "    "
+    }
+
     let viewToken: ViewToken
     let constraintTokens: [AnchorToken]
     let subdescribes: [ViewDescriber]
     
     func descriptions(indents: String = "") -> [String] {
-        var descriptions: [String] = []
-        if constraintTokens.isEmpty {
-            if subdescribes.isEmpty {
-                descriptions.append(viewToken.viewTag)
-            } else {
-                descriptions.append(viewToken.viewTag.appending(".sublayout {"))
-                descriptions.append(contentsOf: subdescribes.flatMap({ $0.descriptions(indents: "    ") }))
-                descriptions.append("}")
-            }
-        } else {
-            descriptions.append(viewToken.viewTag.appending(".anchors {"))
-            descriptions.append(contentsOf: AnchorsDescriber.descriptionFromConstraints(constraintTokens).map("    ".appending))
-            if !subdescribes.isEmpty {
-                descriptions.append("}.sublayout {")
-                descriptions.append(contentsOf: subdescribes.flatMap({ $0.descriptions(indents: "    ") }))
-            }
+        let configDescriptions = viewToken.configuration.map(Constant.indents.appending)
+        let anchersDescriptions = AnchorsDescriber.descriptionFromConstraints(constraintTokens).map(Constant.indents.appending)
+        let sublayoutDescriptions = subdescribes.flatMap { $0.descriptions(indents: Constant.indents) }
+
+        var descriptions: [String] = [viewToken.viewTag]
+
+        if configDescriptions.isEmpty == false {
+            var last = descriptions.removeLast()
+            last.append(".config {")
+            descriptions.append(last)
+            descriptions.append(contentsOf: configDescriptions)
             descriptions.append("}")
         }
+
+        if anchersDescriptions.isEmpty == false {
+            var last = descriptions.removeLast()
+            last.append(".anchors {")
+            descriptions.append(last)
+            descriptions.append(contentsOf: anchersDescriptions)
+            descriptions.append("}")
+        }
+
+        if sublayoutDescriptions.isEmpty == false {
+            var last = descriptions.removeLast()
+            last.append(".sublayout {")
+            descriptions.append(last)
+            descriptions.append(contentsOf: sublayoutDescriptions)
+            descriptions.append("}")
+        }
+
         return descriptions.map(indents.appending)
     }
 }

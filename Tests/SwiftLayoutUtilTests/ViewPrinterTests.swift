@@ -737,3 +737,97 @@ extension ViewPrinterTests {
         }
     }
 }
+
+// MARK: - withViewConfig
+extension ViewPrinterTests {
+    func testWithViewConfig() {
+        let root = UIView().identifying("root")
+        let child = UIView().identifying("child")
+        let grandchild = UIView().identifying("grandchild")
+
+        activation = root.config {
+            $0.alpha = 0.4
+        }.sublayout {
+            child.config {
+                $0.alpha = 1.0
+                $0.accessibilityLabel = "child-accessibilityLabel"
+            }.anchors{
+                Anchors.allSides()
+            }.sublayout {
+                grandchild.config {
+                    $0.isHidden = true
+                    $0.accessibilityLabel = "grandchild-accessibilityLabel"
+                }.anchors {
+                    Anchors.allSides()
+                }
+            }
+        }.active()
+
+        let expect = """
+        root.config {
+            $0.alpha = 0.4000000059604645
+        }.sublayout {
+            child.config {
+                $0.accessibilityLabel = child-accessibilityLabel
+            }.anchors {
+                Anchors.top.bottom
+                Anchors.leading.trailing
+            }.sublayout {
+                grandchild.config {
+                    $0.isHidden = true
+                    $0.accessibilityLabel = grandchild-accessibilityLabel
+                }.anchors {
+                    Anchors.top.bottom
+                    Anchors.leading.trailing
+                }
+            }
+        }
+        """
+
+        let result = ViewPrinter(root, options: .withViewConfig).description
+        XCTAssertEqual(result, expect)
+    }
+
+    func testWithOutViewConfig() {
+        let root = UIView().identifying("root")
+        let child = UIView().identifying("child")
+        let grandchild = UIView().identifying("grandchild")
+
+        activation = root.config {
+            $0.alpha = 0.4
+        }.sublayout {
+            child.config {
+                $0.alpha = 1.0
+                $0.accessibilityLabel = "child-accessibilityLabel"
+            }.anchors{
+                Anchors.allSides()
+            }.sublayout {
+                grandchild.config {
+                    $0.isHidden = true
+                    $0.accessibilityLabel = "grandchild-accessibilityLabel"
+                }.anchors {
+                    Anchors.allSides()
+                }
+            }
+        }.active()
+
+        let expect = """
+        root.sublayout {
+            child.anchors {
+                Anchors.top.bottom
+                Anchors.leading.trailing
+            }.sublayout {
+                grandchild.anchors {
+                    Anchors.top.bottom
+                    Anchors.leading.trailing
+                }
+            }
+        }
+        """
+
+        let result = ViewPrinter(root).description
+        XCTAssertEqual(result, expect)
+    }
+
+}
+
