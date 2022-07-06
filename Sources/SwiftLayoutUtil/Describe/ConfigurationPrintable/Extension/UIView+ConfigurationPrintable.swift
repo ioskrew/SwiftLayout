@@ -12,7 +12,7 @@ extension UIView: ConfigurationPrintable {
         [
             .property(keypath: \.isHidden, defualtValue: false) { "$0.isHidden = \($0)" },
             .property(keypath: \.alpha, defualtValue: 1.0) { "$0.alpha = \($0)" },
-            .property(keypath: \.accessibilityLabel, defualtValue: nil) { "$0.accessibilityLabel = \($0 ?? "nil")" },
+            .property(keypath: \.accessibilityLabel, defualtValue: nil) { value in "$0.accessibilityLabel = \(value.map({"\"\($0)\""}) ?? "nil")" },
         ]
     }
 }

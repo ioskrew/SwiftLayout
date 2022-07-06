@@ -768,14 +768,14 @@ extension ViewPrinterTests {
             $0.alpha = 0.4000000059604645
         }.sublayout {
             child.config {
-                $0.accessibilityLabel = child-accessibilityLabel
+                $0.accessibilityLabel = "child-accessibilityLabel"
             }.anchors {
                 Anchors.top.bottom
                 Anchors.leading.trailing
             }.sublayout {
                 grandchild.config {
                     $0.isHidden = true
-                    $0.accessibilityLabel = grandchild-accessibilityLabel
+                    $0.accessibilityLabel = "grandchild-accessibilityLabel"
                 }.anchors {
                     Anchors.top.bottom
                     Anchors.leading.trailing
