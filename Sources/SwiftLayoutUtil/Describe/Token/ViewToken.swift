@@ -23,7 +23,7 @@ struct ViewToken {
     enum Parser {
         static func from(_ view: UIView, viewTags tags: ViewTags, options: ViewPrinter.PrintOptions) -> ViewToken? {
             let superviewTag = tags.tag(object: view.superview, options: options)
-            let configuration = options.contains(.withViewConfig) ? view.configurations : []
+            let configuration = Self.configuration(view, options: options)
             if let viewTag = tags.tag(object: view, options: options) {
                 return ViewToken(
                     superviewTag: superviewTag,
@@ -35,6 +35,23 @@ struct ViewToken {
                 )
             } else {
                 return nil
+            }
+        }
+
+        private static func configuration(_ view: UIView, options: ViewPrinter.PrintOptions) -> [String] {
+            guard options.contains(.withViewConfig) else {
+                return []
+            }
+
+            let configurablePropertys: [ConfigurableProperty]
+            if let printable = view as? CustomConfigurablePropertys {
+                configurablePropertys = printable.configurablePropertys
+            } else {
+                configurablePropertys = ConfigurableProperty.defaultConfigurablePropertys(view: view)
+            }
+
+            return configurablePropertys.compactMap {
+                $0.configuration(view: view)
             }
         }
     }
