@@ -194,8 +194,12 @@ extension ConfigurableProperty {
     }
 
     private static func uiImageViewDefaultConfigurablePropertys(defualtReferenceView imageView: UIImageView) -> [ConfigurableProperty] {
-        // TODO
-        return []
+        return [
+            .property(keypath: \.image, defualtReferenceView: imageView) { "$0.image = \(String(describing: $0))"},
+            .property(keypath: \.highlightedImage, defualtReferenceView: imageView) { "$0.highlightedImage = \(String(describing: $0))"},
+            .property(keypath: \.isHighlighted, defualtReferenceView: imageView) { "$0.isHighlighted = \($0)" },
+            .property(keypath: \.adjustsImageSizeForAccessibilityContentSizeCategory, defualtReferenceView: imageView) { "$0.adjustsImageSizeForAccessibilityContentSizeCategory = \($0)" },
+        ]
     }
 
     private static func uiStackViewDefaultConfigurablePropertys(defualtReferenceView stackView: UIStackView) -> [ConfigurableProperty] {
