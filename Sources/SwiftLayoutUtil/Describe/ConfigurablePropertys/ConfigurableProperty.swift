@@ -19,7 +19,7 @@ public struct ConfigurableProperty {
     }
 
     private struct ConfigurablePropertyImp<View, Value>: ConfigurablePropertyProtocol  where View: UIView, Value: Equatable {
-        let keypath: KeyPath<View, Value>
+        let getter: (View) -> Value
         let defualtValue: Value
         let describer: (Value) -> String
 
@@ -28,7 +28,7 @@ public struct ConfigurableProperty {
                 return nil
             }
 
-            let value = view[keyPath: keypath]
+            let value = getter(view)
 
             guard value != defualtValue else {
                 return nil
@@ -41,13 +41,27 @@ public struct ConfigurableProperty {
 
 extension ConfigurableProperty {
     public static func property<View: UIView, Value: Equatable>(
-        keypath: KeyPath<View, Value>,
+        getter: @escaping (View) -> Value,
+        defualtValue: Value,
+        describer: @escaping (Value) -> String
+    ) -> ConfigurableProperty {
+        return ConfigurableProperty(
+            configurator: ConfigurablePropertyImp(
+                getter: getter,
+                defualtValue: defualtValue,
+                describer: describer
+            )
+        )
+    }
+
+    public static func property<View: UIView, Value: Equatable>(
+        getter: @escaping (View) -> Value,
         defualtReferenceView: View,
         describer: @escaping (Value) -> String
     ) -> ConfigurableProperty {
         return property(
-            keypath: keypath,
-            defualtValue: defualtReferenceView[keyPath: keypath],
+            getter: getter,
+            defualtValue: getter(defualtReferenceView),
             describer: describer
         )
     }
@@ -58,14 +72,30 @@ extension ConfigurableProperty {
         describer: @escaping (Value) -> String
     ) -> ConfigurableProperty {
         return ConfigurableProperty(
-            configurator: ConfigurablePropertyImp(
-                keypath: keypath,
+            configurator: ConfigurablePropertyImp<View, Value>(
+                getter: { view in
+                    view[keyPath: keypath]
+                },
                 defualtValue: defualtValue,
                 describer: describer
             )
         )
     }
 
+    public static func property<View: UIView, Value: Equatable>(
+        keypath: KeyPath<View, Value>,
+        defualtReferenceView: View,
+        describer: @escaping (Value) -> String
+    ) -> ConfigurableProperty {
+        return property(
+            keypath: keypath,
+            defualtValue: defualtReferenceView[keyPath: keypath],
+            describer: describer
+        )
+    }
+}
+
+extension ConfigurableProperty {
     public static func defaultConfigurablePropertys<View: UIView>(view: View) -> [ConfigurableProperty] {
         if view is UILabel {
             let defualtReferenceView = UILabel()
@@ -190,7 +220,9 @@ extension ConfigurableProperty {
 
     private static func uiButtonDefaultConfigurablePropertys(defualtReferenceView button: UIButton) -> [ConfigurableProperty] {
         // TODO
-        return []
+        return [
+            .property(getter: { $0.title(for: .normal) }, defualtReferenceView: button) { "$0.setTitle(\($0.configurationName), for: .normal)" }
+        ]
     }
 
     private static func uiImageViewDefaultConfigurablePropertys(defualtReferenceView imageView: UIImageView) -> [ConfigurableProperty] {
