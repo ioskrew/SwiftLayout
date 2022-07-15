@@ -1,5 +1,5 @@
 //
-//  NSLayoutConstraint.Axis+ConfigurationName.swift
+//  NSLayoutConstraint+ConfigurationName.swift
 //  
 //
 //  Created by aiden_h on 2022/07/15.

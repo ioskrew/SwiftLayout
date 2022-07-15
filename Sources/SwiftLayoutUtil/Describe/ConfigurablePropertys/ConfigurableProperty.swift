@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol ConfigurablePropertyProtocol {
+private protocol ConfigurablePropertyProtocol {
     func configuration(view: UIView) -> String?
 }
 
@@ -219,10 +219,74 @@ extension ConfigurableProperty {
     }
 
     private static func uiButtonDefaultConfigurablePropertys(defualtReferenceView button: UIButton) -> [ConfigurableProperty] {
-        // TODO
-        return [
-            .property(getter: { $0.title(for: .normal) }, defualtReferenceView: button) { "$0.setTitle(\($0.configurationName), for: .normal)" }
+        var configurablePropertys: [ConfigurableProperty] = [
+            .property(getter: { $0.title(for: .normal) }, defualtReferenceView: button) { "$0.setTitle(\($0.configurationName), for: .normal)" },
+            .property(getter: { $0.titleColor(for: .normal) }, defualtReferenceView: button) { "$0.titleColor(\(String(describing: $0)), for: .normal)" },
+            .property(getter: { $0.titleShadowColor(for: .normal) }, defualtReferenceView: button) { "$0.titleShadowColor(\(String(describing: $0)), for: .normal)" },
+            .property(getter: { $0.backgroundImage(for: .normal) }, defualtReferenceView: button) { "$0.backgroundImage(\(String(describing: $0)), for: .normal)" },
+            .property(getter: { $0.image(for: .normal) }, defualtReferenceView: button) { "$0.setImage(\(String(describing: $0)), for: .normal)" },
+
+            .property(getter: { $0.title(for: .highlighted) }, defualtReferenceView: button) { "$0.setTitle(\($0.configurationName), for: .highlighted)" },
+            .property(getter: { $0.titleColor(for: .highlighted) }, defualtReferenceView: button) { "$0.titleColor(\(String(describing: $0)), for: .highlighted)" },
+            .property(getter: { $0.titleShadowColor(for: .highlighted) }, defualtReferenceView: button) { "$0.titleShadowColor(\(String(describing: $0)), for: .highlighted)" },
+            .property(getter: { $0.backgroundImage(for: .highlighted) }, defualtReferenceView: button) { "$0.backgroundImage(\(String(describing: $0)), for: .highlighted)" },
+            .property(getter: { $0.image(for: .highlighted) }, defualtReferenceView: button) { "$0.setImage(\(String(describing: $0)), for: .highlighted)" },
+
+            .property(getter: { $0.title(for: .disabled) }, defualtReferenceView: button) { "$0.setTitle(\($0.configurationName), for: .disabled)" },
+            .property(getter: { $0.titleColor(for: .disabled) }, defualtReferenceView: button) { "$0.titleColor(\(String(describing: $0)), for: .disabled)" },
+            .property(getter: { $0.titleShadowColor(for: .disabled) }, defualtReferenceView: button) { "$0.titleShadowColor(\(String(describing: $0)), for: .disabled)" },
+            .property(getter: { $0.backgroundImage(for: .disabled) }, defualtReferenceView: button) { "$0.backgroundImage(\(String(describing: $0)), for: .disabled)" },
+            .property(getter: { $0.image(for: .disabled) }, defualtReferenceView: button) { "$0.setImage(\(String(describing: $0)), for: .disabled)" },
+
+            .property(getter: { $0.title(for: .selected) }, defualtReferenceView: button) { "$0.setTitle(\($0.configurationName), for: .selected)" },
+            .property(getter: { $0.titleColor(for: .selected) }, defualtReferenceView: button) { "$0.titleColor(\(String(describing: $0)), for: .selected)" },
+            .property(getter: { $0.titleShadowColor(for: .selected) }, defualtReferenceView: button) { "$0.titleShadowColor(\(String(describing: $0)), for: .selected)" },
+            .property(getter: { $0.backgroundImage(for: .selected) }, defualtReferenceView: button) { "$0.backgroundImage(\(String(describing: $0)), for: .selected)" },
+            .property(getter: { $0.image(for: .selected) }, defualtReferenceView: button) { "$0.setImage(\(String(describing: $0)), for: .selected)" },
+
+            .property(getter: { $0.title(for: .focused) }, defualtReferenceView: button) { "$0.setTitle(\($0.configurationName), for: .focused)" },
+            .property(getter: { $0.titleColor(for: .focused) }, defualtReferenceView: button) { "$0.titleColor(\(String(describing: $0)), for: .focused)" },
+            .property(getter: { $0.titleShadowColor(for: .focused) }, defualtReferenceView: button) { "$0.titleShadowColor(\(String(describing: $0)), for: .focused)" },
+            .property(getter: { $0.backgroundImage(for: .focused) }, defualtReferenceView: button) { "$0.backgroundImage(\(String(describing: $0)), for: .focused)" },
+            .property(getter: { $0.image(for: .focused) }, defualtReferenceView: button) { "$0.setImage(\(String(describing: $0)), for: .focused)" },
+
+            .property(getter: { $0.title(for: .application) }, defualtReferenceView: button) { "$0.setTitle(\($0.configurationName), for: .application)" },
+            .property(getter: { $0.titleColor(for: .application) }, defualtReferenceView: button) { "$0.titleColor(\(String(describing: $0)), for: .application)" },
+            .property(getter: { $0.titleShadowColor(for: .application) }, defualtReferenceView: button) { "$0.titleShadowColor(\(String(describing: $0)), for: .application)" },
+            .property(getter: { $0.backgroundImage(for: .application) }, defualtReferenceView: button) { "$0.backgroundImage(\(String(describing: $0)), for: .application)" },
+            .property(getter: { $0.image(for: .application) }, defualtReferenceView: button) { "$0.setImage(\(String(describing: $0)), for: .application)" },
+
+            .property(getter: { $0.title(for: .reserved) }, defualtReferenceView: button) { "$0.setTitle(\($0.configurationName), for: .reserved)" },
+            .property(getter: { $0.titleColor(for: .reserved) }, defualtReferenceView: button) { "$0.titleColor(\(String(describing: $0)), for: .reserved)" },
+            .property(getter: { $0.titleShadowColor(for: .reserved) }, defualtReferenceView: button) { "$0.titleShadowColor(\(String(describing: $0)), for: .reserved)" },
+            .property(getter: { $0.backgroundImage(for: .reserved) }, defualtReferenceView: button) { "$0.backgroundImage(\(String(describing: $0)), for: .reserved)" },
+            .property(getter: { $0.image(for: .reserved) }, defualtReferenceView: button) { "$0.setImage(\(String(describing: $0)), for: .reserved)" },
+
+            .property(keypath: \.adjustsImageSizeForAccessibilityContentSizeCategory, defualtReferenceView: button) { "$0.adjustsImageSizeForAccessibilityContentSizeCategory = \($0)" },
         ]
+
+        if #available(iOS 13.4, *) {
+            configurablePropertys.append(contentsOf: [
+                .property(keypath: \.isPointerInteractionEnabled, defualtReferenceView: button) { "$0.isPointerInteractionEnabled = \($0)" },
+            ])
+        }
+
+        if #available(iOS 14.0, *) {
+            configurablePropertys.append(contentsOf: [
+                .property(keypath: \.showsMenuAsPrimaryAction, defualtReferenceView: button) { "$0.showsMenuAsPrimaryAction = \($0)" },
+                .property(keypath: \.role, defualtReferenceView: button) { "$0.role = \($0.configurationName)" },
+            ])
+        }
+
+        if #available(iOS 15.0, *) {
+            configurablePropertys.append(contentsOf: [
+                .property(keypath: \.isHovered, defualtReferenceView: button) { "$0.isHovered = \($0)" },
+                .property(keypath: \.isHeld, defualtReferenceView: button) { "$0.isHeld = \($0)" },
+                .property(keypath: \.changesSelectionAsPrimaryAction, defualtReferenceView: button) { "$0.changesSelectionAsPrimaryAction = \($0)" },
+            ])
+        }
+
+        return configurablePropertys
     }
 
     private static func uiImageViewDefaultConfigurablePropertys(defualtReferenceView imageView: UIImageView) -> [ConfigurableProperty] {
