@@ -117,17 +117,17 @@ extension ConfigurableProperty {
     private static func accessibilityDefaultConfigurablePropertys(defualtReferenceView view: UIView) -> [ConfigurableProperty] {
         return [
             .property(keypath: \.isAccessibilityElement, defualtReferenceView: view) { "$0.isAccessibilityElement = \($0)"},
-            .property(keypath: \.accessibilityLabel, defualtReferenceView: view) { "$0.accessibilityLabel = \(optionalStringOutput($0))"},
-            .property(keypath: \.accessibilityHint, defualtReferenceView: view) { "$0.accessibilityHint = \(optionalStringOutput($0))"},
-            .property(keypath: \.accessibilityIdentifier, defualtReferenceView: view) { "$0.accessibilityIdentifier = \(optionalStringOutput($0))"},
+            .property(keypath: \.accessibilityLabel, defualtReferenceView: view) { "$0.accessibilityLabel = \($0.configurationName)"},
+            .property(keypath: \.accessibilityHint, defualtReferenceView: view) { "$0.accessibilityHint = \($0.configurationName)"},
+            .property(keypath: \.accessibilityIdentifier, defualtReferenceView: view) { "$0.accessibilityIdentifier = \($0.configurationName)"},
             .property(keypath: \.accessibilityTraits, defualtReferenceView: view) { "$0.accessibilityIdentifier = \($0.configurationName)"},
         ]
     }
 
     private static func uiViewDefaultConfigurablePropertys(defualtReferenceView view: UIView) -> [ConfigurableProperty] {
         return [
-            .property(keypath: \.contentMode, defualtReferenceView: view) { "$0.contentMode = .\($0.configurationName)"},
-            .property(keypath: \.semanticContentAttribute, defualtReferenceView: view) { "$0.semanticContentAttribute = .\($0.configurationName)"},
+            .property(keypath: \.contentMode, defualtReferenceView: view) { "$0.contentMode = \($0.configurationName)"},
+            .property(keypath: \.semanticContentAttribute, defualtReferenceView: view) { "$0.semanticContentAttribute = \($0.configurationName)"},
             .property(keypath: \.tag, defualtReferenceView: view) { "$0.tag = \($0)" },
             .property(keypath: \.isUserInteractionEnabled, defualtReferenceView: view) { "$0.isUserInteractionEnabled = \($0)"},
             .property(keypath: \.isMultipleTouchEnabled, defualtReferenceView: view) { "$0.isMultipleTouchEnabled = \($0)"},
@@ -144,8 +144,8 @@ extension ConfigurableProperty {
 
     private static func uiControlDefaultConfigurablePropertys(defualtReferenceView view: UIControl) -> [ConfigurableProperty] {
         var configurablePropertys: [ConfigurableProperty] = [
-            .property(keypath: \.contentHorizontalAlignment, defualtReferenceView: view) { "$0.contentHorizontalAlignment = .\($0.configurationName)"},
-            .property(keypath: \.contentVerticalAlignment, defualtReferenceView: view) { "$0.contentVerticalAlignment = .\($0.configurationName)"},
+            .property(keypath: \.contentHorizontalAlignment, defualtReferenceView: view) { "$0.contentHorizontalAlignment = \($0.configurationName)"},
+            .property(keypath: \.contentVerticalAlignment, defualtReferenceView: view) { "$0.contentVerticalAlignment = \($0.configurationName)"},
             .property(keypath: \.isSelected, defualtReferenceView: view) { "$0.isSelected = \($0)" },
             .property(keypath: \.isEnabled, defualtReferenceView: view) { "$0.isEnabled = \($0)" },
             .property(keypath: \.isHighlighted, defualtReferenceView: view) { "$0.isHighlighted = \($0)" },
@@ -159,7 +159,7 @@ extension ConfigurableProperty {
 
         if #available(iOS 15.0, *) {
             configurablePropertys.append(contentsOf: [
-                .property(keypath: \.toolTip, defualtReferenceView: view) {"$0.toolTip = \(optionalStringOutput($0))"},
+                .property(keypath: \.toolTip, defualtReferenceView: view) {"$0.toolTip = \($0.configurationName)"},
             ])
         }
 
@@ -168,16 +168,16 @@ extension ConfigurableProperty {
 
     private static func uiLabelDefaultConfigurablePropertys(defualtReferenceView label: UILabel) -> [ConfigurableProperty] {
         return [
-            .property(keypath: \.text, defualtReferenceView: label) { "$0.text = \(optionalStringOutput($0))"},
+            .property(keypath: \.text, defualtReferenceView: label) { "$0.text = \($0.configurationName)"},
             .property(keypath: \.textColor, defualtReferenceView: label) { "$0.textColor = \(String(describing: $0))" },
             .property(keypath: \.font, defualtReferenceView: label) { "$0.font = \(String(describing: $0))" },
             .property(keypath: \.adjustsFontForContentSizeCategory, defualtReferenceView: label) { "$0.adjustsFontForContentSizeCategory = \($0)" },
-            .property(keypath: \.textAlignment, defualtReferenceView: label) { "$0.textAlignment = .\($0.configurationName)" },
+            .property(keypath: \.textAlignment, defualtReferenceView: label) { "$0.textAlignment = \($0.configurationName)" },
             .property(keypath: \.numberOfLines, defualtReferenceView: label) { "$0.numberOfLines = \($0)" },
             .property(keypath: \.isEnabled, defualtReferenceView: label) { "$0.isEnabled = \($0)" },
             .property(keypath: \.isHighlighted, defualtReferenceView: label) { "$0.isHighlighted = \($0)" },
             .property(keypath: \.showsExpansionTextWhenTruncated, defualtReferenceView: label) { "$0.showsExpansionTextWhenTruncated = \($0)" },
-            .property(keypath: \.baselineAdjustment, defualtReferenceView: label) { "$0.baselineAdjustment = .\($0.configurationName)" },
+            .property(keypath: \.baselineAdjustment, defualtReferenceView: label) { "$0.baselineAdjustment = \($0.configurationName)" },
             .property(keypath: \.lineBreakMode, defualtReferenceView: label) { "$0.lineBreakMode = .\($0.configurationName)" },
             .property(keypath: \.adjustsFontSizeToFitWidth, defualtReferenceView: label) { "$0.adjustsFontSizeToFitWidth = \($0)" },
             .property(keypath: \.minimumScaleFactor, defualtReferenceView: label) { "$0.minimumScaleFactor = \($0)" },
@@ -201,11 +201,5 @@ extension ConfigurableProperty {
     private static func uiStackViewDefaultConfigurablePropertys(defualtReferenceView stackView: UIStackView) -> [ConfigurableProperty] {
         // TODO
         return []
-    }
-}
-
-extension ConfigurableProperty {
-    private static func optionalStringOutput(_ string: String?) -> String {
-        return string.map { "\"\($0)\"" } ?? "nil"
     }
 }

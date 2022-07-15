@@ -10,10 +10,10 @@ import UIKit
 extension UIBaselineAdjustment {
     var configurationName: String {
         switch self {
-        case .alignBaselines: return "alignBaselines"
-        case .alignCenters: return "alignCenters"
-        case .none: return "none"
-        @unknown default: return "unknown"
+        case .alignBaselines: return ".alignBaselines"
+        case .alignCenters: return ".alignCenters"
+        case .none: return ".none"
+        @unknown default: return ".unknown"
         }
     }
 }
