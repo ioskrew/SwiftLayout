@@ -203,7 +203,12 @@ extension ConfigurableProperty {
     }
 
     private static func uiStackViewDefaultConfigurablePropertys(defualtReferenceView stackView: UIStackView) -> [ConfigurableProperty] {
-        // TODO
-        return []
+        return [
+            .property(keypath: \.axis, defualtReferenceView: stackView) { "$0.axis = \($0.configurationName)"},
+            .property(keypath: \.alignment, defualtReferenceView: stackView) { "$0.alignment = \($0.configurationName)"},
+            .property(keypath: \.distribution, defualtReferenceView: stackView) { "$0.distribution = \($0.configurationName)"},
+            .property(keypath: \.spacing, defualtReferenceView: stackView) { "$0.spacing = \($0)"},
+            .property(keypath: \.isBaselineRelativeArrangement, defualtReferenceView: stackView) { "$0.isBaselineRelativeArrangement = \($0)"},
+        ]
     }
 }
