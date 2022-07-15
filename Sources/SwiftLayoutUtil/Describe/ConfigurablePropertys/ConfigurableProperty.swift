@@ -115,8 +115,13 @@ extension ConfigurableProperty {
 
 extension ConfigurableProperty {
     private static func accessibilityDefaultConfigurablePropertys(defualtReferenceView view: UIView) -> [ConfigurableProperty] {
-        // TODO
-        return []
+        return [
+            .property(keypath: \.isAccessibilityElement, defualtReferenceView: view) { "$0.isAccessibilityElement = \($0)"},
+            .property(keypath: \.accessibilityLabel, defualtReferenceView: view) { "$0.accessibilityLabel = \(optionalStringOutput($0))"},
+            .property(keypath: \.accessibilityHint, defualtReferenceView: view) { "$0.accessibilityHint = \(optionalStringOutput($0))"},
+            .property(keypath: \.accessibilityIdentifier, defualtReferenceView: view) { "$0.accessibilityIdentifier = \(optionalStringOutput($0))"},
+            .property(keypath: \.accessibilityTraits, defualtReferenceView: view) { "$0.accessibilityIdentifier = \($0.configurationName)"},
+        ]
     }
 
     private static func uiViewDefaultConfigurablePropertys(defualtReferenceView view: UIView) -> [ConfigurableProperty] {
@@ -154,7 +159,7 @@ extension ConfigurableProperty {
 
         if #available(iOS 15.0, *) {
             configurablePropertys.append(contentsOf: [
-                .property(keypath: \.toolTip, defualtReferenceView: view) {"$0.toolTip = .\($0 ?? "nil")"},
+                .property(keypath: \.toolTip, defualtReferenceView: view) {"$0.toolTip = \(optionalStringOutput($0))"},
             ])
         }
 
@@ -163,7 +168,7 @@ extension ConfigurableProperty {
 
     private static func uiLabelDefaultConfigurablePropertys(defualtReferenceView label: UILabel) -> [ConfigurableProperty] {
         return [
-            .property(keypath: \.text, defualtReferenceView: label) { "$0.text = .\($0 ?? "nil")"},
+            .property(keypath: \.text, defualtReferenceView: label) { "$0.text = \(optionalStringOutput($0))"},
             .property(keypath: \.textColor, defualtReferenceView: label) { "$0.textColor = \(String(describing: $0))" },
             .property(keypath: \.font, defualtReferenceView: label) { "$0.font = \(String(describing: $0))" },
             .property(keypath: \.adjustsFontForContentSizeCategory, defualtReferenceView: label) { "$0.adjustsFontForContentSizeCategory = \($0)" },
@@ -197,6 +202,10 @@ extension ConfigurableProperty {
         // TODO
         return []
     }
+}
 
-
+extension ConfigurableProperty {
+    private static func optionalStringOutput(_ string: String?) -> String {
+        return string.map { "\"\($0)\"" } ?? "nil"
+    }
 }

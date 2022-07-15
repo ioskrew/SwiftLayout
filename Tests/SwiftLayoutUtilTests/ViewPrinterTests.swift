@@ -766,10 +766,13 @@ extension ViewPrinterTests {
 
         let expect = """
         root.config {
+            $0.contentMode = .scaleAspectFit
             $0.alpha = 0.4000000059604645
+            $0.accessibilityIdentifier = "root"
         }.sublayout {
             child.config {
                 $0.accessibilityLabel = "child-accessibilityLabel"
+                $0.accessibilityIdentifier = "child"
             }.anchors {
                 Anchors.top.bottom
                 Anchors.leading.trailing
@@ -777,6 +780,7 @@ extension ViewPrinterTests {
                 grandchild.config {
                     $0.isHidden = true
                     $0.accessibilityLabel = "grandchild-accessibilityLabel"
+                    $0.accessibilityIdentifier = "grandchild"
                 }.anchors {
                     Anchors.top.bottom
                     Anchors.leading.trailing
