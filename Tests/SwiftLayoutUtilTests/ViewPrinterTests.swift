@@ -741,12 +741,13 @@ extension ViewPrinterTests {
 // MARK: - withViewConfig
 extension ViewPrinterTests {
     func testWithViewConfig() {
-        let root = UIView().identifying("root")
+        let root = UILabel().identifying("root")
         let child = UIView().identifying("child")
         let grandchild = UIView().identifying("grandchild")
 
         activation = root.config {
             $0.alpha = 0.4
+            $0.contentMode = .scaleAspectFit
         }.sublayout {
             child.config {
                 $0.alpha = 1.0

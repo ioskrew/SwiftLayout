@@ -45,37 +45,89 @@ extension ConfigurableProperty {
         defualtReferenceView: View,
         describer: @escaping (Value) -> String
     ) -> ConfigurableProperty {
-        ConfigurableProperty(
+        return property(
+            keypath: keypath,
+            defualtValue: defualtReferenceView[keyPath: keypath],
+            describer: describer
+        )
+    }
+
+    public static func property<View: UIView, Value: Equatable>(
+        keypath: KeyPath<View, Value>,
+        defualtValue: Value,
+        describer: @escaping (Value) -> String
+    ) -> ConfigurableProperty {
+        return ConfigurableProperty(
             configurator: ConfigurablePropertyImp(
                 keypath: keypath,
-                defualtValue: defualtReferenceView[keyPath: keypath],
+                defualtValue: defualtValue,
                 describer: describer
             )
         )
     }
 
     public static func defaultConfigurablePropertys<View: UIView>(view: View) -> [ConfigurableProperty] {
-        var configurablePropertys: [ConfigurableProperty] = Self.uiViewDefaultConfigurablePropertys
-
         if view is UILabel {
-            configurablePropertys.append(contentsOf: uiLabelDefaultConfigurablePropertys)
+            let defualtReferenceView = UILabel()
+            return [
+                uiViewDefaultConfigurablePropertys(defualtReferenceView: defualtReferenceView),
+                uiLabelDefaultConfigurablePropertys(defualtReferenceView: defualtReferenceView),
+                accessibilityDefaultConfigurablePropertys(defualtReferenceView: defualtReferenceView)
+            ].flatMap { $0 }
+        } else if view is UIButton {
+            let defualtReferenceView = UIButton()
+            return [
+                uiViewDefaultConfigurablePropertys(defualtReferenceView: defualtReferenceView),
+                uiControlDefaultConfigurablePropertys(defualtReferenceView: defualtReferenceView),
+                uiButtonDefaultConfigurablePropertys(defualtReferenceView: defualtReferenceView),
+                accessibilityDefaultConfigurablePropertys(defualtReferenceView: defualtReferenceView)
+            ].flatMap { $0 }
+        }  else if view is UIImageView {
+            let defualtReferenceView = UIImageView()
+            return [
+                uiViewDefaultConfigurablePropertys(defualtReferenceView: defualtReferenceView),
+                uiViewDefaultConfigurablePropertys(defualtReferenceView: defualtReferenceView),
+                accessibilityDefaultConfigurablePropertys(defualtReferenceView: defualtReferenceView)
+            ].flatMap { $0 }
+        } else if view is UIStackView {
+            let defualtReferenceView = UIStackView()
+            return [
+                uiViewDefaultConfigurablePropertys(defualtReferenceView: defualtReferenceView),
+                uiStackViewDefaultConfigurablePropertys(defualtReferenceView: defualtReferenceView),
+                accessibilityDefaultConfigurablePropertys(defualtReferenceView: defualtReferenceView)
+            ].flatMap { $0 }
+        } else if view is UIControl {
+            let defualtReferenceView = UIControl()
+            return [
+                uiViewDefaultConfigurablePropertys(defualtReferenceView: defualtReferenceView),
+                uiControlDefaultConfigurablePropertys(defualtReferenceView: defualtReferenceView),
+                accessibilityDefaultConfigurablePropertys(defualtReferenceView: defualtReferenceView)
+            ].flatMap { $0 }
+        } else {
+            let defualtReferenceView = UIView()
+            return [
+                uiViewDefaultConfigurablePropertys(defualtReferenceView: defualtReferenceView),
+                accessibilityDefaultConfigurablePropertys(defualtReferenceView: defualtReferenceView)
+            ].flatMap { $0 }
         }
-
-        return configurablePropertys
     }
 }
 
 extension ConfigurableProperty {
-    private static var uiViewDefaultConfigurablePropertys: [ConfigurableProperty] {
-        let view = UIView()
+    private static func accessibilityDefaultConfigurablePropertys(defualtReferenceView view: UIView) -> [ConfigurableProperty] {
+        // TODO
+        return []
+    }
+
+    private static func uiViewDefaultConfigurablePropertys(defualtReferenceView view: UIView) -> [ConfigurableProperty] {
         return [
             .property(keypath: \.contentMode, defualtReferenceView: view) { "$0.contentMode = .\($0.configurationName)"},
             .property(keypath: \.semanticContentAttribute, defualtReferenceView: view) { "$0.semanticContentAttribute = .\($0.configurationName)"},
             .property(keypath: \.tag, defualtReferenceView: view) { "$0.tag = \($0)" },
-            .property(keypath: \.isUserInteractionEnabled, defualtReferenceView: label) { "$0.isUserInteractionEnabled = \($0)"},
+            .property(keypath: \.isUserInteractionEnabled, defualtReferenceView: view) { "$0.isUserInteractionEnabled = \($0)"},
             .property(keypath: \.isMultipleTouchEnabled, defualtReferenceView: view) { "$0.isMultipleTouchEnabled = \($0)"},
             .property(keypath: \.alpha, defualtReferenceView: view) { "$0.alpha = \($0)" },
-            .property(keypath: \.backgroundColor, defualtReferenceView: label) { "$0.backgroundColor = \(String(describing: $0))" },
+            .property(keypath: \.backgroundColor, defualtReferenceView: view) { "$0.backgroundColor = \(String(describing: $0))" },
             .property(keypath: \.tintColor, defualtReferenceView: view) { "$0.tintColor = \(String(describing: $0))" },
             .property(keypath: \.isOpaque, defualtReferenceView: view) { "$0.isOpaque = \($0)" },
             .property(keypath: \.isHidden, defualtReferenceView: view) { "$0.isHidden = \($0)" },
@@ -85,10 +137,33 @@ extension ConfigurableProperty {
         ]
     }
 
-    private static var uiLabelDefaultConfigurablePropertys: [ConfigurableProperty] {
-        let label = UILabel()
+    private static func uiControlDefaultConfigurablePropertys(defualtReferenceView view: UIControl) -> [ConfigurableProperty] {
+        var configurablePropertys: [ConfigurableProperty] = [
+            .property(keypath: \.contentHorizontalAlignment, defualtReferenceView: view) { "$0.contentHorizontalAlignment = .\($0.configurationName)"},
+            .property(keypath: \.contentVerticalAlignment, defualtReferenceView: view) { "$0.contentVerticalAlignment = .\($0.configurationName)"},
+            .property(keypath: \.isSelected, defualtReferenceView: view) { "$0.isSelected = \($0)" },
+            .property(keypath: \.isEnabled, defualtReferenceView: view) { "$0.isEnabled = \($0)" },
+            .property(keypath: \.isHighlighted, defualtReferenceView: view) { "$0.isHighlighted = \($0)" },
+        ]
+
+        if #available(iOS 14.0, *) {
+            configurablePropertys.append(contentsOf: [
+                .property(keypath: \.showsMenuAsPrimaryAction, defualtReferenceView: view) { "$0.showsMenuAsPrimaryAction = \($0)"},
+            ])
+        }
+
+        if #available(iOS 15.0, *) {
+            configurablePropertys.append(contentsOf: [
+                .property(keypath: \.toolTip, defualtReferenceView: view) {"$0.toolTip = .\($0 ?? "nil")"},
+            ])
+        }
+
+        return configurablePropertys
+    }
+
+    private static func uiLabelDefaultConfigurablePropertys(defualtReferenceView label: UILabel) -> [ConfigurableProperty] {
         return [
-            .property(keypath: \.text, defualtReferenceView: label) { "$0.contentMode = .\($0 ?? "nil")"},
+            .property(keypath: \.text, defualtReferenceView: label) { "$0.text = .\($0 ?? "nil")"},
             .property(keypath: \.textColor, defualtReferenceView: label) { "$0.textColor = \(String(describing: $0))" },
             .property(keypath: \.font, defualtReferenceView: label) { "$0.font = \(String(describing: $0))" },
             .property(keypath: \.adjustsFontForContentSizeCategory, defualtReferenceView: label) { "$0.adjustsFontForContentSizeCategory = \($0)" },
@@ -107,4 +182,21 @@ extension ConfigurableProperty {
             .property(keypath: \.shadowOffset, defualtReferenceView: label) { "$0.shadowOffset = CGSize(width: \($0.width), height: \($0.height))" },
         ]
     }
+
+    private static func uiButtonDefaultConfigurablePropertys(defualtReferenceView button: UIButton) -> [ConfigurableProperty] {
+        // TODO
+        return []
+    }
+
+    private static func uiImageViewDefaultConfigurablePropertys(defualtReferenceView imageView: UIImageView) -> [ConfigurableProperty] {
+        // TODO
+        return []
+    }
+
+    private static func uiStackViewDefaultConfigurablePropertys(defualtReferenceView stackView: UIStackView) -> [ConfigurableProperty] {
+        // TODO
+        return []
+    }
+
+
 }
