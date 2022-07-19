@@ -116,7 +116,7 @@ extension ConfigurableProperty {
             let defualtReferenceView = UIImageView()
             return [
                 uiViewDefaultConfigurablePropertys(defualtReferenceView: defualtReferenceView),
-                uiViewDefaultConfigurablePropertys(defualtReferenceView: defualtReferenceView),
+                uiImageViewDefaultConfigurablePropertys(defualtReferenceView: defualtReferenceView),
                 accessibilityDefaultConfigurablePropertys(defualtReferenceView: defualtReferenceView)
             ].flatMap { $0 }
         } else if view is UIStackView {
@@ -162,8 +162,8 @@ extension ConfigurableProperty {
             .property(keypath: \.isUserInteractionEnabled, defualtReferenceView: view) { "$0.isUserInteractionEnabled = \($0)"},
             .property(keypath: \.isMultipleTouchEnabled, defualtReferenceView: view) { "$0.isMultipleTouchEnabled = \($0)"},
             .property(keypath: \.alpha, defualtReferenceView: view) { "$0.alpha = \($0)" },
-            .property(keypath: \.backgroundColor, defualtReferenceView: view) { "$0.backgroundColor = \(String(describing: $0))" },
-            .property(keypath: \.tintColor, defualtReferenceView: view) { "$0.tintColor = \(String(describing: $0))" },
+            .property(keypath: \.backgroundColor, defualtReferenceView: view) { "$0.backgroundColor = \($0.configuration)" },
+            .property(keypath: \.tintColor, defualtReferenceView: view) { "$0.tintColor = \($0.configuration)" },
             .property(keypath: \.isOpaque, defualtReferenceView: view) { "$0.isOpaque = \($0)" },
             .property(keypath: \.isHidden, defualtReferenceView: view) { "$0.isHidden = \($0)" },
             .property(keypath: \.clearsContextBeforeDrawing, defualtReferenceView: view) { "$0.clearsContextBeforeDrawing = \($0)" },
@@ -199,8 +199,8 @@ extension ConfigurableProperty {
     private static func uiLabelDefaultConfigurablePropertys(defualtReferenceView label: UILabel) -> [ConfigurableProperty] {
         return [
             .property(keypath: \.text, defualtReferenceView: label) { "$0.text = \($0.configuration)"},
-            .property(keypath: \.textColor, defualtReferenceView: label) { "$0.textColor = \(String(describing: $0))" },
-            .property(keypath: \.font, defualtReferenceView: label) { "$0.font = \(String(describing: $0))" },
+            .property(keypath: \.textColor, defualtReferenceView: label) { "$0.textColor = \($0.configuration)" },
+            .property(keypath: \.font, defualtReferenceView: label) { "$0.font = \($0.configuration)" },
             .property(keypath: \.adjustsFontForContentSizeCategory, defualtReferenceView: label) { "$0.adjustsFontForContentSizeCategory = \($0)" },
             .property(keypath: \.textAlignment, defualtReferenceView: label) { "$0.textAlignment = \($0.configuration)" },
             .property(keypath: \.numberOfLines, defualtReferenceView: label) { "$0.numberOfLines = \($0)" },
@@ -212,8 +212,8 @@ extension ConfigurableProperty {
             .property(keypath: \.adjustsFontSizeToFitWidth, defualtReferenceView: label) { "$0.adjustsFontSizeToFitWidth = \($0)" },
             .property(keypath: \.minimumScaleFactor, defualtReferenceView: label) { "$0.minimumScaleFactor = \($0)" },
             .property(keypath: \.allowsDefaultTighteningForTruncation, defualtReferenceView: label) { "$0.allowsDefaultTighteningForTruncation = \($0)" },
-            .property(keypath: \.highlightedTextColor, defualtReferenceView: label) { "$0.highlightedTextColor = \(String(describing: $0))" },
-            .property(keypath: \.shadowColor, defualtReferenceView: label) { "$0.shadowColor = \(String(describing: $0))" },
+            .property(keypath: \.highlightedTextColor, defualtReferenceView: label) { "$0.highlightedTextColor = \($0.configuration)" },
+            .property(keypath: \.shadowColor, defualtReferenceView: label) { "$0.shadowColor = \($0.configuration)" },
             .property(keypath: \.shadowOffset, defualtReferenceView: label) { "$0.shadowOffset = CGSize(width: \($0.width), height: \($0.height))" },
         ]
     }
@@ -221,46 +221,46 @@ extension ConfigurableProperty {
     private static func uiButtonDefaultConfigurablePropertys(defualtReferenceView button: UIButton) -> [ConfigurableProperty] {
         var configurablePropertys: [ConfigurableProperty] = [
             .property(getter: { $0.title(for: .normal) }, defualtReferenceView: button) { "$0.setTitle(\($0.configuration), for: .normal)" },
-            .property(getter: { $0.titleColor(for: .normal) }, defualtReferenceView: button) { "$0.titleColor(\(String(describing: $0)), for: .normal)" },
-            .property(getter: { $0.titleShadowColor(for: .normal) }, defualtReferenceView: button) { "$0.titleShadowColor(\(String(describing: $0)), for: .normal)" },
-            .property(getter: { $0.backgroundImage(for: .normal) }, defualtReferenceView: button) { "$0.backgroundImage(\(String(describing: $0)), for: .normal)" },
-            .property(getter: { $0.image(for: .normal) }, defualtReferenceView: button) { "$0.setImage(\(String(describing: $0)), for: .normal)" },
+            .property(getter: { $0.titleColor(for: .normal) }, defualtReferenceView: button) { "$0.titleColor(\($0.configuration), for: .normal)" },
+            .property(getter: { $0.titleShadowColor(for: .normal) }, defualtReferenceView: button) { "$0.titleShadowColor(\($0.configuration), for: .normal)" },
+            .property(getter: { $0.backgroundImage(for: .normal) }, defualtReferenceView: button) { "$0.backgroundImage(\($0.configuration), for: .normal)" },
+            .property(getter: { $0.image(for: .normal) }, defualtReferenceView: button) { "$0.setImage(\($0.configuration), for: .normal)" },
 
             .property(getter: { $0.title(for: .highlighted) }, defualtReferenceView: button) { "$0.setTitle(\($0.configuration), for: .highlighted)" },
-            .property(getter: { $0.titleColor(for: .highlighted) }, defualtReferenceView: button) { "$0.titleColor(\(String(describing: $0)), for: .highlighted)" },
-            .property(getter: { $0.titleShadowColor(for: .highlighted) }, defualtReferenceView: button) { "$0.titleShadowColor(\(String(describing: $0)), for: .highlighted)" },
-            .property(getter: { $0.backgroundImage(for: .highlighted) }, defualtReferenceView: button) { "$0.backgroundImage(\(String(describing: $0)), for: .highlighted)" },
-            .property(getter: { $0.image(for: .highlighted) }, defualtReferenceView: button) { "$0.setImage(\(String(describing: $0)), for: .highlighted)" },
+            .property(getter: { $0.titleColor(for: .highlighted) }, defualtReferenceView: button) { "$0.titleColor(\($0.configuration), for: .highlighted)" },
+            .property(getter: { $0.titleShadowColor(for: .highlighted) }, defualtReferenceView: button) { "$0.titleShadowColor(\($0.configuration), for: .highlighted)" },
+            .property(getter: { $0.backgroundImage(for: .highlighted) }, defualtReferenceView: button) { "$0.backgroundImage(\($0.configuration), for: .highlighted)" },
+            .property(getter: { $0.image(for: .highlighted) }, defualtReferenceView: button) { "$0.setImage(\($0.configuration), for: .highlighted)" },
 
             .property(getter: { $0.title(for: .disabled) }, defualtReferenceView: button) { "$0.setTitle(\($0.configuration), for: .disabled)" },
-            .property(getter: { $0.titleColor(for: .disabled) }, defualtReferenceView: button) { "$0.titleColor(\(String(describing: $0)), for: .disabled)" },
-            .property(getter: { $0.titleShadowColor(for: .disabled) }, defualtReferenceView: button) { "$0.titleShadowColor(\(String(describing: $0)), for: .disabled)" },
-            .property(getter: { $0.backgroundImage(for: .disabled) }, defualtReferenceView: button) { "$0.backgroundImage(\(String(describing: $0)), for: .disabled)" },
-            .property(getter: { $0.image(for: .disabled) }, defualtReferenceView: button) { "$0.setImage(\(String(describing: $0)), for: .disabled)" },
+            .property(getter: { $0.titleColor(for: .disabled) }, defualtReferenceView: button) { "$0.titleColor(\($0.configuration), for: .disabled)" },
+            .property(getter: { $0.titleShadowColor(for: .disabled) }, defualtReferenceView: button) { "$0.titleShadowColor(\($0.configuration), for: .disabled)" },
+            .property(getter: { $0.backgroundImage(for: .disabled) }, defualtReferenceView: button) { "$0.backgroundImage(\($0.configuration), for: .disabled)" },
+            .property(getter: { $0.image(for: .disabled) }, defualtReferenceView: button) { "$0.setImage(\($0.configuration), for: .disabled)" },
 
             .property(getter: { $0.title(for: .selected) }, defualtReferenceView: button) { "$0.setTitle(\($0.configuration), for: .selected)" },
-            .property(getter: { $0.titleColor(for: .selected) }, defualtReferenceView: button) { "$0.titleColor(\(String(describing: $0)), for: .selected)" },
-            .property(getter: { $0.titleShadowColor(for: .selected) }, defualtReferenceView: button) { "$0.titleShadowColor(\(String(describing: $0)), for: .selected)" },
-            .property(getter: { $0.backgroundImage(for: .selected) }, defualtReferenceView: button) { "$0.backgroundImage(\(String(describing: $0)), for: .selected)" },
-            .property(getter: { $0.image(for: .selected) }, defualtReferenceView: button) { "$0.setImage(\(String(describing: $0)), for: .selected)" },
+            .property(getter: { $0.titleColor(for: .selected) }, defualtReferenceView: button) { "$0.titleColor(\($0.configuration), for: .selected)" },
+            .property(getter: { $0.titleShadowColor(for: .selected) }, defualtReferenceView: button) { "$0.titleShadowColor(\($0.configuration), for: .selected)" },
+            .property(getter: { $0.backgroundImage(for: .selected) }, defualtReferenceView: button) { "$0.backgroundImage(\($0.configuration), for: .selected)" },
+            .property(getter: { $0.image(for: .selected) }, defualtReferenceView: button) { "$0.setImage(\($0.configuration), for: .selected)" },
 
             .property(getter: { $0.title(for: .focused) }, defualtReferenceView: button) { "$0.setTitle(\($0.configuration), for: .focused)" },
-            .property(getter: { $0.titleColor(for: .focused) }, defualtReferenceView: button) { "$0.titleColor(\(String(describing: $0)), for: .focused)" },
-            .property(getter: { $0.titleShadowColor(for: .focused) }, defualtReferenceView: button) { "$0.titleShadowColor(\(String(describing: $0)), for: .focused)" },
-            .property(getter: { $0.backgroundImage(for: .focused) }, defualtReferenceView: button) { "$0.backgroundImage(\(String(describing: $0)), for: .focused)" },
-            .property(getter: { $0.image(for: .focused) }, defualtReferenceView: button) { "$0.setImage(\(String(describing: $0)), for: .focused)" },
+            .property(getter: { $0.titleColor(for: .focused) }, defualtReferenceView: button) { "$0.titleColor(\($0.configuration), for: .focused)" },
+            .property(getter: { $0.titleShadowColor(for: .focused) }, defualtReferenceView: button) { "$0.titleShadowColor(\($0.configuration), for: .focused)" },
+            .property(getter: { $0.backgroundImage(for: .focused) }, defualtReferenceView: button) { "$0.backgroundImage(\($0.configuration), for: .focused)" },
+            .property(getter: { $0.image(for: .focused) }, defualtReferenceView: button) { "$0.setImage(\($0.configuration), for: .focused)" },
 
             .property(getter: { $0.title(for: .application) }, defualtReferenceView: button) { "$0.setTitle(\($0.configuration), for: .application)" },
-            .property(getter: { $0.titleColor(for: .application) }, defualtReferenceView: button) { "$0.titleColor(\(String(describing: $0)), for: .application)" },
-            .property(getter: { $0.titleShadowColor(for: .application) }, defualtReferenceView: button) { "$0.titleShadowColor(\(String(describing: $0)), for: .application)" },
-            .property(getter: { $0.backgroundImage(for: .application) }, defualtReferenceView: button) { "$0.backgroundImage(\(String(describing: $0)), for: .application)" },
-            .property(getter: { $0.image(for: .application) }, defualtReferenceView: button) { "$0.setImage(\(String(describing: $0)), for: .application)" },
+            .property(getter: { $0.titleColor(for: .application) }, defualtReferenceView: button) { "$0.titleColor(\($0.configuration), for: .application)" },
+            .property(getter: { $0.titleShadowColor(for: .application) }, defualtReferenceView: button) { "$0.titleShadowColor(\($0.configuration), for: .application)" },
+            .property(getter: { $0.backgroundImage(for: .application) }, defualtReferenceView: button) { "$0.backgroundImage(\($0.configuration), for: .application)" },
+            .property(getter: { $0.image(for: .application) }, defualtReferenceView: button) { "$0.setImage(\($0.configuration), for: .application)" },
 
             .property(getter: { $0.title(for: .reserved) }, defualtReferenceView: button) { "$0.setTitle(\($0.configuration), for: .reserved)" },
-            .property(getter: { $0.titleColor(for: .reserved) }, defualtReferenceView: button) { "$0.titleColor(\(String(describing: $0)), for: .reserved)" },
-            .property(getter: { $0.titleShadowColor(for: .reserved) }, defualtReferenceView: button) { "$0.titleShadowColor(\(String(describing: $0)), for: .reserved)" },
-            .property(getter: { $0.backgroundImage(for: .reserved) }, defualtReferenceView: button) { "$0.backgroundImage(\(String(describing: $0)), for: .reserved)" },
-            .property(getter: { $0.image(for: .reserved) }, defualtReferenceView: button) { "$0.setImage(\(String(describing: $0)), for: .reserved)" },
+            .property(getter: { $0.titleColor(for: .reserved) }, defualtReferenceView: button) { "$0.titleColor(\($0.configuration), for: .reserved)" },
+            .property(getter: { $0.titleShadowColor(for: .reserved) }, defualtReferenceView: button) { "$0.titleShadowColor(\($0.configuration), for: .reserved)" },
+            .property(getter: { $0.backgroundImage(for: .reserved) }, defualtReferenceView: button) { "$0.backgroundImage(\($0.configuration), for: .reserved)" },
+            .property(getter: { $0.image(for: .reserved) }, defualtReferenceView: button) { "$0.setImage(\($0.configuration), for: .reserved)" },
 
             .property(keypath: \.adjustsImageSizeForAccessibilityContentSizeCategory, defualtReferenceView: button) { "$0.adjustsImageSizeForAccessibilityContentSizeCategory = \($0)" },
         ]
@@ -291,8 +291,8 @@ extension ConfigurableProperty {
 
     private static func uiImageViewDefaultConfigurablePropertys(defualtReferenceView imageView: UIImageView) -> [ConfigurableProperty] {
         return [
-            .property(keypath: \.image, defualtReferenceView: imageView) { "$0.image = \(String(describing: $0))"},
-            .property(keypath: \.highlightedImage, defualtReferenceView: imageView) { "$0.highlightedImage = \(String(describing: $0))"},
+            .property(keypath: \.image, defualtReferenceView: imageView) { "$0.image = \($0.configuration)"},
+            .property(keypath: \.highlightedImage, defualtReferenceView: imageView) { "$0.highlightedImage = \($0.configuration)"},
             .property(keypath: \.isHighlighted, defualtReferenceView: imageView) { "$0.isHighlighted = \($0)" },
             .property(keypath: \.adjustsImageSizeForAccessibilityContentSizeCategory, defualtReferenceView: imageView) { "$0.adjustsImageSizeForAccessibilityContentSizeCategory = \($0)" },
         ]
