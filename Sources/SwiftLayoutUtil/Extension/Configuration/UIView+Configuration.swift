@@ -1,5 +1,5 @@
 //
-//  UIView.ContentMode+ConfigurationName.swift
+//  UIView.ContentMode+Configuration.swift
 //  
 //
 //  Created by aiden_h on 2022/07/08.
@@ -8,7 +8,7 @@
 import UIKit
 
 extension UIView.ContentMode {
-    var configurationName: String {
+    var configuration: String {
         switch self {
         case .scaleToFill: return ".scaleToFill"
         case .scaleAspectFit: return ".scaleAspectFit"

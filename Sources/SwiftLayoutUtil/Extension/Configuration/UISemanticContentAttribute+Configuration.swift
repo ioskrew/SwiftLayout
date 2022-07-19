@@ -1,5 +1,5 @@
 //
-//  UISemanticContentAttribute+ConfigurationName.swift
+//  UISemanticContentAttribute+Configuration.swift
 //  
 //
 //  Created by aiden_h on 2022/07/08.
@@ -8,7 +8,7 @@
 import UIKit
 
 extension UISemanticContentAttribute {
-    var configurationName: String {
+    var configuration: String {
         switch self {
         case .unspecified: return ".unspecified"
         case .playback: return ".playback"

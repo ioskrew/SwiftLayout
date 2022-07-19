@@ -147,17 +147,17 @@ extension ConfigurableProperty {
     private static func accessibilityDefaultConfigurablePropertys(defualtReferenceView view: UIView) -> [ConfigurableProperty] {
         return [
             .property(keypath: \.isAccessibilityElement, defualtReferenceView: view) { "$0.isAccessibilityElement = \($0)"},
-            .property(keypath: \.accessibilityLabel, defualtReferenceView: view) { "$0.accessibilityLabel = \($0.configurationName)"},
-            .property(keypath: \.accessibilityHint, defualtReferenceView: view) { "$0.accessibilityHint = \($0.configurationName)"},
-            .property(keypath: \.accessibilityIdentifier, defualtReferenceView: view) { "$0.accessibilityIdentifier = \($0.configurationName)"},
-            .property(keypath: \.accessibilityTraits, defualtReferenceView: view) { "$0.accessibilityIdentifier = \($0.configurationName)"},
+            .property(keypath: \.accessibilityLabel, defualtReferenceView: view) { "$0.accessibilityLabel = \($0.configuration)"},
+            .property(keypath: \.accessibilityHint, defualtReferenceView: view) { "$0.accessibilityHint = \($0.configuration)"},
+            .property(keypath: \.accessibilityIdentifier, defualtReferenceView: view) { "$0.accessibilityIdentifier = \($0.configuration)"},
+            .property(keypath: \.accessibilityTraits, defualtReferenceView: view) { "$0.accessibilityTraits = \($0.configuration)"},
         ]
     }
 
     private static func uiViewDefaultConfigurablePropertys(defualtReferenceView view: UIView) -> [ConfigurableProperty] {
         return [
-            .property(keypath: \.contentMode, defualtReferenceView: view) { "$0.contentMode = \($0.configurationName)"},
-            .property(keypath: \.semanticContentAttribute, defualtReferenceView: view) { "$0.semanticContentAttribute = \($0.configurationName)"},
+            .property(keypath: \.contentMode, defualtReferenceView: view) { "$0.contentMode = \($0.configuration)"},
+            .property(keypath: \.semanticContentAttribute, defualtReferenceView: view) { "$0.semanticContentAttribute = \($0.configuration)"},
             .property(keypath: \.tag, defualtReferenceView: view) { "$0.tag = \($0)" },
             .property(keypath: \.isUserInteractionEnabled, defualtReferenceView: view) { "$0.isUserInteractionEnabled = \($0)"},
             .property(keypath: \.isMultipleTouchEnabled, defualtReferenceView: view) { "$0.isMultipleTouchEnabled = \($0)"},
@@ -174,8 +174,8 @@ extension ConfigurableProperty {
 
     private static func uiControlDefaultConfigurablePropertys(defualtReferenceView view: UIControl) -> [ConfigurableProperty] {
         var configurablePropertys: [ConfigurableProperty] = [
-            .property(keypath: \.contentHorizontalAlignment, defualtReferenceView: view) { "$0.contentHorizontalAlignment = \($0.configurationName)"},
-            .property(keypath: \.contentVerticalAlignment, defualtReferenceView: view) { "$0.contentVerticalAlignment = \($0.configurationName)"},
+            .property(keypath: \.contentHorizontalAlignment, defualtReferenceView: view) { "$0.contentHorizontalAlignment = \($0.configuration)"},
+            .property(keypath: \.contentVerticalAlignment, defualtReferenceView: view) { "$0.contentVerticalAlignment = \($0.configuration)"},
             .property(keypath: \.isSelected, defualtReferenceView: view) { "$0.isSelected = \($0)" },
             .property(keypath: \.isEnabled, defualtReferenceView: view) { "$0.isEnabled = \($0)" },
             .property(keypath: \.isHighlighted, defualtReferenceView: view) { "$0.isHighlighted = \($0)" },
@@ -189,7 +189,7 @@ extension ConfigurableProperty {
 
         if #available(iOS 15.0, *) {
             configurablePropertys.append(contentsOf: [
-                .property(keypath: \.toolTip, defualtReferenceView: view) {"$0.toolTip = \($0.configurationName)"},
+                .property(keypath: \.toolTip, defualtReferenceView: view) {"$0.toolTip = \($0.configuration)"},
             ])
         }
 
@@ -198,17 +198,17 @@ extension ConfigurableProperty {
 
     private static func uiLabelDefaultConfigurablePropertys(defualtReferenceView label: UILabel) -> [ConfigurableProperty] {
         return [
-            .property(keypath: \.text, defualtReferenceView: label) { "$0.text = \($0.configurationName)"},
+            .property(keypath: \.text, defualtReferenceView: label) { "$0.text = \($0.configuration)"},
             .property(keypath: \.textColor, defualtReferenceView: label) { "$0.textColor = \(String(describing: $0))" },
             .property(keypath: \.font, defualtReferenceView: label) { "$0.font = \(String(describing: $0))" },
             .property(keypath: \.adjustsFontForContentSizeCategory, defualtReferenceView: label) { "$0.adjustsFontForContentSizeCategory = \($0)" },
-            .property(keypath: \.textAlignment, defualtReferenceView: label) { "$0.textAlignment = \($0.configurationName)" },
+            .property(keypath: \.textAlignment, defualtReferenceView: label) { "$0.textAlignment = \($0.configuration)" },
             .property(keypath: \.numberOfLines, defualtReferenceView: label) { "$0.numberOfLines = \($0)" },
             .property(keypath: \.isEnabled, defualtReferenceView: label) { "$0.isEnabled = \($0)" },
             .property(keypath: \.isHighlighted, defualtReferenceView: label) { "$0.isHighlighted = \($0)" },
             .property(keypath: \.showsExpansionTextWhenTruncated, defualtReferenceView: label) { "$0.showsExpansionTextWhenTruncated = \($0)" },
-            .property(keypath: \.baselineAdjustment, defualtReferenceView: label) { "$0.baselineAdjustment = \($0.configurationName)" },
-            .property(keypath: \.lineBreakMode, defualtReferenceView: label) { "$0.lineBreakMode = .\($0.configurationName)" },
+            .property(keypath: \.baselineAdjustment, defualtReferenceView: label) { "$0.baselineAdjustment = \($0.configuration)" },
+            .property(keypath: \.lineBreakMode, defualtReferenceView: label) { "$0.lineBreakMode = .\($0.configuration)" },
             .property(keypath: \.adjustsFontSizeToFitWidth, defualtReferenceView: label) { "$0.adjustsFontSizeToFitWidth = \($0)" },
             .property(keypath: \.minimumScaleFactor, defualtReferenceView: label) { "$0.minimumScaleFactor = \($0)" },
             .property(keypath: \.allowsDefaultTighteningForTruncation, defualtReferenceView: label) { "$0.allowsDefaultTighteningForTruncation = \($0)" },
@@ -220,43 +220,43 @@ extension ConfigurableProperty {
 
     private static func uiButtonDefaultConfigurablePropertys(defualtReferenceView button: UIButton) -> [ConfigurableProperty] {
         var configurablePropertys: [ConfigurableProperty] = [
-            .property(getter: { $0.title(for: .normal) }, defualtReferenceView: button) { "$0.setTitle(\($0.configurationName), for: .normal)" },
+            .property(getter: { $0.title(for: .normal) }, defualtReferenceView: button) { "$0.setTitle(\($0.configuration), for: .normal)" },
             .property(getter: { $0.titleColor(for: .normal) }, defualtReferenceView: button) { "$0.titleColor(\(String(describing: $0)), for: .normal)" },
             .property(getter: { $0.titleShadowColor(for: .normal) }, defualtReferenceView: button) { "$0.titleShadowColor(\(String(describing: $0)), for: .normal)" },
             .property(getter: { $0.backgroundImage(for: .normal) }, defualtReferenceView: button) { "$0.backgroundImage(\(String(describing: $0)), for: .normal)" },
             .property(getter: { $0.image(for: .normal) }, defualtReferenceView: button) { "$0.setImage(\(String(describing: $0)), for: .normal)" },
 
-            .property(getter: { $0.title(for: .highlighted) }, defualtReferenceView: button) { "$0.setTitle(\($0.configurationName), for: .highlighted)" },
+            .property(getter: { $0.title(for: .highlighted) }, defualtReferenceView: button) { "$0.setTitle(\($0.configuration), for: .highlighted)" },
             .property(getter: { $0.titleColor(for: .highlighted) }, defualtReferenceView: button) { "$0.titleColor(\(String(describing: $0)), for: .highlighted)" },
             .property(getter: { $0.titleShadowColor(for: .highlighted) }, defualtReferenceView: button) { "$0.titleShadowColor(\(String(describing: $0)), for: .highlighted)" },
             .property(getter: { $0.backgroundImage(for: .highlighted) }, defualtReferenceView: button) { "$0.backgroundImage(\(String(describing: $0)), for: .highlighted)" },
             .property(getter: { $0.image(for: .highlighted) }, defualtReferenceView: button) { "$0.setImage(\(String(describing: $0)), for: .highlighted)" },
 
-            .property(getter: { $0.title(for: .disabled) }, defualtReferenceView: button) { "$0.setTitle(\($0.configurationName), for: .disabled)" },
+            .property(getter: { $0.title(for: .disabled) }, defualtReferenceView: button) { "$0.setTitle(\($0.configuration), for: .disabled)" },
             .property(getter: { $0.titleColor(for: .disabled) }, defualtReferenceView: button) { "$0.titleColor(\(String(describing: $0)), for: .disabled)" },
             .property(getter: { $0.titleShadowColor(for: .disabled) }, defualtReferenceView: button) { "$0.titleShadowColor(\(String(describing: $0)), for: .disabled)" },
             .property(getter: { $0.backgroundImage(for: .disabled) }, defualtReferenceView: button) { "$0.backgroundImage(\(String(describing: $0)), for: .disabled)" },
             .property(getter: { $0.image(for: .disabled) }, defualtReferenceView: button) { "$0.setImage(\(String(describing: $0)), for: .disabled)" },
 
-            .property(getter: { $0.title(for: .selected) }, defualtReferenceView: button) { "$0.setTitle(\($0.configurationName), for: .selected)" },
+            .property(getter: { $0.title(for: .selected) }, defualtReferenceView: button) { "$0.setTitle(\($0.configuration), for: .selected)" },
             .property(getter: { $0.titleColor(for: .selected) }, defualtReferenceView: button) { "$0.titleColor(\(String(describing: $0)), for: .selected)" },
             .property(getter: { $0.titleShadowColor(for: .selected) }, defualtReferenceView: button) { "$0.titleShadowColor(\(String(describing: $0)), for: .selected)" },
             .property(getter: { $0.backgroundImage(for: .selected) }, defualtReferenceView: button) { "$0.backgroundImage(\(String(describing: $0)), for: .selected)" },
             .property(getter: { $0.image(for: .selected) }, defualtReferenceView: button) { "$0.setImage(\(String(describing: $0)), for: .selected)" },
 
-            .property(getter: { $0.title(for: .focused) }, defualtReferenceView: button) { "$0.setTitle(\($0.configurationName), for: .focused)" },
+            .property(getter: { $0.title(for: .focused) }, defualtReferenceView: button) { "$0.setTitle(\($0.configuration), for: .focused)" },
             .property(getter: { $0.titleColor(for: .focused) }, defualtReferenceView: button) { "$0.titleColor(\(String(describing: $0)), for: .focused)" },
             .property(getter: { $0.titleShadowColor(for: .focused) }, defualtReferenceView: button) { "$0.titleShadowColor(\(String(describing: $0)), for: .focused)" },
             .property(getter: { $0.backgroundImage(for: .focused) }, defualtReferenceView: button) { "$0.backgroundImage(\(String(describing: $0)), for: .focused)" },
             .property(getter: { $0.image(for: .focused) }, defualtReferenceView: button) { "$0.setImage(\(String(describing: $0)), for: .focused)" },
 
-            .property(getter: { $0.title(for: .application) }, defualtReferenceView: button) { "$0.setTitle(\($0.configurationName), for: .application)" },
+            .property(getter: { $0.title(for: .application) }, defualtReferenceView: button) { "$0.setTitle(\($0.configuration), for: .application)" },
             .property(getter: { $0.titleColor(for: .application) }, defualtReferenceView: button) { "$0.titleColor(\(String(describing: $0)), for: .application)" },
             .property(getter: { $0.titleShadowColor(for: .application) }, defualtReferenceView: button) { "$0.titleShadowColor(\(String(describing: $0)), for: .application)" },
             .property(getter: { $0.backgroundImage(for: .application) }, defualtReferenceView: button) { "$0.backgroundImage(\(String(describing: $0)), for: .application)" },
             .property(getter: { $0.image(for: .application) }, defualtReferenceView: button) { "$0.setImage(\(String(describing: $0)), for: .application)" },
 
-            .property(getter: { $0.title(for: .reserved) }, defualtReferenceView: button) { "$0.setTitle(\($0.configurationName), for: .reserved)" },
+            .property(getter: { $0.title(for: .reserved) }, defualtReferenceView: button) { "$0.setTitle(\($0.configuration), for: .reserved)" },
             .property(getter: { $0.titleColor(for: .reserved) }, defualtReferenceView: button) { "$0.titleColor(\(String(describing: $0)), for: .reserved)" },
             .property(getter: { $0.titleShadowColor(for: .reserved) }, defualtReferenceView: button) { "$0.titleShadowColor(\(String(describing: $0)), for: .reserved)" },
             .property(getter: { $0.backgroundImage(for: .reserved) }, defualtReferenceView: button) { "$0.backgroundImage(\(String(describing: $0)), for: .reserved)" },
@@ -274,7 +274,7 @@ extension ConfigurableProperty {
         if #available(iOS 14.0, *) {
             configurablePropertys.append(contentsOf: [
                 .property(keypath: \.showsMenuAsPrimaryAction, defualtReferenceView: button) { "$0.showsMenuAsPrimaryAction = \($0)" },
-                .property(keypath: \.role, defualtReferenceView: button) { "$0.role = \($0.configurationName)" },
+                .property(keypath: \.role, defualtReferenceView: button) { "$0.role = \($0.configuration)" },
             ])
         }
 
@@ -300,9 +300,9 @@ extension ConfigurableProperty {
 
     private static func uiStackViewDefaultConfigurablePropertys(defualtReferenceView stackView: UIStackView) -> [ConfigurableProperty] {
         return [
-            .property(keypath: \.axis, defualtReferenceView: stackView) { "$0.axis = \($0.configurationName)"},
-            .property(keypath: \.alignment, defualtReferenceView: stackView) { "$0.alignment = \($0.configurationName)"},
-            .property(keypath: \.distribution, defualtReferenceView: stackView) { "$0.distribution = \($0.configurationName)"},
+            .property(keypath: \.axis, defualtReferenceView: stackView) { "$0.axis = \($0.configuration)"},
+            .property(keypath: \.alignment, defualtReferenceView: stackView) { "$0.alignment = \($0.configuration)"},
+            .property(keypath: \.distribution, defualtReferenceView: stackView) { "$0.distribution = \($0.configuration)"},
             .property(keypath: \.spacing, defualtReferenceView: stackView) { "$0.spacing = \($0)"},
             .property(keypath: \.isBaselineRelativeArrangement, defualtReferenceView: stackView) { "$0.isBaselineRelativeArrangement = \($0)"},
         ]

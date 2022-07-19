@@ -1,5 +1,5 @@
 //
-//  UIStackView+ConfigurationName.swift
+//  UIStackView+Configuration.swift
 //  
 //
 //  Created by aiden_h on 2022/07/15.
@@ -8,7 +8,7 @@
 import UIKit
 
 extension UIStackView.Alignment {
-    var configurationName: String {
+    var configuration: String {
         switch self {
         case .fill: return ".fill"
         case .leading: return ".leading"
@@ -22,7 +22,7 @@ extension UIStackView.Alignment {
 }
 
 extension UIStackView.Distribution {
-    var configurationName: String {
+    var configuration: String {
         switch self {
         case .fill: return ".fill"
         case .fillEqually: return ".fillEqually"

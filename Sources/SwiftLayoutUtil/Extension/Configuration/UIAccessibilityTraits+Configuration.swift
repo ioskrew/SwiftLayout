@@ -1,5 +1,5 @@
 //
-//  UIAccessibilityTraits+ConfigurationName.swift
+//  UIAccessibilityTraits+Configuration.swift
 //  
 //
 //  Created by aiden_h on 2022/07/15.
@@ -7,7 +7,7 @@
 import UIKit
 
 extension UIAccessibilityTraits {
-    var configurationName: String {
+    var configuration: String {
         var names: [String] = []
 
         if self.contains(.button) { names.append(".button")}

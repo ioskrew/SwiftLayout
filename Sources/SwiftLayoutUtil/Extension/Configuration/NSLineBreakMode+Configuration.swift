@@ -1,5 +1,5 @@
 //
-//  NSLineBreakMode+ConfigurationName.swift
+//  NSLineBreakMode+Configuration.swift
 //  
 //
 //  Created by aiden_h on 2022/07/08.
@@ -8,7 +8,7 @@
 import UIKit
 
 extension NSLineBreakMode {
-    var configurationName: String {
+    var configuration: String {
         switch self {
         case .byWordWrapping: return ".byWordWrapping"
         case .byCharWrapping: return ".byCharWrapping"

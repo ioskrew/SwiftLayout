@@ -1,5 +1,5 @@
 //
-//  UIBaselineAdjustment+ConfigurationName.swift
+//  UIBaselineAdjustment+Configuration.swift
 //  
 //
 //  Created by aiden_h on 2022/07/08.
@@ -8,7 +8,7 @@
 import UIKit
 
 extension UIBaselineAdjustment {
-    var configurationName: String {
+    var configuration: String {
         switch self {
         case .alignBaselines: return ".alignBaselines"
         case .alignCenters: return ".alignCenters"

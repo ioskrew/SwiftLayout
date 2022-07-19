@@ -1,5 +1,5 @@
 //
-//  NSTextAlignment+ConfigurationName.swift
+//  NSTextAlignment+Configuration.swift
 //  
 //
 //  Created by aiden_h on 2022/07/08.
@@ -8,7 +8,7 @@
 import UIKit
 
 extension NSTextAlignment {
-    var configurationName: String {
+    var configuration: String {
         switch self {
         case .left: return ".left"
         case .center: return ".center"

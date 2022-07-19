@@ -1,5 +1,5 @@
 //
-//  UIButton+ConfigurationName.swift
+//  UIButton+Configuration.swift
 //  
 //
 //  Created by aiden_h on 2022/07/15.
@@ -9,7 +9,7 @@ import UIKit
 
 @available(iOS 14, *)
 extension UIButton.Role {
-    var configurationName: String {
+    var configuration: String {
         switch self {
         case .normal: return ".normal"
         case .primary: return ".primary"

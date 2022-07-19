@@ -1,5 +1,5 @@
 //
-//  UIControl+ConfigurationName.swift
+//  UIControl+Configuration.swift
 //  
 //
 //  Created by aiden_h on 2022/07/14.
@@ -8,7 +8,7 @@
 import UIKit
 
 extension UIControl.ContentHorizontalAlignment {
-    var configurationName: String {
+    var configuration: String {
         switch self {
         case .center: return ".center"
         case .left: return ".left"
@@ -23,7 +23,7 @@ extension UIControl.ContentHorizontalAlignment {
 
 
 extension UIControl.ContentVerticalAlignment {
-    var configurationName: String {
+    var configuration: String {
         switch self {
         case .center: return ".center"
         case .top: return ".top"
