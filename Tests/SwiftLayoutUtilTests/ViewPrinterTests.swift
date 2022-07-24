@@ -1084,8 +1084,8 @@ extension ViewPrinterTests {
 
         var configurablePropertys: [ConfigurableProperty] {
             return ConfigurableProperty.defaultConfigurablePropertys(view: self) + [
-                ConfigurableProperty.property(keypath: \CustomConfigurableView.someFlag, defualtValue: true) { "$0.someFlag = \($0)" },
-                ConfigurableProperty.property(keypath: \CustomConfigurableView.someValue, defualtValue: 10) { "$0.someFlag = \($0)" },
+                ConfigurableProperty.property(keypath: \CustomConfigurableView.someFlag, defaultValue: true) { "$0.someFlag = \($0)" },
+                ConfigurableProperty.property(keypath: \CustomConfigurableView.someValue, defaultValue: 10) { "$0.someFlag = \($0)" },
             ]
         }
     }
