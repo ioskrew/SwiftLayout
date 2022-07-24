@@ -173,12 +173,23 @@ public enum Anchors {
         container.append(AnchorsExpression(xAxis: .trailing).equalTo(item, constant: -1.0 * offset))
         return container
     }
+
+    /// dimensional combination of **width and height** anchors for selfview
+    /// - Parameters:
+    ///   - size: size of self
+    /// - Returns: self.width = size.width and self.height = size.height
+    public static func size(_ size: CGSize) -> AnchorsContainer {
+        let container = AnchorsContainer()
+        container.append(AnchorsExpression(dimensions: .width).equalTo(constant: size.width))
+        container.append(AnchorsExpression(dimensions: .height).equalTo(constant: size.height))
+        return container
+    }
     
     /// dimensional combination of **width and height** anchors for selfview
     /// - Parameters:
     ///   - width: width of self
     ///   - height: height of self
-    /// - Returns: self.width = width + self.height = height
+    /// - Returns: self.width = width and self.height = height
     public static func size(width: CGFloat, height: CGFloat) -> AnchorsContainer {
         let container = AnchorsContainer()
         container.append(AnchorsExpression(dimensions: .width).equalTo(constant: width))
@@ -191,7 +202,7 @@ public enum Anchors {
     ///   - item: target of anchors
     ///   - width: width for target's + width
     ///   - height: height for target's + height
-    /// - Returns: item.width + width + item.height + height
+    /// - Returns: self.width = item.width + width and self.height = item.height + height
     public static func size<I>(_ item: I, width: CGFloat, height: CGFloat) -> AnchorsContainer where I: AnchorsItemable {
         let container = AnchorsContainer()
         container.append(AnchorsExpression(dimensions: .width).equalTo(item, constant: width))
