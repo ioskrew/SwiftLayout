@@ -20,7 +20,7 @@ extension Optional where Wrapped == UIImage {
             return "nil"
         }
 
-        return "// Modified! Check it manually."
+        return "/* Modified! Check it manually. */"
     }
 }
 
@@ -30,7 +30,7 @@ extension Optional where Wrapped == UIFont {
             return "nil"
         }
 
-        return "// Modified! Check it manually. (fontName: \(self.fontName), pointSize: \(self.pointSize))"
+        return "/* Modified! Check it manually. (fontName: \(self.fontName), pointSize: \(self.pointSize)) */"
     }
 }
 
@@ -46,6 +46,6 @@ extension Optional where Wrapped == UIColor {
 
         let hexCode = String(format: "%02X%02X%02X", Int(r * 255), Int(g * 255), Int(b * 255))
 
-        return "// Modified! Check it manually. (hex: #\(hexCode), alpha: \(a))"
+        return "/* Modified! Check it manually. (hex: #\(hexCode), alpha: \(a)) */"
     }
 }

@@ -896,7 +896,7 @@ extension ViewPrinterTests {
                 $0.accessibilityIdentifier = "child"
                 $0.alpha = 0.8999999761581421
                 $0.autoresizesSubviews = false
-                $0.backgroundColor = // Modified! Check it manually. (hex: #555555, alpha: 1.0)
+                $0.backgroundColor = /* Modified! Check it manually. (hex: #555555, alpha: 1.0) */
                 $0.clearsContextBeforeDrawing = false
                 $0.clipsToBounds = true
                 $0.contentMode = .scaleAspectFill
@@ -906,7 +906,7 @@ extension ViewPrinterTests {
                 $0.isUserInteractionEnabled = false
                 $0.semanticContentAttribute = .forceLeftToRight
                 $0.tag = 7
-                $0.tintColor = // Modified! Check it manually. (hex: #FF00FF, alpha: 1.0)
+                $0.tintColor = /* Modified! Check it manually. (hex: #FF00FF, alpha: 1.0) */
             }
         }
         """
@@ -990,19 +990,19 @@ extension ViewPrinterTests {
                 $0.adjustsFontSizeToFitWidth = true
                 $0.allowsDefaultTighteningForTruncation = true
                 $0.baselineAdjustment = .alignCenters
-                $0.font = // Modified! Check it manually. (fontName: .SFUI-Semibold, pointSize: 16.0)
-                $0.highlightedTextColor = // Modified! Check it manually. (hex: #0000FF, alpha: 1.0)
+                $0.font = /* Modified! Check it manually. (fontName: .SFUI-Semibold, pointSize: 16.0) */
+                $0.highlightedTextColor = /* Modified! Check it manually. (hex: #0000FF, alpha: 1.0) */
                 $0.isEnabled = false
                 $0.isHighlighted = true
                 $0.lineBreakMode = ..byTruncatingHead
                 $0.minimumScaleFactor = 0.5
                 $0.numberOfLines = 3
-                $0.shadowColor = // Modified! Check it manually. (hex: #996633, alpha: 1.0)
+                $0.shadowColor = /* Modified! Check it manually. (hex: #996633, alpha: 1.0) */
                 $0.shadowOffset = CGSize(width: 0.0, height: 0.0)
                 $0.showsExpansionTextWhenTruncated = true
                 $0.text = "text_child"
                 $0.textAlignment = .left
-                $0.textColor = // Modified! Check it manually. (hex: #7F7F7F, alpha: 1.0)
+                $0.textColor = /* Modified! Check it manually. (hex: #7F7F7F, alpha: 1.0) */
             }
         }
         """
@@ -1031,8 +1031,8 @@ extension ViewPrinterTests {
             child.config {
                 $0.accessibilityIdentifier = "child"
                 $0.adjustsImageSizeForAccessibilityContentSizeCategory = true
-                $0.highlightedImage = // Modified! Check it manually.
-                $0.image = // Modified! Check it manually.
+                $0.highlightedImage = /* Modified! Check it manually. */
+                $0.image = /* Modified! Check it manually. */
                 $0.isHighlighted = true
                 $0.isOpaque = false
             }
@@ -1122,7 +1122,7 @@ extension ViewPrinterTests {
                 $0.accessibilityIdentifier = "child"
                 $0.alpha = 0.8999999761581421
                 $0.autoresizesSubviews = false
-                $0.backgroundColor = // Modified! Check it manually. (hex: #555555, alpha: 1.0)
+                $0.backgroundColor = /* Modified! Check it manually. (hex: #555555, alpha: 1.0) */
                 $0.clearsContextBeforeDrawing = false
                 $0.clipsToBounds = true
                 $0.contentMode = .scaleAspectFill
@@ -1134,7 +1134,7 @@ extension ViewPrinterTests {
                 $0.someFlag = 1
                 $0.someFlag = false
                 $0.tag = 7
-                $0.tintColor = // Modified! Check it manually. (hex: #FF00FF, alpha: 1.0)
+                $0.tintColor = /* Modified! Check it manually. (hex: #FF00FF, alpha: 1.0) */
             }
         }
         """
