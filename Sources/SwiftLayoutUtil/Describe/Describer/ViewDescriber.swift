@@ -17,7 +17,7 @@ struct ViewDescriber {
     let subdescribes: [ViewDescriber]
     
     func descriptions(indents: String = "") -> [String] {
-        let configDescriptions = viewToken.configuration.map(Constant.indents.appending)
+        let configDescriptions = viewToken.configuration.map(Constant.indents.appending).sorted()
         let anchersDescriptions = AnchorsDescriber.descriptionFromConstraints(constraintTokens).map(Constant.indents.appending)
         let sublayoutDescriptions = subdescribes.flatMap { $0.descriptions(indents: Constant.indents) }
 
