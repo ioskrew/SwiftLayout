@@ -47,7 +47,7 @@ struct ViewToken {
             if let printable = view as? CustomConfigurablePropertys {
                 configurablePropertys = printable.configurablePropertys
             } else {
-                configurablePropertys = ConfigurableProperty.defaultConfigurablePropertys(view: view)
+                configurablePropertys = DefaultConfigurablePropertys.configurablePropertys(view: view)
             }
 
             return configurablePropertys.compactMap {
