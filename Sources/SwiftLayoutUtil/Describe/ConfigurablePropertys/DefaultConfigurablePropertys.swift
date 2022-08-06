@@ -54,17 +54,7 @@ public struct DefaultConfigurablePropertys {
     }
     
     public static func configurablePropertys<View: UIView>(view: View) -> [ConfigurableProperty] {
-        if view is UILabel {
-            return properties(view: view)
-        } else if view is UIButton {
-            let defaultReferenceView = UIButton()
-            return [
-                uiViewDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView),
-                uiControlDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView),
-                uiButtonDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView),
-                accessibilityDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView)
-            ].flatMap { $0 }
-        }  else if view is UIImageView {
+        if view is UIImageView {
             let defaultReferenceView = UIImageView()
             return [
                 uiViewDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView),
@@ -86,11 +76,7 @@ public struct DefaultConfigurablePropertys {
                 accessibilityDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView)
             ].flatMap { $0 }
         } else {
-            let defaultReferenceView = UIView()
-            return [
-                uiViewDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView),
-                accessibilityDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView)
-            ].flatMap { $0 }
+            return properties(view: view)
         }
     }
 }
