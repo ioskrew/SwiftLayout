@@ -1,6 +1,7 @@
 import XCTest
 import SwiftLayout
 import SwiftLayoutUtil
+import UIKit
 
 class ViewPrinterTests: XCTestCase {
     
@@ -1142,4 +1143,5 @@ extension ViewPrinterTests {
         let result = ViewPrinter(root, options: .withViewConfig).description
         XCTAssertEqual(result, expect)
     }
+   
 }

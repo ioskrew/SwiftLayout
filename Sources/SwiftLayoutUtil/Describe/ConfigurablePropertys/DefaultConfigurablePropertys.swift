@@ -8,15 +8,54 @@
 import Foundation
 import UIKit
 
-public enum DefaultConfigurablePropertys {
+public struct DefaultConfigurablePropertys {
+    
+    private static var handlers: [String: ConfigPropertiesHandlable] = [:]
+    
+    public static func regist() {
+        regist(UIView.self, propertiesHandler: uiViewDefaultConfigurablePropertys)
+        regist(UILabel.self, propertiesHandler: uiLabelDefaultConfigurablePropertys)
+        regist(UIControl.self, propertiesHandler: uiControlDefaultConfigurablePropertys)
+        regist(UIButton.self, propertiesHandler: uiButtonDefaultConfigurablePropertys)
+    }
+    
+    private static func regist<V: UIView>(_ view: V.Type, propertiesHandler: @escaping (V) -> [ConfigurableProperty]) {
+        let name = String(describing: view)
+        handlers[name] = ConfigPropertiesHandler(propertiesHandler: propertiesHandler)
+    }
+    
+    private static func properties<V: UIView>(view: V, defaultReferenceView: V? = nil) -> [ConfigurableProperty] {
+        let referenceView = defaultReferenceView ?? view.new()
+        var properties: [ConfigurableProperty] = []
+        for name in viewInheritances(view) {
+            guard let prepareProperties = handlers[name]?.properties(defaultReferenceView: referenceView) else {
+                continue
+            }
+            properties.append(contentsOf: prepareProperties)
+        }
+        properties.append(contentsOf: accessibilityDefaultConfigurablePropertys(defaultReferenceView: referenceView))
+        return properties
+    }
+    
+    private static func viewInheritances<V>(_ view: V) -> [String] where V: UIView {
+        var mirror: Mirror? = Mirror(reflecting: view)
+        var names: [String] = []
+        while mirror != nil {
+            guard let viewMirror = mirror else {
+                break
+            }
+            names.append(viewMirror.subjectTypeName)
+            if viewMirror.subjectTypeName == "UIView" {
+                break
+            }
+            mirror = viewMirror.superclassMirror
+        }
+        return names.reversed()
+    }
+    
     public static func configurablePropertys<View: UIView>(view: View) -> [ConfigurableProperty] {
         if view is UILabel {
-            let defaultReferenceView = UILabel()
-            return [
-                uiViewDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView),
-                uiLabelDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView),
-                accessibilityDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView)
-            ].flatMap { $0 }
+            return properties(view: view)
         } else if view is UIButton {
             let defaultReferenceView = UIButton()
             return [
@@ -67,7 +106,7 @@ extension DefaultConfigurablePropertys {
         ]
     }
 
-    private static func uiViewDefaultConfigurablePropertys(defaultReferenceView view: UIView) -> [ConfigurableProperty] {
+    static func uiViewDefaultConfigurablePropertys(defaultReferenceView view: UIView) -> [ConfigurableProperty] {
         return [
             .property(keypath: \.alpha, defaultReferenceView: view) { "$0.alpha = \($0)" },
             .property(keypath: \.autoresizesSubviews, defaultReferenceView: view) { "$0.autoresizesSubviews = \($0)" },
@@ -222,5 +261,36 @@ extension DefaultConfigurablePropertys {
             .property(keypath: \.isBaselineRelativeArrangement, defaultReferenceView: stackView) { "$0.isBaselineRelativeArrangement = \($0)"},
             .property(keypath: \.spacing, defaultReferenceView: stackView) { "$0.spacing = \($0)"},
         ]
+    }
+}
+
+protocol ConfigPropertiesHandlable {
+    func properties<V: UIView>(defaultReferenceView: V) -> [ConfigurableProperty]
+}
+
+struct ConfigPropertiesHandler<V: UIView>: ConfigPropertiesHandlable {
+    private let propertiesHandler: (V) -> [ConfigurableProperty]
+    
+    init(propertiesHandler: @escaping (V) -> [ConfigurableProperty]) {
+        self.propertiesHandler = propertiesHandler
+    }
+    
+    func properties<RV: UIView>(defaultReferenceView: RV) -> [ConfigurableProperty] {
+        guard let view: V = defaultReferenceView as? V else {
+            return []
+        }
+        return self.propertiesHandler(view)
+    }
+}
+
+private extension Mirror {
+    var subjectTypeName: String {
+        String(describing: subjectType)
+    }
+}
+
+private extension UIView {
+    func new() -> Self {
+        Self.init()
     }
 }
