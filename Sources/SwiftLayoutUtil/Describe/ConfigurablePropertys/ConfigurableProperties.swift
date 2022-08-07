@@ -14,7 +14,11 @@ public final class ConfigurableProperties {
     
     private var handlers: [String: ConfigPropertiesHandlable] = [:]
     
-    public func regist() {
+    private init() {
+        regist()
+    }
+    
+    private func regist() {
         registUIView()
         registUILabel()
         registUIControl()
