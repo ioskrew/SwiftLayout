@@ -4,11 +4,11 @@ import UIKit
 extension ConfigurableProperties {
     
     func registUIView() {
-        regist(UIView.self, propertiesHandler: uiViewDefaultConfigurablePropertys)
+        regist(UIView.self, propertiesHandler: uiViewDefaultConfigurableProperties)
     }
     
-    private func uiViewDefaultConfigurablePropertys(defaultReferenceView view: UIView) -> [ConfigurableProperty] {
-        return [
+    private func uiViewDefaultConfigurableProperties(defaultReferenceView view: UIView) -> [ConfigurableProperty] {
+        let viewProperties: [ConfigurableProperty] = [
             .property(keypath: \.alpha, defaultReferenceView: view) { "$0.alpha = \($0)" },
             .property(keypath: \.autoresizesSubviews, defaultReferenceView: view) { "$0.autoresizesSubviews = \($0)" },
             .property(keypath: \.backgroundColor, defaultReferenceView: view) { "$0.backgroundColor = \($0.configuration)" },
@@ -23,5 +23,15 @@ extension ConfigurableProperties {
             .property(keypath: \.tag, defaultReferenceView: view) { "$0.tag = \($0)" },
             .property(keypath: \.tintColor, defaultReferenceView: view) { "$0.tintColor = \($0.configuration)" },
         ]
+
+        let accessibilityProperties: [ConfigurableProperty] = [
+            .property(keypath: \.accessibilityHint, defaultReferenceView: view) { "$0.accessibilityHint = \($0.configuration)"},
+            .property(keypath: \.accessibilityIdentifier, defaultReferenceView: view) { "$0.accessibilityIdentifier = \($0.configuration)"},
+            .property(keypath: \.accessibilityLabel, defaultReferenceView: view) { "$0.accessibilityLabel = \($0.configuration)"},
+            .property(keypath: \.accessibilityTraits, defaultReferenceView: view) { "$0.accessibilityTraits = \($0.configuration)"},
+            .property(keypath: \.isAccessibilityElement, defaultReferenceView: view) { "$0.isAccessibilityElement = \($0)"},
+        ]
+
+        return viewProperties + accessibilityProperties
     }
 }

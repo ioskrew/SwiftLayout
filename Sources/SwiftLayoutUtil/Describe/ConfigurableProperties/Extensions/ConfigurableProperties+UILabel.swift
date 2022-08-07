@@ -4,10 +4,10 @@ import UIKit
 extension ConfigurableProperties {
     
     func registUILabel() {
-        regist(UILabel.self, propertiesHandler: uiLabelDefaultConfigurablePropertys)
+        regist(UILabel.self, propertiesHandler: uiLabelDefaultConfigurableProperties)
     }
     
-    private func uiLabelDefaultConfigurablePropertys(defaultReferenceView label: UILabel) -> [ConfigurableProperty] {
+    private func uiLabelDefaultConfigurableProperties(defaultReferenceView label: UILabel) -> [ConfigurableProperty] {
         return [
             .property(keypath: \.adjustsFontForContentSizeCategory, defaultReferenceView: label) { "$0.adjustsFontForContentSizeCategory = \($0)" },
             .property(keypath: \.adjustsFontSizeToFitWidth, defaultReferenceView: label) { "$0.adjustsFontSizeToFitWidth = \($0)" },

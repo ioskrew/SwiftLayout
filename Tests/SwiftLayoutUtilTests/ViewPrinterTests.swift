@@ -835,7 +835,7 @@ extension ViewPrinterTests {
         XCTAssertEqual(result, expect)
     }
 
-    func testAccessibilityDefaultConfigurablePropertys() {
+    func testAccessibilityDefaultConfigurableProperties() {
         let root = UIView().identifying("root")
         let child = UIControl()
 
@@ -867,7 +867,7 @@ extension ViewPrinterTests {
         XCTAssertEqual(result, expect)
     }
 
-    func testUIViewDefaultConfigurablePropertys() {
+    func testUIViewDefaultConfigurableProperties() {
         let root = UIView().identifying("root")
         let child = UIView().identifying("child")
 
@@ -916,7 +916,7 @@ extension ViewPrinterTests {
         XCTAssertEqual(result, expect)
     }
 
-    func testUIControlDefaultConfigurablePropertys() {
+    func testUIControlDefaultConfigurableProperties() {
         let root = UIView().identifying("root")
         let child = UIControl().identifying("child")
         let friend = UIControl().identifying("friend")
@@ -955,7 +955,7 @@ extension ViewPrinterTests {
         XCTAssertEqual(result, expect)
     }
 
-    func testUILabelDefaultConfigurablePropertys() {
+    func testUILabelDefaultConfigurableProperties() {
         let root = UIView().identifying("root")
         let child = UILabel().identifying("child")
 
@@ -1012,7 +1012,7 @@ extension ViewPrinterTests {
         XCTAssertEqual(result, expect)
     }
 
-    func testUIImageViewDefaultConfigurablePropertys() {
+    func testUIImageViewDefaultConfigurableProperties() {
         let root = UIView().identifying("root")
         let child = UIImageView().identifying("child")
 
@@ -1044,7 +1044,7 @@ extension ViewPrinterTests {
         XCTAssertEqual(result, expect)
     }
 
-    func testStackViewDefaultConfigurablePropertys() {
+    func testStackViewDefaultConfigurableProperties() {
         let root = UIView().identifying("root")
         let child = UIStackView().identifying("child")
 
@@ -1079,17 +1079,17 @@ extension ViewPrinterTests {
 }
 
 extension ViewPrinterTests {
-    private class CustomConfigurableView: UIView, CustomConfigurablePropertys {
+    private class CustomConfigurableView: UIView, CustomConfigurableProperties {
         var someFlag: Bool = true
         var someValue: Int = 10
         
-        var configurablePropertys: [ConfigurableProperty] {
+        var configurableProperties: [ConfigurableProperty] {
             [ConfigurableProperty.property(keypath: \CustomConfigurableView.someFlag, defaultValue: true) { "$0.someFlag = \($0)" },
             ConfigurableProperty.property(keypath: \CustomConfigurableView.someValue, defaultValue: 10) { "$0.someValue = \($0)" }]
         }
     }
 
-    func testCustomConfigurableViewDefaultConfigurablePropertys() {
+    func testCustomConfigurableViewDefaultConfigurableProperties() {
         let root = UIView().identifying("root")
         let child = CustomConfigurableView().identifying("child")
         
@@ -1147,7 +1147,7 @@ extension ViewPrinterTests {
         var someValue: Int = 10
     }
     
-    func testConfigurableViewDefaultConfigurablePropertys() {
+    func testConfigurableViewDefaultConfigurableProperties() {
         let root = UIView().identifying("root")
         let child = ConfigurableView().identifying("child")
 

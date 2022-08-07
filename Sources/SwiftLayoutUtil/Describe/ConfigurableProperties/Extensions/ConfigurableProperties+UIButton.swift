@@ -4,11 +4,11 @@ import UIKit
 extension ConfigurableProperties {
     
     func registUIButton() {
-        regist(UIButton.self, propertiesHandler: uiButtonDefaultConfigurablePropertys)
+        regist(UIButton.self, propertiesHandler: uiButtonDefaultConfigurableProperties)
     }
     
-    private func uiButtonDefaultConfigurablePropertys(defaultReferenceView button: UIButton) -> [ConfigurableProperty] {
-        var configurablePropertys: [ConfigurableProperty] = [
+    private func uiButtonDefaultConfigurableProperties(defaultReferenceView button: UIButton) -> [ConfigurableProperty] {
+        var configurableProperties: [ConfigurableProperty] = [
             .property(getter: { $0.backgroundImage(for: .application) }, defaultReferenceView: button) { "$0.backgroundImage(\($0.configuration), for: .application)" },
             .property(getter: { $0.backgroundImage(for: .disabled) }, defaultReferenceView: button) { "$0.backgroundImage(\($0.configuration), for: .disabled)" },
             .property(getter: { $0.backgroundImage(for: .focused) }, defaultReferenceView: button) { "$0.backgroundImage(\($0.configuration), for: .focused)" },
@@ -48,26 +48,26 @@ extension ConfigurableProperties {
         ]
 
         if #available(iOS 13.4, *) {
-            configurablePropertys.append(contentsOf: [
+            configurableProperties.append(contentsOf: [
                 .property(keypath: \.isPointerInteractionEnabled, defaultReferenceView: button) { "$0.isPointerInteractionEnabled = \($0)" },
             ])
         }
 
         if #available(iOS 14.0, *) {
-            configurablePropertys.append(contentsOf: [
+            configurableProperties.append(contentsOf: [
                 .property(keypath: \.showsMenuAsPrimaryAction, defaultReferenceView: button) { "$0.showsMenuAsPrimaryAction = \($0)" },
                 .property(keypath: \.role, defaultReferenceView: button) { "$0.role = \($0.configuration)" },
             ])
         }
 
         if #available(iOS 15.0, *) {
-            configurablePropertys.append(contentsOf: [
+            configurableProperties.append(contentsOf: [
                 .property(keypath: \.changesSelectionAsPrimaryAction, defaultReferenceView: button) { "$0.changesSelectionAsPrimaryAction = \($0)" },
                 .property(keypath: \.isHeld, defaultReferenceView: button) { "$0.isHeld = \($0)" },
                 .property(keypath: \.isHovered, defaultReferenceView: button) { "$0.isHovered = \($0)" },
             ])
         }
 
-        return configurablePropertys
+        return configurableProperties
     }
 }

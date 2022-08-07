@@ -43,14 +43,14 @@ struct ViewToken {
                 return []
             }
 
-            let configurablePropertys: [ConfigurableProperty]
-            if let printable = view as? CustomConfigurablePropertys {
-                configurablePropertys = ConfigurableProperties.default.configurablePropertys(view: view, excludePreparedProperties: true) + printable.configurablePropertys
+            let configurableProperties: [ConfigurableProperty]
+            if let printable = view as? CustomConfigurableProperties {
+                configurableProperties = ConfigurableProperties.default.configurableProperties(view: view, excludePreparedProperties: true) + printable.configurableProperties
             } else {
-                configurablePropertys = ConfigurableProperties.default.configurablePropertys(view: view)
+                configurableProperties = ConfigurableProperties.default.configurableProperties(view: view)
             }
 
-            return configurablePropertys.compactMap {
+            return configurableProperties.compactMap {
                 $0.configuration(view: view)
             }
         }

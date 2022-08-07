@@ -4,10 +4,10 @@ import UIKit
 extension ConfigurableProperties {
     
     func registUIStackView() {
-        regist(UIStackView.self, propertiesHandler: uiStackViewDefaultConfigurablePropertys)
+        regist(UIStackView.self, propertiesHandler: uiStackViewDefaultConfigurableProperties)
     }
     
-    private func uiStackViewDefaultConfigurablePropertys(defaultReferenceView stackView: UIStackView) -> [ConfigurableProperty] {
+    private func uiStackViewDefaultConfigurableProperties(defaultReferenceView stackView: UIStackView) -> [ConfigurableProperty] {
         return [
             .property(keypath: \.alignment, defaultReferenceView: stackView) { "$0.alignment = \($0.configuration)"},
             .property(keypath: \.axis, defaultReferenceView: stackView) { "$0.axis = \($0.configuration)"},

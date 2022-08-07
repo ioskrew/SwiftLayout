@@ -4,11 +4,11 @@ import UIKit
 extension ConfigurableProperties {
     
     func registUIControl() {
-        regist(UIControl.self, propertiesHandler: uiControlDefaultConfigurablePropertys)
+        regist(UIControl.self, propertiesHandler: uiControlDefaultConfigurableProperties)
     }
     
-    private func uiControlDefaultConfigurablePropertys(defaultReferenceView view: UIControl) -> [ConfigurableProperty] {
-        var configurablePropertys: [ConfigurableProperty] = [
+    private func uiControlDefaultConfigurableProperties(defaultReferenceView view: UIControl) -> [ConfigurableProperty] {
+        var configurableProperties: [ConfigurableProperty] = [
             .property(keypath: \.contentHorizontalAlignment, defaultReferenceView: view) { "$0.contentHorizontalAlignment = \($0.configuration)"},
             .property(keypath: \.contentVerticalAlignment, defaultReferenceView: view) { "$0.contentVerticalAlignment = \($0.configuration)"},
             .property(keypath: \.isEnabled, defaultReferenceView: view) { "$0.isEnabled = \($0)" },
@@ -17,17 +17,17 @@ extension ConfigurableProperties {
         ]
 
         if #available(iOS 14.0, *) {
-            configurablePropertys.append(contentsOf: [
+            configurableProperties.append(contentsOf: [
                 .property(keypath: \.showsMenuAsPrimaryAction, defaultReferenceView: view) { "$0.showsMenuAsPrimaryAction = \($0)"},
             ])
         }
 
         if #available(iOS 15.0, *) {
-            configurablePropertys.append(contentsOf: [
+            configurableProperties.append(contentsOf: [
                 .property(keypath: \.toolTip, defaultReferenceView: view) {"$0.toolTip = \($0.configuration)"},
             ])
         }
 
-        return configurablePropertys
+        return configurableProperties
     }
 }

@@ -1,5 +1,5 @@
 //
-//  DefaultConfigurablePropertys.swift
+//  DefaultConfigurableProperties.swift
 //  
 //
 //  Created by aiden_h on 2022/08/01.
@@ -50,7 +50,6 @@ public final class ConfigurableProperties {
             }
             properties.append(contentsOf: prepareProperties)
         }
-        properties.append(contentsOf: accessibilityDefaultConfigurablePropertys(defaultReferenceView: referenceView))
         return properties
     }
     
@@ -70,24 +69,12 @@ public final class ConfigurableProperties {
         return names.reversed()
     }
     
-    public func configurablePropertys<View: UIView>(view: View, defaultReferenceView: View? = nil) -> [ConfigurableProperty] {
+    public func configurableProperties<View: UIView>(view: View, defaultReferenceView: View? = nil) -> [ConfigurableProperty] {
         return properties(view: view, defaultReferenceView: defaultReferenceView)
     }
     
-    func configurablePropertys<View: UIView>(view: View, defaultReferenceView: View? = nil, excludePreparedProperties: Bool = false) -> [ConfigurableProperty] {
+    func configurableProperties<View: UIView>(view: View, defaultReferenceView: View? = nil, excludePreparedProperties: Bool = false) -> [ConfigurableProperty] {
         return properties(view: view, defaultReferenceView: defaultReferenceView, excludePreparedProperties: excludePreparedProperties)
-    }
-}
-
-extension ConfigurableProperties {
-    func accessibilityDefaultConfigurablePropertys(defaultReferenceView view: UIView) -> [ConfigurableProperty] {
-        return [
-            .property(keypath: \.accessibilityHint, defaultReferenceView: view) { "$0.accessibilityHint = \($0.configuration)"},
-            .property(keypath: \.accessibilityIdentifier, defaultReferenceView: view) { "$0.accessibilityIdentifier = \($0.configuration)"},
-            .property(keypath: \.accessibilityLabel, defaultReferenceView: view) { "$0.accessibilityLabel = \($0.configuration)"},
-            .property(keypath: \.accessibilityTraits, defaultReferenceView: view) { "$0.accessibilityTraits = \($0.configuration)"},
-            .property(keypath: \.isAccessibilityElement, defaultReferenceView: view) { "$0.isAccessibilityElement = \($0)"},
-        ]
     }
 }
 
