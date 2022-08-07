@@ -1088,7 +1088,7 @@ extension ViewPrinterTests {
         let root = UIView().identifying("root")
         let child = CustomConfigurableView().identifying("child")
 
-        DefaultConfigurablePropertys.regist(CustomConfigurableView.self) { _ in
+        ConfigurableProperties.default.regist(CustomConfigurableView.self) { _ in
             [ConfigurableProperty.property(keypath: \CustomConfigurableView.someFlag, defaultValue: true) { "$0.someFlag = \($0)" },
             ConfigurableProperty.property(keypath: \CustomConfigurableView.someValue, defaultValue: 10) { "$0.someFlag = \($0)" }]
         }

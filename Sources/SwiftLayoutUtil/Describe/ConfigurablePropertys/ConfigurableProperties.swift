@@ -8,11 +8,13 @@
 import Foundation
 import UIKit
 
-public struct DefaultConfigurablePropertys {
+public final class ConfigurableProperties {
     
-    private static var handlers: [String: ConfigPropertiesHandlable] = [:]
+    public static let `default` = ConfigurableProperties()
     
-    public static func regist() {
+    private var handlers: [String: ConfigPropertiesHandlable] = [:]
+    
+    public func regist() {
         regist(UIView.self, propertiesHandler: uiViewDefaultConfigurablePropertys)
         regist(UILabel.self, propertiesHandler: uiLabelDefaultConfigurablePropertys)
         regist(UIControl.self, propertiesHandler: uiControlDefaultConfigurablePropertys)
@@ -21,12 +23,12 @@ public struct DefaultConfigurablePropertys {
         regist(UIStackView.self, propertiesHandler: uiStackViewDefaultConfigurablePropertys)
     }
     
-    public static func regist<V: UIView>(_ view: V.Type, propertiesHandler: @escaping (V) -> [ConfigurableProperty]) {
+    public func regist<V: UIView>(_ view: V.Type, propertiesHandler: @escaping (V) -> [ConfigurableProperty]) {
         let name = String(describing: view)
         handlers[name] = ConfigPropertiesHandler(propertiesHandler: propertiesHandler)
     }
     
-    private static func properties<V: UIView>(view: V, defaultReferenceView: V? = nil) -> [ConfigurableProperty] {
+    private func properties<V: UIView>(view: V, defaultReferenceView: V? = nil) -> [ConfigurableProperty] {
         let referenceView = defaultReferenceView ?? view.new()
         var properties: [ConfigurableProperty] = []
         for name in viewInheritances(view) {
@@ -39,7 +41,7 @@ public struct DefaultConfigurablePropertys {
         return properties
     }
     
-    private static func viewInheritances<V>(_ view: V) -> [String] where V: UIView {
+    private func viewInheritances<V>(_ view: V) -> [String] where V: UIView {
         var mirror: Mirror? = Mirror(reflecting: view)
         var names: [String] = []
         while mirror != nil {
@@ -55,13 +57,13 @@ public struct DefaultConfigurablePropertys {
         return names.reversed()
     }
     
-    public static func configurablePropertys<View: UIView>(view: View, defaultReferenceView: View? = nil) -> [ConfigurableProperty] {
+    public func configurablePropertys<View: UIView>(view: View, defaultReferenceView: View? = nil) -> [ConfigurableProperty] {
         return properties(view: view, defaultReferenceView: defaultReferenceView)
     }
 }
 
-extension DefaultConfigurablePropertys {
-    static func accessibilityDefaultConfigurablePropertys(defaultReferenceView view: UIView) -> [ConfigurableProperty] {
+extension ConfigurableProperties {
+    func accessibilityDefaultConfigurablePropertys(defaultReferenceView view: UIView) -> [ConfigurableProperty] {
         return [
             .property(keypath: \.accessibilityHint, defaultReferenceView: view) { "$0.accessibilityHint = \($0.configuration)"},
             .property(keypath: \.accessibilityIdentifier, defaultReferenceView: view) { "$0.accessibilityIdentifier = \($0.configuration)"},
@@ -71,7 +73,7 @@ extension DefaultConfigurablePropertys {
         ]
     }
 
-    static func uiViewDefaultConfigurablePropertys(defaultReferenceView view: UIView) -> [ConfigurableProperty] {
+    func uiViewDefaultConfigurablePropertys(defaultReferenceView view: UIView) -> [ConfigurableProperty] {
         return [
             .property(keypath: \.alpha, defaultReferenceView: view) { "$0.alpha = \($0)" },
             .property(keypath: \.autoresizesSubviews, defaultReferenceView: view) { "$0.autoresizesSubviews = \($0)" },
@@ -90,8 +92,8 @@ extension DefaultConfigurablePropertys {
     }
 }
 
-extension DefaultConfigurablePropertys {
-    private static func uiControlDefaultConfigurablePropertys(defaultReferenceView view: UIControl) -> [ConfigurableProperty] {
+extension ConfigurableProperties {
+    private func uiControlDefaultConfigurablePropertys(defaultReferenceView view: UIControl) -> [ConfigurableProperty] {
         var configurablePropertys: [ConfigurableProperty] = [
             .property(keypath: \.contentHorizontalAlignment, defaultReferenceView: view) { "$0.contentHorizontalAlignment = \($0.configuration)"},
             .property(keypath: \.contentVerticalAlignment, defaultReferenceView: view) { "$0.contentVerticalAlignment = \($0.configuration)"},
@@ -116,8 +118,8 @@ extension DefaultConfigurablePropertys {
     }
 }
 
-extension DefaultConfigurablePropertys {
-    private static func uiLabelDefaultConfigurablePropertys(defaultReferenceView label: UILabel) -> [ConfigurableProperty] {
+extension ConfigurableProperties {
+    private func uiLabelDefaultConfigurablePropertys(defaultReferenceView label: UILabel) -> [ConfigurableProperty] {
         return [
             .property(keypath: \.adjustsFontForContentSizeCategory, defaultReferenceView: label) { "$0.adjustsFontForContentSizeCategory = \($0)" },
             .property(keypath: \.adjustsFontSizeToFitWidth, defaultReferenceView: label) { "$0.adjustsFontSizeToFitWidth = \($0)" },
@@ -140,8 +142,8 @@ extension DefaultConfigurablePropertys {
     }
 }
 
-extension DefaultConfigurablePropertys {
-    private static func uiButtonDefaultConfigurablePropertys(defaultReferenceView button: UIButton) -> [ConfigurableProperty] {
+extension ConfigurableProperties {
+    private func uiButtonDefaultConfigurablePropertys(defaultReferenceView button: UIButton) -> [ConfigurableProperty] {
         var configurablePropertys: [ConfigurableProperty] = [
             .property(getter: { $0.backgroundImage(for: .application) }, defaultReferenceView: button) { "$0.backgroundImage(\($0.configuration), for: .application)" },
             .property(getter: { $0.backgroundImage(for: .disabled) }, defaultReferenceView: button) { "$0.backgroundImage(\($0.configuration), for: .disabled)" },
@@ -206,8 +208,8 @@ extension DefaultConfigurablePropertys {
     }
 }
 
-extension DefaultConfigurablePropertys {
-    private static func uiImageViewDefaultConfigurablePropertys(defaultReferenceView imageView: UIImageView) -> [ConfigurableProperty] {
+extension ConfigurableProperties {
+    private func uiImageViewDefaultConfigurablePropertys(defaultReferenceView imageView: UIImageView) -> [ConfigurableProperty] {
         return [
             .property(keypath: \.adjustsImageSizeForAccessibilityContentSizeCategory, defaultReferenceView: imageView) { "$0.adjustsImageSizeForAccessibilityContentSizeCategory = \($0)" },
             .property(keypath: \.highlightedImage, defaultReferenceView: imageView) { "$0.highlightedImage = \($0.configuration)"},
@@ -217,8 +219,8 @@ extension DefaultConfigurablePropertys {
     }
 }
 
-extension DefaultConfigurablePropertys {
-    private static func uiStackViewDefaultConfigurablePropertys(defaultReferenceView stackView: UIStackView) -> [ConfigurableProperty] {
+extension ConfigurableProperties {
+    private func uiStackViewDefaultConfigurablePropertys(defaultReferenceView stackView: UIStackView) -> [ConfigurableProperty] {
         return [
             .property(keypath: \.alignment, defaultReferenceView: stackView) { "$0.alignment = \($0.configuration)"},
             .property(keypath: \.axis, defaultReferenceView: stackView) { "$0.axis = \($0.configuration)"},
