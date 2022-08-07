@@ -33,11 +33,15 @@ public final class ConfigurableProperties {
         handlers[name] = nil
     }
     
-    private func properties<V: UIView>(view: V, defaultReferenceView: V? = nil) -> [ConfigurableProperty] {
+    private func properties<V: UIView>(view: V, defaultReferenceView: V? = nil, excludePreparedProperties: Bool = false) -> [ConfigurableProperty] {
         let referenceView = defaultReferenceView ?? view.new()
         var properties: [ConfigurableProperty] = []
+        let viewName = view.subjectTypeName
         for name in viewInheritances(view) {
             guard let prepareProperties = handlers[name]?.properties(defaultReferenceView: referenceView) else {
+                continue
+            }
+            if name == viewName, excludePreparedProperties {
                 continue
             }
             properties.append(contentsOf: prepareProperties)
@@ -64,6 +68,10 @@ public final class ConfigurableProperties {
     
     public func configurablePropertys<View: UIView>(view: View, defaultReferenceView: View? = nil) -> [ConfigurableProperty] {
         return properties(view: view, defaultReferenceView: defaultReferenceView)
+    }
+    
+    func configurablePropertys<View: UIView>(view: View, defaultReferenceView: View? = nil, excludePreparedProperties: Bool = false) -> [ConfigurableProperty] {
+        return properties(view: view, defaultReferenceView: defaultReferenceView, excludePreparedProperties: excludePreparedProperties)
     }
 }
 
@@ -264,5 +272,9 @@ private extension Mirror {
 private extension UIView {
     func new() -> Self {
         Self.init()
+    }
+    
+    var subjectTypeName: String {
+        Mirror(reflecting: self).subjectTypeName
     }
 }
