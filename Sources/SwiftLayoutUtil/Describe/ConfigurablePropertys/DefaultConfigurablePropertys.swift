@@ -17,6 +17,8 @@ public struct DefaultConfigurablePropertys {
         regist(UILabel.self, propertiesHandler: uiLabelDefaultConfigurablePropertys)
         regist(UIControl.self, propertiesHandler: uiControlDefaultConfigurablePropertys)
         regist(UIButton.self, propertiesHandler: uiButtonDefaultConfigurablePropertys)
+        regist(UIImageView.self, propertiesHandler: uiImageViewDefaultConfigurablePropertys)
+        regist(UIStackView.self, propertiesHandler: uiStackViewDefaultConfigurablePropertys)
     }
     
     private static func regist<V: UIView>(_ view: V.Type, propertiesHandler: @escaping (V) -> [ConfigurableProperty]) {
@@ -54,30 +56,30 @@ public struct DefaultConfigurablePropertys {
     }
     
     public static func configurablePropertys<View: UIView>(view: View) -> [ConfigurableProperty] {
-        if view is UIImageView {
-            let defaultReferenceView = UIImageView()
-            return [
-                uiViewDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView),
-                uiImageViewDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView),
-                accessibilityDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView)
-            ].flatMap { $0 }
-        } else if view is UIStackView {
-            let defaultReferenceView = UIStackView()
-            return [
-                uiViewDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView),
-                uiStackViewDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView),
-                accessibilityDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView)
-            ].flatMap { $0 }
-        } else if view is UIControl {
-            let defaultReferenceView = UIControl()
-            return [
-                uiViewDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView),
-                uiControlDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView),
-                accessibilityDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView)
-            ].flatMap { $0 }
-        } else {
+//        if view is UIImageView {
+//            let defaultReferenceView = UIImageView()
+//            return [
+//                uiViewDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView),
+//                uiImageViewDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView),
+//                accessibilityDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView)
+//            ].flatMap { $0 }
+//        } else if view is UIStackView {
+//            let defaultReferenceView = UIStackView()
+//            return [
+//                uiViewDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView),
+//                uiStackViewDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView),
+//                accessibilityDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView)
+//            ].flatMap { $0 }
+//        } else if view is UIControl {
+//            let defaultReferenceView = UIControl()
+//            return [
+//                uiViewDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView),
+//                uiControlDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView),
+//                accessibilityDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView)
+//            ].flatMap { $0 }
+//        } else {
             return properties(view: view)
-        }
+//        }
     }
 }
 
