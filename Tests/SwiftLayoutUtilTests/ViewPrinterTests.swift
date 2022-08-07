@@ -1079,22 +1079,20 @@ extension ViewPrinterTests {
 }
 
 extension ViewPrinterTests {
-    private class CustomConfigurableView: UIView, CustomConfigurablePropertys {
+    private class CustomConfigurableView: UIView {
         var someFlag: Bool = true
         var someValue: Int = 10
-
-        var configurablePropertys: [ConfigurableProperty] {
-            return DefaultConfigurablePropertys.configurablePropertys(view: self) + [
-                ConfigurableProperty.property(keypath: \CustomConfigurableView.someFlag, defaultValue: true) { "$0.someFlag = \($0)" },
-                ConfigurableProperty.property(keypath: \CustomConfigurableView.someValue, defaultValue: 10) { "$0.someFlag = \($0)" },
-            ]
-        }
     }
 
     func testCustomConfigurableViewDefaultConfigurablePropertys() {
         let root = UIView().identifying("root")
         let child = CustomConfigurableView().identifying("child")
 
+        DefaultConfigurablePropertys.regist(CustomConfigurableView.self) { _ in
+            [ConfigurableProperty.property(keypath: \CustomConfigurableView.someFlag, defaultValue: true) { "$0.someFlag = \($0)" },
+            ConfigurableProperty.property(keypath: \CustomConfigurableView.someValue, defaultValue: 10) { "$0.someFlag = \($0)" }]
+        }
+        
         activation = root.sublayout {
             child.config {
                 $0.contentMode = .scaleAspectFill

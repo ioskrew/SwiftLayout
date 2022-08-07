@@ -21,7 +21,7 @@ public struct DefaultConfigurablePropertys {
         regist(UIStackView.self, propertiesHandler: uiStackViewDefaultConfigurablePropertys)
     }
     
-    private static func regist<V: UIView>(_ view: V.Type, propertiesHandler: @escaping (V) -> [ConfigurableProperty]) {
+    public static func regist<V: UIView>(_ view: V.Type, propertiesHandler: @escaping (V) -> [ConfigurableProperty]) {
         let name = String(describing: view)
         handlers[name] = ConfigPropertiesHandler(propertiesHandler: propertiesHandler)
     }
@@ -55,36 +55,13 @@ public struct DefaultConfigurablePropertys {
         return names.reversed()
     }
     
-    public static func configurablePropertys<View: UIView>(view: View) -> [ConfigurableProperty] {
-//        if view is UIImageView {
-//            let defaultReferenceView = UIImageView()
-//            return [
-//                uiViewDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView),
-//                uiImageViewDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView),
-//                accessibilityDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView)
-//            ].flatMap { $0 }
-//        } else if view is UIStackView {
-//            let defaultReferenceView = UIStackView()
-//            return [
-//                uiViewDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView),
-//                uiStackViewDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView),
-//                accessibilityDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView)
-//            ].flatMap { $0 }
-//        } else if view is UIControl {
-//            let defaultReferenceView = UIControl()
-//            return [
-//                uiViewDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView),
-//                uiControlDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView),
-//                accessibilityDefaultConfigurablePropertys(defaultReferenceView: defaultReferenceView)
-//            ].flatMap { $0 }
-//        } else {
-            return properties(view: view)
-//        }
+    public static func configurablePropertys<View: UIView>(view: View, defaultReferenceView: View? = nil) -> [ConfigurableProperty] {
+        return properties(view: view, defaultReferenceView: defaultReferenceView)
     }
 }
 
 extension DefaultConfigurablePropertys {
-    private static func accessibilityDefaultConfigurablePropertys(defaultReferenceView view: UIView) -> [ConfigurableProperty] {
+    static func accessibilityDefaultConfigurablePropertys(defaultReferenceView view: UIView) -> [ConfigurableProperty] {
         return [
             .property(keypath: \.accessibilityHint, defaultReferenceView: view) { "$0.accessibilityHint = \($0.configuration)"},
             .property(keypath: \.accessibilityIdentifier, defaultReferenceView: view) { "$0.accessibilityIdentifier = \($0.configuration)"},
