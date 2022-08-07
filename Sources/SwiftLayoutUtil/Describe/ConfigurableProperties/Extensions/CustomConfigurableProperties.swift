@@ -7,6 +7,7 @@
 
 import UIKit
 
-public protocol CustomConfigurableProperties: UIView {
+public protocol CustomConfigurableProperties: AnyObject {
+    init()
     var configurableProperties: [ConfigurableProperty] { get }
 }

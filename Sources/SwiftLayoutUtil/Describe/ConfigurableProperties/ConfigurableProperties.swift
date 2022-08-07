@@ -27,12 +27,12 @@ public final class ConfigurableProperties {
         registUIStackView()
     }
     
-    public func regist<V: UIView>(_ view: V.Type, propertiesHandler: @escaping (_ defaultReferenceView: V) -> [ConfigurableProperty]) {
+    func regist<V: UIView>(_ view: V.Type, propertiesHandler: @escaping (_ defaultReferenceView: V) -> [ConfigurableProperty]) {
         let name = String(describing: view)
         handlers[name] = ConfigPropertiesHandler(propertiesHandler: propertiesHandler)
     }
     
-    public func unregist<V: UIView>(_ view: V.Type) {
+    func unregist<V: UIView>(_ view: V.Type) {
         let name = String(describing: view)
         handlers[name] = nil
     }
