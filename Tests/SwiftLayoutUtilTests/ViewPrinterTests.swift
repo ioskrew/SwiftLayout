@@ -1140,6 +1140,32 @@ extension ViewPrinterTests {
 
         let result = ViewPrinter(root, options: .withViewConfig).description
         XCTAssertEqual(result, expect)
+        
+        ConfigurableProperties.default.unregist(CustomConfigurableView.self)
+        
+        let expectAfterUnregist = """
+        root.config {
+            $0.accessibilityIdentifier = "root"
+        }.sublayout {
+            child.config {
+                $0.accessibilityIdentifier = "child"
+                $0.alpha = 0.8999999761581421
+                $0.autoresizesSubviews = false
+                $0.backgroundColor = /* Modified! Check it manually. (hex: #555555, alpha: 1.0) */
+                $0.clearsContextBeforeDrawing = false
+                $0.clipsToBounds = tru
+                $0.contentMode = .scaleAspectFill
+                $0.isHidden = true
+                $0.isMultipleTouchEnabled = true
+                $0.isOpaque = false
+                $0.isUserInteractionEnabled = false
+                $0.semanticContentAttribute = .forceLeftToRight
+                $0.tag = 7
+                $0.tintColor = /* Modified! Check it manually. (hex: #FF00FF, alpha: 1.0) */
+            }
+        }
+        """
+        XCTAssertEqual(ViewPrinter(root, options: .withViewConfig).description, expectAfterUnregist)
     }
    
 }

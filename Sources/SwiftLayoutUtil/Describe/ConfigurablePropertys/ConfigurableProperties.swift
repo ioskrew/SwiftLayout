@@ -28,6 +28,11 @@ public final class ConfigurableProperties {
         handlers[name] = ConfigPropertiesHandler(propertiesHandler: propertiesHandler)
     }
     
+    public func unregist<V: UIView>(_ view: V.Type) {
+        let name = String(describing: view)
+        handlers[name] = nil
+    }
+    
     private func properties<V: UIView>(view: V, defaultReferenceView: V? = nil) -> [ConfigurableProperty] {
         let referenceView = defaultReferenceView ?? view.new()
         var properties: [ConfigurableProperty] = []
