@@ -4,7 +4,11 @@ import UIKit
 extension ConfigurableProperties {
     
     func registUIImage() {
-        regist(UIImageView.self, propertiesHandler: uiImageViewDefaultConfigurableProperties)
+        regist(
+            UIImageView.self,
+            defaultReferenceView: UIImageView(),
+            propertiesHandler: uiImageViewDefaultConfigurableProperties
+        )
     }
     
     private func uiImageViewDefaultConfigurableProperties(defaultReferenceView imageView: UIImageView) -> [ConfigurableProperty] {

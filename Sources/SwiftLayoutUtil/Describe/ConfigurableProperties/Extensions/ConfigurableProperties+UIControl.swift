@@ -4,7 +4,11 @@ import UIKit
 extension ConfigurableProperties {
     
     func registUIControl() {
-        regist(UIControl.self, propertiesHandler: uiControlDefaultConfigurableProperties)
+        regist(
+            UIControl.self,
+            defaultReferenceView: UIControl(),
+            propertiesHandler: uiControlDefaultConfigurableProperties
+        )
     }
     
     private func uiControlDefaultConfigurableProperties(defaultReferenceView view: UIControl) -> [ConfigurableProperty] {

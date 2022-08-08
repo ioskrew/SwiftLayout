@@ -4,7 +4,11 @@ import UIKit
 extension ConfigurableProperties {
     
     func registUIView() {
-        regist(UIView.self, propertiesHandler: uiViewDefaultConfigurableProperties)
+        regist(
+            UIView.self,
+            defaultReferenceView: UIView(),
+            propertiesHandler: uiViewDefaultConfigurableProperties
+        )
     }
     
     private func uiViewDefaultConfigurableProperties(defaultReferenceView view: UIView) -> [ConfigurableProperty] {

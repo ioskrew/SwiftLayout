@@ -4,7 +4,11 @@ import UIKit
 extension ConfigurableProperties {
     
     func registUIButton() {
-        regist(UIButton.self, propertiesHandler: uiButtonDefaultConfigurableProperties)
+        regist(
+            UIButton.self,
+            defaultReferenceView: UIButton(),
+            propertiesHandler: uiButtonDefaultConfigurableProperties
+        )
     }
     
     private func uiButtonDefaultConfigurableProperties(defaultReferenceView button: UIButton) -> [ConfigurableProperty] {

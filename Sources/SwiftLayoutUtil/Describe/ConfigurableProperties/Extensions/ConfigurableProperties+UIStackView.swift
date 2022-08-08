@@ -4,7 +4,11 @@ import UIKit
 extension ConfigurableProperties {
     
     func registUIStackView() {
-        regist(UIStackView.self, propertiesHandler: uiStackViewDefaultConfigurableProperties)
+        regist(
+            UIStackView.self,
+            defaultReferenceView: UIStackView(),
+            propertiesHandler: uiStackViewDefaultConfigurableProperties
+        )
     }
     
     private func uiStackViewDefaultConfigurableProperties(defaultReferenceView stackView: UIStackView) -> [ConfigurableProperty] {

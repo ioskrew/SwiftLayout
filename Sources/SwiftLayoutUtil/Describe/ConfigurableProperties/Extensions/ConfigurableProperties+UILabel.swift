@@ -4,7 +4,11 @@ import UIKit
 extension ConfigurableProperties {
     
     func registUILabel() {
-        regist(UILabel.self, propertiesHandler: uiLabelDefaultConfigurableProperties)
+        regist(
+            UILabel.self,
+            defaultReferenceView: UILabel(),
+            propertiesHandler: uiLabelDefaultConfigurableProperties
+        )
     }
     
     private func uiLabelDefaultConfigurableProperties(defaultReferenceView label: UILabel) -> [ConfigurableProperty] {
