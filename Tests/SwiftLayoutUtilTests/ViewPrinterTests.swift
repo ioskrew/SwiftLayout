@@ -1083,12 +1083,80 @@ extension ViewPrinterTests {
         var someFlag: Bool = true
         var someValue: Int = 10
         
+        required init() {
+            super.init(frame: .zero)
+        }
+        
+        init(someFlag: Bool, someVaue: Int) {
+            self.someFlag = someFlag
+            self.someValue = someVaue
+            super.init(frame: .zero)
+        }
+        
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+        
         var configurableProperties: [ConfigurableProperty] {
             [
                 ConfigurableProperty.property(keypath: \CustomConfigurableView.someFlag, defaultValue: true) { "$0.someFlag = \($0)" },
                 ConfigurableProperty.property(keypath: \CustomConfigurableView.someValue, defaultValue: 10) { "$0.someValue = \($0)" }
             ]
         }
+    }
+    
+    func testCustomConfigurableViewDefaultConfigurableProperties() {
+        let root = UIView().identifying("root")
+        let child = CustomConfigurableView().identifying("child")
+        
+        activation = root.sublayout {
+            child.config {
+                $0.contentMode = .scaleAspectFill
+                $0.semanticContentAttribute = .forceLeftToRight
+                $0.tag = 7
+                $0.isUserInteractionEnabled = false
+                $0.isMultipleTouchEnabled = true
+                $0.alpha = 0.9
+                $0.backgroundColor = .darkGray
+                $0.tintColor = .magenta
+                $0.isOpaque = false
+                $0.isHidden = true
+                $0.clearsContextBeforeDrawing = false
+                $0.clipsToBounds = true
+                $0.autoresizesSubviews = false
+                $0.someFlag = false
+                $0.someValue = 1
+            }
+        }.active()
+        
+        let expect = """
+            root.config {
+                $0.accessibilityIdentifier = "root"
+            }.sublayout {
+                child.config {
+                    $0.accessibilityIdentifier = "child"
+                    $0.alpha = 0.8999999761581421
+                    $0.autoresizesSubviews = false
+                    $0.backgroundColor = /* Modified! Check it manually. (hex: #555555, alpha: 1.0) */
+                    $0.clearsContextBeforeDrawing = false
+                    $0.clipsToBounds = true
+                    $0.contentMode = .scaleAspectFill
+                    $0.isHidden = true
+                    $0.isMultipleTouchEnabled = true
+                    $0.isOpaque = false
+                    $0.isUserInteractionEnabled = false
+                    $0.semanticContentAttribute = .forceLeftToRight
+                    $0.someFlag = false
+                    $0.someValue = 1
+                    $0.tag = 7
+                    $0.tintColor = /* Modified! Check it manually. (hex: #FF00FF, alpha: 1.0) */
+                }
+            }
+            """
+        
+        let result = ViewPrinter(root, options: .withViewConfig).description
+        XCTAssertEqual(result, expect)
+        
     }
     
     func testCustomConfigurableViewDefaultConfigurablePropertiesHiddenPropertyIsDefault() {
@@ -1196,4 +1264,5 @@ extension ViewPrinterTests {
         let result3 = ViewPrinter(root, options: .withViewConfig).description
         XCTAssertEqual(result3, expect3)
     }
+    
 }
