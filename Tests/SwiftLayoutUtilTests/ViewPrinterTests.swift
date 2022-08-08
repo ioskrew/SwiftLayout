@@ -1076,6 +1076,54 @@ extension ViewPrinterTests {
         let result = ViewPrinter(root, options: .withViewConfig).description
         XCTAssertEqual(result, expect)
     }
+    
+    func testSwitchDefaultConfigurableProperties() {
+        let root = UIView().identifying("root")
+        let child = UISwitch().identifying("child")
+
+        activation = root.sublayout {
+            child.config { child in
+                for subview in child.subviews {
+                    subview.removeFromSuperview()
+                }
+                child.isOn = true
+                if #available(iOS 14.0, *) {
+                    child.preferredStyle = .sliding
+                }
+            }
+        }.active()
+        
+        if #available(iOS 14.0, *) {
+            let expect = """
+            root.config {
+                $0.accessibilityIdentifier = "root"
+            }.sublayout {
+                child.config {
+                    $0.accessibilityIdentifier = "child"
+                    $0.isOn = true
+                    $0.preferredStyle = .sliding
+                }
+            }
+            """
+            
+            let result = ViewPrinter(root, options: .withViewConfig).description
+            XCTAssertEqual(result, expect)
+        } else {
+            let expect = """
+            root.config {
+                $0.accessibilityIdentifier = "root"
+            }.sublayout {
+                child.config {
+                    $0.accessibilityIdentifier = "child"
+                    $0.isOn = true
+                }
+            }
+            """
+            
+            let result = ViewPrinter(root, options: .withViewConfig).description
+            XCTAssertEqual(result, expect)
+        }
+    }
 }
 
 extension ViewPrinterTests {
