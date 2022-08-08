@@ -45,7 +45,7 @@ struct ViewToken {
 
             let configurableProperties: [ConfigurableProperty]
             if let printable = view as? CustomConfigurableProperties {
-                configurableProperties = ConfigurableProperties.default.configurableProperties(view: view, excludePreparedProperties: true) + printable.configurableProperties
+                configurableProperties = ConfigurableProperties.default.configurablePropertiesExcludeSelf(view: view) + printable.configurableProperties
             } else {
                 configurableProperties = ConfigurableProperties.default.configurableProperties(view: view)
             }

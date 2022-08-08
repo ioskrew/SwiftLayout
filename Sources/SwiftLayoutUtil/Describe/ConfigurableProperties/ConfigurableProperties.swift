@@ -31,11 +31,17 @@ public final class ConfigurableProperties {
         let name = String(describing: view)
         handlers[name] = ConfigPropertiesHandler(propertiesHandler: propertiesHandler)
     }
+
+    public func regist<V: UIView>(_ view: V.Type, defaultReferenceView: @autoclosure @escaping () -> V, propertiesHandler: @escaping (_ defaultReferenceView: V) -> [ConfigurableProperty]) {
+        let name = String(describing: view)
+        handlers[name] = ConfigPropertiesHandler(defaultReferenceView: defaultReferenceView,
+                                                 propertiesHandler: propertiesHandler)
+    }
     
-    private func properties<V: UIView>(view: V, defaultReferenceView: V? = nil, excludePreparedProperties: Bool = false) -> [ConfigurableProperty] {
-        let referenceView = defaultReferenceView ?? view.new()
-        var properties: [ConfigurableProperty] = []
+    private func properties<V: UIView>(view: V, excludePreparedProperties: Bool = false) -> [ConfigurableProperty] {
         let viewName = view.subjectTypeName
+        let referenceView = handlers[viewName]?.preparedDefaultReferenceView() ?? V.new()
+        var properties: [ConfigurableProperty] = []
         for name in viewInheritances(view) {
             guard let prepareProperties = handlers[name]?.properties(defaultReferenceView: referenceView) else {
                 continue
@@ -64,31 +70,43 @@ public final class ConfigurableProperties {
         return names.reversed()
     }
     
-    public func configurableProperties<View: UIView>(view: View, defaultReferenceView: View? = nil) -> [ConfigurableProperty] {
-        return properties(view: view, defaultReferenceView: defaultReferenceView)
+    func configurableProperties<View: UIView>(view: View) -> [ConfigurableProperty] {
+        return properties(view: view, excludePreparedProperties: false)
     }
     
-    func configurableProperties<View: UIView>(view: View, defaultReferenceView: View? = nil, excludePreparedProperties: Bool = false) -> [ConfigurableProperty] {
-        return properties(view: view, defaultReferenceView: defaultReferenceView, excludePreparedProperties: excludePreparedProperties)
+    func configurablePropertiesExcludeSelf<View: UIView>(view: View) -> [ConfigurableProperty] {
+        return properties(view: view, excludePreparedProperties: true)
     }
 }
 
 protocol ConfigPropertiesHandlable {
-    func properties<V: UIView>(defaultReferenceView: V) -> [ConfigurableProperty]
+    func properties<RV: UIView>(defaultReferenceView: RV?) -> [ConfigurableProperty]
+    func preparedDefaultReferenceView<RV: UIView>() -> RV?
 }
 
 struct ConfigPropertiesHandler<V: UIView>: ConfigPropertiesHandlable {
+    private let defaultReferendeView: () -> V
     private let propertiesHandler: (V) -> [ConfigurableProperty]
     
     init(propertiesHandler: @escaping (V) -> [ConfigurableProperty]) {
+        self.defaultReferendeView = { V.new() }
         self.propertiesHandler = propertiesHandler
     }
     
-    func properties<RV: UIView>(defaultReferenceView: RV) -> [ConfigurableProperty] {
+    init(defaultReferenceView: @escaping () -> V, propertiesHandler: @escaping (V) -> [ConfigurableProperty]) {
+        self.defaultReferendeView = defaultReferenceView
+        self.propertiesHandler = propertiesHandler
+    }
+    
+    func properties<RV: UIView>(defaultReferenceView: RV?) -> [ConfigurableProperty] {
         guard let view: V = defaultReferenceView as? V else {
             return []
         }
         return self.propertiesHandler(view)
+    }
+    
+    func preparedDefaultReferenceView<RV: UIView>() -> RV? {
+        defaultReferendeView() as? RV
     }
 }
 
@@ -99,8 +117,8 @@ private extension Mirror {
 }
 
 private extension UIView {
-    func new() -> Self {
-        Self.init()
+    static func new() -> Self {
+        self.init()
     }
     
     var subjectTypeName: String {
