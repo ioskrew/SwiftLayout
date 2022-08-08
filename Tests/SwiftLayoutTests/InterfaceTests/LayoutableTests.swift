@@ -110,7 +110,7 @@ extension LayoutableTests {
         var activation: Activation?
         
         var layout: some Layout {
-            self {
+            self.sublayout {
                 root.anchors {
                     if flag {
                         Anchors.allSides()

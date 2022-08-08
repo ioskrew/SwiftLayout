@@ -19,6 +19,7 @@ extension _UIViewExtension where Self: UIView {
     /// - Parameter build: A ``LayoutBuilder`` that  create sublayouts of this view.
     /// - Returns: An ``ViewLayout`` that wraps this view and contains sublayouts .
     ///
+    @available(*, deprecated, message: "Use the sublayout(_:) method instead.")
     public func callAsFunction<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<Self> {
         ViewLayout(self, sublayouts: [build()])
     }

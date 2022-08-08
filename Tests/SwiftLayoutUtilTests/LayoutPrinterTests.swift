@@ -18,7 +18,7 @@ class LayoutPrinterTests: XCTestCase {
     let descriptionLabel: UILabel = UILabel().identifying("descriptionLabel")
     
     var layout: some Layout {
-        root {
+        root.sublayout {
             contentView.anchors {
                 Anchors.leading.equalTo(root.safeAreaLayoutGuide, constant: 16.0)
                 Anchors.trailing.equalTo(root.safeAreaLayoutGuide, constant: -16.0)
