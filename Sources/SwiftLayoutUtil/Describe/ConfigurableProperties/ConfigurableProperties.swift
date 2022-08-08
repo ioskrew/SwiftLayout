@@ -38,6 +38,10 @@ public final class ConfigurableProperties {
                                                  propertiesHandler: propertiesHandler)
     }
     
+    public func regist<V: UIView>(byTypeOf view: V, defaultReferenceView: @autoclosure @escaping () -> V, propertiesHandler: @escaping (_ defaultReferenceView: V) -> [ConfigurableProperty]) {
+        self.regist(V.self, defaultReferenceView: defaultReferenceView(), propertiesHandler: propertiesHandler)
+    }
+    
     private func properties<V: UIView>(view: V, excludePreparedProperties: Bool = false) -> [ConfigurableProperty] {
         let viewName = view.subjectTypeName
         let referenceView = handlers[viewName]?.preparedDefaultReferenceView() ?? V.new()

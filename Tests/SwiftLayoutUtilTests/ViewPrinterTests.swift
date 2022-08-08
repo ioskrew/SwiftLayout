@@ -1257,18 +1257,17 @@ extension ViewPrinterTests {
     private class CustomRegistedConfigurableView: UIView {
         var someFlag: Bool = true
         var someValue: Int = 10
-       
-        var configurableProperties: [ConfigurableProperty] {
-            [
-                ConfigurableProperty.property(keypath: \CustomRegistedConfigurableView.someFlag, defaultValue: true) { "$0.someFlag = \($0)" },
-                ConfigurableProperty.property(keypath: \CustomRegistedConfigurableView.someValue, defaultValue: 10) { "$0.someValue = \($0)" }
-            ]
-        }
     }
     
     func testCustomRegistedConfigurableViewDefaultConfigurableProperties() {
         let root = UIView().identifying("root")
         let child = CustomRegistedConfigurableView().identifying("child")
+        ConfigurableProperties.default.regist(CustomRegistedConfigurableView.self, defaultReferenceView: CustomRegistedConfigurableView()) { defaultReferenceView in
+            [
+                ConfigurableProperty.property(keypath: \.someFlag, defaultReferenceView: defaultReferenceView) { "$0.someFlag = \($0)" },
+                ConfigurableProperty.property(keypath: \.someValue, defaultReferenceView: defaultReferenceView) { "$0.someValue = \($0)" }
+            ]
+        }
         
         activation = root.sublayout {
             child.config {
@@ -1317,6 +1316,34 @@ extension ViewPrinterTests {
         
         let result = ViewPrinter(root, options: .withViewConfig).description
         XCTAssertEqual(result, expect)
+        
+        child.someFlag = true
+        let expect2 = """
+            root.config {
+                $0.accessibilityIdentifier = "root"
+            }.sublayout {
+                child.config {
+                    $0.accessibilityIdentifier = "child"
+                    $0.alpha = 0.8999999761581421
+                    $0.autoresizesSubviews = false
+                    $0.backgroundColor = /* Modified! Check it manually. (hex: #555555, alpha: 1.0) */
+                    $0.clearsContextBeforeDrawing = false
+                    $0.clipsToBounds = true
+                    $0.contentMode = .scaleAspectFill
+                    $0.isHidden = true
+                    $0.isMultipleTouchEnabled = true
+                    $0.isOpaque = false
+                    $0.isUserInteractionEnabled = false
+                    $0.semanticContentAttribute = .forceLeftToRight
+                    $0.someValue = 1
+                    $0.tag = 7
+                    $0.tintColor = /* Modified! Check it manually. (hex: #FF00FF, alpha: 1.0) */
+                }
+            }
+            """
+        
+        let result2 = ViewPrinter(root, options: .withViewConfig).description
+        XCTAssertEqual(result2, expect2)
         
     }
     
