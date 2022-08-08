@@ -10,7 +10,7 @@
 
 ```swift
 @LayoutBuilder var layout: some Layout {
-  self {
+  self.sublayout {
     leftParenthesis.anchors {
       Anchors.leading.equalToSuper(constant: 16)
       Anchors.centerY
@@ -57,7 +57,7 @@
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "2.5.4"),
+  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "2.6.0"),
 ],
 ```
 
@@ -78,8 +78,8 @@ dependencies: [
 
 ```swift
 @LayoutBuilder var layout: some Layout {
-  view {
-    subview {
+  view.sublayout {
+    subview.sublayout {
       subsubview
       subsub2view
     }
@@ -123,7 +123,7 @@ subview.addSubview(subsub2view)
 - enable to set of second part(item, attribute) through relation functions
   
   ```swift
-  superview {
+  superview.sublayout {
     selfview.anchors {
       Anchors.top.equalTo(superview, attribute: .top, constant: 10)
     }
@@ -139,7 +139,7 @@ subview.addSubview(subsub2view)
 - second item of Anchors with no relation functions may be its superview
   
   ```swift
-  superview {
+  superview.sublayout {
     selfview.anchors {
       Anchors.top.bottom
     }
@@ -164,7 +164,7 @@ subview.addSubview(subsub2view)
 - width and height attributes can be set for first item(view) self not second item.
   
   ```swift
-  superview {
+  superview.sublayout {
     selfview.anchors {
       Anchors.width.height.equalToSuper(constant: 10) // only for selfview
     }
@@ -188,7 +188,7 @@ Now you can combine `LayoutBuilder` and `AnchorsBuilder` for add subview and mak
   
   ```swift
   @LayoutBuilder func layout() -> some Layout {
-    superview {
+    superview.sublayout {
       selfview.anchors {
         Anchors.allSides()
       }.sublayout {
@@ -200,16 +200,16 @@ Now you can combine `LayoutBuilder` and `AnchorsBuilder` for add subview and mak
   }
   ```
 
-- don't want `sublayout`? separates it.
+- Is your hierarchy too complex? Just separates it.
   
   ```swift
   @LayoutBuilder func layout() -> some Layout {
-    superview {
+    superview.sublayout {
       selfview.anchors {
         Anchors.allSides()
       }
     }
-    selfview {
+    selfview.sublayout {
       subview.anchors {
         Anchors.allSides()
       }
@@ -228,7 +228,7 @@ so, for do addSubview and active constraints needs following works:
   
   ```swift
   @LayoutBuilder func layout() -> some Layout {
-    superview {
+    superview.sublayout {
       selfview.anchors {
         Anchors.top
       }
@@ -245,7 +245,7 @@ so, for do addSubview and active constraints needs following works:
   
   ```swift
   @LayoutBuilder func layout() -> some Layout {
-    superview {
+    superview.sublayout {
       selfview.anchors {
         if someCondition {
           Anchors.bottom
@@ -281,7 +281,7 @@ For implementing `Layoutable`, you needs be write following codes
   class SomeView: UIView, Layoutable {
     var activation: Activation?
     @LayoutBuilder var layout: some Layout {
-      self {
+      self.sublayout {
         ...
       }
     }
@@ -307,7 +307,7 @@ var showMiddleName: Bool = false {
 }
 
 var layout: some Layout {
-  self {
+  self.sublayout {
     firstNameLabel
     if showMiddleName {
       middleNameLabel
@@ -325,7 +325,7 @@ In this case, you can update automatically by using `LayoutProperty`:
 @LayoutProeprty var showMiddleName: Bool = false // change value call updateLayout of Layoutable
 
 var layout: some Layout {
-  self {
+  self.sublayout {
     firstNameLabel
     if showMiddleName {
       middleNameLabel
@@ -364,7 +364,7 @@ final class PreviewView: UIView, Layoutable {
   var activation: Activation?
 
   var layout: some Layout {
-    self {
+    self.sublayout {
       top.anchors {
         Anchors.cap()
       }
@@ -425,7 +425,7 @@ final class PreviewView: UIView, Layoutable {
 You can decorate view in Layout with config function (*and using outside freely*)
 
 ```swift
-contentView {
+contentView.sublayout {
   nameLabel.config { label in 
     label.text = "Hello"
     label.textColor = .black
@@ -440,7 +440,7 @@ contentView {
 You can set `accessibilityIdentifier` and use that instead of the view reference.
 
 ```swift
-contentView {
+contentView.sublayout {
   nameLabel.identifying("name").anchors {
     Anchors.cap()
   }
@@ -494,8 +494,8 @@ This can be useful when you want to make sure the current layout is configured t
 - prints the tree created by the hierarchy of layouts and anchors.
   
   ```swift
-    var layout: some Layout {
-    root {
+  var layout: some Layout {
+    root.sublayout {
       child.anchors {
         Anchors.top
         Anchors.leading.trailing
@@ -576,7 +576,7 @@ This can be useful when you want to migrate your current view to SwiftLayout for
   
   ```swift
   SomeView {
-    root {
+    root.sublayout {
       child.anchors {
         Anchors.top
         Anchors.leading.trailing

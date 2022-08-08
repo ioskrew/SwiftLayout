@@ -10,7 +10,7 @@
 
 ```swift
 @LayoutBuilder var layout: some Layout {
-  self {
+  self.sublayout {
     leftParenthesis.anchors {
       Anchors.leading.equalToSuper(constant: 16)
       Anchors.centerY
@@ -53,7 +53,7 @@
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "2.5.4"),
+  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "2.6.0"),
 ],
 ```
 
@@ -79,8 +79,8 @@ dependencies: [
 
 ```swift
 @LayoutBuilder var layout: some Layout {
-  view {
-    subview {
+  view.sublayout {
+    subview.sublayout {
       subsubview
       subsub2view
     }
@@ -125,7 +125,7 @@ Layout의 메소드인 `anchors` 안에서 주로 사용됩니다.
 - equalTo와 같은 관계 메소드를 통해서 두번째 아이템(NSLayoutConstraint.secondItem, secondAttribute)을 설정할 수 있습니다.
   
   ```swift
-  superview {
+  superview.sublayout {
     selfview.anchors {
       Anchors.top.equalTo(superview, attribute: .top, constant: 10)
     }
@@ -141,7 +141,7 @@ Layout의 메소드인 `anchors` 안에서 주로 사용됩니다.
 - 관계 메소드를 생략할 경우 두번째 아이템은 자동으로 해당 뷰의 상위뷰로 설정됩니다.
   
   ```swift
-  superview {
+  superview.sublayout {
     selfview.anchors {
       Anchors.top.bottom
     }
@@ -166,7 +166,7 @@ Layout의 메소드인 `anchors` 안에서 주로 사용됩니다.
 - 너비와 높이는 두번째 아이템을 설정하지 않을 경우 자기 자신이 됩니다.
   
   ```swift
-  superview {
+  superview.sublayout {
     selfview.anchors {
       Anchors.width.height.equalToSuper(constant: 10) // only for selfview
     }
@@ -190,7 +190,7 @@ Layout의 메소드인 `anchors` 안에서 주로 사용됩니다.
   
   ```swift
   @LayoutBuilder func layout() -> some Layout {
-    superview {
+    superview.sublayout {
       selfview.anchors {
         Anchors.allSides()
       }.sublayout {
@@ -202,16 +202,16 @@ Layout의 메소드인 `anchors` 안에서 주로 사용됩니다.
   }
   ```
 
-- 혹시 `sublayout` 메소드를 쓰기 귀찮나요? 나눠쓰면 됩니다.
+- 혹시 계층구조가 너무 복잡한가요? 나눠쓰면 됩니다.
   
   ```swift
   @LayoutBuilder func layout() -> some Layout {
-    superview {
+    superview.sublayout {
       selfview.anchors {
         Anchors.allSides()
       }
     }
-    selfview {
+    selfview.sublayout {
       subview.anchors {
         Anchors.allSides()
       }
@@ -230,7 +230,7 @@ addSubview와 constraint의 적용을 위해서는 아래의 메소드를 호출
   
   ```swift
   @LayoutBuilder func layout() -> some Layout {
-    superview {
+    superview.sublayout {
       selfview.anchors {
         Anchors.top
       }
@@ -247,7 +247,7 @@ addSubview와 constraint의 적용을 위해서는 아래의 메소드를 호출
   
   ```swift
   @LayoutBuilder func layout() -> some Layout {
-    superview {
+    superview.sublayout {
       selfview.anchors {
         if someCondition {
           Anchors.bottom
@@ -283,7 +283,7 @@ addSubview와 constraint의 적용을 위해서는 아래의 메소드를 호출
   class SomeView: UIView, Layoutable {
     var activation: Activation?
     @LayoutBuilder var layout: some Layout {
-      self {
+      self.sublayout {
         ...
       }
     }
@@ -309,7 +309,7 @@ var showMiddleName: Bool = false {
 }
 
 var layout: some Layout {
-  self {
+  self.sublayout {
     firstNameLabel
     if showMiddleName {
       middleNameLabel
@@ -327,7 +327,7 @@ var layout: some Layout {
 @LayoutProeprty var showMiddleName: Bool = false // change value call updateLayout of Layoutable
 
 var layout: some Layout {
-  self {
+  self.sublayout {
     firstNameLabel
     if showMiddleName {
       middleNameLabel
@@ -366,7 +366,7 @@ final class PreviewView: UIView, Layoutable {
   var activation: Activation?
 
   var layout: some Layout {
-    self {
+    self.sublayout {
       top.anchors {
         Anchors.cap()
       }
@@ -424,10 +424,10 @@ final class PreviewView: UIView, Layoutable {
 
 ### UIView의 `config(_:)`
 
-Layout안에서 뷰의 속성을 설정할 수 있습니다.
+Layout안에서 뷰의 속성을 설정할 수 있습니다. (*Layout이 아닌 다른 곳에서도 유용하게 사용할 수 있습니다.*)
 
 ```swift
-contentView {
+contentView.sublayout {
   nameLabel.config { label in 
     label.text = "Hello"
     label.textColor = .black
@@ -442,7 +442,7 @@ contentView {
 `accessibilityIdentifier`을 설정하고 view reference 대신 해당 문자열을 이용할 수 있습니다.
 
 ```swift
-contentView {
+contentView.sublayout {
   nameLabel.identifying("name").anchors {
     Anchors.cap()
   }
@@ -497,7 +497,7 @@ struct ViewUIView_Previews: PreviewProvider {
   
   ```swift
   var layout: some Layout {
-    root {
+    root.sublayout {
       child.anchors {
         Anchors.top
         Anchors.leading.trailing
@@ -578,7 +578,7 @@ xib혹은 UIKit으로 직접 구현되어 있는 뷰를 SwiftLayout으로 마이
   
   ```swift
   SomeView {
-    root {
+    root.sublayout {
       child.anchors {
         Anchors.top
         Anchors.leading.trailing
@@ -594,7 +594,7 @@ xib혹은 UIKit으로 직접 구현되어 있는 뷰를 SwiftLayout으로 마이
 
 <img src="https://user-images.githubusercontent.com/3011832/157275626-c5f5672f-0a4a-4f45-8800-5ea3871c9dac.png" alt="thateasy" style="zoom:25%;" />
 
-# credits
+# Credits
 
 - oozoofrog([@oozoofrog](https://twitter.com/oozoofrog))
 - gmlwhdtjd([gmlwhdtjd](https://github.com/gmlwhdtjd))
