@@ -1082,21 +1082,7 @@ extension ViewPrinterTests {
     private class CustomConfigurableView: UIView, CustomConfigurableProperties {
         var someFlag: Bool = true
         var someValue: Int = 10
-        
-        required init() {
-            super.init(frame: .zero)
-        }
-        
-        init(someFlag: Bool, someVaue: Int) {
-            self.someFlag = someFlag
-            self.someValue = someVaue
-            super.init(frame: .zero)
-        }
-        
-        required init?(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-        
+       
         var configurableProperties: [ConfigurableProperty] {
             [
                 ConfigurableProperty.property(keypath: \CustomConfigurableView.someFlag, defaultValue: true) { "$0.someFlag = \($0)" },
