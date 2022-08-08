@@ -1,7 +1,6 @@
 import XCTest
 import SwiftLayout
 import SwiftLayoutUtil
-import UIKit
 
 class ViewPrinterTests: XCTestCase {
     
@@ -24,12 +23,12 @@ extension ViewPrinterTests {
         let root = UIView().identifying("root")
         let child = UIView().identifying("child")
         
-        activation = root.sublayout {
+        activation = root {
             child
         }.active()
         
         let expect = """
-        root.sublayout {
+        root {
             child
         }
         """
@@ -43,13 +42,13 @@ extension ViewPrinterTests {
         let a = UIView().identifying("a")
         let b = UIView().identifying("b")
         
-        activation = root.sublayout {
+        activation = root {
             a
             b
         }.active()
         
         let expect = """
-        root.sublayout {
+        root {
             a
             b
         }
@@ -64,15 +63,15 @@ extension ViewPrinterTests {
         let child = UIView().identifying("child")
         let grandchild = UIView().identifying("grandchild")
         
-        activation = root.sublayout {
-            child.sublayout {
+        activation = root {
+            child {
                 grandchild
             }
         }.active()
         
         let expect = """
-        root.sublayout {
-            child.sublayout {
+        root {
+            child {
                 grandchild
             }
         }
@@ -88,16 +87,16 @@ extension ViewPrinterTests {
         let friend = UIView().identifying("friend")
         let grandchild = UIView().identifying("grandchild")
         
-        activation = root.sublayout {
-            child.sublayout {
+        activation = root {
+            child {
                 grandchild
             }
             friend
         }.active()
         
         let expect = """
-        root.sublayout {
-            child.sublayout {
+        root {
+            child {
                 grandchild
             }
             friend
@@ -113,7 +112,7 @@ extension ViewPrinterTests {
         let two = UIView().identifying("two")
         
         func layout() -> some Layout {
-            root.sublayout {
+            root {
                 one.anchors {
                     Anchors.bottom
                     Anchors.leading.trailing
@@ -129,7 +128,7 @@ extension ViewPrinterTests {
         layout().finalActive()
         
         XCTAssertEqual(ViewPrinter(root).description, """
-        root.sublayout {
+        root {
             one.anchors {
                 Anchors.bottom
                 Anchors.leading.trailing
@@ -147,14 +146,14 @@ extension ViewPrinterTests {
         let root = UIView().identifying("root")
         let one = UIView().identifying("one")
         
-        root.sublayout {
+        root {
             one.anchors {
                 Anchors.width.equalTo(root, constant: -20.0)
             }
         }.finalActive()
         
         XCTAssertEqual(ViewPrinter(root).description, """
-        root.sublayout {
+        root {
             one.anchors {
                 Anchors.width.equalToSuper(constant: -20.0)
             }
@@ -167,7 +166,7 @@ extension ViewPrinterTests {
         root.translatesAutoresizingMaskIntoConstraints = false
         window.addSubview(root)
         let child = UIView().identifying("child")
-        activation = root.sublayout {
+        activation = root {
             child.anchors {
                 Anchors.top
                 Anchors.bottom.equalToSuper(constant: -10.0)
@@ -175,7 +174,7 @@ extension ViewPrinterTests {
         }.active()
         
         let expect = """
-        root.sublayout {
+        root {
             child.anchors {
                 Anchors.top
                 Anchors.bottom.equalToSuper(constant: -10.0)
@@ -193,7 +192,7 @@ extension ViewPrinterTests {
         window.addSubview(root)
         let child = UIView().identifying("child")
         let friend = UIView().identifying("friend")
-        activation = root.sublayout {
+        activation = root {
             child.anchors {
                 Anchors.top
                 Anchors.bottom.equalToSuper(constant: -10.0)
@@ -204,7 +203,7 @@ extension ViewPrinterTests {
         }.active()
         
         let expect = """
-        root.sublayout {
+        root {
             child.anchors {
                 Anchors.top
                 Anchors.bottom.equalToSuper(constant: -10.0)
@@ -221,14 +220,14 @@ extension ViewPrinterTests {
 
     func testPrintWithAnonymousTaggedView() {
         let root = UIView().identifying("root")
-        activation = root.sublayout {
+        activation = root {
             UILabel().identifying("label").anchors {
                 Anchors.allSides()
             }
         }.active()
         
         let expect = """
-        root.sublayout {
+        root {
             label.anchors {
                 Anchors.top.bottom
                 Anchors.leading.trailing
@@ -246,7 +245,7 @@ extension ViewPrinterTests {
         let child = UIView().identifying("child")
         let grandchild = UIView().identifying("grandchild")
         
-        activation = root.sublayout {
+        activation = root {
             child.anchors{
                 Anchors.allSides()
             }.sublayout {
@@ -257,7 +256,7 @@ extension ViewPrinterTests {
         }.active()
         
         let expect = """
-        root.sublayout {
+        root {
             child.anchors {
                 Anchors.top.bottom
                 Anchors.leading.trailing
@@ -279,8 +278,8 @@ extension ViewPrinterTests {
         let child = UILabel()
         let grand = UILabel().identifying("grand")
         
-        activation = root.sublayout {
-            child.sublayout {
+        activation = root {
+            child {
                 grand.anchors {
                     Anchors.top
                 }
@@ -288,8 +287,8 @@ extension ViewPrinterTests {
         }.active()
         
         let expect = """
-        root.sublayout {
-            child.sublayout {
+        root {
+            child {
                 grandchild.anchors {
                     Anchors.top
                 }
@@ -304,7 +303,7 @@ extension ViewPrinterTests {
     func testPrintWithSafeAreaLayoutGuide() {
         let root = UIView().identifying("root")
         let child = UIView().identifying("child")
-        activation = root.sublayout {
+        activation = root {
             child.anchors {
                 Anchors.top.bottom.equalTo(root.safeAreaLayoutGuide)
                 Anchors.leading
@@ -312,7 +311,7 @@ extension ViewPrinterTests {
         }.active()
         
         let expect = """
-        root.sublayout {
+        root {
             child.anchors {
                 Anchors.top.bottom.equalTo(root.safeAreaLayoutGuide)
                 Anchors.leading
@@ -328,7 +327,7 @@ extension ViewPrinterTests {
     func testPrintWithFindingViewIdentifiers() {
         let cell = Cell()
         let expect = """
-        contentView.sublayout {
+        contentView {
             profileView:\(UIImageView.self)
             nameLabel:\(UILabel.self)
         }
@@ -345,7 +344,7 @@ extension ViewPrinterTests {
         let child = UIView().identifying("child")
         let friend = UIView().identifying("friend")
         
-        activation = root.sublayout {
+        activation = root {
             child.anchors {
                 Anchors.cap()
             }
@@ -358,7 +357,7 @@ extension ViewPrinterTests {
         }.active()
         
         let expect = """
-        root.sublayout {
+        root {
             child.anchors {
                 Anchors.top
                 Anchors.leading.trailing
@@ -381,7 +380,7 @@ extension ViewPrinterTests {
         window.addSubview(root)
         let child = UIView().identifying("child")
         let friend = UIView().identifying("friend")
-        activation = root.sublayout {
+        activation = root {
             child.anchors {
                 Anchors.top.greaterThanOrEqualToSuper()
                 Anchors.bottom.lessThanOrEqualToSuper()
@@ -393,7 +392,7 @@ extension ViewPrinterTests {
         }.active()
         
         let expect = """
-        root.sublayout {
+        root {
             child.anchors {
                 Anchors.top.greaterThanOrEqualToSuper()
                 Anchors.bottom.lessThanOrEqualToSuper()
@@ -414,7 +413,7 @@ extension ViewPrinterTests {
         let child = UIView().identifying("child")
         
         func layout() -> some Layout {
-            root.sublayout {
+            root {
                 child.anchors {
                     Anchors.width.height
                 }
@@ -424,7 +423,7 @@ extension ViewPrinterTests {
         layout().finalActive()
         
         XCTAssertEqual(ViewPrinter(root).description, """
-        root.sublayout {
+        root {
             child.anchors {
                 Anchors.width.height.equalToSuper()
             }
@@ -454,7 +453,7 @@ extension ViewPrinterTests {
         var activation: Activation?
         
         var layout: some Layout {
-            self.sublayout {
+            self {
                 profileView
                 nameLabel
             }
@@ -484,7 +483,7 @@ extension ViewPrinterTests {
         
         XCTAssertEqual(ViewPrinter(gont, tags: [gont: "gont"]).updateIdentifiers(.referenceAndNameWithTypeOfView).description,
         """
-        gont.sublayout {
+        gont {
             sea:\(UILabel.self).anchors {
                 Anchors.top.bottom
                 Anchors.leading.trailing
@@ -527,7 +526,7 @@ extension ViewPrinterTests {
         
         var activation: Activation?
         var layout: some Layout {
-            self.sublayout {
+            self {
                 sea.anchors({
                     Anchors.allSides()
                 }).sublayout {
@@ -566,7 +565,7 @@ extension ViewPrinterTests {
         
         var activation: Activation? 
         var layout: some Layout {
-            self.sublayout {
+            self {
                 nickname.anchors({
                     Anchors.cap()
                 }).sublayout {
@@ -608,7 +607,7 @@ extension ViewPrinterTests {
         label.text = "HELLO"
         @LayoutBuilder
         func layout() -> some Layout {
-            root.sublayout {
+            root {
                 label.anchors {
                     Anchors.allSides()
                 }
@@ -617,7 +616,7 @@ extension ViewPrinterTests {
         
         layout().finalActive()
         XCTAssertEqual(ViewPrinter(root, options: .onlyIdentifier).description, """
-        root.sublayout {
+        root {
             label.anchors {
                 Anchors.top.bottom
                 Anchors.leading.trailing
@@ -636,11 +635,11 @@ extension ViewPrinterTests {
         container.root.translatesAutoresizingMaskIntoConstraints = false
         rootView.addSubview(container.root)
         
-        container.root.sublayout {
-            container.red.sublayout {
+        container.root {
+            container.red {
                 container.button
                 container.label
-                container.blue.sublayout {
+                container.blue {
                     container.image
                 }
             }
@@ -648,11 +647,11 @@ extension ViewPrinterTests {
         .finalActive()
         
         let expect = """
-        root.sublayout {
-            red.sublayout {
+        root {
+            red {
                 button
                 label
-                blue.sublayout {
+                blue {
                     image
                 }
             }
@@ -701,7 +700,7 @@ extension ViewPrinterTests {
         let view = IdentifierView(frame: .zero)
         
         XCTAssertEqual(ViewPrinter(view,tags: [view: "view"], options: .onlyIdentifier).description, """
-        view.sublayout {
+        view {
             red.anchors {
                 Anchors.top
                 Anchors.leading.trailing
@@ -717,7 +716,7 @@ extension ViewPrinterTests {
         var activation: Activation?
         
         var layout: some Layout {
-            self.sublayout {
+            self {
                 red.anchors {
                     Anchors.cap()
                 }
@@ -737,614 +736,4 @@ extension ViewPrinterTests {
             fatalError()
         }
     }
-}
-
-// MARK: - withViewConfig
-extension ViewPrinterTests {
-    func testWithViewConfig() {
-        let root = UILabel().identifying("root")
-        let child = UIView().identifying("child")
-        let grandchild = UIView().identifying("grandchild")
-
-        activation = root.config {
-            $0.alpha = 0.4
-            $0.contentMode = .scaleAspectFit
-        }.sublayout {
-            child.config {
-                $0.alpha = 1.0
-                $0.accessibilityLabel = "child-accessibilityLabel"
-            }.anchors{
-                Anchors.allSides()
-            }.sublayout {
-                grandchild.config {
-                    $0.isHidden = true
-                    $0.accessibilityLabel = "grandchild-accessibilityLabel"
-                }.anchors {
-                    Anchors.allSides()
-                }
-            }
-        }.active()
-
-        let expect = """
-        root.config {
-            $0.accessibilityIdentifier = "root"
-            $0.alpha = 0.4000000059604645
-            $0.contentMode = .scaleAspectFit
-        }.sublayout {
-            child.config {
-                $0.accessibilityIdentifier = "child"
-                $0.accessibilityLabel = "child-accessibilityLabel"
-            }.anchors {
-                Anchors.top.bottom
-                Anchors.leading.trailing
-            }.sublayout {
-                grandchild.config {
-                    $0.accessibilityIdentifier = "grandchild"
-                    $0.accessibilityLabel = "grandchild-accessibilityLabel"
-                    $0.isHidden = true
-                }.anchors {
-                    Anchors.top.bottom
-                    Anchors.leading.trailing
-                }
-            }
-        }
-        """
-
-        let result = ViewPrinter(root, options: .withViewConfig).description
-        XCTAssertEqual(result, expect)
-    }
-
-    func testWithOutViewConfig() {
-        let root = UIView().identifying("root")
-        let child = UIView().identifying("child")
-        let grandchild = UIView().identifying("grandchild")
-
-        activation = root.config {
-            $0.alpha = 0.4
-        }.sublayout {
-            child.config {
-                $0.alpha = 1.0
-                $0.accessibilityLabel = "child-accessibilityLabel"
-            }.anchors{
-                Anchors.allSides()
-            }.sublayout {
-                grandchild.config {
-                    $0.isHidden = true
-                    $0.accessibilityLabel = "grandchild-accessibilityLabel"
-                }.anchors {
-                    Anchors.allSides()
-                }
-            }
-        }.active()
-
-        let expect = """
-        root.sublayout {
-            child.anchors {
-                Anchors.top.bottom
-                Anchors.leading.trailing
-            }.sublayout {
-                grandchild.anchors {
-                    Anchors.top.bottom
-                    Anchors.leading.trailing
-                }
-            }
-        }
-        """
-
-        let result = ViewPrinter(root).description
-        XCTAssertEqual(result, expect)
-    }
-
-    func testAccessibilityDefaultConfigurableProperties() {
-        let root = UIView().identifying("root")
-        let child = UIControl()
-
-        activation = root.sublayout {
-            child.config {
-                $0.isAccessibilityElement = true
-                $0.accessibilityLabel = "accessibilityLabel_child"
-                $0.accessibilityHint = "accessibilityHint_child"
-                $0.accessibilityIdentifier = "accessibilityIdentifier_child"
-                $0.accessibilityTraits = [.button, .image]
-            }
-        }.active()
-
-        let expect = """
-        root.config {
-            $0.accessibilityIdentifier = "root"
-        }.sublayout {
-            accessibilityIdentifier_child.config {
-                $0.accessibilityHint = "accessibilityHint_child"
-                $0.accessibilityIdentifier = "accessibilityIdentifier_child"
-                $0.accessibilityLabel = "accessibilityLabel_child"
-                $0.accessibilityTraits = [.button, .image]
-                $0.isAccessibilityElement = true
-            }
-        }
-        """
-
-        let result = ViewPrinter(root, options: .withViewConfig).description
-        XCTAssertEqual(result, expect)
-    }
-
-    func testUIViewDefaultConfigurableProperties() {
-        let root = UIView().identifying("root")
-        let child = UIView().identifying("child")
-
-        activation = root.sublayout {
-            child.config {
-                $0.contentMode = .scaleAspectFill
-                $0.semanticContentAttribute = .forceLeftToRight
-                $0.tag = 7
-                $0.isUserInteractionEnabled = false
-                $0.isMultipleTouchEnabled = true
-                $0.alpha = 0.9
-                $0.backgroundColor = .darkGray
-                $0.tintColor = .magenta
-                $0.isOpaque = false
-                $0.isHidden = true
-                $0.clearsContextBeforeDrawing = false
-                $0.clipsToBounds = true
-                $0.autoresizesSubviews = false
-            }
-        }.active()
-
-        let expect = """
-        root.config {
-            $0.accessibilityIdentifier = "root"
-        }.sublayout {
-            child.config {
-                $0.accessibilityIdentifier = "child"
-                $0.alpha = 0.8999999761581421
-                $0.autoresizesSubviews = false
-                $0.backgroundColor = /* Modified! Check it manually. (hex: #555555, alpha: 1.0) */
-                $0.clearsContextBeforeDrawing = false
-                $0.clipsToBounds = true
-                $0.contentMode = .scaleAspectFill
-                $0.isHidden = true
-                $0.isMultipleTouchEnabled = true
-                $0.isOpaque = false
-                $0.isUserInteractionEnabled = false
-                $0.semanticContentAttribute = .forceLeftToRight
-                $0.tag = 7
-                $0.tintColor = /* Modified! Check it manually. (hex: #FF00FF, alpha: 1.0) */
-            }
-        }
-        """
-
-        let result = ViewPrinter(root, options: .withViewConfig).description
-        XCTAssertEqual(result, expect)
-    }
-
-    func testUIControlDefaultConfigurableProperties() {
-        let root = UIView().identifying("root")
-        let child = UIControl().identifying("child")
-        let friend = UIControl().identifying("friend")
-
-        activation = root.sublayout {
-            child.config {
-                $0.contentHorizontalAlignment = .trailing
-                $0.contentVerticalAlignment = .top
-                $0.isSelected = true
-                $0.isHighlighted = true
-            }
-            friend.config {
-                $0.isEnabled = false
-            }
-        }.active()
-
-        let expect = """
-        root.config {
-            $0.accessibilityIdentifier = "root"
-        }.sublayout {
-            child.config {
-                $0.accessibilityIdentifier = "child"
-                $0.contentHorizontalAlignment = .trailing
-                $0.contentVerticalAlignment = .top
-                $0.isHighlighted = true
-                $0.isSelected = true
-            }
-            friend.config {
-                $0.accessibilityIdentifier = "friend"
-                $0.isEnabled = false
-            }
-        }
-        """
-
-        let result = ViewPrinter(root, options: .withViewConfig).description
-        XCTAssertEqual(result, expect)
-    }
-
-    func testUILabelDefaultConfigurableProperties() {
-        let root = UIView().identifying("root")
-        let child = UILabel().identifying("child")
-
-        activation = root.sublayout {
-            child.config {
-                $0.text = "text_child"
-                $0.textColor = .gray
-                $0.font = .systemFont(ofSize: 16, weight: .semibold)
-                $0.adjustsFontForContentSizeCategory = true
-                $0.textAlignment = .left
-                $0.numberOfLines = 3
-                $0.isEnabled = false
-                $0.isHighlighted = true
-                $0.showsExpansionTextWhenTruncated = true
-                $0.baselineAdjustment = .alignCenters
-                $0.lineBreakMode = .byTruncatingHead
-                $0.adjustsFontSizeToFitWidth = true
-                $0.minimumScaleFactor = 0.5
-                $0.allowsDefaultTighteningForTruncation = true
-                $0.highlightedTextColor = .blue
-                $0.shadowColor = .brown
-                $0.shadowOffset = .zero
-            }
-        }.active()
-
-        let expect = """
-        root.config {
-            $0.accessibilityIdentifier = "root"
-        }.sublayout {
-            child.config {
-                $0.accessibilityIdentifier = "child"
-                $0.adjustsFontForContentSizeCategory = true
-                $0.adjustsFontSizeToFitWidth = true
-                $0.allowsDefaultTighteningForTruncation = true
-                $0.baselineAdjustment = .alignCenters
-                $0.font = /* Modified! Check it manually. (fontName: .SFUI-Semibold, pointSize: 16.0) */
-                $0.highlightedTextColor = /* Modified! Check it manually. (hex: #0000FF, alpha: 1.0) */
-                $0.isEnabled = false
-                $0.isHighlighted = true
-                $0.lineBreakMode = ..byTruncatingHead
-                $0.minimumScaleFactor = 0.5
-                $0.numberOfLines = 3
-                $0.shadowColor = /* Modified! Check it manually. (hex: #996633, alpha: 1.0) */
-                $0.shadowOffset = CGSize(width: 0.0, height: 0.0)
-                $0.showsExpansionTextWhenTruncated = true
-                $0.text = "text_child"
-                $0.textAlignment = .left
-                $0.textColor = /* Modified! Check it manually. (hex: #7F7F7F, alpha: 1.0) */
-            }
-        }
-        """
-
-        let result = ViewPrinter(root, options: .withViewConfig).description
-        XCTAssertEqual(result, expect)
-    }
-
-    func testUIImageViewDefaultConfigurableProperties() {
-        let root = UIView().identifying("root")
-        let child = UIImageView().identifying("child")
-
-        activation = root.sublayout {
-            child.config {
-                $0.image = UIImage(systemName: "star")
-                $0.highlightedImage = UIImage(systemName: "star.fill")
-                $0.isHighlighted = true
-                $0.adjustsImageSizeForAccessibilityContentSizeCategory = true
-            }
-        }.active()
-
-        let expect = """
-        root.config {
-            $0.accessibilityIdentifier = "root"
-        }.sublayout {
-            child.config {
-                $0.accessibilityIdentifier = "child"
-                $0.adjustsImageSizeForAccessibilityContentSizeCategory = true
-                $0.highlightedImage = /* Modified! Check it manually. */
-                $0.image = /* Modified! Check it manually. */
-                $0.isHighlighted = true
-                $0.isOpaque = false
-            }
-        }
-        """
-
-        let result = ViewPrinter(root, options: .withViewConfig).description
-        XCTAssertEqual(result, expect)
-    }
-
-    func testStackViewDefaultConfigurableProperties() {
-        let root = UIView().identifying("root")
-        let child = UIStackView().identifying("child")
-
-        activation = root.sublayout {
-            child.config {
-                $0.axis = .vertical
-                $0.alignment = .leading
-                $0.distribution = .fillEqually
-                $0.spacing = 5
-                $0.isBaselineRelativeArrangement = true
-            }
-        }.active()
-
-        let expect = """
-        root.config {
-            $0.accessibilityIdentifier = "root"
-        }.sublayout {
-            child.config {
-                $0.accessibilityIdentifier = "child"
-                $0.alignment = .leading
-                $0.axis = .vertical
-                $0.distribution = .fillEqually
-                $0.isBaselineRelativeArrangement = true
-                $0.spacing = 5.0
-            }
-        }
-        """
-
-        let result = ViewPrinter(root, options: .withViewConfig).description
-        XCTAssertEqual(result, expect)
-    }
-}
-
-extension ViewPrinterTests {
-    private class CustomConfigurableView: UIView, CustomConfigurableProperties {
-        var someFlag: Bool = true
-        var someValue: Int = 10
-       
-        var configurableProperties: [ConfigurableProperty] {
-            [
-                ConfigurableProperty.property(keypath: \CustomConfigurableView.someFlag, defaultValue: true) { "$0.someFlag = \($0)" },
-                ConfigurableProperty.property(keypath: \CustomConfigurableView.someValue, defaultValue: 10) { "$0.someValue = \($0)" }
-            ]
-        }
-    }
-    
-    func testCustomConfigurableViewDefaultConfigurableProperties() {
-        let root = UIView().identifying("root")
-        let child = CustomConfigurableView().identifying("child")
-        
-        activation = root.sublayout {
-            child.config {
-                $0.contentMode = .scaleAspectFill
-                $0.semanticContentAttribute = .forceLeftToRight
-                $0.tag = 7
-                $0.isUserInteractionEnabled = false
-                $0.isMultipleTouchEnabled = true
-                $0.alpha = 0.9
-                $0.backgroundColor = .darkGray
-                $0.tintColor = .magenta
-                $0.isOpaque = false
-                $0.isHidden = true
-                $0.clearsContextBeforeDrawing = false
-                $0.clipsToBounds = true
-                $0.autoresizesSubviews = false
-                $0.someFlag = false
-                $0.someValue = 1
-            }
-        }.active()
-        
-        let expect = """
-            root.config {
-                $0.accessibilityIdentifier = "root"
-            }.sublayout {
-                child.config {
-                    $0.accessibilityIdentifier = "child"
-                    $0.alpha = 0.8999999761581421
-                    $0.autoresizesSubviews = false
-                    $0.backgroundColor = /* Modified! Check it manually. (hex: #555555, alpha: 1.0) */
-                    $0.clearsContextBeforeDrawing = false
-                    $0.clipsToBounds = true
-                    $0.contentMode = .scaleAspectFill
-                    $0.isHidden = true
-                    $0.isMultipleTouchEnabled = true
-                    $0.isOpaque = false
-                    $0.isUserInteractionEnabled = false
-                    $0.semanticContentAttribute = .forceLeftToRight
-                    $0.someFlag = false
-                    $0.someValue = 1
-                    $0.tag = 7
-                    $0.tintColor = /* Modified! Check it manually. (hex: #FF00FF, alpha: 1.0) */
-                }
-            }
-            """
-        
-        let result = ViewPrinter(root, options: .withViewConfig).description
-        XCTAssertEqual(result, expect)
-        
-    }
-    
-    func testCustomConfigurableViewDefaultConfigurablePropertiesHiddenPropertyIsDefault() {
-        let root = UIView().identifying("root")
-        let child = CustomConfigurableView().identifying("child")
-        
-        activation = root.sublayout {
-            child.config {
-                $0.contentMode = .scaleAspectFill
-                $0.semanticContentAttribute = .forceLeftToRight
-                $0.tag = 7
-                $0.isUserInteractionEnabled = false
-                $0.isMultipleTouchEnabled = true
-                $0.alpha = 0.9
-                $0.backgroundColor = .darkGray
-                $0.tintColor = .magenta
-                $0.isOpaque = false
-                $0.isHidden = true
-                $0.clearsContextBeforeDrawing = false
-                $0.clipsToBounds = true
-                $0.autoresizesSubviews = false
-                //                $0.someFlag = false
-                $0.someValue = 1
-            }
-        }.active()
-        
-        let expect = """
-            root.config {
-                $0.accessibilityIdentifier = "root"
-            }.sublayout {
-                child.config {
-                    $0.accessibilityIdentifier = "child"
-                    $0.alpha = 0.8999999761581421
-                    $0.autoresizesSubviews = false
-                    $0.backgroundColor = /* Modified! Check it manually. (hex: #555555, alpha: 1.0) */
-                    $0.clearsContextBeforeDrawing = false
-                    $0.clipsToBounds = true
-                    $0.contentMode = .scaleAspectFill
-                    $0.isHidden = true
-                    $0.isMultipleTouchEnabled = true
-                    $0.isOpaque = false
-                    $0.isUserInteractionEnabled = false
-                    $0.semanticContentAttribute = .forceLeftToRight
-                    $0.someValue = 1
-                    $0.tag = 7
-                    $0.tintColor = /* Modified! Check it manually. (hex: #FF00FF, alpha: 1.0) */
-                }
-            }
-            """
-        
-        let result = ViewPrinter(root, options: .withViewConfig).description
-        XCTAssertEqual(result, expect)
-        
-        child.someFlag = false
-        child.someValue = 10
-        let expect2 = """
-            root.config {
-                $0.accessibilityIdentifier = "root"
-            }.sublayout {
-                child.config {
-                    $0.accessibilityIdentifier = "child"
-                    $0.alpha = 0.8999999761581421
-                    $0.autoresizesSubviews = false
-                    $0.backgroundColor = /* Modified! Check it manually. (hex: #555555, alpha: 1.0) */
-                    $0.clearsContextBeforeDrawing = false
-                    $0.clipsToBounds = true
-                    $0.contentMode = .scaleAspectFill
-                    $0.isHidden = true
-                    $0.isMultipleTouchEnabled = true
-                    $0.isOpaque = false
-                    $0.isUserInteractionEnabled = false
-                    $0.semanticContentAttribute = .forceLeftToRight
-                    $0.someFlag = false
-                    $0.tag = 7
-                    $0.tintColor = /* Modified! Check it manually. (hex: #FF00FF, alpha: 1.0) */
-                }
-            }
-            """
-        let result2 = ViewPrinter(root, options: .withViewConfig).description
-        XCTAssertEqual(result2, expect2)
-        
-        child.someFlag = true
-        let expect3 = """
-            root.config {
-                $0.accessibilityIdentifier = "root"
-            }.sublayout {
-                child.config {
-                    $0.accessibilityIdentifier = "child"
-                    $0.alpha = 0.8999999761581421
-                    $0.autoresizesSubviews = false
-                    $0.backgroundColor = /* Modified! Check it manually. (hex: #555555, alpha: 1.0) */
-                    $0.clearsContextBeforeDrawing = false
-                    $0.clipsToBounds = true
-                    $0.contentMode = .scaleAspectFill
-                    $0.isHidden = true
-                    $0.isMultipleTouchEnabled = true
-                    $0.isOpaque = false
-                    $0.isUserInteractionEnabled = false
-                    $0.semanticContentAttribute = .forceLeftToRight
-                    $0.tag = 7
-                    $0.tintColor = /* Modified! Check it manually. (hex: #FF00FF, alpha: 1.0) */
-                }
-            }
-            """
-        let result3 = ViewPrinter(root, options: .withViewConfig).description
-        XCTAssertEqual(result3, expect3)
-    }
-    
-}
-
-extension ViewPrinterTests {
-    private class CustomRegistedConfigurableView: UIView {
-        var someFlag: Bool = true
-        var someValue: Int = 10
-    }
-    
-    func testCustomRegistedConfigurableViewDefaultConfigurableProperties() {
-        let root = UIView().identifying("root")
-        let child = CustomRegistedConfigurableView().identifying("child")
-        ConfigurableProperties.default.regist(CustomRegistedConfigurableView.self, defaultReferenceView: CustomRegistedConfigurableView()) { defaultReferenceView in
-            [
-                ConfigurableProperty.property(keypath: \.someFlag, defaultReferenceView: defaultReferenceView) { "$0.someFlag = \($0)" },
-                ConfigurableProperty.property(keypath: \.someValue, defaultReferenceView: defaultReferenceView) { "$0.someValue = \($0)" }
-            ]
-        }
-        
-        activation = root.sublayout {
-            child.config {
-                $0.contentMode = .scaleAspectFill
-                $0.semanticContentAttribute = .forceLeftToRight
-                $0.tag = 7
-                $0.isUserInteractionEnabled = false
-                $0.isMultipleTouchEnabled = true
-                $0.alpha = 0.9
-                $0.backgroundColor = .darkGray
-                $0.tintColor = .magenta
-                $0.isOpaque = false
-                $0.isHidden = true
-                $0.clearsContextBeforeDrawing = false
-                $0.clipsToBounds = true
-                $0.autoresizesSubviews = false
-                $0.someFlag = false
-                $0.someValue = 1
-            }
-        }.active()
-        
-        let expect = """
-            root.config {
-                $0.accessibilityIdentifier = "root"
-            }.sublayout {
-                child.config {
-                    $0.accessibilityIdentifier = "child"
-                    $0.alpha = 0.8999999761581421
-                    $0.autoresizesSubviews = false
-                    $0.backgroundColor = /* Modified! Check it manually. (hex: #555555, alpha: 1.0) */
-                    $0.clearsContextBeforeDrawing = false
-                    $0.clipsToBounds = true
-                    $0.contentMode = .scaleAspectFill
-                    $0.isHidden = true
-                    $0.isMultipleTouchEnabled = true
-                    $0.isOpaque = false
-                    $0.isUserInteractionEnabled = false
-                    $0.semanticContentAttribute = .forceLeftToRight
-                    $0.someFlag = false
-                    $0.someValue = 1
-                    $0.tag = 7
-                    $0.tintColor = /* Modified! Check it manually. (hex: #FF00FF, alpha: 1.0) */
-                }
-            }
-            """
-        
-        let result = ViewPrinter(root, options: .withViewConfig).description
-        XCTAssertEqual(result, expect)
-        
-        child.someFlag = true
-        let expect2 = """
-            root.config {
-                $0.accessibilityIdentifier = "root"
-            }.sublayout {
-                child.config {
-                    $0.accessibilityIdentifier = "child"
-                    $0.alpha = 0.8999999761581421
-                    $0.autoresizesSubviews = false
-                    $0.backgroundColor = /* Modified! Check it manually. (hex: #555555, alpha: 1.0) */
-                    $0.clearsContextBeforeDrawing = false
-                    $0.clipsToBounds = true
-                    $0.contentMode = .scaleAspectFill
-                    $0.isHidden = true
-                    $0.isMultipleTouchEnabled = true
-                    $0.isOpaque = false
-                    $0.isUserInteractionEnabled = false
-                    $0.semanticContentAttribute = .forceLeftToRight
-                    $0.someValue = 1
-                    $0.tag = 7
-                    $0.tintColor = /* Modified! Check it manually. (hex: #FF00FF, alpha: 1.0) */
-                }
-            }
-            """
-        
-        let result2 = ViewPrinter(root, options: .withViewConfig).description
-        XCTAssertEqual(result2, expect2)
-        
-    }
-    
 }
