@@ -12,7 +12,7 @@ extension ConfigurableProperties {
     }
     
     private func uiLabelDefaultConfigurableProperties(defaultReferenceView label: UILabel) -> [ConfigurableProperty] {
-        var configurableProperties: [ConfigurableProperty] = [
+        return [
             .property(keypath: \.adjustsFontForContentSizeCategory, defaultReferenceView: label) { "$0.adjustsFontForContentSizeCategory = \($0)" },
             .property(keypath: \.adjustsFontSizeToFitWidth, defaultReferenceView: label) { "$0.adjustsFontSizeToFitWidth = \($0)" },
             .property(keypath: \.allowsDefaultTighteningForTruncation, defaultReferenceView: label) { "$0.allowsDefaultTighteningForTruncation = \($0)" },
@@ -30,12 +30,5 @@ extension ConfigurableProperties {
             .property(keypath: \.textAlignment, defaultReferenceView: label) { "$0.textAlignment = \($0.configuration)" },
             .property(keypath: \.textColor, defaultReferenceView: label) { "$0.textColor = \($0.configuration)" },
         ]
-        
-        if #available(iOS 14.0, *), UIDevice.current.userInterfaceIdiom == .mac {
-            configurableProperties.append(contentsOf: [
-                .property(keypath: \.showsExpansionTextWhenTruncated, defaultReferenceView: label) { "$0.showsExpansionTextWhenTruncated = \($0)" }
-            ])
-        }
-        return configurableProperties
     }
 }
