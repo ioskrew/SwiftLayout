@@ -969,7 +969,9 @@ extension ViewPrinterTests {
                 $0.numberOfLines = 3
                 $0.isEnabled = false
                 $0.isHighlighted = true
-                $0.showsExpansionTextWhenTruncated = true
+                if #available(iOS 14.0, *), UIDevice.current.userInterfaceIdiom == .mac {
+                    $0.showsExpansionTextWhenTruncated = true
+                }
                 $0.baselineAdjustment = .alignCenters
                 $0.lineBreakMode = .byTruncatingHead
                 $0.adjustsFontSizeToFitWidth = true
@@ -981,32 +983,63 @@ extension ViewPrinterTests {
             }
         }.active()
 
-        let expect = """
-        root.config {
-            $0.accessibilityIdentifier = "root"
-        }.sublayout {
-            child.config {
-                $0.accessibilityIdentifier = "child"
-                $0.adjustsFontForContentSizeCategory = true
-                $0.adjustsFontSizeToFitWidth = true
-                $0.allowsDefaultTighteningForTruncation = true
-                $0.baselineAdjustment = .alignCenters
-                $0.font = /* Modified! Check it manually. (fontName: .SFUI-Semibold, pointSize: 16.0) */
-                $0.highlightedTextColor = /* Modified! Check it manually. (hex: #0000FF, alpha: 1.0) */
-                $0.isEnabled = false
-                $0.isHighlighted = true
-                $0.lineBreakMode = ..byTruncatingHead
-                $0.minimumScaleFactor = 0.5
-                $0.numberOfLines = 3
-                $0.shadowColor = /* Modified! Check it manually. (hex: #996633, alpha: 1.0) */
-                $0.shadowOffset = CGSize(width: 0.0, height: 0.0)
-                $0.showsExpansionTextWhenTruncated = true
-                $0.text = "text_child"
-                $0.textAlignment = .left
-                $0.textColor = /* Modified! Check it manually. (hex: #7F7F7F, alpha: 1.0) */
+        let expect: String
+        if #available(iOS 14.0, *), UIDevice.current.userInterfaceIdiom == .mac {
+            expect =
+            """
+            root.config {
+                $0.accessibilityIdentifier = "root"
+            }.sublayout {
+                child.config {
+                    $0.accessibilityIdentifier = "child"
+                    $0.adjustsFontForContentSizeCategory = true
+                    $0.adjustsFontSizeToFitWidth = true
+                    $0.allowsDefaultTighteningForTruncation = true
+                    $0.baselineAdjustment = .alignCenters
+                    $0.font = /* Modified! Check it manually. (fontName: .SFUI-Semibold, pointSize: 16.0) */
+                    $0.highlightedTextColor = /* Modified! Check it manually. (hex: #0000FF, alpha: 1.0) */
+                    $0.isEnabled = false
+                    $0.isHighlighted = true
+                    $0.lineBreakMode = .byTruncatingHead
+                    $0.minimumScaleFactor = 0.5
+                    $0.numberOfLines = 3
+                    $0.shadowColor = /* Modified! Check it manually. (hex: #996633, alpha: 1.0) */
+                    $0.shadowOffset = CGSize(width: 0.0, height: 0.0)
+                    $0.showsExpansionTextWhenTruncated = true
+                    $0.text = "text_child"
+                    $0.textAlignment = .left
+                    $0.textColor = /* Modified! Check it manually. (hex: #7F7F7F, alpha: 1.0) */
+                }
             }
+            """
+        } else {
+            expect =
+            """
+            root.config {
+                $0.accessibilityIdentifier = "root"
+            }.sublayout {
+                child.config {
+                    $0.accessibilityIdentifier = "child"
+                    $0.adjustsFontForContentSizeCategory = true
+                    $0.adjustsFontSizeToFitWidth = true
+                    $0.allowsDefaultTighteningForTruncation = true
+                    $0.baselineAdjustment = .alignCenters
+                    $0.font = /* Modified! Check it manually. (fontName: .SFUI-Semibold, pointSize: 16.0) */
+                    $0.highlightedTextColor = /* Modified! Check it manually. (hex: #0000FF, alpha: 1.0) */
+                    $0.isEnabled = false
+                    $0.isHighlighted = true
+                    $0.lineBreakMode = .byTruncatingHead
+                    $0.minimumScaleFactor = 0.5
+                    $0.numberOfLines = 3
+                    $0.shadowColor = /* Modified! Check it manually. (hex: #996633, alpha: 1.0) */
+                    $0.shadowOffset = CGSize(width: 0.0, height: 0.0)
+                    $0.text = "text_child"
+                    $0.textAlignment = .left
+                    $0.textColor = /* Modified! Check it manually. (hex: #7F7F7F, alpha: 1.0) */
+                }
+            }
+            """
         }
-        """
 
         let result = ViewPrinter(root, options: .withViewConfig).description
         XCTAssertEqual(result, expect)
