@@ -13,11 +13,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: tests13_1
-      run: xcodebuild test -scheme SwiftLayout-Package -sdk iphonesimulator -destination 'name=iPhone 8,platform=iOS Simulator,OS=13.0'
-    - name: tests14_1
+    - name: tests13
+      run: xcodebuild test -scheme SwiftLayout-Package -sdk iphonesimulator -destination 'name=iPhone 8,platform=iOS Simulator,OS=13.7'
+    - name: tests14
       run: xcod3build test -scheme SwiftLayout-Package -sdk iphonesimulator -destination 'name=iPhone 8,platform=iOS Simulator,OS=14.0'
-    - name: tests15_2
+    - name: tests15
       run: xcodebuild test -scheme SwiftLayout-Package -sdk iphonesimulator15.2 -destination 'name=iPhone 13 Pro'
   
 # test-macos:
