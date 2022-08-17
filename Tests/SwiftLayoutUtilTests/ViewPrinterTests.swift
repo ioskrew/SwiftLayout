@@ -1087,6 +1087,10 @@ extension ViewPrinterTests {
                     subview.removeFromSuperview()
                 }
                 child.isOn = true
+                child.onTintColor = UIColor.orange
+                child.thumbTintColor = UIColor.yellow
+                child.onImage = UIImage(systemName: "plus")
+                child.offImage = UIImage(systemName: "minus")
                 if #available(iOS 14.0, *) {
                     child.preferredStyle = .sliding
                 }
@@ -1101,7 +1105,11 @@ extension ViewPrinterTests {
                 child.config {
                     $0.accessibilityIdentifier = "child"
                     $0.isOn = true
+                    $0.offImage = /* Modified! Check it manually. */
+                    $0.onImage = /* Modified! Check it manually. */
+                    $0.onTintColor = /* Modified! Check it manually. (hex: #FF7F00, alpha: 1.0) */
                     $0.preferredStyle = .sliding
+                    $0.thumbTintColor = /* Modified! Check it manually. (hex: #FFFF00, alpha: 1.0) */
                 }
             }
             """
@@ -1116,6 +1124,10 @@ extension ViewPrinterTests {
                 child.config {
                     $0.accessibilityIdentifier = "child"
                     $0.isOn = true
+                    $0.offImage = /* Modified! Check it manually. */
+                    $0.onImage = /* Modified! Check it manually. */
+                    $0.onTintColor = /* Modified! Check it manually. (hex: #FF7F00, alpha: 1.0) */
+                    $0.thumbTintColor = /* Modified! Check it manually. (hex: #FFFF00, alpha: 1.0) */
                 }
             }
             """
