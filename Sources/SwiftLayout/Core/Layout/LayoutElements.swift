@@ -15,7 +15,7 @@ struct LayoutElements<L: Layout> {
         let components = LayoutExplorer.components(layout: layout)
         
         viewInformations = components.map { component in
-            ViewInformation(superview: component.superView, view: component.view)
+            ViewInformation(superview: component.superView, view: component.view, option: component.option)
         }
         
         let viewDic = Dictionary(
