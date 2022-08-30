@@ -7,6 +7,8 @@ public struct ViewLayout<V: UIView>: Layout {
     public private(set) var sublayouts: [Layout]
     
     public private(set) var anchors: AnchorsContainer
+
+    public var option: LayoutOption? { LayoutOption.none }
     
     init(_ view: V, sublayouts: [Layout] = [], anchors: AnchorsContainer = AnchorsContainer()) {
         self.innerView = view

@@ -1,8 +1,11 @@
 public struct GroupLayout<L: Layout>: Layout {
     
     private let layout: L
+
+    public let option: LayoutOption?
     
-    public init(@LayoutBuilder _ handler: () -> L) {
+    public init(option: LayoutOption = .none, @LayoutBuilder _ handler: () -> L) {
+        self.option = option
         self.layout = handler()
     }
     
