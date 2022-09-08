@@ -12,6 +12,7 @@ enum LayoutExplorer {
         var superView: UIView? 
         var view: UIView
         var anchors: AnchorsContainer
+        var option: LayoutOption
         
         var keyValueTuple: (String, UIView)? {
             guard let identifier = view.accessibilityIdentifier else {
@@ -22,26 +23,27 @@ enum LayoutExplorer {
         }
     }
     
-    typealias TraversalHandler = (_ layout: Layout, _ superview: UIView?) -> Void
+    typealias TraversalHandler = (_ layout: Layout, _ superview: UIView?, _ option: LayoutOption) -> Void
     
     static func components<L: Layout>(layout: L) -> [Component] {
         var elements: [Component] = []
         
-        traversal(layout: layout, superview: nil) { layout, superview in
+        traversal(layout: layout, superview: nil, option: .none) { layout, superview, option in
             if let view = layout.view {
-                elements.append(Component(superView: superview, view: view, anchors: layout.anchors))
+                elements.append(Component(superView: superview, view: view, anchors: layout.anchors, option: option))
             }
         }
         
         return elements
     }
     
-    static func traversal(layout: Layout, superview: UIView?, handler: TraversalHandler) {
-        handler(layout, superview)
+    static func traversal(layout: Layout, superview: UIView?, option: LayoutOption, handler: TraversalHandler) {
+        handler(layout, superview, option)
         
         let nextSuperview = layout.view ?? superview
+        let nextOption = layout.option ?? option
         layout.sublayouts.forEach { layout in
-            traversal(layout: layout, superview: nextSuperview, handler: handler)
+            traversal(layout: layout, superview: nextSuperview, option: nextOption, handler: handler)
         }
     }
 }

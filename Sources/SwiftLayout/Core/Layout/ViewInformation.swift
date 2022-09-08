@@ -9,13 +9,15 @@ import UIKit
 
 final class ViewInformation: Hashable {
     
-    init(superview: UIView?, view: UIView?) {
+    init(superview: UIView?, view: UIView?, option: LayoutOption) {
         self.superview = superview
         self.view = view
+        self.option = option
     }
     
     private(set) public weak var superview: UIView?
     private(set) public weak var view: UIView?
+    var option: LayoutOption
     var identifier: String? { view?.accessibilityIdentifier }
     
     func addSuperview() {
@@ -23,7 +25,8 @@ final class ViewInformation: Hashable {
             return
         }
         superview?.addSubview(view)
-        if let stackSuperView = superview as? UIStackView {
+
+        if let stackSuperView = superview as? UIStackView, option.contains(.isNotArranged) == false {
             stackSuperView.addArrangedSubview(view)
         }
     }

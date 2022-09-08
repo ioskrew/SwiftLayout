@@ -11,11 +11,13 @@ public protocol Layout {
     var view: UIView? { get }
     var anchors: AnchorsContainer { get }
     var sublayouts: [Layout] { get }
+    var option: LayoutOption? { get }
 }
 
 extension Layout {
     public var view: UIView? { nil }
     public var anchors: AnchorsContainer { AnchorsContainer() }
+    public var option: LayoutOption? { nil }
 }
 
 extension Layout {

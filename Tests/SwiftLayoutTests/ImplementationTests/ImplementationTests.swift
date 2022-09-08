@@ -39,7 +39,7 @@ extension ImplementationTests {
         }
         
         var result: [String] = []
-        LayoutExplorer.traversal(layout: layout, superview: nil) { layout, superview in
+        LayoutExplorer.traversal(layout: layout, superview: nil, option: .none) { layout, superview, _ in
             guard let view = layout.view else {
                 return
             }
