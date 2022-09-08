@@ -414,7 +414,7 @@ final class PreviewView: UIView, Layoutable {
 }
 ```
 
-[![animation in update layout](https://user-images.githubusercontent.com/3011832/156908073-d4089c26-928f-41d9-961b-8b04d7dcde37.png)](https://user-images.githubusercontent.com/3011832/156908065-8d6bcebd-553b-490b-903b-6e375d4c97a3.mp4)
+[![animation in update layout](https://user-images.githubusercontent.com/3011832/189062670-93b3bcef-fdea-458b-b18f-f37cce1ec8ee.png)](https://user-images.githubusercontent.com/3011832/189062744-41b2c667-b595-4e2b-87fe-97b32d66df2b.mp4)
 
 ## Other useful features
 
