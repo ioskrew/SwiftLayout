@@ -1,37 +1,37 @@
 //
 //  Activation.swift
-//  
+//
 //
 //  Created by aiden_h on 2022/02/16.
 //
 import UIKit
 
 public final class Activation: Hashable {
-    
+
     typealias Constraints = Set<WeakReference<NSLayoutConstraint>>
-    
+
     var viewInfos: [ViewInformation]
     var constraints: Constraints
-    
+
     convenience init() {
         self.init(viewInfos: .init(), constraints: .init())
     }
-    
+
     init(viewInfos: [ViewInformation], constraints: Constraints) {
         self.viewInfos = viewInfos
         self.constraints = constraints
     }
-    
+
     deinit {
         deactive()
     }
-    
+
     func deactiveConstraints() {
         let constraints = constraints.compactMap(\.origin).filter(\.isActive)
         NSLayoutConstraint.deactivate(constraints)
         self.constraints = .init()
     }
-    
+
     func deactiveViews() {
         let views = viewInfos.compactMap(\.view)
         for view in views {
@@ -48,7 +48,7 @@ extension Activation {
         deactiveViews()
         deactiveConstraints()
     }
-    
+
     public func viewForIdentifier(_ identifier: String) -> UIView? {
         viewInfos.first(where: { $0.identifier == identifier })?.view
     }
@@ -73,3 +73,4 @@ extension Activation {
         hasher.combine(constraints)
     }
 }
+
