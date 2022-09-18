@@ -15,14 +15,14 @@ enum Activator {
     
     @discardableResult
     static func update<L: Layout>(layout: L, fromActivation activation: Activation, forceLayout: Bool) -> Activation {
-        var prevInfos: [ViewInformation: Set<WeakReference<NSLayoutConstraint>>] = [:]
+        var prevInfos: [ViewInformation: Set<WeakConstraint>] = [:]
         for viewInfo in activation.viewInfos {
             guard let view = viewInfo.view else { continue }
             prevInfos[viewInfo] = Set(view.constraints.weakens)
         }
 
         let elements = LayoutElements(layout: layout)
-        
+
         let viewInfos = elements.viewInformations
         updateViews(activation: activation, viewInfos: viewInfos)
 
@@ -89,11 +89,15 @@ private extension Activator {
     
     static func updateConstraints(activation: Activation, constraints: [NSLayoutConstraint]) {
         let news = Set(constraints.weakens)
-        let olds = Set(activation.constraints)
-        
-        NSLayoutConstraint.deactivate(olds.compactMap(\.origin).filter(\.isActive))
-        NSLayoutConstraint.activate(news.compactMap(\.origin))
-        activation.constraints = news
+        let olds = activation.constraints
+
+        let needToDeactivate = olds.subtracting(news)
+        let needToActivate = news.subtracting(olds)
+
+        NSLayoutConstraint.deactivate(needToDeactivate.compactMap(\.origin).filter(\.isActive))
+        NSLayoutConstraint.activate(needToActivate.compactMap(\.origin))
+
+        activation.constraints = olds.union(news).subtracting(needToDeactivate)
     }
     
     static func updateConstraints(constraints: [NSLayoutConstraint]) {
@@ -101,7 +105,7 @@ private extension Activator {
         NSLayoutConstraint.activate(news.compactMap(\.origin))
     }
     
-    static func layoutIfNeeded(_ viewInfos: [ViewInformation], _ prevInfos: [ViewInformation: Set<WeakReference<NSLayoutConstraint>>] = [:]) {
+    static func layoutIfNeeded(_ viewInfos: [ViewInformation], _ prevInfos: [ViewInformation: Set<WeakConstraint>] = [:]) {
         for viewInfo in viewInfos {
             if viewInfo.superview == nil, let view = viewInfo.view {
                 view.setNeedsLayout()
