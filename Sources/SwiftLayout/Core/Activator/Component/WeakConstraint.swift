@@ -7,15 +7,14 @@
 
 import UIKit
 
-final class WeakConstraint {
-    weak var origin: NSLayoutConstraint?
+struct WeakConstraint {
+    private(set) weak var origin: NSLayoutConstraint?
+    private var customHashValue: Int
 
     init(origin: NSLayoutConstraint? = nil) {
         self.origin = origin
-    }
-}
-extension WeakConstraint: Hashable, Equatable {
-    func hash(into hasher: inout Hasher) {
+
+        var hasher = Hasher()
         hasher.combine(origin?.firstItem as? NSObject)
         hasher.combine(origin?.firstAttribute)
         hasher.combine(origin?.secondItem as? NSObject)
@@ -24,6 +23,13 @@ extension WeakConstraint: Hashable, Equatable {
         hasher.combine(origin?.constant)
         hasher.combine(origin?.multiplier)
         hasher.combine(origin?.priority)
+        self.customHashValue = hasher.finalize()
+    }
+}
+
+extension WeakConstraint: Hashable, Equatable {
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(origin.map( { _ in customHashValue }))
     }
 
     static func == (lhs: WeakConstraint, rhs: WeakConstraint) -> Bool {
