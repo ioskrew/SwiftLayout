@@ -106,6 +106,21 @@ func SLTAssertConstraintsEqual(_ constraints1: [NSLayoutConstraint], _ constrain
     )
 }
 
+func SLTAssertConstraintsNotEqual(_ constraints1: [NSLayoutConstraint], _ constraints2: [NSLayoutConstraint], _ tags: [UIView : String] = [:], _ file: StaticString = #file, _ line: UInt = #line) {
+    let descriptions1: [String] = constraints1.map(testDescriptionFromConstraint(tags))
+    let descriptions2: [String] = constraints2.map(testDescriptionFromConstraint(tags))
+
+    if descriptions1.elementsEqual(descriptions2) == false {
+        return
+    }
+
+    XCTFail(
+        "\(descriptions1) is equal to \(descriptions2)",
+        file: file,
+        line: line
+    )
+}
+
 private func testDescriptionFromConstraint(_ tags: [UIView: String] = [:]) -> (_ constraint: NSLayoutConstraint) -> String {
     { constraint in
         var description = constraint.debugDescription

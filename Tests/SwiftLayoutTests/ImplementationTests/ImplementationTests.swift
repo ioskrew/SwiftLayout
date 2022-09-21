@@ -108,16 +108,16 @@ extension ImplementationTests {
         let e6 = LayoutElements(layout: f6)
         
         XCTAssertEqual(e1.viewInformations, e2.viewInformations)
-        XCTAssertEqual(e1.viewConstraints.weakens, e2.viewConstraints.weakens)
+        SLTAssertConstraintsEqual(e1.viewConstraints, e1.viewConstraints)
         
         XCTAssertEqual(e3.viewInformations, e4.viewInformations)
-        XCTAssertEqual(e3.viewConstraints.weakens, e4.viewConstraints.weakens)
+        SLTAssertConstraintsEqual(e3.viewConstraints, e4.viewConstraints)
         
         XCTAssertEqual(e4.viewInformations, e5.viewInformations)
-        XCTAssertNotEqual(e4.viewConstraints.weakens, e5.viewConstraints.weakens)
+        SLTAssertConstraintsNotEqual(e4.viewConstraints, e5.viewConstraints)
         
         XCTAssertNotEqual(e5.viewInformations, e6.viewInformations)
-        XCTAssertNotEqual(e5.viewConstraints.weakens, e6.viewConstraints.weakens)
+        SLTAssertConstraintsNotEqual(e5.viewConstraints, e6.viewConstraints)
     }
     
     func testDontTouchRootViewByDeactive() {
@@ -164,7 +164,7 @@ extension ImplementationTests {
         let currents = activation.constraints
         let labelConstraints = Set(Anchors.cap().constraints(item: label!, toItem: root).weakens)
         XCTAssertEqual(currents.intersection(labelConstraints), labelConstraints)
-        
+
         let secondViewConstraints = Set(Anchors.cap().constraints(item: label!, toItem: root).weakens)
         XCTAssertEqual(currents.intersection(secondViewConstraints), secondViewConstraints)
         
