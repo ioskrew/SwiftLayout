@@ -1,9 +1,6 @@
 //
-//  File.swift
+//  SLTAssertView.swift
 //  
-//
-//  Created by oozoofrog on 2022/04/25.
-//
 
 import Foundation
 import UIKit

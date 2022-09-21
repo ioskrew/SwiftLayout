@@ -1,9 +1,6 @@
 //
 //  CallCountView.swift
 //  
-//
-//  Created by aiden_h on 2022/04/02.
-//
 
 import UIKit
 

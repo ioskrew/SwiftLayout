@@ -1,9 +1,6 @@
 //
 //  Attribute+CaseIterable.swift
 //  
-//
-//  Created by aiden_h on 2022/04/03.
-//
 
 import UIKit
 import SwiftLayout
