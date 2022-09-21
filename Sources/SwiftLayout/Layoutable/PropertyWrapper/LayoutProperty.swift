@@ -25,7 +25,7 @@
      }
  }
  ```
-  
+
  > ``LayoutProperty`` must using only in Layoutable, otherwise, cause of crash.
  */
 @propertyWrapper
@@ -53,7 +53,7 @@ public final class LayoutProperty<Value> {
     
     @available(*, unavailable, message: "This property wrapper can only be applied to Layoutable")
     public var wrappedValue: Value {
-      get { fatalError() }
-      set { fatalError() }
+        get { fatalError() }
+        set { fatalError() }
     }
 }
