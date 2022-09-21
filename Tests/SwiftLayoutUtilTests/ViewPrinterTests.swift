@@ -7,7 +7,7 @@ class ViewPrinterTests: XCTestCase {
     
     var window: UIView!
     
-    var activation: Activation? 
+    var activation: Activation?
     
     override func setUpWithError() throws {
         continueAfterFailure = false
@@ -319,7 +319,7 @@ extension ViewPrinterTests {
             }
         }
         """
-       
+
         let result = ViewPrinter(root).description
         
         XCTAssertEqual(result, expect)
@@ -409,7 +409,7 @@ extension ViewPrinterTests {
     }
     
     func testPrintSize() {
-       
+
         let root = UIView().identifying("root")
         let child = UIView().identifying("child")
         
@@ -478,7 +478,7 @@ extension ViewPrinterTests {
     class One: UIView {}
     class Two: One {}
     class Three: Two {}
-   
+
     func testDeepAssignIdentifier() {
         let gont = Gont()
         
@@ -564,7 +564,7 @@ extension ViewPrinterTests {
         weak var earth: Earth?
         let nickname = UILabel()
         
-        var activation: Activation? 
+        var activation: Activation?
         var layout: some Layout {
             self.sublayout {
                 nickname.anchors({
@@ -1142,7 +1142,7 @@ extension ViewPrinterTests {
     private class CustomConfigurableView: UIView, CustomConfigurableProperties {
         var someFlag: Bool = true
         var someValue: Int = 10
-       
+
         var configurableProperties: [ConfigurableProperty] {
             [
                 ConfigurableProperty.property(keypath: \CustomConfigurableView.someFlag, defaultValue: true) { "$0.someFlag = \($0)" },
