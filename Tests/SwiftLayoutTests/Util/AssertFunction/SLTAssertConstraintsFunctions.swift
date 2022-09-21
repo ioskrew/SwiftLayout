@@ -79,7 +79,7 @@ func SLTAssertConstraintsEqualSorted(_ constraints1: [NSLayoutConstraint], _ con
 func SLTAssertConstraintsEqualAndSequencial<S1: Sequence, S2: Sequence>(_ constraints1: S1, _ constraints2: S2, _ tags: [UIView : String] = [:], _ file: StaticString = #file, _ line: UInt = #line) where S1.Element: NSLayoutConstraint, S2.Element: NSLayoutConstraint {
     let descriptions1: [String] = constraints1.map(testDescriptionFromConstraint(tags))
     let descriptions2: [String] = constraints2.map(testDescriptionFromConstraint(tags))
-   
+
     if descriptions1.elementsEqual(descriptions2) {
         return
     }
@@ -110,7 +110,7 @@ func SLTAssertConstraintsEqualAndSequencial<S1: Sequence, S2: Sequence>(_ constr
             failInformations.append("\(String(format: indexFormat, offset + 1)) ".appending([String](repeating: "-", count: lineLength - descriptions2[offset].count).joined()).appending(" ").appending(descriptions2[offset]))
         }
     }
-   
+
     XCTFail("\(descriptions2.count - descriptions1.count) constraints\n"
                 .appending(failInformations.joined(separator: "\n")),
             file: file,

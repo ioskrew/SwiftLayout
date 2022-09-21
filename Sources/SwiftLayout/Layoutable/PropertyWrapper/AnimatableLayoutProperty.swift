@@ -55,7 +55,7 @@ public final class AnimatableLayoutProperty<Value> {
     
     @available(*, unavailable, message: "This property wrapper can only be applied to Layoutable")
     public var wrappedValue: Value {
-      get { fatalError() }
-      set { fatalError() }
+        get { fatalError() }
+        set { fatalError() }
     }
 }

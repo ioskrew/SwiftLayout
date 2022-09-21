@@ -1,5 +1,5 @@
 //
-//  ConstraintBuilder.swift
+//  AnchorsBuilder.swift
 //  
 //
 //  Created by oozoofrog on 2022/02/04.
@@ -40,7 +40,7 @@ extension AnchorsBuilder {
     public static func buildEither(second component: AnchorsContainer) -> AnchorsContainer {
         component
     }
-   
+
     public static func buildArray(_ components: [AnchorsContainer]) -> AnchorsContainer {
         components.reduce(into: AnchorsContainer()) { $0.append($1) }
     }

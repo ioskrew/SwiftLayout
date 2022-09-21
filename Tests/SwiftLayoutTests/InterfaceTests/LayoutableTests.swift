@@ -30,7 +30,7 @@ final class LayoutableTests: XCTestCase {
             SLTAssertConstraintsEqual(view.constraints, firstView: view.root, secondView: view, tags: [view: "layoutableView", view.root: "layoutableView.root"]) {
                 Anchors.allSides()
             }
-           
+
             SLTAssertConstraintsIsEmpty(view.child.constraints)
             SLTAssertConstraintsIsEmpty(view.friend.constraints)
         }
