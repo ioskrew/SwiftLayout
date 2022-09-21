@@ -96,7 +96,7 @@ private extension Activator {
 
         NSLayoutConstraint.deactivate(needToDeactivate.compactMap(\.origin).filter(\.isActive))
         NSLayoutConstraint.activate(needToActivate.compactMap(\.origin))
-        
+
         activation.constraints = olds.subtracting(needToDeactivate).union(needToActivate)
     }
 
