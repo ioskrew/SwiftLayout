@@ -15,7 +15,7 @@ struct AnchorToken: Hashable {
     
     static func < (lhs: AnchorToken, rhs: AnchorToken) -> Bool {
         [
-    
+
         ].allSatisfy({ $0 })
     }
     
