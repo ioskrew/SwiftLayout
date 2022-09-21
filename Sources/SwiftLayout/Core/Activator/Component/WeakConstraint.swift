@@ -37,8 +37,8 @@ extension WeakConstraint: Hashable, Equatable {
     }
 }
 
-extension Collection where Element: NSLayoutConstraint {
-    var weakens: [WeakConstraint] {
-        map(WeakConstraint.init)
+extension Set where Element == WeakConstraint {
+    init(ofWeakConstraintsFrom sequence: [NSLayoutConstraint]) {
+        self.init(sequence.map(WeakConstraint.init))
     }
 }

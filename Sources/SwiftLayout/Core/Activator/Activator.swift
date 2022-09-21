@@ -18,7 +18,7 @@ enum Activator {
         var prevInfos: [ViewInformation: Set<WeakConstraint>] = [:]
         for viewInfo in activation.viewInfos {
             guard let view = viewInfo.view else { continue }
-            prevInfos[viewInfo] = Set(view.constraints.weakens)
+            prevInfos[viewInfo] = Set(ofWeakConstraintsFrom: view.constraints)
         }
 
         let elements = LayoutElements(layout: layout)
@@ -88,7 +88,7 @@ private extension Activator {
     }
     
     static func updateConstraints(activation: Activation, constraints: [NSLayoutConstraint]) {
-        let news = Set(constraints.weakens)
+        let news = Set(ofWeakConstraintsFrom: constraints)
         let olds = activation.constraints
 
         let needToDeactivate = olds.subtracting(news)
@@ -101,7 +101,7 @@ private extension Activator {
     }
     
     static func updateConstraints(constraints: [NSLayoutConstraint]) {
-        let news = Set(constraints.weakens)
+        let news = Set(ofWeakConstraintsFrom: constraints)
         NSLayoutConstraint.activate(news.compactMap(\.origin))
     }
     

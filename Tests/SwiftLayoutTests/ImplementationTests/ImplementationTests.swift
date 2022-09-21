@@ -162,13 +162,13 @@ extension ImplementationTests {
         XCTAssertEqual(secondView?.accessibilityIdentifier, "secondView")
         
         let currents = activation.constraints
-        let labelConstraints = Set(Anchors.cap().constraints(item: label!, toItem: root).weakens)
+        let labelConstraints = Set(ofWeakConstraintsFrom: Anchors.cap().constraints(item: label!, toItem: root))
         XCTAssertEqual(currents.intersection(labelConstraints), labelConstraints)
 
-        let secondViewConstraints = Set(Anchors.cap().constraints(item: label!, toItem: root).weakens)
+        let secondViewConstraints = Set(ofWeakConstraintsFrom: Anchors.cap().constraints(item: label!, toItem: root))
         XCTAssertEqual(currents.intersection(secondViewConstraints), secondViewConstraints)
         
-        let constraintsBetweebViews = Set(AnchorsContainer(Anchors.top.equalTo(label!, attribute: .bottom)).constraints(item: secondView!, toItem: label).weakens)
+        let constraintsBetweebViews = Set(ofWeakConstraintsFrom: AnchorsContainer(Anchors.top.equalTo(label!, attribute: .bottom)).constraints(item: secondView!, toItem: label))
         XCTAssertEqual(currents.intersection(constraintsBetweebViews), constraintsBetweebViews)
     }
 }
