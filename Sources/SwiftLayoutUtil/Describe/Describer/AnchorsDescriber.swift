@@ -70,7 +70,7 @@ enum AnchorsDescriber {
             } else if token.relation == .greaterThanOrEqual {
                 functionDescription.append("greaterThanOrEqualTo")
             }
-           
+
             if token.secondTagIsSuperview && (token.firstAttributeIsSecondAttribute || token.firstAttributeType != .dimension) {
                 functionDescription.append("Super(")
             } else {

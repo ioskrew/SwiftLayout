@@ -3,7 +3,7 @@ import XCTest
 
 /// test cases for api rules except DSL syntax
 final class ImplementationTests: XCTestCase {
-        
+
     var root = UIView().identifying("root")
     var child = UIView().identifying("child")
     var friend = UIView().identifying("friend")

@@ -321,7 +321,7 @@ extension LayoutDSLTests {
         let view_3 = UIView()
         
         let views = [view_0, view_1, view_2, view_3]
-       
+
         @LayoutBuilder
         var layout: some Layout {
             root.sublayout {

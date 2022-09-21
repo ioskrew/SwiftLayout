@@ -27,8 +27,8 @@ struct Describer: CustomStringConvertible {
     
     private func describingFromToken(_ viewToken: ViewToken) -> ViewDescriber {
         ViewDescriber(viewToken: viewToken,
-                       constraintTokens: constraintTokensForViewToken(viewToken),
-                       subdescribes: viewToken.subviews.map(describingFromToken))
+                      constraintTokens: constraintTokensForViewToken(viewToken),
+                      subdescribes: viewToken.subviews.map(describingFromToken))
     }
     
     private func constraintTokensForViewToken(_ viewToken: ViewToken) -> [AnchorToken] {
