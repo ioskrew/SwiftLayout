@@ -4,20 +4,18 @@
 //
 //  Created by aiden_h on 2022/02/16.
 //
+
 import UIKit
 
 public final class Activation: Hashable {
-
-    typealias Constraints = Set<WeakReference<NSLayoutConstraint>>
-
     var viewInfos: [ViewInformation]
-    var constraints: Constraints
+    var constraints: Set<WeakConstraint>
 
     convenience init() {
         self.init(viewInfos: .init(), constraints: .init())
     }
 
-    init(viewInfos: [ViewInformation], constraints: Constraints) {
+    init(viewInfos: [ViewInformation], constraints: Set<WeakConstraint>) {
         self.viewInfos = viewInfos
         self.constraints = constraints
     }
@@ -73,4 +71,3 @@ extension Activation {
         hasher.combine(constraints)
     }
 }
-
