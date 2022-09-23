@@ -29,7 +29,7 @@ struct WeakConstraint {
 
 extension WeakConstraint: Hashable, Equatable {
     func hash(into hasher: inout Hasher) {
-        hasher.combine(origin.map( { _ in customHashValue }))
+        hasher.combine(customHashValue)
     }
 
     static func == (lhs: WeakConstraint, rhs: WeakConstraint) -> Bool {
