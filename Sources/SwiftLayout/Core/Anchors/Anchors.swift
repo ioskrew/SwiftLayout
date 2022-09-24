@@ -110,6 +110,36 @@ public enum Anchors {
         return container
     }
     
+    /// combination of **top, leading, bottom** anchors for superview
+    ///
+    /// - Parameter offset: plus constant at top, plus constant at leading, minus constant at bottom. default value is 0.
+    /// - Returns:
+    /// superview.top + constant(offset)
+    /// **AND**
+    /// superview.leading + constant(offset) and superview.bottom - constant(offset)
+    public static func startBracket(offset: CGFloat = .zero) -> AnchorsContainer {
+        let container = AnchorsContainer()
+        container.append(AnchorsExpression(yAxis: .top).equalToSuper(constant: offset))
+        container.append(AnchorsExpression(xAxis: .leading).equalToSuper(constant: offset))
+        container.append(AnchorsExpression(xAxis: .bottom).equalToSuper(constant: -1.0 * offset))
+        return container
+    }
+    
+    /// combination of **top, trailing, bottom** anchors for superview
+    ///
+    /// - Parameter offset: plus constant at top, minus constant at trailing, minus constant at bottom. default value is 0.
+    /// - Returns:
+    /// superview.top + constant(offset)
+    /// **AND**
+    /// superview.trailing - constant(offset) and superview.bottom - constant(offset)
+    public static func endBracket(offset: CGFloat = .zero) -> AnchorsContainer {
+        let container = AnchorsContainer()
+        container.append(AnchorsExpression(yAxis: .top).equalToSuper(constant: offset))
+        container.append(AnchorsExpression(xAxis: .trailing).equalToSuper(constant: -1.0 * offset))
+        container.append(AnchorsExpression(xAxis: .bottom).equalToSuper(constant: -1.0 * offset))
+        return container
+    }
+    
     /// combination of **top, leading, trailing** anchors for superview
     ///
     /// - Parameter offset: plus constant at top, plus constant at leading, minus constant at trailing. default value is 0.
