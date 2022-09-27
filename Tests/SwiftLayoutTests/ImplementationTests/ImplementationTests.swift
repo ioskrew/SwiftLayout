@@ -227,4 +227,41 @@ extension ImplementationTests {
         
         var isA: Bool = true
     }
+
+    func testForecDeactivateNSLayoutConstraint() {
+        let superview = UIView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+        let childs: [UIView] = (0..<10).map({ _ in UIView(frame: CGRect(x: 0, y: 0, width: 100, height: 100)) })
+
+        var layout: some Layout {
+            superview.sublayout {
+                for child in childs {
+                    child.anchors {
+                        Anchors.top
+                    }
+                }
+            }
+        }
+
+        var activation: Activation!
+
+        let expectation1 = XCTestExpectation(description: "active layout and force deactivate")
+        DispatchQueue.main.asyncAfter(deadline: .now()) {
+            activation = layout.active(forceLayout: true)
+
+            NSLayoutConstraint.deactivate(superview.constraints)
+            superview.setNeedsLayout()
+            superview.layoutIfNeeded()
+
+            expectation1.fulfill()
+        }
+
+        let expectation2 = XCTestExpectation(description: "layout update after force deactivate")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            activation = layout.update(fromActivation: activation, forceLayout: true)
+
+            expectation2.fulfill()
+        }
+
+        wait(for: [expectation1, expectation2], timeout: 3)
+    }
 }
