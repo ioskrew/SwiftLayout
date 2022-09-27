@@ -15,11 +15,7 @@ enum Activator {
 
     @discardableResult
     static func update<L: Layout>(layout: L, fromActivation activation: Activation, forceLayout: Bool) -> Activation {
-        var prevInfos: [ViewInformation: Set<WeakConstraint>] = [:]
-        for viewInfo in activation.viewInfos {
-            guard let view = viewInfo.view else { continue }
-            prevInfos[viewInfo] = Set(ofWeakConstraintsFrom: view.constraints)
-        }
+        let prevInfoHashValues = Set(activation.viewInfos.map(\.hashValue))
 
         let elements = LayoutElements(layout: layout)
 
@@ -30,7 +26,7 @@ enum Activator {
         updateConstraints(activation: activation, constraints: constraints)
 
         if forceLayout {
-            layoutIfNeeded(viewInfos, prevInfos)
+            layoutIfNeeded(viewInfos, prevInfoHashValues)
         }
 
         return activation
@@ -105,13 +101,13 @@ private extension Activator {
         NSLayoutConstraint.activate(news.compactMap(\.origin))
     }
 
-    static func layoutIfNeeded(_ viewInfos: [ViewInformation], _ prevInfos: [ViewInformation: Set<WeakConstraint>] = [:]) {
+    static func layoutIfNeeded(_ viewInfos: [ViewInformation], _ prevInfoHashValues: Set<Int> = []) {
         for viewInfo in viewInfos {
             if viewInfo.superview == nil, let view = viewInfo.view {
                 view.setNeedsLayout()
                 view.layoutIfNeeded()
             }
-            if prevInfos[viewInfo] == nil {
+            if prevInfoHashValues.contains(viewInfo.hashValue) {
                 // for newly add to superview
                 viewInfo.view?.layer.removeAnimation(forKey: "bounds.size")
                 viewInfo.view?.layer.removeAnimation(forKey: "position")
