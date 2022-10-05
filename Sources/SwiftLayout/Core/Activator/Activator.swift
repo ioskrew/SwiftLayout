@@ -107,7 +107,7 @@ private extension Activator {
                 view.setNeedsLayout()
                 view.layoutIfNeeded()
             }
-            if prevInfoHashValues.contains(viewInfo.hashValue) == false {
+            if !prevInfoHashValues.contains(viewInfo.hashValue) {
                 // for newly add to superview
                 viewInfo.view?.layer.removeAnimation(forKey: "bounds.size")
                 viewInfo.view?.layer.removeAnimation(forKey: "position")
