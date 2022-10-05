@@ -1,8 +1,5 @@
 //
-//  File.swift
-//  
-//
-//  Created by oozoofrog on 2022/04/25.
+//  SLTAssertConstraintsFunctions.swift
 //
 
 import Foundation
@@ -10,50 +7,38 @@ import UIKit
 import XCTest
 @testable import SwiftLayout
 
-func SLTAssertConstraintsEqual(_ constraints: [NSLayoutConstraint],
-                               firstView: UIView, secondView: UIView, tags: [UIView: String] = [:],
-                               sorted: Bool = true,
-                               @AnchorsBuilder anchors: () -> AnchorsContainer,
-                               file: StaticString = #filePath, line: UInt = #line) {
-    SLTAssertConstraintsEqual(constraints, anchors().constraints(item: firstView, toItem: secondView), tags: tags, sorted: sorted, file: file, line: line)
+func SLTAssertConstraintsHasSameElements(_ constraints: [NSLayoutConstraint],
+                                         firstView: UIView, secondView: UIView, tags: [UIView: String] = [:],
+                                         @AnchorsBuilder anchors: () -> AnchorsContainer,
+                                         file: StaticString = #filePath, line: UInt = #line) {
+    SLTAssertConstraintsHasSameElements(constraints, anchors().constraints(item: firstView, toItem: secondView), tags: tags, file, line)
 }
 
-func SLTAssertConstraintsEqual(_ constraints: [NSLayoutConstraint],
-                               firstView: UIView, tags: [UIView: String] = [:],
-                               sorted: Bool = true,
-                               @AnchorsBuilder anchors: () -> AnchorsContainer,
-                               file: StaticString = #filePath, line: UInt = #line) {
-    SLTAssertConstraintsEqual(constraints, anchors().constraints(item: firstView, toItem: nil), tags: tags, sorted: sorted, file: file, line: line)
+func SLTAssertConstraintsHasSameElements(_ constraints: [NSLayoutConstraint],
+                                         firstView: UIView, tags: [UIView: String] = [:],
+                                         @AnchorsBuilder anchors: () -> AnchorsContainer,
+                                         file: StaticString = #filePath, line: UInt = #line) {
+    SLTAssertConstraintsHasSameElements(constraints, anchors().constraints(item: firstView, toItem: nil), tags: tags, file, line)
 }
 
-func SLTAssertConstraintsEqual(_ constraints: [NSLayoutConstraint],
-                               tags: [UIView: String] = [:],
-                               sorted: Bool = true,
-                               @TestAnchorsBuilder anchors: () -> [NSLayoutConstraint],
-                               file: StaticString = #filePath, line: UInt = #line) {
-    SLTAssertConstraintsEqual(constraints, anchors(), tags: tags, sorted: sorted, file: file, line: line)
+func SLTAssertConstraintsHasSameElements(_ constraints: [NSLayoutConstraint],
+                                         tags: [UIView: String] = [:],
+                                         @TestAnchorsBuilder anchors: () -> [NSLayoutConstraint],
+                                         file: StaticString = #filePath, line: UInt = #line) {
+    SLTAssertConstraintsHasSameElements(constraints, anchors(), tags: tags, file, line)
 }
 
-func SLTAssertConstraintsIsEmpty(_ constraints: [NSLayoutConstraint], tags: [UIView: String] = [:], sorted: Bool = true, file: StaticString = #filePath, line: UInt = #line) {
-    SLTAssertConstraintsEqual(constraints, [], tags: tags, sorted: sorted, file: file, line: line)
+func SLTAssertConstraintsIsEmpty(_ constraints: [NSLayoutConstraint], tags: [UIView: String] = [:], file: StaticString = #filePath, line: UInt = #line) {
+    SLTAssertConstraintsHasSameElements(constraints, [], tags: tags, file, line)
 }
 
-func SLTAssertConstraintsEqual(_ constraints1: [NSLayoutConstraint],
-                               _ constraints2: [NSLayoutConstraint],
-                               tags: [UIView: String] = [:],
-                               sorted: Bool = true,
-                               file: StaticString = #filePath, line: UInt = #line) {
-    if sorted {
-        SLTAssertConstraintsEqualSorted(constraints1, constraints2, tags, file, line)
-    } else {
-        SLTAssertConstraintsEqualAndSequencial(constraints1, constraints2, tags, file, line)
-    }
-}
-
-func SLTAssertConstraintsEqualSorted(_ constraints1: [NSLayoutConstraint], _ constraints2: [NSLayoutConstraint], _ tags: [UIView : String], _ file: StaticString = #file, _ line: UInt = #line) {
+func SLTAssertConstraintsHasSameElements(_ constraints1: [NSLayoutConstraint],
+                                         _ constraints2: [NSLayoutConstraint],
+                                         tags: [UIView: String] = [:],
+                                         _ file: StaticString = #filePath, _ line: UInt = #line) {
     let descriptions1: [String] = constraints1.map(testDescriptionFromConstraint(tags)).sorted()
     let descriptions2: [String] = constraints2.map(testDescriptionFromConstraint(tags)).sorted()
-    
+
     let diffs = descriptions2.difference(from: descriptions1)
     var failInsertDescriptions: [String] = []
     var failRemoveDescriptions: [String] = []
@@ -68,15 +53,17 @@ func SLTAssertConstraintsEqualSorted(_ constraints1: [NSLayoutConstraint], _ con
     if failInsertDescriptions.isEmpty && failRemoveDescriptions.isEmpty {
         return
     }
-    XCTFail("+\(failInsertDescriptions.count), -\(failRemoveDescriptions.count) constraints\n"
-                .appending(failInsertDescriptions.joined(separator: "\n"))
-                .appending("\n")
-                .appending(failRemoveDescriptions.joined(separator: "\n")),
-            file: file,
-            line: line)
+    XCTFail(
+        "+\(failInsertDescriptions.count), -\(failRemoveDescriptions.count) constraints\n"
+            .appending(failInsertDescriptions.joined(separator: "\n"))
+            .appending("\n")
+            .appending(failRemoveDescriptions.joined(separator: "\n")),
+        file: file,
+        line: line
+    )
 }
 
-func SLTAssertConstraintsEqualAndSequencial<S1: Sequence, S2: Sequence>(_ constraints1: S1, _ constraints2: S2, _ tags: [UIView : String] = [:], _ file: StaticString = #file, _ line: UInt = #line) where S1.Element: NSLayoutConstraint, S2.Element: NSLayoutConstraint {
+func SLTAssertConstraintsEqual(_ constraints1: [NSLayoutConstraint], _ constraints2: [NSLayoutConstraint], _ tags: [UIView : String] = [:], _ file: StaticString = #file, _ line: UInt = #line) {
     let descriptions1: [String] = constraints1.map(testDescriptionFromConstraint(tags))
     let descriptions2: [String] = constraints2.map(testDescriptionFromConstraint(tags))
 
@@ -111,10 +98,27 @@ func SLTAssertConstraintsEqualAndSequencial<S1: Sequence, S2: Sequence>(_ constr
         }
     }
 
-    XCTFail("\(descriptions2.count - descriptions1.count) constraints\n"
-                .appending(failInformations.joined(separator: "\n")),
-            file: file,
-            line: line)
+    XCTFail(
+        "\(descriptions2.count - descriptions1.count) constraints\n"
+            .appending(failInformations.joined(separator: "\n")),
+        file: file,
+        line: line
+    )
+}
+
+func SLTAssertConstraintsNotEqual(_ constraints1: [NSLayoutConstraint], _ constraints2: [NSLayoutConstraint], _ tags: [UIView : String] = [:], _ file: StaticString = #file, _ line: UInt = #line) {
+    let descriptions1: [String] = constraints1.map(testDescriptionFromConstraint(tags))
+    let descriptions2: [String] = constraints2.map(testDescriptionFromConstraint(tags))
+
+    if descriptions1.elementsEqual(descriptions2) == false {
+        return
+    }
+
+    XCTFail(
+        "\(descriptions1) is equal to \(descriptions2)",
+        file: file,
+        line: line
+    )
 }
 
 private func testDescriptionFromConstraint(_ tags: [UIView: String] = [:]) -> (_ constraint: NSLayoutConstraint) -> String {

@@ -15,11 +15,7 @@ enum Activator {
 
     @discardableResult
     static func update<L: Layout>(layout: L, fromActivation activation: Activation, forceLayout: Bool) -> Activation {
-        var prevInfos: [ViewInformation: Set<WeakConstraint>] = [:]
-        for viewInfo in activation.viewInfos {
-            guard let view = viewInfo.view else { continue }
-            prevInfos[viewInfo] = Set(view.constraints.weakens)
-        }
+        let prevInfoHashValues = Set(activation.viewInfos.map(\.hashValue))
 
         let elements = LayoutElements(layout: layout)
 
@@ -30,7 +26,7 @@ enum Activator {
         updateConstraints(activation: activation, constraints: constraints)
 
         if forceLayout {
-            layoutIfNeeded(viewInfos, prevInfos)
+            layoutIfNeeded(viewInfos, prevInfoHashValues)
         }
 
         return activation
@@ -88,7 +84,7 @@ private extension Activator {
     }
 
     static func updateConstraints(activation: Activation, constraints: [NSLayoutConstraint]) {
-        let news = Set(constraints.weakens)
+        let news = Set(ofWeakConstraintsFrom: constraints)
         let olds = activation.constraints.filter { $0.origin != nil}
 
         let needToDeactivate = olds.subtracting(news)
@@ -101,17 +97,17 @@ private extension Activator {
     }
 
     static func updateConstraints(constraints: [NSLayoutConstraint]) {
-        let news = Set(constraints.weakens)
+        let news = Set(ofWeakConstraintsFrom: constraints)
         NSLayoutConstraint.activate(news.compactMap(\.origin))
     }
 
-    static func layoutIfNeeded(_ viewInfos: [ViewInformation], _ prevInfos: [ViewInformation: Set<WeakConstraint>] = [:]) {
+    static func layoutIfNeeded(_ viewInfos: [ViewInformation], _ prevInfoHashValues: Set<Int> = []) {
         for viewInfo in viewInfos {
             if viewInfo.superview == nil, let view = viewInfo.view {
                 view.setNeedsLayout()
                 view.layoutIfNeeded()
             }
-            if prevInfos[viewInfo] == nil {
+            if !prevInfoHashValues.contains(viewInfo.hashValue) {
                 // for newly add to superview
                 viewInfo.view?.layer.removeAnimation(forKey: "bounds.size")
                 viewInfo.view?.layer.removeAnimation(forKey: "position")
