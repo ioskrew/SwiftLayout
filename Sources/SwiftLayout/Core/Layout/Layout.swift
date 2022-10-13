@@ -54,7 +54,17 @@ extension Layout {
     ///
     /// - Returns: An ``AnyLayout`` wrapping this layout.
     ///
+    @available(*, deprecated, renamed: "eraseToAnyLayout()")
     public var anyLayout: AnyLayout {
+        AnyLayout(self)
+    }
+
+    ///
+    /// Wraps this layout with a type eraser.
+    ///
+    /// - Returns: An ``AnyLayout`` wrapping this layout.
+    ///
+    public func eraseToAnyLayout() -> AnyLayout {
         AnyLayout(self)
     }
 }

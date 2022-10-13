@@ -35,7 +35,7 @@ class LayoutPrinterTests: XCTestCase {
                     Anchors.top.equalToSuper(constant: 8.0)
                     Anchors.leading.equalTo(image, attribute: .trailing, constant: 10.0)
                     Anchors.height.equalTo(constant: 24.0)
-                }.anyLayout
+                }.eraseToAnyLayout()
                 
                 descriptionLabel.anchors {
                     Anchors.top.equalTo(title, attribute: .bottom, constant: 5.0)
