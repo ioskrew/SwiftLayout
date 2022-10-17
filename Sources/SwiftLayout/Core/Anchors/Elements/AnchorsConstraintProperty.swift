@@ -34,7 +34,7 @@ public struct AnchorsConstraintProperty {
             constant: constant
         )
         constrint.priority = priority
-    
+
         return constrint
     }
     

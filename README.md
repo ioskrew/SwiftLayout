@@ -40,8 +40,6 @@
 }
 ```
 
-<img src="https://user-images.githubusercontent.com/3011832/157275626-c5f5672f-0a4a-4f45-8800-5ea3871c9dac.png" alt="thateasy" style="zoom:25%;" />
-
 # Translation
 
 - [Korean](README_ko.md)
@@ -57,7 +55,7 @@
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "2.6.0"),
+  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "2.7.0"),
 ],
 ```
 
@@ -416,7 +414,7 @@ final class PreviewView: UIView, Layoutable {
 }
 ```
 
-[![animation in update layout](https://user-images.githubusercontent.com/3011832/156908073-d4089c26-928f-41d9-961b-8b04d7dcde37.png)](https://user-images.githubusercontent.com/3011832/156908065-8d6bcebd-553b-490b-903b-6e375d4c97a3.mp4)
+[![animation in update layout](https://user-images.githubusercontent.com/3011832/189062670-93b3bcef-fdea-458b-b18f-f37cce1ec8ee.png)](https://user-images.githubusercontent.com/3011832/189063286-f106ae90-fea1-464a-a798-3586109dac2f.mp4)
 
 ## Other useful features
 
@@ -589,8 +587,6 @@ This can be useful when you want to migrate your current view to SwiftLayout for
     }
   }
   ```
-
-<img src="https://user-images.githubusercontent.com/3011832/157275626-c5f5672f-0a4a-4f45-8800-5ea3871c9dac.png" alt="thateasy" style="zoom:25%;" />
 
 # Credits
 

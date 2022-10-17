@@ -27,10 +27,10 @@ final class LayoutableTests: XCTestCase {
             XCTAssertEqual(view.child.removeFromSuperviewCallCount, 0)
             XCTAssertEqual(view.root.removeFromSuperviewCallCount, 0)
             
-            SLTAssertConstraintsEqual(view.constraints, firstView: view.root, secondView: view, tags: [view: "layoutableView", view.root: "layoutableView.root"]) {
+            SLTAssertConstraintsHasSameElements(view.constraints, firstView: view.root, secondView: view, tags: [view: "layoutableView", view.root: "layoutableView.root"]) {
                 Anchors.allSides()
             }
-           
+
             SLTAssertConstraintsIsEmpty(view.child.constraints)
             SLTAssertConstraintsIsEmpty(view.friend.constraints)
         }
@@ -51,10 +51,10 @@ final class LayoutableTests: XCTestCase {
             XCTAssertEqual(view.child.removeFromSuperviewCallCount, 1)
             XCTAssertEqual(view.root.removeFromSuperviewCallCount, 0)
             
-            SLTAssertConstraintsEqual(view.constraints, firstView: view.root, secondView: view) {
+            SLTAssertConstraintsHasSameElements(view.constraints, firstView: view.root, secondView: view) {
                 Anchors.center()
             }
-            SLTAssertConstraintsEqual(view.root.constraints) {
+            SLTAssertConstraintsHasSameElements(view.root.constraints) {
                 TestAnchors(first: view.root) {
                     Anchors.size(width: 50, height: 50)
                 }
@@ -82,10 +82,10 @@ final class LayoutableTests: XCTestCase {
             XCTAssertEqual(view.child.removeFromSuperviewCallCount, 1)
             XCTAssertEqual(view.root.removeFromSuperviewCallCount, 0)
             
-            SLTAssertConstraintsEqual(view.constraints, firstView: view.root, secondView: view) {
+            SLTAssertConstraintsHasSameElements(view.constraints, firstView: view.root, secondView: view) {
                 Anchors.center()
             }
-            SLTAssertConstraintsEqual(view.root.constraints) {
+            SLTAssertConstraintsHasSameElements(view.root.constraints) {
                 TestAnchors(first: view.root) {
                     Anchors.size(width: 50, height: 50)
                 }

@@ -1,9 +1,6 @@
 //
 //  XCTViewAssert.swift
 //  
-//
-//  Created by oozoofrog on 2022/04/04.
-//
 
 import Foundation
 @testable import SwiftLayout

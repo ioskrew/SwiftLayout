@@ -321,7 +321,7 @@ extension LayoutDSLTests {
         let view_3 = UIView()
         
         let views = [view_0, view_1, view_2, view_3]
-       
+
         @LayoutBuilder
         var layout: some Layout {
             root.sublayout {
@@ -459,6 +459,39 @@ extension LayoutDSLTests {
         SLTAssertView(group1_3, superview: root, subviews: [])
         SLTAssertView(group2_1, superview: root, subviews: [])
         SLTAssertView(group2_2, superview: root, subviews: [])
+    }
+
+    func testGroupLayoutWithOption() {
+        let stackView = UIStackView()
+        let notArrangedview1 = UIView()
+        let notArrangedview2 = UIView()
+        let arrangedView1 = UIView()
+        let arrangedView2 = UIView()
+        let arrangedView3 = UIView()
+
+        @LayoutBuilder
+        var layout: some Layout {
+            root.sublayout {
+                stackView.sublayout {
+                    GroupLayout(option: .isNotArranged) {
+                        notArrangedview1
+                        notArrangedview2
+                    }
+
+                    arrangedView1
+                    arrangedView2
+                    arrangedView3
+                }
+            }
+        }
+
+        layout.finalActive()
+
+        SLTAssertView(root, superview: window, subviews: [stackView])
+        SLTAssertView(stackView, superview: root, subviews: [notArrangedview1, notArrangedview2, arrangedView1, arrangedView2, arrangedView3])
+        XCTAssertEqual(stackView.arrangedSubviews, [arrangedView1, arrangedView2, arrangedView3])
+        XCTAssertEqual(stackView.arrangedSubviews.contains(notArrangedview1), false)
+        XCTAssertEqual(stackView.arrangedSubviews.contains(notArrangedview2), false)
     }
 }
 

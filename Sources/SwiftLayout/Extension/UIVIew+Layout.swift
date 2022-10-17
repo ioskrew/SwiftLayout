@@ -73,6 +73,15 @@ extension _UIViewExtension where Self: UIView {
     public func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<Self> {
         ViewLayout(self, sublayouts: [build()])
     }
+
+    ///
+    /// Wraps this view with a layout type eraser.
+    ///
+    /// - Returns: An ``AnyLayout`` wrapping this layout.
+    ///
+    public func eraseToAnyLayout() -> AnyLayout {
+        AnyLayout(ViewLayout(self))
+    }
     
     ///
     /// Provides a block that can change the properties of the view within the layout block.

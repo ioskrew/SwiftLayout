@@ -19,12 +19,13 @@ public final class ConfigurableProperties {
     }
     
     private func regist() {
-        registUIView()
-        registUILabel()
-        registUIControl()
         registUIButton()
+        registUIControl()
         registUIImage()
+        registUILabel()
         registUIStackView()
+        registUISwitch()
+        registUIView()
     }
 
     public func regist<V: UIView>(

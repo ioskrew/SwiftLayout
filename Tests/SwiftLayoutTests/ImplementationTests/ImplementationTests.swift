@@ -3,7 +3,7 @@ import XCTest
 
 /// test cases for api rules except DSL syntax
 final class ImplementationTests: XCTestCase {
-        
+
     var root = UIView().identifying("root")
     var child = UIView().identifying("child")
     var friend = UIView().identifying("friend")
@@ -39,7 +39,7 @@ extension ImplementationTests {
         }
         
         var result: [String] = []
-        LayoutExplorer.traversal(layout: layout, superview: nil) { layout, superview in
+        LayoutExplorer.traversal(layout: layout, superview: nil, option: .none) { layout, superview, _ in
             guard let view = layout.view else {
                 return
             }
@@ -108,16 +108,16 @@ extension ImplementationTests {
         let e6 = LayoutElements(layout: f6)
         
         XCTAssertEqual(e1.viewInformations, e2.viewInformations)
-        XCTAssertEqual(e1.viewConstraints.weakens, e2.viewConstraints.weakens)
+        SLTAssertConstraintsEqual(e1.viewConstraints, e1.viewConstraints)
         
         XCTAssertEqual(e3.viewInformations, e4.viewInformations)
-        XCTAssertEqual(e3.viewConstraints.weakens, e4.viewConstraints.weakens)
+        SLTAssertConstraintsEqual(e3.viewConstraints, e4.viewConstraints)
         
         XCTAssertEqual(e4.viewInformations, e5.viewInformations)
-        XCTAssertNotEqual(e4.viewConstraints.weakens, e5.viewConstraints.weakens)
+        SLTAssertConstraintsNotEqual(e4.viewConstraints, e5.viewConstraints)
         
         XCTAssertNotEqual(e5.viewInformations, e6.viewInformations)
-        XCTAssertNotEqual(e5.viewConstraints.weakens, e6.viewConstraints.weakens)
+        SLTAssertConstraintsNotEqual(e5.viewConstraints, e6.viewConstraints)
     }
     
     func testDontTouchRootViewByDeactive() {
@@ -162,13 +162,13 @@ extension ImplementationTests {
         XCTAssertEqual(secondView?.accessibilityIdentifier, "secondView")
         
         let currents = activation.constraints
-        let labelConstraints = Set(Anchors.cap().constraints(item: label!, toItem: root).weakens)
+        let labelConstraints = Set(ofWeakConstraintsFrom: Anchors.cap().constraints(item: label!, toItem: root))
         XCTAssertEqual(currents.intersection(labelConstraints), labelConstraints)
-        
-        let secondViewConstraints = Set(Anchors.cap().constraints(item: label!, toItem: root).weakens)
+
+        let secondViewConstraints = Set(ofWeakConstraintsFrom: Anchors.cap().constraints(item: label!, toItem: root))
         XCTAssertEqual(currents.intersection(secondViewConstraints), secondViewConstraints)
         
-        let constraintsBetweebViews = Set(AnchorsContainer(Anchors.top.equalTo(label!, attribute: .bottom)).constraints(item: secondView!, toItem: label).weakens)
+        let constraintsBetweebViews = Set(ofWeakConstraintsFrom: AnchorsContainer(Anchors.top.equalTo(label!, attribute: .bottom)).constraints(item: secondView!, toItem: label))
         XCTAssertEqual(currents.intersection(constraintsBetweebViews), constraintsBetweebViews)
     }
 }
@@ -226,5 +226,42 @@ extension ImplementationTests {
         let b = UIView().identifying("b")
         
         var isA: Bool = true
+    }
+
+    func testForecDeactivateNSLayoutConstraint() {
+        let superview = UIView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+        let childs: [UIView] = (0..<10).map({ _ in UIView(frame: CGRect(x: 0, y: 0, width: 100, height: 100)) })
+
+        var layout: some Layout {
+            superview.sublayout {
+                for child in childs {
+                    child.anchors {
+                        Anchors.top
+                    }
+                }
+            }
+        }
+
+        var activation: Activation!
+
+        let expectation1 = XCTestExpectation(description: "active layout and force deactivate")
+        DispatchQueue.main.asyncAfter(deadline: .now()) {
+            activation = layout.active(forceLayout: true)
+
+            NSLayoutConstraint.deactivate(superview.constraints)
+            superview.setNeedsLayout()
+            superview.layoutIfNeeded()
+
+            expectation1.fulfill()
+        }
+
+        let expectation2 = XCTestExpectation(description: "layout update after force deactivate")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            activation = layout.update(fromActivation: activation, forceLayout: true)
+
+            expectation2.fulfill()
+        }
+
+        wait(for: [expectation1, expectation2], timeout: 3)
     }
 }

@@ -11,11 +11,13 @@ public protocol Layout {
     var view: UIView? { get }
     var anchors: AnchorsContainer { get }
     var sublayouts: [Layout] { get }
+    var option: LayoutOption? { get }
 }
 
 extension Layout {
     public var view: UIView? { nil }
     public var anchors: AnchorsContainer { AnchorsContainer() }
+    public var option: LayoutOption? { nil }
 }
 
 extension Layout {
@@ -52,7 +54,17 @@ extension Layout {
     ///
     /// - Returns: An ``AnyLayout`` wrapping this layout.
     ///
+    @available(*, deprecated, renamed: "eraseToAnyLayout()")
     public var anyLayout: AnyLayout {
+        AnyLayout(self)
+    }
+
+    ///
+    /// Wraps this layout with a type eraser.
+    ///
+    /// - Returns: An ``AnyLayout`` wrapping this layout.
+    ///
+    public func eraseToAnyLayout() -> AnyLayout {
         AnyLayout(self)
     }
 }
