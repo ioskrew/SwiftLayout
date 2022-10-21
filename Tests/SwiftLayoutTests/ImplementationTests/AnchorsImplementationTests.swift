@@ -96,7 +96,7 @@ extension AnchorsImplementationTests {
         }
         
         @AnchorsBuilder
-        func anchors(attribute: AnchorsXAxisAttribute) -> AnchorsContainer {
+        func anchors(attribute: AnchorsXAxisAttribute) -> Anchors {
             AnchorsExpression(xAxis: attribute)
             
             AnchorsExpression(xAxis: attribute).equalToSuper()
@@ -192,7 +192,7 @@ extension AnchorsImplementationTests {
         let constant: CGFloat = 11.0
 
         @AnchorsBuilder
-        func anchors(attribute: AnchorsYAxisAttribute) -> AnchorsContainer {
+        func anchors(attribute: AnchorsYAxisAttribute) -> Anchors {
             AnchorsExpression(yAxis: attribute)
             
             AnchorsExpression(yAxis: attribute).equalToSuper()
@@ -274,7 +274,7 @@ extension AnchorsImplementationTests {
         let constant: CGFloat = 11.0
         
         @AnchorsBuilder
-        func anchors(attribute: AnchorsDimensionAttribute) -> AnchorsContainer {
+        func anchors(attribute: AnchorsDimensionAttribute) -> Anchors {
             AnchorsExpression(dimensions: attribute)
 
             AnchorsExpression(dimensions: attribute).equalToSuper()
@@ -362,7 +362,7 @@ extension AnchorsImplementationTests {
         let multiplier: CGFloat = 0.5
         
         @AnchorsBuilder
-        var anchors: AnchorsContainer {
+        var anchors: Anchors {
             AnchorsExpression(xAxis: .leading).equalToSuper(attribute: .trailing, constant: constant)
             AnchorsExpression(xAxis: .leading).equalToSuper(attribute: .trailing, constant: constant).multiplier(multiplier)
             AnchorsExpression(xAxis: .leading).equalToSuper(attribute: .trailing, constant: constant).constant(newConstant)
@@ -438,7 +438,7 @@ extension AnchorsImplementationTests {
         let priority: UILayoutPriority = .defaultLow
         
         @AnchorsBuilder
-        var anchors: AnchorsContainer {
+        var anchors: Anchors {
             AnchorsExpression(xAxis: .leading).equalToSuper(attribute: .trailing, constant: constant)
             AnchorsExpression(xAxis: .leading).equalToSuper(attribute: .trailing, constant: constant).priority(priority)
             AnchorsExpression(xAxis: .leading).equalToSuper(attribute: .trailing, constant: constant).constant(newConstant)
@@ -506,7 +506,7 @@ extension AnchorsImplementationTests {
     func testExpressionChaining() {
         context("testExpressionChaining xAxis") {
             @AnchorsBuilder
-            var anchors: AnchorsContainer {
+            var anchors: Anchors {
                 AnchorsExpression<AnchorsXAxisAttribute>().centerX.leading.trailing.left.right.centerXWithinMargins.leftMargin.rightMargin.leadingMargin.trailingMargin
             }
             let constraints = anchors.constraints(item: subview, toItem: superview)
@@ -528,7 +528,7 @@ extension AnchorsImplementationTests {
         
         context("testExpressionChaining yAxis") {
             @AnchorsBuilder
-            var anchors: AnchorsContainer {
+            var anchors: Anchors {
                 AnchorsExpression<AnchorsYAxisAttribute>().centerY.top.bottom.firstBaseline.lastBaseline.centerYWithinMargins.topMargin.bottomMargin
                 
                 
@@ -550,7 +550,7 @@ extension AnchorsImplementationTests {
         
         context("testExpressionChaining xAxis") {
             @AnchorsBuilder
-            var anchors: AnchorsContainer {
+            var anchors: Anchors {
                 AnchorsExpression<AnchorsDimensionAttribute>().height.width
             }
             let constraints = anchors.constraints(item: subview, toItem: superview)
@@ -567,7 +567,7 @@ extension AnchorsImplementationTests {
     
     func testExpressionSafeArea() {
         @AnchorsBuilder
-        var anchors: AnchorsContainer {
+        var anchors: Anchors {
             for attribute in AnchorsXAxisAttribute.allCases {
                 AnchorsExpression(xAxis: attribute).equalTo(superview.safeAreaLayoutGuide)
             }
@@ -596,7 +596,7 @@ extension AnchorsImplementationTests {
 extension AnchorsImplementationTests {
     func testStaticsSingle() {
         @AnchorsBuilder
-        var anchors: AnchorsContainer {
+        var anchors: Anchors {
             Anchors.centerX
             Anchors.leading
             Anchors.trailing
@@ -649,7 +649,7 @@ extension AnchorsImplementationTests {
         let offset: CGFloat = 13
         
         @AnchorsBuilder
-        var anchors: AnchorsContainer {
+        var anchors: Anchors {
             Anchors.horizontal()
             Anchors.horizontal(offset: 13)
             Anchors.horizontal(siblingview)
@@ -674,7 +674,7 @@ extension AnchorsImplementationTests {
         let offset: CGFloat = 13
         
         @AnchorsBuilder
-        var anchors: AnchorsContainer {
+        var anchors: Anchors {
             Anchors.vertical()
             Anchors.vertical(offset: offset)
             Anchors.vertical(siblingview)
@@ -699,7 +699,7 @@ extension AnchorsImplementationTests {
         let offset: CGFloat = 13
         
         @AnchorsBuilder
-        var anchors: AnchorsContainer {
+        var anchors: Anchors {
             Anchors.allSides()
             Anchors.allSides(offset: offset)
             Anchors.allSides(siblingview)
@@ -732,7 +732,7 @@ extension AnchorsImplementationTests {
         let offset: CGFloat = 13
         
         @AnchorsBuilder
-        var anchors: AnchorsContainer {
+        var anchors: Anchors {
             Anchors.cap()
             Anchors.cap(offset: offset)
             Anchors.cap(siblingview)
@@ -761,7 +761,7 @@ extension AnchorsImplementationTests {
         let offset: CGFloat = 13
         
         @AnchorsBuilder
-        var anchors: AnchorsContainer {
+        var anchors: Anchors {
             Anchors.shoe()
             Anchors.shoe(offset: offset)
             Anchors.shoe(siblingview)
@@ -791,7 +791,7 @@ extension AnchorsImplementationTests {
         let height: CGFloat = 37
         
         @AnchorsBuilder
-        var anchors: AnchorsContainer {
+        var anchors: Anchors {
             Anchors.size(width: width, height: height)
             Anchors.size(siblingview, width: width, height: height)
         }
@@ -811,7 +811,7 @@ extension AnchorsImplementationTests {
         let offsetY: CGFloat = 37
         
         @AnchorsBuilder
-        var anchors: AnchorsContainer {
+        var anchors: Anchors {
             Anchors.center()
             Anchors.center(offsetX: offsetX, offsetY: offsetY)
             Anchors.center(siblingview)
@@ -840,7 +840,7 @@ extension AnchorsImplementationTests {
         let multiplier: CGFloat = 0.25
         
         @AnchorsBuilder
-        var anchors: AnchorsContainer {
+        var anchors: Anchors {
             Anchors.size(siblingview, width: width, height: height).multiplier(multiplier)
             Anchors.center(offsetX: offsetX, offsetY: offsetY).multiplier(multiplier)
         }
@@ -863,7 +863,7 @@ extension AnchorsImplementationTests {
         let priority: UILayoutPriority = .defaultLow
         
         @AnchorsBuilder
-        var anchors: AnchorsContainer {
+        var anchors: Anchors {
             Anchors.size(siblingview, width: width, height: height).priority(priority)
             Anchors.center(offsetX: offsetX, offsetY: offsetY).priority(priority)
         }
