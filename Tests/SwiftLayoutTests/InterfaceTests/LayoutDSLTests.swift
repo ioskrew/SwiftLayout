@@ -561,3 +561,40 @@ extension LayoutDSLTests {
         }
     }
 }
+
+// MARK: - TupleLayout
+extension LayoutDSLTests {
+
+    func testTupleLayout10() {
+        let rootView = UIView()
+        measure {
+            let layout = layouts(rootView)
+            layout.finalActive()
+        }
+    }
+
+    @LayoutBuilder
+    func layouts(_ rootView: UIView) -> some Layout {
+        rootView.identifying("root").sublayout {
+            label(1)
+            label(2)
+            label(3)
+            label(4)
+            label(5)
+            label(6)
+            label(7)
+            label(8)
+            label(9)
+            label(10)
+        }
+    }
+
+    private func label(_ index: Int) -> UILabel {
+        let label = UILabel()
+        let text = "view." + index.description
+        label.text = text
+        label.accessibilityIdentifier = text
+        return label
+    }
+
+}
