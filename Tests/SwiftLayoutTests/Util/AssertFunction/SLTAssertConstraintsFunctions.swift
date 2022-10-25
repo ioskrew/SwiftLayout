@@ -9,14 +9,14 @@ import XCTest
 
 func SLTAssertConstraintsHasSameElements(_ constraints: [NSLayoutConstraint],
                                          firstView: UIView, secondView: UIView, tags: [UIView: String] = [:],
-                                         @AnchorsBuilder anchors: () -> AnchorsContainer,
+                                         @AnchorsBuilder anchors: () -> Anchors,
                                          file: StaticString = #filePath, line: UInt = #line) {
     SLTAssertConstraintsHasSameElements(constraints, anchors().constraints(item: firstView, toItem: secondView), tags: tags, file, line)
 }
 
 func SLTAssertConstraintsHasSameElements(_ constraints: [NSLayoutConstraint],
                                          firstView: UIView, tags: [UIView: String] = [:],
-                                         @AnchorsBuilder anchors: () -> AnchorsContainer,
+                                         @AnchorsBuilder anchors: () -> Anchors,
                                          file: StaticString = #filePath, line: UInt = #line) {
     SLTAssertConstraintsHasSameElements(constraints, anchors().constraints(item: firstView, toItem: nil), tags: tags, file, line)
 }

@@ -11,7 +11,7 @@ enum LayoutExplorer {
     struct Component {
         var superView: UIView? 
         var view: UIView
-        var anchors: AnchorsContainer
+        var anchors: Anchors
         var option: LayoutOption
         
         var keyValueTuple: (String, UIView)? {

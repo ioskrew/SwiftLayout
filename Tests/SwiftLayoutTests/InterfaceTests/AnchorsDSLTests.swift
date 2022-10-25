@@ -355,7 +355,7 @@ extension AnchorsDSLTests {
     }
     
     func testOptional() {
-        var optionalContainer: AnchorsContainer?
+        var optionalContainer: Anchors?
         var optionalExpression: AnchorsExpression<AnchorsDimensionAttribute>?
         
         @LayoutBuilder

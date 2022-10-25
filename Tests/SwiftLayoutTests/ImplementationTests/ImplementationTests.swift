@@ -168,7 +168,7 @@ extension ImplementationTests {
         let secondViewConstraints = Set(ofWeakConstraintsFrom: Anchors.cap().constraints(item: label!, toItem: root))
         XCTAssertEqual(currents.intersection(secondViewConstraints), secondViewConstraints)
         
-        let constraintsBetweebViews = Set(ofWeakConstraintsFrom: AnchorsContainer(Anchors.top.equalTo(label!, attribute: .bottom)).constraints(item: secondView!, toItem: label))
+        let constraintsBetweebViews = Set(ofWeakConstraintsFrom: Anchors(Anchors.top.equalTo(label!, attribute: .bottom)).constraints(item: secondView!, toItem: label))
         XCTAssertEqual(currents.intersection(constraintsBetweebViews), constraintsBetweebViews)
     }
 }
