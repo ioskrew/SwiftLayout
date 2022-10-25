@@ -532,8 +532,8 @@ extension ViewPrinterTests {
                     Anchors.allSides()
                 }).sublayout {
                     duny.anchors {
-                        Anchors.centerX.multiplier(1.2)
-                        Anchors.centerY.multiplier(0.8)
+                        Anchors.centerX.equalToSuper().multiplier(1.2)
+                        Anchors.centerY.equalToSuper().multiplier(0.8)
                     }
                 }
             }

@@ -8,12 +8,12 @@
 @resultBuilder
 public struct AnchorsBuilder {
     public static func buildExpression<A>(_ anchors: AnchorsExpression<A>) -> Anchors {
-        Anchors(anchors)
+        Anchors(from: anchors)
     }
-    
+
     public static func buildExpression<A>(_ anchors: AnchorsExpression<A>?) -> Anchors {
         if let anchors = anchors {
-            return Anchors(anchors)
+            return Anchors(from: anchors)
         } else {
             return Anchors()
         }

@@ -202,7 +202,7 @@ extension AnchorsDSLTests {
             SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
             SLTAssertConstraintsHasSameElements(siblingview.constraints, tags: tags) {
                 TestAnchors(first: siblingview) {
-                    Anchors.width.constant(37)
+                    Anchors.width.equalTo(constant: 37)
                 }
             }
             SLTAssertConstraintsHasSameElements(siblingview.constraints, [
@@ -217,10 +217,10 @@ extension AnchorsDSLTests {
             
             SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
                 TestAnchors(first: subview, second: superview) {
-                    Anchors.top.constant(10)
+                    Anchors.top.equalToSuper(constant: 10)
                 }
                 TestAnchors(first: siblingview, second: superview) {
-                    Anchors.height.multiplier(0.5)
+                    Anchors.height.equalToSuper().multiplier(0.5)
                     Anchors.centerX
                     Anchors.bottom
                 }
@@ -232,7 +232,7 @@ extension AnchorsDSLTests {
             }
             SLTAssertConstraintsHasSameElements(siblingview.constraints, tags: tags) {
                 TestAnchors(first: siblingview) {
-                    Anchors.width.constant(37)
+                    Anchors.width.equalTo(constant: 37)
                 }
             }
         }
@@ -380,17 +380,13 @@ extension AnchorsDSLTests {
         
         context("is optional") {
             optionalContainer = Anchors.center()
-            optionalExpression = Anchors.width.height.equalTo(constant: 11)
+            optionalExpression = Anchors.width.height
             layout.active().store(&activation)
             
             SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
                 TestAnchors(first: subview, second: superview) {
                     Anchors.center()
-                }
-            }
-            SLTAssertConstraintsHasSameElements(subview.constraints, tags: tags) {
-                TestAnchors(first: subview) {
-                    Anchors.size(width: 11, height: 11)
+                    Anchors.width.height
                 }
             }
         }
@@ -468,7 +464,7 @@ extension AnchorsDSLTests {
         SLTAssertConstraintsIsEmpty(subview.constraints)
         SLTAssertConstraintsHasSameElements(identifyingView.constraints) {
             TestAnchors(first: identifyingView) {
-                Anchors.width.constant(37.0)
+                Anchors.width.equalTo(constant: 37)
             }
         }
     }
@@ -556,7 +552,7 @@ extension AnchorsDSLTests {
         SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
         
         SLTAssertConstraintsHasSameElements(siblingview.constraints, firstView: siblingview, tags: tags) {
-            Anchors.width.constant(37.0)
+            Anchors.width.equalTo(constant: 37)
         }
     }
     
@@ -601,7 +597,7 @@ extension AnchorsDSLTests {
         }
         SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
         SLTAssertConstraintsHasSameElements(siblingview.constraints, firstView: siblingview) {
-            Anchors.width.constant(37)
+            Anchors.width.equalTo(constant: 37)
         }
     }
 }

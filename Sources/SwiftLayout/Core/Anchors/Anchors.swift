@@ -14,17 +14,19 @@ public final class Anchors {
     init(_ constraints: [AnchorsConstraintProperty] = []) {
         self.constraints = constraints
     }
-    
-    init<A>(_ expression: AnchorsExpression<A>) where A: AnchorsAttribute {
-        self.constraints = expression.constraintProperties
+
+    init<A>(
+        from expression: AnchorsExpression<A>,
+        relation: NSLayoutConstraint.Relation = .equal,
+        toItem: AnchorsItem = .transparent,
+        toAttribute: A? = nil,
+        constant: CGFloat = 0.0
+    ) where A: AnchorsAttribute {
+        self.constraints = expression.constraintProperties(relation: relation, toItem: toItem, toAttribute: toAttribute, constant: constant)
     }
     
     func append(_ container: Anchors) {
         self.constraints.append(contentsOf: container.constraints)
-    }
-    
-    func append<A>(_ expression: AnchorsExpression<A>) where A: AnchorsAttribute {
-        self.constraints.append(contentsOf: expression.constraintProperties)
     }
     
     func constraints(item fromItem: NSObject, toItem: NSObject?, viewDic: [String: UIView] = [:]) -> [NSLayoutConstraint] {
