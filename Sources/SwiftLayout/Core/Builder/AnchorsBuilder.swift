@@ -7,13 +7,13 @@
 
 @resultBuilder
 public struct AnchorsBuilder {
-    public static func buildExpression<A>(_ anchors: AnchorsExpression<A>) -> Anchors {
-        Anchors(from: anchors)
+    public static func buildExpression<A>(_ expression: AnchorsExpression<A>) -> Anchors {
+        Anchors(expression.constraintProperties())
     }
 
-    public static func buildExpression<A>(_ anchors: AnchorsExpression<A>?) -> Anchors {
-        if let anchors = anchors {
-            return Anchors(from: anchors)
+    public static func buildExpression<A>(_ expression: AnchorsExpression<A>?) -> Anchors {
+        if let expression = expression {
+            return Anchors(expression.constraintProperties())
         } else {
             return Anchors()
         }

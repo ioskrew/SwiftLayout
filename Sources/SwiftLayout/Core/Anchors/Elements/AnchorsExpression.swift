@@ -1,6 +1,6 @@
 //
 //  AnchorsExpression.swift
-//  
+//
 //
 //  Created by aiden_h on 2022/03/27.
 //
@@ -15,12 +15,12 @@ public struct AnchorsExpression<Attribute: AnchorsAttribute> {
         self.attributes += [appendedAttribute]
     }
 
-    
+
     func constraintProperties(
-        relation: NSLayoutConstraint.Relation,
-        toItem: AnchorsItem,
-        toAttribute: Attribute?,
-        constant: CGFloat
+        relation: NSLayoutConstraint.Relation = .equal,
+        toItem: AnchorsItem = .transparent,
+        toAttribute: Attribute? = nil,
+        constant: CGFloat = 0.0
     ) ->  [AnchorsConstraintProperty] {
         attributes.map {
             AnchorsConstraintProperty(
@@ -32,7 +32,7 @@ public struct AnchorsExpression<Attribute: AnchorsAttribute> {
             )
         }
     }
-    
+
     private func targetFromConstraint(_ constraint: NSLayoutConstraint) -> (toItem: AnchorsItem, toAttribute: Attribute?) {
         if let object = constraint.secondItem as? NSObject {
             return (toItem: .object(object), toAttribute: Attribute(attribute: constraint.secondAttribute))
@@ -43,38 +43,44 @@ public struct AnchorsExpression<Attribute: AnchorsAttribute> {
 }
 
 extension AnchorsExpression {
-    
+
     public func equalToSuper(attribute: Attribute? = nil, constant: CGFloat = .zero) -> Anchors {
-        Anchors(from: self, relation: .equal, toItem: .transparent, toAttribute: attribute, constant: constant)
+        let constraintProperties = constraintProperties(relation: .equal, toItem: .transparent, toAttribute: attribute, constant: constant)
+        return Anchors(constraintProperties)
     }
-    
+
     public func greaterThanOrEqualToSuper(attribute: Attribute? = nil, constant: CGFloat = .zero) -> Anchors {
-        Anchors(from: self, relation: .greaterThanOrEqual, toItem: .transparent, toAttribute: attribute, constant: constant)
+        let constraintProperties = constraintProperties(relation: .greaterThanOrEqual, toItem: .transparent, toAttribute: attribute, constant: constant)
+        return Anchors(constraintProperties)
     }
-    
+
     public func lessThanOrEqualToSuper(attribute: Attribute? = nil, constant: CGFloat = .zero) -> Anchors {
-        Anchors(from: self, relation: .lessThanOrEqual, toItem: .transparent, toAttribute: attribute, constant: constant)
+        let constraintProperties = constraintProperties(relation: .lessThanOrEqual, toItem: .transparent, toAttribute: attribute, constant: constant)
+        return Anchors(constraintProperties)
     }
 
     public func equalTo<I>(_ toItem: I, attribute: Attribute? = nil, constant: CGFloat = .zero) -> Anchors where I: AnchorsItemable {
-        Anchors(from: self, relation: .equal, toItem: AnchorsItem(toItem), toAttribute: attribute, constant: constant)
+        let constraintProperties = constraintProperties(relation: .equal, toItem: AnchorsItem(toItem), toAttribute: attribute, constant: constant)
+        return Anchors(constraintProperties)
     }
-    
+
     public func greaterThanOrEqualTo<I>(_ toItem: I, attribute: Attribute? = nil, constant: CGFloat = .zero) -> Anchors where I: AnchorsItemable {
-        Anchors(from: self, relation: .greaterThanOrEqual, toItem: AnchorsItem(toItem), toAttribute: attribute, constant: constant)
+        let constraintProperties = constraintProperties(relation: .greaterThanOrEqual, toItem: AnchorsItem(toItem), toAttribute: attribute, constant: constant)
+        return Anchors(constraintProperties)
     }
-    
+
     public func lessThanOrEqualTo<I>(_ toItem: I, attribute: Attribute? = nil, constant: CGFloat = .zero) -> Anchors where I: AnchorsItemable {
-        Anchors(from: self, relation: .lessThanOrEqual, toItem: AnchorsItem(toItem), toAttribute: attribute, constant: constant)
+        let constraintProperties = constraintProperties(relation: .lessThanOrEqual, toItem: AnchorsItem(toItem), toAttribute: attribute, constant: constant)
+        return Anchors(constraintProperties)
     }
 }
 
 extension AnchorsExpression where Attribute == AnchorsXAxisAttribute {
-    
+
     init(xAxis attributes: Attribute...) {
         self.attributes = attributes
     }
-    
+
     public var centerX: Self { Self.init(from: self, appendedAttribute: .centerX) }
     public var leading: Self { Self.init(from: self, appendedAttribute: .leading) }
     public var trailing: Self { Self.init(from: self, appendedAttribute: .trailing) }
@@ -89,24 +95,27 @@ extension AnchorsExpression where Attribute == AnchorsXAxisAttribute {
     public func equalTo(_ layoutAnchor: NSLayoutXAxisAnchor, constant: CGFloat = .zero) -> Anchors {
         let tmpConstraint = UIView().leadingAnchor.constraint(equalTo: layoutAnchor)
         let target = targetFromConstraint(tmpConstraint)
-        return Anchors(from: self, relation: .equal, toItem: target.toItem, toAttribute: target.toAttribute, constant: constant)
+        let constraintProperties = constraintProperties(relation: .equal, toItem: target.toItem, toAttribute: target.toAttribute, constant: constant)
+        return Anchors(constraintProperties)
     }
-    
+
     public func greaterThanOrEqualTo(_ layoutAnchor: NSLayoutXAxisAnchor, constant: CGFloat = .zero) -> Anchors {
         let tmpConstraint = UIView().leadingAnchor.constraint(equalTo: layoutAnchor)
         let target = targetFromConstraint(tmpConstraint)
-        return Anchors(from: self, relation: .greaterThanOrEqual, toItem: target.toItem, toAttribute: target.toAttribute, constant: constant)
+        let constraintProperties = constraintProperties(relation: .greaterThanOrEqual, toItem: target.toItem, toAttribute: target.toAttribute, constant: constant)
+        return Anchors(constraintProperties)
     }
-    
+
     public func lessThanOrEqualTo(_ layoutAnchor: NSLayoutXAxisAnchor, constant: CGFloat = .zero) -> Anchors {
         let tmpConstraint = UIView().leadingAnchor.constraint(equalTo: layoutAnchor)
         let target = targetFromConstraint(tmpConstraint)
-        return Anchors(from: self, relation: .lessThanOrEqual, toItem: target.toItem, toAttribute: target.toAttribute, constant: constant)
+        let constraintProperties = constraintProperties(relation: .lessThanOrEqual, toItem: target.toItem, toAttribute: target.toAttribute, constant: constant)
+        return Anchors(constraintProperties)
     }
 }
 
 extension AnchorsExpression where Attribute == AnchorsYAxisAttribute {
-    
+
     init(yAxis attributes: Attribute...) {
         self.attributes = attributes
     }
@@ -119,54 +128,62 @@ extension AnchorsExpression where Attribute == AnchorsYAxisAttribute {
     public var centerYWithinMargins: Self { Self.init(from: self, appendedAttribute: .centerYWithinMargins) }
     public var topMargin: Self { Self.init(from: self, appendedAttribute: .topMargin) }
     public var bottomMargin: Self { Self.init(from: self, appendedAttribute: .bottomMargin) }
-    
+
     public func equalTo(_ layoutAnchor: NSLayoutYAxisAnchor, constant: CGFloat = .zero) -> Anchors {
         let tmpConstraint = UIView().topAnchor.constraint(equalTo: layoutAnchor)
         let target = targetFromConstraint(tmpConstraint)
-        return Anchors(from: self, relation: .equal, toItem: target.toItem, toAttribute: target.toAttribute, constant: constant)
+        let constraintProperties = constraintProperties(relation: .equal, toItem: target.toItem, toAttribute: target.toAttribute, constant: constant)
+        return Anchors(constraintProperties)
     }
-    
+
     public func greaterThanOrEqualTo(_ layoutAnchor: NSLayoutYAxisAnchor, constant: CGFloat = .zero) -> Anchors {
         let tmpConstraint = UIView().topAnchor.constraint(equalTo: layoutAnchor)
         let target = targetFromConstraint(tmpConstraint)
-        return Anchors(from: self, relation: .greaterThanOrEqual, toItem: target.toItem, toAttribute: target.toAttribute, constant: constant)
+        let constraintProperties = constraintProperties(relation: .greaterThanOrEqual, toItem: target.toItem, toAttribute: target.toAttribute, constant: constant)
+        return Anchors(constraintProperties)
     }
-    
+
     public func lessThanOrEqualTo(_ layoutAnchor: NSLayoutYAxisAnchor, constant: CGFloat = .zero) -> Anchors {
         let tmpConstraint = UIView().topAnchor.constraint(equalTo: layoutAnchor)
         let target = targetFromConstraint(tmpConstraint)
-        return Anchors(from: self, relation: .lessThanOrEqual, toItem: target.toItem, toAttribute: target.toAttribute, constant: constant)
+        let constraintProperties = constraintProperties(relation: .lessThanOrEqual, toItem: target.toItem, toAttribute: target.toAttribute, constant: constant)
+        return Anchors(constraintProperties)
     }
 }
 
 extension AnchorsExpression where Attribute == AnchorsDimensionAttribute {
-    
+
     init(dimensions attributes: Attribute...) {
         self.attributes = attributes
     }
-    
+
     public var height: Self { Self.init(from: self, appendedAttribute: .height) }
     public var width: Self { Self.init(from: self, appendedAttribute: .width) }
-    
+
     public func equalTo(constant: CGFloat) -> Anchors {
-        Anchors(from: self, relation: .equal, toItem: .deny, toAttribute: nil, constant: constant)
+        let constraintProperties = constraintProperties(relation: .equal, toItem: .deny, toAttribute: nil, constant: constant)
+        return Anchors(constraintProperties)
     }
-    
+
     public func equalTo(_ layoutAnchor: NSLayoutDimension, constant: CGFloat = .zero) -> Anchors {
         let tmpConstraint = UIView().widthAnchor.constraint(equalTo: layoutAnchor)
         let target = targetFromConstraint(tmpConstraint)
-        return Anchors(from: self, relation: .equal, toItem: target.toItem, toAttribute: target.toAttribute, constant: constant)
+        let constraintProperties = constraintProperties(relation: .equal, toItem: target.toItem, toAttribute: target.toAttribute, constant: constant)
+        return Anchors(constraintProperties)
     }
-    
+
     public func greaterThanOrEqualTo(_ layoutAnchor: NSLayoutDimension, constant: CGFloat = .zero) -> Anchors {
         let tmpConstraint = UIView().widthAnchor.constraint(equalTo: layoutAnchor)
         let target = targetFromConstraint(tmpConstraint)
-        return Anchors(from: self, relation: .greaterThanOrEqual, toItem: target.toItem, toAttribute: target.toAttribute, constant: constant)
+        let constraintProperties = constraintProperties(relation: .greaterThanOrEqual, toItem: target.toItem, toAttribute: target.toAttribute, constant: constant)
+        return Anchors(constraintProperties)
     }
-    
+
     public func lessThanOrEqualTo(_ layoutAnchor: NSLayoutDimension, constant: CGFloat = .zero) -> Anchors {
         let tmpConstraint = UIView().widthAnchor.constraint(equalTo: layoutAnchor)
         let target = targetFromConstraint(tmpConstraint)
-        return Anchors(from: self, relation: .lessThanOrEqual, toItem: target.toItem, toAttribute: target.toAttribute, constant: constant)
+        let constraintProperties = constraintProperties(relation: .lessThanOrEqual, toItem: target.toItem, toAttribute: target.toAttribute, constant: constant)
+        return Anchors(constraintProperties)
     }
 }
+
