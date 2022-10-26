@@ -53,7 +53,7 @@ extension AnchorsBuilder {
     public static func buildArray(_ components: [Anchors]) -> Anchors {
         components.reduce(into: Anchors()) { $0.append($1) }
     }
-    
+
     public static func buildOptional(_ component: Anchors?) -> Anchors {
         component ?? Anchors()
     }

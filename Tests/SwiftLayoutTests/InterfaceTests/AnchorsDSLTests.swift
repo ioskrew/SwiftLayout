@@ -38,8 +38,7 @@ extension AnchorsDSLTests {
                 siblingview.anchors {
                     Anchors.width.equalTo(constant: 37)
                     Anchors.height.equalToSuper().multiplier(0.5)
-                    Anchors.centerX
-                    Anchors.bottom
+                    Anchors.centerX.bottom
                 }
             }
         }
@@ -55,8 +54,7 @@ extension AnchorsDSLTests {
             }
             TestAnchors(first: siblingview, second: superview) {
                 Anchors.height.equalToSuper().multiplier(0.5)
-                Anchors.centerX
-                Anchors.bottom
+                Anchors.centerX.bottom
             }
         }
         SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
@@ -78,8 +76,7 @@ extension AnchorsDSLTests {
                 siblingview.anchors {
                     Anchors.width.equalTo(constant: 37)
                     Anchors.height.equalToSuper().multiplier(0.5)
-                    Anchors.centerX
-                    Anchors.bottom
+                    Anchors.centerX.bottom
                 }
             }
         }
@@ -104,8 +101,7 @@ extension AnchorsDSLTests {
                 siblingview.anchors {
                     Anchors.width.equalTo(constant: 37)
                     Anchors.height.equalToSuper().multiplier(0.5)
-                    Anchors.centerX
-                    Anchors.bottom
+                    Anchors.centerX.bottom
                 }
             }
         }
@@ -121,8 +117,7 @@ extension AnchorsDSLTests {
             }
             TestAnchors(first: siblingview, second: superview) {
                 Anchors.height.equalToSuper().multiplier(0.5)
-                Anchors.centerX
-                Anchors.bottom
+                Anchors.centerX.bottom
             }
         }
         SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
@@ -153,8 +148,7 @@ extension AnchorsDSLTests {
                 siblingview.anchors {
                     Anchors.width.equalTo(constant: 37)
                     Anchors.height.equalToSuper().multiplier(0.5)
-                    Anchors.centerX
-                    Anchors.bottom
+                    Anchors.centerX.bottom
                 }
             }
         }
@@ -171,8 +165,7 @@ extension AnchorsDSLTests {
                 }
                 TestAnchors(first: siblingview, second: superview) {
                     Anchors.height.equalToSuper().multiplier(0.5)
-                    Anchors.centerX
-                    Anchors.bottom
+                    Anchors.centerX.bottom
                 }
             }
             SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
@@ -195,8 +188,7 @@ extension AnchorsDSLTests {
                 }
                 TestAnchors(first: siblingview, second: superview) {
                     Anchors.height.equalToSuper().multiplier(0.5)
-                    Anchors.centerX
-                    Anchors.bottom
+                    Anchors.centerX.bottom
                 }
             }
             SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
@@ -221,8 +213,7 @@ extension AnchorsDSLTests {
                 }
                 TestAnchors(first: siblingview, second: superview) {
                     Anchors.height.equalToSuper().multiplier(0.5)
-                    Anchors.centerX
-                    Anchors.bottom
+                    Anchors.centerX.bottom
                 }
             }
             SLTAssertConstraintsHasSameElements(subview.constraints, tags: tags) {
@@ -355,22 +346,25 @@ extension AnchorsDSLTests {
     }
     
     func testOptional() {
-        var optionalContainer: Anchors?
+        var optionalAnchors: Anchors?
         var optionalExpression: AnchorsExpression<AnchorsDimensionAttribute>?
+        var optionalMixedExpression: AnchorsMixedExpression?
         
         @LayoutBuilder
         var layout: some Layout {
             superview.sublayout {
                 subview.anchors {
-                    optionalContainer
+                    optionalAnchors
                     optionalExpression
+                    optionalMixedExpression
                 }
             }
         }
         
         context("is nil") {
-            optionalContainer = nil
+            optionalAnchors = nil
             optionalExpression = nil
+            optionalMixedExpression = nil
             
             layout.active().store(&activation)
             
@@ -379,14 +373,18 @@ extension AnchorsDSLTests {
         }
         
         context("is optional") {
-            optionalContainer = Anchors.center()
+            optionalAnchors = Anchors.center()
             optionalExpression = Anchors.width.height
+            optionalMixedExpression = Anchors.leading.top
+
             layout.active().store(&activation)
             
             SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
                 TestAnchors(first: subview, second: superview) {
                     Anchors.center()
                     Anchors.width.height
+                    Anchors.leading
+                    Anchors.top
                 }
             }
         }
