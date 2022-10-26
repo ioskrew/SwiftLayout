@@ -1,9 +1,6 @@
 //
 //  AnchorsBuilder.swift
 //  
-//
-//  Created by oozoofrog on 2022/02/04.
-//
 
 @resultBuilder
 public struct AnchorsBuilder {
@@ -12,6 +9,18 @@ public struct AnchorsBuilder {
     }
 
     public static func buildExpression<A>(_ expression: AnchorsExpression<A>?) -> Anchors {
+        if let expression = expression {
+            return Anchors(expression.constraintProperties())
+        } else {
+            return Anchors()
+        }
+    }
+
+    public static func buildExpression(_ expression: AnchorsMixedExpression) -> Anchors {
+        Anchors(expression.constraintProperties())
+    }
+
+    public static func buildExpression(_ expression: AnchorsMixedExpression?) -> Anchors {
         if let expression = expression {
             return Anchors(expression.constraintProperties())
         } else {

@@ -1,9 +1,6 @@
 //
 //  Anchors+Interface.swift
 //  
-//
-//  Created by aiden_h on 2022/03/27.
-//
 
 import UIKit
 
@@ -35,10 +32,7 @@ public extension Anchors {
     /// - Parameter offset: plus constant at leading, minus constant at trailing. default value is 0.
     /// - Returns: superview.leading + constant(offset) and superview.trailing - constant(offset)
     static func horizontal(offset: CGFloat = .zero) -> Anchors {
-        let container = Anchors()
-        container.append(AnchorsExpression(xAxis: .leading).equalToSuper(constant: offset))
-        container.append(AnchorsExpression(xAxis: .trailing).equalToSuper(constant: -1.0 * offset))
-        return container
+        return Anchors.leading.trailing.equalToSuper(inwardOffset: offset)
     }
     
     /// combination of **leading and trailing** anchors for item
@@ -47,10 +41,7 @@ public extension Anchors {
     ///   - offset: plus constant at leading, minus constant at trailing. default value is 0.
     /// - Returns: item.leading + constant(offset) and item.trailing - constant(offset)
     static func horizontal<I>(_ item: I, offset: CGFloat = .zero) -> Anchors where I: AnchorsItemable {
-        let container = Anchors()
-        container.append(AnchorsExpression(xAxis: .leading).equalTo(item, constant: offset))
-        container.append(AnchorsExpression(xAxis: .trailing).equalTo(item, constant: -1.0 * offset))
-        return container
+        return Anchors.leading.trailing.equalTo(item, inwardOffset: offset)
     }
     
     /// combination of **top and bottom** anchors for superview
@@ -58,10 +49,7 @@ public extension Anchors {
     /// - Parameter offset: plus constant at top, minus constant at bottom. default value is 0.
     /// - Returns: superview.leading + constant(offset) and superview.trailing - constant(offset)
     static func vertical(offset: CGFloat = .zero) -> Anchors {
-        let container = Anchors()
-        container.append(AnchorsExpression(yAxis: .top).equalToSuper(constant: offset))
-        container.append(AnchorsExpression(yAxis: .bottom).equalToSuper(constant: -1.0 * offset))
-        return container
+        return Anchors.top.bottom.equalToSuper(inwardOffset: offset)
     }
     
     /// combination of **top and bottom** anchors for item
@@ -70,10 +58,7 @@ public extension Anchors {
     ///   - offset: plus constant at top, minus constant at bottom. default value is 0.
     /// - Returns: item.top + constant(offset) and item.bottom - constant(offset)
     static func vertical<I>(_ item: I, offset: CGFloat = .zero) -> Anchors where I: AnchorsItemable {
-        let container = Anchors()
-        container.append(AnchorsExpression(yAxis: .top).equalTo(item, constant: offset))
-        container.append(AnchorsExpression(yAxis: .bottom).equalTo(item, constant: -1.0 * offset))
-        return container
+        return Anchors.top.bottom.equalTo(item, inwardOffset: offset)
     }
     
     /// combination of **top, bottom, leading, trailing** anchors for superview
@@ -84,12 +69,7 @@ public extension Anchors {
     /// **AND**
     /// superview.leading + constant(offset) and superview.trailing - constant(offset)
     static func allSides(offset: CGFloat = .zero) -> Anchors {
-        let container = Anchors()
-        container.append(AnchorsExpression(yAxis: .top).equalToSuper(constant: offset))
-        container.append(AnchorsExpression(yAxis: .bottom).equalToSuper(constant: -1.0 * offset))
-        container.append(AnchorsExpression(xAxis: .leading).equalToSuper(constant: offset))
-        container.append(AnchorsExpression(xAxis: .trailing).equalToSuper(constant: -1.0 * offset))
-        return container
+        return Anchors.top.bottom.leading.trailing.equalToSuper(inwardOffset: offset)
     }
     
     /// combination of **top, bottom, leading, trailing** anchors for superview
@@ -102,12 +82,7 @@ public extension Anchors {
     /// **AND**
     /// superview.leading + constant(offset) and superview.trailing - constant(offset)
     static func allSides<I>(_ item: I, offset: CGFloat = .zero) -> Anchors where I: AnchorsItemable {
-        let container = Anchors()
-        container.append(AnchorsExpression(yAxis: .top).equalTo(item, constant: offset))
-        container.append(AnchorsExpression(yAxis: .bottom).equalTo(item, constant: -1.0 * offset))
-        container.append(AnchorsExpression(xAxis: .leading).equalTo(item, constant: offset))
-        container.append(AnchorsExpression(xAxis: .trailing).equalTo(item, constant: -1.0 * offset))
-        return container
+        return Anchors.top.bottom.leading.trailing.equalTo(item, inwardOffset: offset)
     }
     
     /// combination of **top, leading, trailing** anchors for superview
@@ -118,11 +93,7 @@ public extension Anchors {
     /// **AND**
     /// superview.leading + constant(offset) and superview.trailing - constant(offset)
     static func cap(offset: CGFloat = .zero) -> Anchors {
-        let container = Anchors()
-        container.append(AnchorsExpression(yAxis: .top).equalToSuper(constant: offset))
-        container.append(AnchorsExpression(xAxis: .leading).equalToSuper(constant: offset))
-        container.append(AnchorsExpression(xAxis: .trailing).equalToSuper(constant: -1.0 * offset))
-        return container
+        return Anchors.top.leading.trailing.equalToSuper(inwardOffset: offset)
     }
     
     /// combination of **top, leading, trailing** anchors for superview
@@ -135,11 +106,7 @@ public extension Anchors {
     /// **AND**
     /// superview.leading + constant(offset) and superview.trailing - constant(offset)
     static func cap<I>(_ item: I, offset: CGFloat = .zero) -> Anchors where I: AnchorsItemable {
-        let container = Anchors()
-        container.append(AnchorsExpression(yAxis: .top).equalTo(item, constant: offset))
-        container.append(AnchorsExpression(xAxis: .leading).equalTo(item, constant: offset))
-        container.append(AnchorsExpression(xAxis: .trailing).equalTo(item, constant: -1.0 * offset))
-        return container
+        return Anchors.top.leading.trailing.equalTo(item, inwardOffset: offset)
     }
     
     /// combination of **bottom, leading, trailing** anchors for superview
@@ -150,11 +117,7 @@ public extension Anchors {
     /// **AND**
     /// superview.leading + constant(offset) and superview.trailing - constant(offset)
     static func shoe(offset: CGFloat = .zero) -> Anchors {
-        let container = Anchors()
-        container.append(AnchorsExpression(yAxis: .bottom).equalToSuper(constant: -1.0 * offset))
-        container.append(AnchorsExpression(xAxis: .leading).equalToSuper(constant: offset))
-        container.append(AnchorsExpression(xAxis: .trailing).equalToSuper(constant: -1.0 * offset))
-        return container
+        return Anchors.bottom.leading.trailing.equalToSuper(inwardOffset: offset)
     }
     
     /// combination of **bottom, leading, trailing** anchors for superview
@@ -167,11 +130,7 @@ public extension Anchors {
     /// **AND**
     /// superview.leading + constant(offset) and superview.trailing - constant(offset)
     static func shoe<I>(_ item: I, offset: CGFloat = .zero) -> Anchors where I: AnchorsItemable {
-        let container = Anchors()
-        container.append(AnchorsExpression(yAxis: .bottom).equalTo(item, constant: -1.0 * offset))
-        container.append(AnchorsExpression(xAxis: .leading).equalTo(item, constant: offset))
-        container.append(AnchorsExpression(xAxis: .trailing).equalTo(item, constant: -1.0 * offset))
-        return container
+        return Anchors.bottom.leading.trailing.equalTo(item, inwardOffset: offset)
     }
 
     /// dimensional combination of **width and height** anchors for selfview
@@ -179,10 +138,12 @@ public extension Anchors {
     ///   - size: size of self
     /// - Returns: self.width = size.width and self.height = size.height
     static func size(_ size: CGSize) -> Anchors {
-        let container = Anchors()
-        container.append(AnchorsExpression(dimensions: .width).equalTo(constant: size.width))
-        container.append(AnchorsExpression(dimensions: .height).equalTo(constant: size.height))
-        return container
+        @AnchorsBuilder
+        var anchors: Anchors {
+            Anchors.width.equalTo(constant: size.width)
+            Anchors.height.equalTo(constant: size.height)
+        }
+        return anchors
     }
     
     /// dimensional combination of **width and height** anchors for selfview
@@ -191,10 +152,12 @@ public extension Anchors {
     ///   - height: height of self
     /// - Returns: self.width = width and self.height = height
     static func size(width: CGFloat, height: CGFloat) -> Anchors {
-        let container = Anchors()
-        container.append(AnchorsExpression(dimensions: .width).equalTo(constant: width))
-        container.append(AnchorsExpression(dimensions: .height).equalTo(constant: height))
-        return container
+        @AnchorsBuilder
+        var anchors: Anchors {
+            Anchors.width.equalTo(constant: width)
+            Anchors.height.equalTo(constant: height)
+        }
+        return anchors
     }
     
     /// dimensional combination of **width and height** anchors for selfview
@@ -204,10 +167,12 @@ public extension Anchors {
     ///   - height: height for target's + height
     /// - Returns: self.width = item.width + width and self.height = item.height + height
     static func size<I>(_ item: I, width: CGFloat, height: CGFloat) -> Anchors where I: AnchorsItemable {
-        let container = Anchors()
-        container.append(AnchorsExpression(dimensions: .width).equalTo(item, constant: width))
-        container.append(AnchorsExpression(dimensions: .height).equalTo(item, constant: height))
-        return container
+        @AnchorsBuilder
+        var anchors: Anchors {
+            Anchors.width.equalTo(item, constant: width)
+            Anchors.height.equalTo(item, constant: height)
+        }
+        return anchors
     }
     
     /// positional combination of **center x, center y** anchors for superview
@@ -216,10 +181,12 @@ public extension Anchors {
     ///   - offsetY: offset for y position from center of superview. default value is 0.
     /// - Returns: superview.centerX + offsetX and superview.centerY + offsetY
     static func center(offsetX: CGFloat = .zero, offsetY: CGFloat = .zero) -> Anchors {
-        let container = Anchors()
-        container.append(AnchorsExpression(xAxis: .centerX).equalToSuper(constant: offsetX))
-        container.append(AnchorsExpression(yAxis: .centerY).equalToSuper(constant: offsetY))
-        return container
+        @AnchorsBuilder
+        var anchors: Anchors {
+            Anchors.centerX.equalToSuper(constant: offsetX)
+            Anchors.centerY.equalToSuper(constant: offsetY)
+        }
+        return anchors
     }
     
     /// positional combination of **center x, center y** anchors for superview
@@ -229,10 +196,12 @@ public extension Anchors {
     ///   - offsetY: offset for y position from center of target. default value is 0.
     /// - Returns: item.centerX + offsetX and item.centerY + offsetY
     static func center<I>(_ item: I, offsetX: CGFloat = .zero, offsetY: CGFloat = .zero) -> Anchors where I: AnchorsItemable {
-        let container = Anchors()
-        container.append(AnchorsExpression(xAxis: .centerX).equalTo(item, constant: offsetX))
-        container.append(AnchorsExpression(yAxis: .centerY).equalTo(item, constant: offsetY))
-        return container
+        @AnchorsBuilder
+        var anchors: Anchors {
+            Anchors.centerX.equalTo(item, constant: offsetX)
+            Anchors.centerY.equalTo(item, constant: offsetY)
+        }
+        return anchors
     }
 }
 

@@ -10,6 +10,7 @@ import UIKit
 public protocol AnchorsAttribute {
     init?(attribute: NSLayoutConstraint.Attribute)
     var attribute: NSLayoutConstraint.Attribute { get }
+    var inwardDirectionFactor: CGFloat { get }
 }
 
 public enum AnchorsXAxisAttribute: AnchorsAttribute {
@@ -55,6 +56,15 @@ public enum AnchorsXAxisAttribute: AnchorsAttribute {
         case .trailingMargin: return .trailingMargin
         }
     }
+
+    public var inwardDirectionFactor: CGFloat {
+        switch self {
+        case .right, .trailing, .rightMargin, .trailingMargin:
+            return -1.0
+        default:
+            return 1.0
+        }
+    }
 }
 
 public enum AnchorsYAxisAttribute: AnchorsAttribute {
@@ -94,6 +104,15 @@ public enum AnchorsYAxisAttribute: AnchorsAttribute {
         case .bottomMargin: return .bottomMargin
         }
     }
+
+    public var inwardDirectionFactor: CGFloat {
+        switch self {
+        case .bottom, .bottomMargin:
+            return -1.0
+        default:
+            return 1.0
+        }
+    }
 }
 
 public enum AnchorsDimensionAttribute: AnchorsAttribute {
@@ -112,6 +131,13 @@ public enum AnchorsDimensionAttribute: AnchorsAttribute {
         switch self {
         case .height: return .height
         case .width: return .width
+        }
+    }
+
+    public var inwardDirectionFactor: CGFloat {
+        switch self {
+        default:
+            return 1.0
         }
     }
 }
