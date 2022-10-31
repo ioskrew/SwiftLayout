@@ -1,13 +1,10 @@
 //
-//  ChainLayout.swift
+//  ListLayout.swift
 //  
-//
-//  Created by oozoofrog on 2022/10/15.
-//
 
 import Foundation
 
-public struct ChainLayout<CurrentLayout: Layout, NextLayout: Layout>: Layout {
+public struct ListLayout<CurrentLayout: Layout, NextLayout: Layout>: Layout {
 
     let currentLayout: CurrentLayout
     let nextLayout: NextLayout
@@ -22,16 +19,16 @@ public struct ChainLayout<CurrentLayout: Layout, NextLayout: Layout>: Layout {
     }
 }
 
-public struct ChainCut: Layout {
+public struct ListEndLayout: Layout {
     public let sublayouts: [Layout] = []
 
     init() {}
 }
 
-extension ChainLayout where NextLayout == ChainCut {
+extension ListLayout where NextLayout == ListEndLayout {
     init(_ currentLayout: CurrentLayout) {
         self.currentLayout = currentLayout
-        self.nextLayout = ChainCut()
+        self.nextLayout = ListEndLayout()
     }
 
     public var sublayouts: [Layout] { [currentLayout] }

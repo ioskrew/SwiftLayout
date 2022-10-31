@@ -61,7 +61,7 @@ extension LayoutPrinterTests {
         let expectedResult = """
         ViewLayout - view: root
         └─ ViewLayout - view: contentView
-           └─ ChainLayout
+           └─ ListLayout
               ├─ ViewLayout - view: image
               ├─ AnyLayout
               │  └─ ViewLayout - view: title
@@ -80,7 +80,7 @@ extension LayoutPrinterTests {
            │     .trailing == root.safeAreaLayoutGuide.trailing - 16.0
            │     .centerY == root.centerY
            │     .height == + 80.0
-           └─ ChainLayout
+           └─ ListLayout
               ├─ ViewLayout - view: image
               │        .leading == superview.leading + 10.0
               │        .centerY == superview.centerY
