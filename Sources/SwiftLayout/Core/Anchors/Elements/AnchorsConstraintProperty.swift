@@ -13,8 +13,8 @@ public struct AnchorsConstraintProperty {
     public let toItem: AnchorsItem
     public let toAttribute: NSLayoutConstraint.Attribute?
     public let constant: CGFloat
-    public internal(set) var multiplier: CGFloat
-    public internal(set) var priority: UILayoutPriority
+    public internal(set) var multiplier: CGFloat = 1.0
+    public internal(set) var priority: UILayoutPriority = .required
     
     public var isDimension: Bool {
         attribute == .height || attribute == .width

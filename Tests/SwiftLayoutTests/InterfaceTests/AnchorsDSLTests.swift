@@ -38,8 +38,7 @@ extension AnchorsDSLTests {
                 siblingview.anchors {
                     Anchors.width.equalTo(constant: 37)
                     Anchors.height.equalToSuper().multiplier(0.5)
-                    Anchors.centerX
-                    Anchors.bottom
+                    Anchors.centerX.bottom
                 }
             }
         }
@@ -55,8 +54,7 @@ extension AnchorsDSLTests {
             }
             TestAnchors(first: siblingview, second: superview) {
                 Anchors.height.equalToSuper().multiplier(0.5)
-                Anchors.centerX
-                Anchors.bottom
+                Anchors.centerX.bottom
             }
         }
         SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
@@ -78,8 +76,7 @@ extension AnchorsDSLTests {
                 siblingview.anchors {
                     Anchors.width.equalTo(constant: 37)
                     Anchors.height.equalToSuper().multiplier(0.5)
-                    Anchors.centerX
-                    Anchors.bottom
+                    Anchors.centerX.bottom
                 }
             }
         }
@@ -104,8 +101,7 @@ extension AnchorsDSLTests {
                 siblingview.anchors {
                     Anchors.width.equalTo(constant: 37)
                     Anchors.height.equalToSuper().multiplier(0.5)
-                    Anchors.centerX
-                    Anchors.bottom
+                    Anchors.centerX.bottom
                 }
             }
         }
@@ -121,8 +117,7 @@ extension AnchorsDSLTests {
             }
             TestAnchors(first: siblingview, second: superview) {
                 Anchors.height.equalToSuper().multiplier(0.5)
-                Anchors.centerX
-                Anchors.bottom
+                Anchors.centerX.bottom
             }
         }
         SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
@@ -153,8 +148,7 @@ extension AnchorsDSLTests {
                 siblingview.anchors {
                     Anchors.width.equalTo(constant: 37)
                     Anchors.height.equalToSuper().multiplier(0.5)
-                    Anchors.centerX
-                    Anchors.bottom
+                    Anchors.centerX.bottom
                 }
             }
         }
@@ -171,8 +165,7 @@ extension AnchorsDSLTests {
                 }
                 TestAnchors(first: siblingview, second: superview) {
                     Anchors.height.equalToSuper().multiplier(0.5)
-                    Anchors.centerX
-                    Anchors.bottom
+                    Anchors.centerX.bottom
                 }
             }
             SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
@@ -195,14 +188,13 @@ extension AnchorsDSLTests {
                 }
                 TestAnchors(first: siblingview, second: superview) {
                     Anchors.height.equalToSuper().multiplier(0.5)
-                    Anchors.centerX
-                    Anchors.bottom
+                    Anchors.centerX.bottom
                 }
             }
             SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
             SLTAssertConstraintsHasSameElements(siblingview.constraints, tags: tags) {
                 TestAnchors(first: siblingview) {
-                    Anchors.width.constant(37)
+                    Anchors.width.equalTo(constant: 37)
                 }
             }
             SLTAssertConstraintsHasSameElements(siblingview.constraints, [
@@ -217,12 +209,11 @@ extension AnchorsDSLTests {
             
             SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
                 TestAnchors(first: subview, second: superview) {
-                    Anchors.top.constant(10)
+                    Anchors.top.equalToSuper(constant: 10)
                 }
                 TestAnchors(first: siblingview, second: superview) {
-                    Anchors.height.multiplier(0.5)
-                    Anchors.centerX
-                    Anchors.bottom
+                    Anchors.height.equalToSuper().multiplier(0.5)
+                    Anchors.centerX.bottom
                 }
             }
             SLTAssertConstraintsHasSameElements(subview.constraints, tags: tags) {
@@ -232,7 +223,7 @@ extension AnchorsDSLTests {
             }
             SLTAssertConstraintsHasSameElements(siblingview.constraints, tags: tags) {
                 TestAnchors(first: siblingview) {
-                    Anchors.width.constant(37)
+                    Anchors.width.equalTo(constant: 37)
                 }
             }
         }
@@ -355,22 +346,25 @@ extension AnchorsDSLTests {
     }
     
     func testOptional() {
-        var optionalContainer: Anchors?
+        var optionalAnchors: Anchors?
         var optionalExpression: AnchorsExpression<AnchorsDimensionAttribute>?
+        var optionalMixedExpression: AnchorsMixedExpression?
         
         @LayoutBuilder
         var layout: some Layout {
             superview.sublayout {
                 subview.anchors {
-                    optionalContainer
+                    optionalAnchors
                     optionalExpression
+                    optionalMixedExpression
                 }
             }
         }
         
         context("is nil") {
-            optionalContainer = nil
+            optionalAnchors = nil
             optionalExpression = nil
+            optionalMixedExpression = nil
             
             layout.active().store(&activation)
             
@@ -379,18 +373,18 @@ extension AnchorsDSLTests {
         }
         
         context("is optional") {
-            optionalContainer = Anchors.center()
-            optionalExpression = Anchors.width.height.equalTo(constant: 11)
+            optionalAnchors = Anchors.center()
+            optionalExpression = Anchors.width.height
+            optionalMixedExpression = Anchors.leading.top
+
             layout.active().store(&activation)
             
             SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
                 TestAnchors(first: subview, second: superview) {
                     Anchors.center()
-                }
-            }
-            SLTAssertConstraintsHasSameElements(subview.constraints, tags: tags) {
-                TestAnchors(first: subview) {
-                    Anchors.size(width: 11, height: 11)
+                    Anchors.width.height
+                    Anchors.leading
+                    Anchors.top
                 }
             }
         }
@@ -468,7 +462,7 @@ extension AnchorsDSLTests {
         SLTAssertConstraintsIsEmpty(subview.constraints)
         SLTAssertConstraintsHasSameElements(identifyingView.constraints) {
             TestAnchors(first: identifyingView) {
-                Anchors.width.constant(37.0)
+                Anchors.width.equalTo(constant: 37)
             }
         }
     }
@@ -556,7 +550,7 @@ extension AnchorsDSLTests {
         SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
         
         SLTAssertConstraintsHasSameElements(siblingview.constraints, firstView: siblingview, tags: tags) {
-            Anchors.width.constant(37.0)
+            Anchors.width.equalTo(constant: 37)
         }
     }
     
@@ -601,7 +595,7 @@ extension AnchorsDSLTests {
         }
         SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
         SLTAssertConstraintsHasSameElements(siblingview.constraints, firstView: siblingview) {
-            Anchors.width.constant(37)
+            Anchors.width.equalTo(constant: 37)
         }
     }
 }

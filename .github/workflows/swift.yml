@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ develop ]
 
+env:
+  DEVELOPER_DIR: /Applications/Xcode_14.0.1.app/Contents/Developer
+
 jobs:
   test-ios:
 
@@ -14,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Run tests
-      run: xcodebuild test -scheme SwiftLayout-Package -sdk iphonesimulator15.2 -destination 'name=iPhone 13 Pro'
+      run: xcodebuild test -scheme SwiftLayout-Package -sdk iphonesimulator16.0 -destination 'name=iPhone 14 Pro'
   
 # test-macos:
 #

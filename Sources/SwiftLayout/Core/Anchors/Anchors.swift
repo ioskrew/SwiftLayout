@@ -9,22 +9,14 @@ import UIKit
 
 public final class Anchors {
     
-    public private(set) var constraints: [AnchorsConstraintProperty] = []
+    public private(set) var constraints: [AnchorsConstraintProperty]
     
     init(_ constraints: [AnchorsConstraintProperty] = []) {
         self.constraints = constraints
     }
-    
-    init<A>(_ expression: AnchorsExpression<A>) where A: AnchorsAttribute {
-        self.constraints = expression.constraintProperties
-    }
-    
+
     func append(_ container: Anchors) {
         self.constraints.append(contentsOf: container.constraints)
-    }
-    
-    func append<A>(_ expression: AnchorsExpression<A>) where A: AnchorsAttribute {
-        self.constraints.append(contentsOf: expression.constraintProperties)
     }
     
     func constraints(item fromItem: NSObject, toItem: NSObject?, viewDic: [String: UIView] = [:]) -> [NSLayoutConstraint] {
