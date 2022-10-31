@@ -1,6 +1,6 @@
 //
 //  ListLayout.swift
-//  
+//
 
 import Foundation
 
@@ -30,6 +30,4 @@ extension ListLayout where NextLayout == ListEndLayout {
         self.currentLayout = currentLayout
         self.nextLayout = ListEndLayout()
     }
-
-    public var sublayouts: [Layout] { [currentLayout] }
 }
