@@ -4,13 +4,13 @@ public struct ViewLayout<V: UIView>: Layout {
     
     private let innerView: V
     
-    public private(set) var sublayouts: [Layout]
+    public private(set) var sublayouts: [any Layout]
     
     public private(set) var anchors: Anchors
 
     public var option: LayoutOption? { LayoutOption.none }
     
-    init(_ view: V, sublayouts: [Layout] = [], anchors: Anchors = Anchors()) {
+    init(_ view: V, sublayouts: [any Layout] = [], anchors: Anchors = Anchors()) {
         self.innerView = view
         self.sublayouts = sublayouts
         self.anchors = anchors

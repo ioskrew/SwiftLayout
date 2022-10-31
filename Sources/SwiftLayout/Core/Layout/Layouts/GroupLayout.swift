@@ -9,7 +9,7 @@ public struct GroupLayout<L: Layout>: Layout {
         self.layout = handler()
     }
     
-    public var sublayouts: [Layout] {
+    public var sublayouts: [any Layout] {
         [layout]
     }
 }

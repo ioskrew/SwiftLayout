@@ -1,6 +1,6 @@
 public struct TupleLayout: Layout {
     
-    public var sublayouts: [Layout]
+    public var sublayouts: [any Layout]
     
     init<L: Layout, L1: Layout>(_ l: L, _ l1: L1) {
         self.sublayouts = [l, l1]

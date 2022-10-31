@@ -10,7 +10,7 @@ import UIKit
 public protocol Layout {
     var view: UIView? { get }
     var anchors: Anchors { get }
-    var sublayouts: [Layout] { get }
+    var sublayouts: [any Layout] { get }
     var option: LayoutOption? { get }
 }
 

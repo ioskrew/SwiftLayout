@@ -15,7 +15,7 @@ class ReferenceTests: XCTestCase {
     
     func testReferenceReleasing() {
         context("prepare") { [weak self] in
-            guard let self = self else { return }
+            guard let self else { return }
             DeinitView.deinitCount = 0
             self.view = SelfReferenceView()
             self.weakView = view
