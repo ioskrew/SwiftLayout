@@ -14,13 +14,13 @@ public struct ListLayout<CurrentLayout: Layout, NextLayout: Layout>: Layout {
         self.nextLayout = nextLayout
     }
 
-    public var sublayouts: [Layout] {
+    public var sublayouts: [Any Layout] {
         [currentLayout] + nextLayout.sublayouts
     }
 }
 
 public struct ListEndLayout: Layout {
-    public let sublayouts: [Layout] = []
+    public let sublayouts: [Any Layout] = []
 
     init() {}
 }
