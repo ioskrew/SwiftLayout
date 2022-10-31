@@ -21,7 +21,7 @@ final class ViewInformation: Hashable {
     var identifier: String? { view?.accessibilityIdentifier }
     
     func addSuperview() {
-        guard let view = view else {
+        guard let view else {
             return
         }
         superview?.addSubview(view)

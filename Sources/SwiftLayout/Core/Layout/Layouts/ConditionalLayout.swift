@@ -11,7 +11,7 @@ public struct ConditionalLayout<True: Layout, False: Layout>: Layout {
         self.layout = layout
     }
     
-    public var sublayouts: [Layout] {
+    public var sublayouts: [any Layout] {
         switch layout {
         case .trueLayout(let layout):
             return [layout]

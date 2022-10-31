@@ -23,7 +23,7 @@ enum LayoutExplorer {
         }
     }
     
-    typealias TraversalHandler = (_ layout: Layout, _ superview: UIView?, _ option: LayoutOption) -> Void
+    typealias TraversalHandler = (_ layout: any Layout, _ superview: UIView?, _ option: LayoutOption) -> Void
     
     static func components<L: Layout>(layout: L) -> [Component] {
         var elements: [Component] = []
@@ -37,7 +37,7 @@ enum LayoutExplorer {
         return elements
     }
     
-    static func traversal(layout: Layout, superview: UIView?, option: LayoutOption, handler: TraversalHandler) {
+    static func traversal(layout: any Layout, superview: UIView?, option: LayoutOption, handler: TraversalHandler) {
         handler(layout, superview, option)
         
         let nextSuperview = layout.view ?? superview
