@@ -7,31 +7,32 @@
 
 import Foundation
 
-public protocol ChainLayoutImplement {}
+public struct ChainLayout<CurrentLayout: Layout, NextLayout: Layout>: Layout {
 
-public struct ChainLayout<CurrentLayout: Layout, NextLayout: Layout>: Layout, ChainLayoutImplement {
-
-    public let currentLayout: CurrentLayout
-    public let nextLayout: NextLayout
+    let currentLayout: CurrentLayout
+    let nextLayout: NextLayout
 
     init(_ currentLayout: CurrentLayout, _ nextLayout: NextLayout) {
         self.currentLayout = currentLayout
         self.nextLayout = nextLayout
     }
-}
-
-extension ChainLayout {
 
     public var sublayouts: [Layout] {
         [currentLayout] + nextLayout.sublayouts
     }
-
 }
 
 public struct ChainCut: Layout {
     public let sublayouts: [Layout] = []
+
+    init() {}
 }
 
 extension ChainLayout where NextLayout == ChainCut {
+    init(_ currentLayout: CurrentLayout) {
+        self.currentLayout = currentLayout
+        self.nextLayout = ChainCut()
+    }
+
     public var sublayouts: [Layout] { [currentLayout] }
 }

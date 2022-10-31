@@ -32,39 +32,39 @@ extension LayoutBuilder {
     }
     
     public static func buildBlock<L: Layout, L1: Layout>(_ l: L, _ l1: L1) -> some Layout {
-        ChainLayout(l, ChainLayout(l1, ChainCut()))
+        ChainLayout(l, ChainLayout(l1))
     }
     
     public static func buildBlock<L: Layout, L1: Layout, L2: Layout>(_ l: L, _ l1: L1, _ l2: L2) -> some Layout {
-        ChainLayout(l, ChainLayout(l1, ChainLayout(l2, ChainCut())))
+        ChainLayout(l, ChainLayout(l1, ChainLayout(l2)))
     }
     
     public static func buildBlock<L: Layout, L1: Layout, L2: Layout, L3: Layout>(_ l: L, _ l1: L1, _ l2: L2, _ l3: L3) -> some Layout {
-        ChainLayout(l, ChainLayout(l1, ChainLayout(l2, ChainLayout(l3, ChainCut()))))
+        ChainLayout(l, ChainLayout(l1, ChainLayout(l2, ChainLayout(l3))))
     }
     
     public static func buildBlock<L: Layout, L1: Layout, L2: Layout, L3: Layout, L4: Layout>(_ l: L, _ l1: L1, _ l2: L2, _ l3: L3, _ l4: L4) -> some Layout {
-        ChainLayout(l, ChainLayout(l1, ChainLayout(l2, ChainLayout(l3, ChainLayout(l4, ChainCut())))))
+        ChainLayout(l, ChainLayout(l1, ChainLayout(l2, ChainLayout(l3, ChainLayout(l4)))))
     }
     
     public static func buildBlock<L: Layout, L1: Layout, L2: Layout, L3: Layout, L4: Layout, L5: Layout>(_ l: L, _ l1: L1, _ l2: L2, _ l3: L3, _ l4: L4, _ l5: L5) -> some Layout {
-        ChainLayout(l, ChainLayout(l1, ChainLayout(l2, ChainLayout(l3, ChainLayout(l4, ChainLayout(l5, ChainCut()))))))
+        ChainLayout(l, ChainLayout(l1, ChainLayout(l2, ChainLayout(l3, ChainLayout(l4, ChainLayout(l5))))))
     }
     
     public static func buildBlock<L: Layout, L1: Layout, L2: Layout, L3: Layout, L4: Layout, L5: Layout, L6: Layout>(_ l: L, _ l1: L1, _ l2: L2, _ l3: L3, _ l4: L4, _ l5: L5, _ l6: L6) -> some Layout {
-        ChainLayout(l, ChainLayout(l1, ChainLayout(l2, ChainLayout(l3, ChainLayout(l4, ChainLayout(l5, ChainLayout(l6, ChainCut())))))))
+        ChainLayout(l, ChainLayout(l1, ChainLayout(l2, ChainLayout(l3, ChainLayout(l4, ChainLayout(l5, ChainLayout(l6)))))))
     }
     
     public static func buildBlock<L: Layout, L1: Layout, L2: Layout, L3: Layout, L4: Layout, L5: Layout, L6: Layout, L7: Layout>(_ l: L, _ l1: L1, _ l2: L2, _ l3: L3, _ l4: L4, _ l5: L5, _ l6: L6, _ l7: L7) -> some Layout {
-        ChainLayout(l, ChainLayout(l1, ChainLayout(l2, ChainLayout(l3, ChainLayout(l4, ChainLayout(l5, ChainLayout(l6, ChainLayout(l7, ChainCut()))))))))
+        ChainLayout(l, ChainLayout(l1, ChainLayout(l2, ChainLayout(l3, ChainLayout(l4, ChainLayout(l5, ChainLayout(l6, ChainLayout(l7))))))))
     }
     
     public static func buildBlock<L: Layout, L1: Layout, L2: Layout, L3: Layout, L4: Layout, L5: Layout, L6: Layout, L7: Layout, L8: Layout>(_ l: L, _ l1: L1, _ l2: L2, _ l3: L3, _ l4: L4, _ l5: L5, _ l6: L6, _ l7: L7, _ l8: L8) -> some Layout {
-        ChainLayout(l, ChainLayout(l1, ChainLayout(l2, ChainLayout(l3, ChainLayout(l4, ChainLayout(l5, ChainLayout(l6, ChainLayout(l7, ChainLayout(l8, ChainCut())))))))))
+        ChainLayout(l, ChainLayout(l1, ChainLayout(l2, ChainLayout(l3, ChainLayout(l4, ChainLayout(l5, ChainLayout(l6, ChainLayout(l7, ChainLayout(l8)))))))))
     }
     
     public static func buildBlock<L: Layout, L1: Layout, L2: Layout, L3: Layout, L4: Layout, L5: Layout, L6: Layout, L7: Layout, L8: Layout, L9: Layout>(_ l: L, _ l1: L1, _ l2: L2, _ l3: L3, _ l4: L4, _ l5: L5, _ l6: L6, _ l7: L7, _ l8: L8, _ l9: L9) -> some Layout {
-        ChainLayout(l, ChainLayout(l1, ChainLayout(l2, ChainLayout(l3, ChainLayout(l4, ChainLayout(l5, ChainLayout(l6, ChainLayout(l7, ChainLayout(l8, ChainLayout(l9, ChainCut()))))))))))
+        ChainLayout(l, ChainLayout(l1, ChainLayout(l2, ChainLayout(l3, ChainLayout(l4, ChainLayout(l5, ChainLayout(l6, ChainLayout(l7, ChainLayout(l8, ChainLayout(l9))))))))))
     }
     
     public static func buildArray<L: Layout>(_ components: [L]) -> ArrayLayout<L> {
