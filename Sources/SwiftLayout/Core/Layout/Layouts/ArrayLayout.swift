@@ -6,7 +6,7 @@ public struct ArrayLayout<L: Layout>: Layout {
         self.layouts = layouts
     }
     
-    public var sublayouts: [Layout] {
+    public var sublayouts: [any Layout] {
         layouts
     }
 }

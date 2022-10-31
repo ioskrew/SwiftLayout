@@ -4,7 +4,7 @@ public protocol ModularLayout: Layout {
 }
 
 extension ModularLayout {
-    public var sublayouts: [Layout] {
+    public var sublayouts: [any Layout] {
         [self.layout]
     }
 }

@@ -3,7 +3,7 @@ private struct _AnyLayoutBox<L: Layout>: AnyLayoutBox {
     
     let layout: L
     
-    var sublayouts: [Layout] {
+    var sublayouts: [any Layout] {
         [layout]
     }
 }
@@ -16,7 +16,7 @@ public struct AnyLayout: Layout {
         self.box = _AnyLayoutBox(layout: layout)
     }
     
-    public var sublayouts: [Layout] {
+    public var sublayouts: [any Layout] {
         box.sublayouts
     }
 }

@@ -41,7 +41,7 @@ struct ViewTags {
     }
     
     func tag<O: AnyObject>(object: O?, options: ViewPrinter.PrintOptions = []) -> String? {
-        guard let object = object else {
+        guard let object else {
             return nil
         }
         return tag(address: AddressDescriptor(object), options: options)
