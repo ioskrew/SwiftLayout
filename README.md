@@ -60,7 +60,7 @@
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "2.7.0"),
+  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "2.8.0"),
 ],
 ```
 
