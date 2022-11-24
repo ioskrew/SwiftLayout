@@ -8,7 +8,7 @@ import XCTest
 
 struct TestAnchors {
     let constraints: [NSLayoutConstraint]
-    init(first: NSObject, second: NSObject? = nil, @AnchorsBuilder anchors: () -> AnchorsContainer) {
+    init(first: NSObject, second: NSObject? = nil, @AnchorsBuilder anchors: () -> Anchors) {
         self.constraints = anchors().constraints(item: first, toItem: second)
     }
 }

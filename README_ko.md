@@ -43,7 +43,12 @@
 # 요구조건
 
 - iOS 13+
-- Swift 5.4+
+
+  | Swift version  | SwiftLayout version                                          |
+  | -------------- | ------------------------------------------------------------ |
+  | **Swift 5.7+** | **2.8.0**                                                    |
+  | Swift 5.5      | [2.7.0](https://github.com/ioskrew/SwiftLayout/releases/tag/2.7.0) |
+  | Swift 5.4      | [2.5.4](https://github.com/ioskrew/SwiftLayout/releases/tag/2.5.4) |
 
 # 설치
 
@@ -51,7 +56,7 @@
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "2.7.0"),
+  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "2.8.0"),
 ],
 ```
 

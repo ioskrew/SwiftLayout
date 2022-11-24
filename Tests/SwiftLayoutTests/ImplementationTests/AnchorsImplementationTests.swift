@@ -96,32 +96,38 @@ extension AnchorsImplementationTests {
         }
         
         @AnchorsBuilder
-        func anchors(attribute: AnchorsXAxisAttribute) -> AnchorsContainer {
+        func anchors(attribute: AnchorsXAxisAttribute) -> Anchors {
             AnchorsExpression(xAxis: attribute)
             
             AnchorsExpression(xAxis: attribute).equalToSuper()
             AnchorsExpression(xAxis: attribute).equalToSuper(attribute: toAttribute(attribute: attribute))
             AnchorsExpression(xAxis: attribute).equalToSuper(attribute: toAttribute(attribute: attribute), constant: constant)
+            AnchorsExpression(xAxis: attribute).equalToSuper(attribute: toAttribute(attribute: attribute), inwardOffset: constant)
             
             AnchorsExpression(xAxis: attribute).greaterThanOrEqualToSuper()
             AnchorsExpression(xAxis: attribute).greaterThanOrEqualToSuper(attribute: toAttribute(attribute: attribute))
             AnchorsExpression(xAxis: attribute).greaterThanOrEqualToSuper(attribute: toAttribute(attribute: attribute), constant: constant)
+            AnchorsExpression(xAxis: attribute).greaterThanOrEqualToSuper(attribute: toAttribute(attribute: attribute), inwardOffset: constant)
             
             AnchorsExpression(xAxis: attribute).lessThanOrEqualToSuper()
             AnchorsExpression(xAxis: attribute).lessThanOrEqualToSuper(attribute: toAttribute(attribute: attribute))
             AnchorsExpression(xAxis: attribute).lessThanOrEqualToSuper(attribute: toAttribute(attribute: attribute), constant: constant)
+            AnchorsExpression(xAxis: attribute).lessThanOrEqualToSuper(attribute: toAttribute(attribute: attribute), inwardOffset: constant)
             
             AnchorsExpression(xAxis: attribute).equalTo(siblingview)
             AnchorsExpression(xAxis: attribute).equalTo(siblingview, attribute: toAttribute(attribute: attribute))
             AnchorsExpression(xAxis: attribute).equalTo(siblingview, attribute: toAttribute(attribute: attribute), constant: constant)
+            AnchorsExpression(xAxis: attribute).equalTo(siblingview, attribute: toAttribute(attribute: attribute), inwardOffset: constant)
             
             AnchorsExpression(xAxis: attribute).greaterThanOrEqualTo(siblingview)
             AnchorsExpression(xAxis: attribute).greaterThanOrEqualTo(siblingview, attribute: toAttribute(attribute: attribute))
             AnchorsExpression(xAxis: attribute).greaterThanOrEqualTo(siblingview, attribute: toAttribute(attribute: attribute), constant: constant)
+            AnchorsExpression(xAxis: attribute).greaterThanOrEqualTo(siblingview, attribute: toAttribute(attribute: attribute), inwardOffset: constant)
             
             AnchorsExpression(xAxis: attribute).lessThanOrEqualTo(siblingview)
             AnchorsExpression(xAxis: attribute).lessThanOrEqualTo(siblingview, attribute: toAttribute(attribute: attribute))
             AnchorsExpression(xAxis: attribute).lessThanOrEqualTo(siblingview, attribute: toAttribute(attribute: attribute), constant: constant)
+            AnchorsExpression(xAxis: attribute).lessThanOrEqualTo(siblingview, attribute: toAttribute(attribute: attribute), inwardOffset: constant)
             
             switch attribute {
             case .left, .right, .leftMargin, .rightMargin:
@@ -129,10 +135,13 @@ extension AnchorsImplementationTests {
             default:
                 AnchorsExpression(xAxis: attribute).equalTo(siblingview.leadingAnchor)
                 AnchorsExpression(xAxis: attribute).equalTo(siblingview.leadingAnchor, constant: constant)
+                AnchorsExpression(xAxis: attribute).equalTo(siblingview.leadingAnchor, inwardOffset: constant)
                 AnchorsExpression(xAxis: attribute).greaterThanOrEqualTo(siblingview.leadingAnchor)
                 AnchorsExpression(xAxis: attribute).greaterThanOrEqualTo(siblingview.leadingAnchor, constant: constant)
+                AnchorsExpression(xAxis: attribute).greaterThanOrEqualTo(siblingview.leadingAnchor, inwardOffset: constant)
                 AnchorsExpression(xAxis: attribute).lessThanOrEqualTo(siblingview.leadingAnchor)
                 AnchorsExpression(xAxis: attribute).lessThanOrEqualTo(siblingview.leadingAnchor, constant: constant)
+                AnchorsExpression(xAxis: attribute).lessThanOrEqualTo(siblingview.leadingAnchor, inwardOffset: constant)
             }
         }
         
@@ -145,26 +154,32 @@ extension AnchorsImplementationTests {
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: superview, attribute: attribute.attribute, multiplier: 1.0, constant: 0.0),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: superview, attribute: toAttribute(attribute: attribute).attribute, multiplier: 1.0, constant: 0.0),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: superview, attribute: toAttribute(attribute: attribute).attribute, multiplier: 1.0, constant: constant),
+                    NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: superview, attribute: toAttribute(attribute: attribute).attribute, multiplier: 1.0, constant: constant * attribute.inwardDirectionFactor),
                     
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: superview, attribute: attribute.attribute, multiplier: 1.0, constant: 0.0),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: superview, attribute: toAttribute(attribute: attribute).attribute, multiplier: 1.0, constant: 0.0),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: superview, attribute: toAttribute(attribute: attribute).attribute, multiplier: 1.0, constant: constant),
-                    
+                    NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: superview, attribute: toAttribute(attribute: attribute).attribute, multiplier: 1.0, constant: constant * attribute.inwardDirectionFactor),
+
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: superview, attribute: attribute.attribute, multiplier: 1.0, constant: 0.0),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: superview, attribute: toAttribute(attribute: attribute).attribute, multiplier: 1.0, constant: 0.0),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: superview, attribute: toAttribute(attribute: attribute).attribute, multiplier: 1.0, constant: constant),
+                    NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: superview, attribute: toAttribute(attribute: attribute).attribute, multiplier: 1.0, constant: constant * attribute.inwardDirectionFactor),
                     
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: siblingview, attribute: attribute.attribute, multiplier: 1.0, constant: 0.0),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: siblingview, attribute: toAttribute(attribute: attribute).attribute, multiplier: 1.0, constant: 0.0),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: siblingview, attribute: toAttribute(attribute: attribute).attribute, multiplier: 1.0, constant: constant),
+                    NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: siblingview, attribute: toAttribute(attribute: attribute).attribute, multiplier: 1.0, constant: constant * attribute.inwardDirectionFactor),
                     
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: siblingview, attribute: attribute.attribute, multiplier: 1.0, constant: 0.0),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: siblingview, attribute: toAttribute(attribute: attribute).attribute, multiplier: 1.0, constant: 0.0),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: siblingview, attribute: toAttribute(attribute: attribute).attribute, multiplier: 1.0, constant: constant),
+                    NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: siblingview, attribute: toAttribute(attribute: attribute).attribute, multiplier: 1.0, constant: constant * attribute.inwardDirectionFactor),
                     
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: siblingview, attribute: attribute.attribute, multiplier: 1.0, constant: 0.0),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: siblingview, attribute: toAttribute(attribute: attribute).attribute, multiplier: 1.0, constant: 0.0),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: siblingview, attribute: toAttribute(attribute: attribute).attribute, multiplier: 1.0, constant: constant),
+                    NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: siblingview, attribute: toAttribute(attribute: attribute).attribute, multiplier: 1.0, constant: constant * attribute.inwardDirectionFactor),
                 ]
                 
                 switch attribute {
@@ -176,10 +191,13 @@ extension AnchorsImplementationTests {
                     expected += [
                         NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: siblingview, attribute: .leading, multiplier: 1.0, constant: 0.0),
                         NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: siblingview, attribute: .leading, multiplier: 1.0, constant: constant),
+                        NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: siblingview, attribute: .leading, multiplier: 1.0, constant: constant * attribute.inwardDirectionFactor),
                         NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: siblingview, attribute: .leading, multiplier: 1.0, constant: 0.0),
                         NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: siblingview, attribute: .leading, multiplier: 1.0, constant: constant),
+                        NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: siblingview, attribute: .leading, multiplier: 1.0, constant: constant * attribute.inwardDirectionFactor),
                         NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: siblingview, attribute: .leading, multiplier: 1.0, constant: 0.0),
                         NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: siblingview, attribute: .leading, multiplier: 1.0, constant: constant),
+                        NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: siblingview, attribute: .leading, multiplier: 1.0, constant: constant * attribute.inwardDirectionFactor),
                     ]
                 }
                 
@@ -192,39 +210,48 @@ extension AnchorsImplementationTests {
         let constant: CGFloat = 11.0
 
         @AnchorsBuilder
-        func anchors(attribute: AnchorsYAxisAttribute) -> AnchorsContainer {
+        func anchors(attribute: AnchorsYAxisAttribute) -> Anchors {
             AnchorsExpression(yAxis: attribute)
             
             AnchorsExpression(yAxis: attribute).equalToSuper()
             AnchorsExpression(yAxis: attribute).equalToSuper(attribute: .top)
             AnchorsExpression(yAxis: attribute).equalToSuper(attribute: .top, constant: constant)
+            AnchorsExpression(yAxis: attribute).equalToSuper(attribute: .top, inwardOffset: constant)
             
             AnchorsExpression(yAxis: attribute).greaterThanOrEqualToSuper()
             AnchorsExpression(yAxis: attribute).greaterThanOrEqualToSuper(attribute: .top)
             AnchorsExpression(yAxis: attribute).greaterThanOrEqualToSuper(attribute: .top, constant: constant)
+            AnchorsExpression(yAxis: attribute).greaterThanOrEqualToSuper(attribute: .top, inwardOffset: constant)
             
             AnchorsExpression(yAxis: attribute).lessThanOrEqualToSuper()
             AnchorsExpression(yAxis: attribute).lessThanOrEqualToSuper(attribute: .top)
             AnchorsExpression(yAxis: attribute).lessThanOrEqualToSuper(attribute: .top, constant: constant)
+            AnchorsExpression(yAxis: attribute).lessThanOrEqualToSuper(attribute: .top, inwardOffset: constant)
             
             AnchorsExpression(yAxis: attribute).equalTo(siblingview)
             AnchorsExpression(yAxis: attribute).equalTo(siblingview, attribute: .top)
             AnchorsExpression(yAxis: attribute).equalTo(siblingview, attribute: .top, constant: constant)
+            AnchorsExpression(yAxis: attribute).equalTo(siblingview, attribute: .top, inwardOffset: constant)
             
             AnchorsExpression(yAxis: attribute).greaterThanOrEqualTo(siblingview)
             AnchorsExpression(yAxis: attribute).greaterThanOrEqualTo(siblingview, attribute: .top)
             AnchorsExpression(yAxis: attribute).greaterThanOrEqualTo(siblingview, attribute: .top, constant: constant)
+            AnchorsExpression(yAxis: attribute).greaterThanOrEqualTo(siblingview, attribute: .top, inwardOffset: constant)
             
             AnchorsExpression(yAxis: attribute).lessThanOrEqualTo(siblingview)
             AnchorsExpression(yAxis: attribute).lessThanOrEqualTo(siblingview, attribute: .top)
             AnchorsExpression(yAxis: attribute).lessThanOrEqualTo(siblingview, attribute: .top, constant: constant)
+            AnchorsExpression(yAxis: attribute).lessThanOrEqualTo(siblingview, attribute: .top, inwardOffset: constant)
             
             AnchorsExpression(yAxis: attribute).equalTo(siblingview.topAnchor)
             AnchorsExpression(yAxis: attribute).equalTo(siblingview.topAnchor, constant: constant)
+            AnchorsExpression(yAxis: attribute).equalTo(siblingview.topAnchor, inwardOffset: constant)
             AnchorsExpression(yAxis: attribute).greaterThanOrEqualTo(siblingview.topAnchor)
             AnchorsExpression(yAxis: attribute).greaterThanOrEqualTo(siblingview.topAnchor, constant: constant)
+            AnchorsExpression(yAxis: attribute).greaterThanOrEqualTo(siblingview.topAnchor, inwardOffset: constant)
             AnchorsExpression(yAxis: attribute).lessThanOrEqualTo(siblingview.topAnchor)
             AnchorsExpression(yAxis: attribute).lessThanOrEqualTo(siblingview.topAnchor, constant: constant)
+            AnchorsExpression(yAxis: attribute).lessThanOrEqualTo(siblingview.topAnchor, inwardOffset: constant)
         }
         
         for attribute in AnchorsYAxisAttribute.allCases {
@@ -236,33 +263,42 @@ extension AnchorsImplementationTests {
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: superview, attribute: attribute.attribute, multiplier: 1.0, constant: 0.0),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1.0, constant: 0.0),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1.0, constant: constant),
+                    NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1.0, constant: constant * attribute.inwardDirectionFactor),
                     
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: superview, attribute: attribute.attribute, multiplier: 1.0, constant: 0.0),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: superview, attribute: .top, multiplier: 1.0, constant: 0.0),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: superview, attribute: .top, multiplier: 1.0, constant: constant),
+                    NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: superview, attribute: .top, multiplier: 1.0, constant: constant * attribute.inwardDirectionFactor),
                     
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: superview, attribute: attribute.attribute, multiplier: 1.0, constant: 0.0),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: superview, attribute: .top, multiplier: 1.0, constant: 0.0),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: superview, attribute: .top, multiplier: 1.0, constant: constant),
+                    NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: superview, attribute: .top, multiplier: 1.0, constant: constant * attribute.inwardDirectionFactor),
                     
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: siblingview, attribute: attribute.attribute, multiplier: 1.0, constant: 0.0),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: siblingview, attribute: .top, multiplier: 1.0, constant: 0.0),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: siblingview, attribute: .top, multiplier: 1.0, constant: constant),
+                    NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: siblingview, attribute: .top, multiplier: 1.0, constant: constant * attribute.inwardDirectionFactor),
                     
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: siblingview, attribute: attribute.attribute, multiplier: 1.0, constant: 0.0),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: siblingview, attribute: .top, multiplier: 1.0, constant: 0.0),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: siblingview, attribute: .top, multiplier: 1.0, constant: constant),
+                    NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: siblingview, attribute: .top, multiplier: 1.0, constant: constant * attribute.inwardDirectionFactor),
                     
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: siblingview, attribute: attribute.attribute, multiplier: 1.0, constant: 0.0),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: siblingview, attribute: .top, multiplier: 1.0, constant: 0.0),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: siblingview, attribute: .top, multiplier: 1.0, constant: constant),
+                    NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: siblingview, attribute: .top, multiplier: 1.0, constant: constant * attribute.inwardDirectionFactor),
                     
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: siblingview, attribute: .top, multiplier: 1.0, constant: 0.0),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: siblingview, attribute: .top, multiplier: 1.0, constant: constant),
+                    NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: siblingview, attribute: .top, multiplier: 1.0, constant: constant * attribute.inwardDirectionFactor),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: siblingview, attribute: .top, multiplier: 1.0, constant: 0.0),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: siblingview, attribute: .top, multiplier: 1.0, constant: constant),
+                    NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: siblingview, attribute: .top, multiplier: 1.0, constant: constant * attribute.inwardDirectionFactor),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: siblingview, attribute: .top, multiplier: 1.0, constant: 0.0),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: siblingview, attribute: .top, multiplier: 1.0, constant: constant),
+                    NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: siblingview, attribute: .top, multiplier: 1.0, constant: constant * attribute.inwardDirectionFactor),
                 ]
                 
                 SLTAssertConstraintsEqual(constraints, expected, tags)
@@ -274,7 +310,7 @@ extension AnchorsImplementationTests {
         let constant: CGFloat = 11.0
         
         @AnchorsBuilder
-        func anchors(attribute: AnchorsDimensionAttribute) -> AnchorsContainer {
+        func anchors(attribute: AnchorsDimensionAttribute) -> Anchors {
             AnchorsExpression(dimensions: attribute)
 
             AnchorsExpression(dimensions: attribute).equalToSuper()
@@ -302,6 +338,8 @@ extension AnchorsImplementationTests {
             AnchorsExpression(dimensions: attribute).lessThanOrEqualTo(siblingview, attribute: .width, constant: constant)
             
             AnchorsExpression(dimensions: attribute).equalTo(constant: constant)
+            AnchorsExpression(dimensions: attribute).greaterThanOrEqualTo(constant: constant)
+            AnchorsExpression(dimensions: attribute).lessThanOrEqualTo(constant: constant)
             
             AnchorsExpression(dimensions: attribute).equalTo(siblingview.widthAnchor)
             AnchorsExpression(dimensions: attribute).equalTo(siblingview.widthAnchor, constant: constant)
@@ -342,6 +380,8 @@ extension AnchorsImplementationTests {
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: siblingview, attribute: .width, multiplier: 1.0, constant: constant),
                     
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: constant),
+                    NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: constant),
+                    NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: constant),
                     
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: siblingview, attribute: .width, multiplier: 1.0, constant: 0.0),
                     NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: siblingview, attribute: .width, multiplier: 1.0, constant: constant),
@@ -358,75 +398,46 @@ extension AnchorsImplementationTests {
     
     func testExpressionConstantAndMultiplier() {
         let constant: CGFloat = 11.0
-        let newConstant: CGFloat = 37.0
         let multiplier: CGFloat = 0.5
         
         @AnchorsBuilder
-        var anchors: AnchorsContainer {
+        var anchors: Anchors {
             AnchorsExpression(xAxis: .leading).equalToSuper(attribute: .trailing, constant: constant)
             AnchorsExpression(xAxis: .leading).equalToSuper(attribute: .trailing, constant: constant).multiplier(multiplier)
-            AnchorsExpression(xAxis: .leading).equalToSuper(attribute: .trailing, constant: constant).constant(newConstant)
-            AnchorsExpression(xAxis: .leading).equalToSuper(attribute: .trailing, constant: constant).constant(newConstant).multiplier(multiplier)
             AnchorsExpression(xAxis: .leading).equalTo(siblingview, attribute: .trailing, constant: constant)
             AnchorsExpression(xAxis: .leading).equalTo(siblingview, attribute: .trailing, constant: constant).multiplier(multiplier)
-            AnchorsExpression(xAxis: .leading).equalTo(siblingview, attribute: .trailing, constant: constant).constant(newConstant)
-            AnchorsExpression(xAxis: .leading).equalTo(siblingview, attribute: .trailing, constant: constant).constant(newConstant).multiplier(multiplier)
             
             AnchorsExpression(yAxis: .top).equalToSuper(attribute: .bottom, constant: constant)
             AnchorsExpression(yAxis: .top).equalToSuper(attribute: .bottom, constant: constant).multiplier(multiplier)
-            AnchorsExpression(yAxis: .top).equalToSuper(attribute: .bottom, constant: constant).constant(newConstant)
-            AnchorsExpression(yAxis: .top).equalToSuper(attribute: .bottom, constant: constant).constant(newConstant).multiplier(multiplier)
             AnchorsExpression(yAxis: .top).equalTo(siblingview, attribute: .bottom, constant: constant)
             AnchorsExpression(yAxis: .top).equalTo(siblingview, attribute: .bottom, constant: constant).multiplier(multiplier)
-            AnchorsExpression(yAxis: .top).equalTo(siblingview, attribute: .bottom, constant: constant).constant(newConstant)
-            AnchorsExpression(yAxis: .top).equalTo(siblingview, attribute: .bottom, constant: constant).constant(newConstant).multiplier(multiplier)
             
             AnchorsExpression(dimensions: .width).equalTo(constant: constant)
             AnchorsExpression(dimensions: .width).equalTo(constant: constant).multiplier(multiplier)
-            AnchorsExpression(dimensions: .width).equalTo(constant: constant).constant(newConstant)
-            AnchorsExpression(dimensions: .width).equalTo(constant: constant).constant(newConstant).multiplier(multiplier)
             AnchorsExpression(dimensions: .width).equalToSuper(attribute: .height, constant: constant)
             AnchorsExpression(dimensions: .width).equalToSuper(attribute: .height, constant: constant).multiplier(multiplier)
-            AnchorsExpression(dimensions: .width).equalToSuper(attribute: .height, constant: constant).constant(newConstant)
-            AnchorsExpression(dimensions: .width).equalToSuper(attribute: .height, constant: constant).constant(newConstant).multiplier(multiplier)
             AnchorsExpression(dimensions: .width).equalTo(siblingview, attribute: .height, constant: constant)
             AnchorsExpression(dimensions: .width).equalTo(siblingview, attribute: .height, constant: constant).multiplier(multiplier)
-            AnchorsExpression(dimensions: .width).equalTo(siblingview, attribute: .height, constant: constant).constant(newConstant)
-            AnchorsExpression(dimensions: .width).equalTo(siblingview, attribute: .height, constant: constant).constant(newConstant).multiplier(multiplier)
         }
         
         let constraints = anchors.constraints(item: subview, toItem: superview)
         let expected = [
             NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1.0, constant: constant),
             NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: multiplier, constant: constant),
-            NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1.0, constant: newConstant),
-            NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: multiplier, constant: newConstant),
             NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: siblingview, attribute: .trailing, multiplier: 1.0, constant: constant),
             NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: siblingview, attribute: .trailing, multiplier: multiplier, constant: constant),
-            NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: siblingview, attribute: .trailing, multiplier: 1.0, constant: newConstant),
-            NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: siblingview, attribute: .trailing, multiplier: multiplier, constant: newConstant),
             
             NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1.0, constant: constant),
             NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: multiplier, constant: constant),
-            NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1.0, constant: newConstant),
-            NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: multiplier, constant: newConstant),
             NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: siblingview, attribute: .bottom, multiplier: 1.0, constant: constant),
             NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: siblingview, attribute: .bottom, multiplier: multiplier, constant: constant),
-            NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: siblingview, attribute: .bottom, multiplier: 1.0, constant: newConstant),
-            NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: siblingview, attribute: .bottom, multiplier: multiplier, constant: newConstant),
             
             NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: constant),
             NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: multiplier, constant: constant),
-            NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: newConstant),
-            NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: multiplier, constant: newConstant),
             NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: superview, attribute: .height, multiplier: 1.0, constant: constant),
             NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: superview, attribute: .height, multiplier: multiplier, constant: constant),
-            NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: superview, attribute: .height, multiplier: 1.0, constant: newConstant),
-            NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: superview, attribute: .height, multiplier: multiplier, constant: newConstant),
             NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: siblingview, attribute: .height, multiplier: 1.0, constant: constant),
             NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: siblingview, attribute: .height, multiplier: multiplier, constant: constant),
-            NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: siblingview, attribute: .height, multiplier: 1.0, constant: newConstant),
-            NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: siblingview, attribute: .height, multiplier: multiplier, constant: newConstant),
         ]
 
         SLTAssertConstraintsEqual(constraints, expected, tags)
@@ -434,61 +445,39 @@ extension AnchorsImplementationTests {
     
     func testExpressionConstantAndPriority() {
         let constant: CGFloat = 11.0
-        let newConstant: CGFloat = 37.0
         let priority: UILayoutPriority = .defaultLow
         
         @AnchorsBuilder
-        var anchors: AnchorsContainer {
+        var anchors: Anchors {
             AnchorsExpression(xAxis: .leading).equalToSuper(attribute: .trailing, constant: constant)
             AnchorsExpression(xAxis: .leading).equalToSuper(attribute: .trailing, constant: constant).priority(priority)
-            AnchorsExpression(xAxis: .leading).equalToSuper(attribute: .trailing, constant: constant).constant(newConstant)
-            AnchorsExpression(xAxis: .leading).equalToSuper(attribute: .trailing, constant: constant).constant(newConstant).priority(priority)
             AnchorsExpression(xAxis: .leading).equalTo(siblingview, attribute: .trailing, constant: constant)
             AnchorsExpression(xAxis: .leading).equalTo(siblingview, attribute: .trailing, constant: constant).priority(priority)
-            AnchorsExpression(xAxis: .leading).equalTo(siblingview, attribute: .trailing, constant: constant).constant(newConstant)
-            AnchorsExpression(xAxis: .leading).equalTo(siblingview, attribute: .trailing, constant: constant).constant(newConstant).priority(priority)
             
             AnchorsExpression(yAxis: .top).equalToSuper(attribute: .bottom, constant: constant)
             AnchorsExpression(yAxis: .top).equalToSuper(attribute: .bottom, constant: constant).priority(priority)
-            AnchorsExpression(yAxis: .top).equalToSuper(attribute: .bottom, constant: constant).constant(newConstant)
-            AnchorsExpression(yAxis: .top).equalToSuper(attribute: .bottom, constant: constant).constant(newConstant).priority(priority)
             AnchorsExpression(yAxis: .top).equalTo(siblingview, attribute: .bottom, constant: constant)
             AnchorsExpression(yAxis: .top).equalTo(siblingview, attribute: .bottom, constant: constant).priority(priority)
-            AnchorsExpression(yAxis: .top).equalTo(siblingview, attribute: .bottom, constant: constant).constant(newConstant)
-            AnchorsExpression(yAxis: .top).equalTo(siblingview, attribute: .bottom, constant: constant).constant(newConstant).priority(priority)
             
             AnchorsExpression(dimensions: .width).equalTo(constant: constant)
             AnchorsExpression(dimensions: .width).equalTo(constant: constant).priority(priority)
-            AnchorsExpression(dimensions: .width).equalTo(constant: constant).constant(newConstant)
-            AnchorsExpression(dimensions: .width).equalTo(constant: constant).constant(newConstant).priority(priority)
             AnchorsExpression(dimensions: .width).equalToSuper(attribute: .height, constant: constant)
             AnchorsExpression(dimensions: .width).equalToSuper(attribute: .height, constant: constant).priority(priority)
-            AnchorsExpression(dimensions: .width).equalToSuper(attribute: .height, constant: constant).constant(newConstant)
-            AnchorsExpression(dimensions: .width).equalToSuper(attribute: .height, constant: constant).constant(newConstant).priority(priority)
             AnchorsExpression(dimensions: .width).equalTo(siblingview, attribute: .height, constant: constant)
             AnchorsExpression(dimensions: .width).equalTo(siblingview, attribute: .height, constant: constant).priority(priority)
-            AnchorsExpression(dimensions: .width).equalTo(siblingview, attribute: .height, constant: constant).constant(newConstant)
-            AnchorsExpression(dimensions: .width).equalTo(siblingview, attribute: .height, constant: constant).constant(newConstant).priority(priority)
         }
         
         let constraints = anchors.constraints(item: subview, toItem: superview)
         let expected: [NSLayoutConstraint] = [
             NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1.0, constant: constant),
-            NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1.0, constant: newConstant),
             NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: siblingview, attribute: .trailing, multiplier: 1.0, constant: constant),
-            NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: siblingview, attribute: .trailing, multiplier: 1.0, constant: newConstant),
-            
+
             NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1.0, constant: constant),
-            NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1.0, constant: newConstant),
             NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: siblingview, attribute: .bottom, multiplier: 1.0, constant: constant),
-            NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: siblingview, attribute: .bottom, multiplier: 1.0, constant: newConstant),
-            
+
             NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: constant),
-            NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: newConstant),
             NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: superview, attribute: .height, multiplier: 1.0, constant: constant),
-            NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: superview, attribute: .height, multiplier: 1.0, constant: newConstant),
             NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: siblingview, attribute: .height, multiplier: 1.0, constant: constant),
-            NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: siblingview, attribute: .height, multiplier: 1.0, constant: newConstant),
         ].flatMap { constraint -> [NSLayoutConstraint] in
             let priorityed = NSLayoutConstraint(
                 item: constraint.firstItem!, attribute: constraint.firstAttribute,
@@ -506,7 +495,7 @@ extension AnchorsImplementationTests {
     func testExpressionChaining() {
         context("testExpressionChaining xAxis") {
             @AnchorsBuilder
-            var anchors: AnchorsContainer {
+            var anchors: Anchors {
                 AnchorsExpression<AnchorsXAxisAttribute>().centerX.leading.trailing.left.right.centerXWithinMargins.leftMargin.rightMargin.leadingMargin.trailingMargin
             }
             let constraints = anchors.constraints(item: subview, toItem: superview)
@@ -528,7 +517,7 @@ extension AnchorsImplementationTests {
         
         context("testExpressionChaining yAxis") {
             @AnchorsBuilder
-            var anchors: AnchorsContainer {
+            var anchors: Anchors {
                 AnchorsExpression<AnchorsYAxisAttribute>().centerY.top.bottom.firstBaseline.lastBaseline.centerYWithinMargins.topMargin.bottomMargin
                 
                 
@@ -548,9 +537,9 @@ extension AnchorsImplementationTests {
             SLTAssertConstraintsEqual(constraints, expected, tags)
         }
         
-        context("testExpressionChaining xAxis") {
+        context("testExpressionChaining dimension") {
             @AnchorsBuilder
-            var anchors: AnchorsContainer {
+            var anchors: Anchors {
                 AnchorsExpression<AnchorsDimensionAttribute>().height.width
             }
             let constraints = anchors.constraints(item: subview, toItem: superview)
@@ -564,10 +553,265 @@ extension AnchorsImplementationTests {
         }
 
     }
-    
+
+    func testMixedExpressionFromAnchorsExpression() {
+        context("testMixExpression from xAxis") {
+            @AnchorsBuilder
+            var anchors: Anchors {
+                AnchorsExpression<AnchorsXAxisAttribute>().centerY
+                AnchorsExpression<AnchorsXAxisAttribute>().top
+                AnchorsExpression<AnchorsXAxisAttribute>().bottom
+                AnchorsExpression<AnchorsXAxisAttribute>().firstBaseline
+                AnchorsExpression<AnchorsXAxisAttribute>().lastBaseline
+                AnchorsExpression<AnchorsXAxisAttribute>().centerYWithinMargins
+                AnchorsExpression<AnchorsXAxisAttribute>().topMargin
+                AnchorsExpression<AnchorsXAxisAttribute>().bottomMargin
+                AnchorsExpression<AnchorsXAxisAttribute>().height
+                AnchorsExpression<AnchorsXAxisAttribute>().width
+            }
+            let constraints = anchors.constraints(item: subview, toItem: superview)
+            let expected = [
+                NSLayoutConstraint(item: subview, attribute: .centerY, relatedBy: .equal, toItem: superview, attribute: .centerY, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .firstBaseline, relatedBy: .equal, toItem: superview, attribute: .firstBaseline, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .lastBaseline, relatedBy: .equal, toItem: superview, attribute: .lastBaseline, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .centerYWithinMargins, relatedBy: .equal, toItem: superview, attribute: .centerYWithinMargins, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .topMargin, relatedBy: .equal, toItem: superview, attribute: .topMargin, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .bottomMargin, relatedBy: .equal, toItem: superview, attribute: .bottomMargin, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .height, relatedBy: .equal, toItem: superview, attribute: .height, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: superview, attribute: .width, multiplier: 1.0, constant: 0.0),
+            ]
+
+            SLTAssertConstraintsEqual(constraints, expected, tags)
+        }
+
+        context("testMixExpression from yAxis") {
+            @AnchorsBuilder
+            var anchors: Anchors {
+                AnchorsExpression<AnchorsYAxisAttribute>().centerX
+                AnchorsExpression<AnchorsYAxisAttribute>().leading
+                AnchorsExpression<AnchorsYAxisAttribute>().trailing
+                AnchorsExpression<AnchorsYAxisAttribute>().left
+                AnchorsExpression<AnchorsYAxisAttribute>().right
+                AnchorsExpression<AnchorsYAxisAttribute>().centerXWithinMargins
+                AnchorsExpression<AnchorsYAxisAttribute>().leftMargin
+                AnchorsExpression<AnchorsYAxisAttribute>().rightMargin
+                AnchorsExpression<AnchorsYAxisAttribute>().leadingMargin
+                AnchorsExpression<AnchorsYAxisAttribute>().trailingMargin
+                AnchorsExpression<AnchorsYAxisAttribute>().height
+                AnchorsExpression<AnchorsYAxisAttribute>().width
+            }
+            let constraints = anchors.constraints(item: subview, toItem: superview)
+            let expected = [
+                NSLayoutConstraint(item: subview, attribute: .centerX, relatedBy: .equal, toItem: superview, attribute: .centerX, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .left, relatedBy: .equal, toItem: superview, attribute: .left, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .right, relatedBy: .equal, toItem: superview, attribute: .right, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .centerXWithinMargins, relatedBy: .equal, toItem: superview, attribute: .centerXWithinMargins, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .leftMargin, relatedBy: .equal, toItem: superview, attribute: .leftMargin, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .rightMargin, relatedBy: .equal, toItem: superview, attribute: .rightMargin, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .leadingMargin, relatedBy: .equal, toItem: superview, attribute: .leadingMargin, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .trailingMargin, relatedBy: .equal, toItem: superview, attribute: .trailingMargin, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .height, relatedBy: .equal, toItem: superview, attribute: .height, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: superview, attribute: .width, multiplier: 1.0, constant: 0.0),
+            ]
+
+            SLTAssertConstraintsEqual(constraints, expected, tags)
+        }
+
+        context("testMixExpression from dimension") {
+            @AnchorsBuilder
+            var anchors: Anchors {
+                AnchorsExpression<AnchorsDimensionAttribute>().centerX
+                AnchorsExpression<AnchorsDimensionAttribute>().leading
+                AnchorsExpression<AnchorsDimensionAttribute>().trailing
+                AnchorsExpression<AnchorsDimensionAttribute>().left
+                AnchorsExpression<AnchorsDimensionAttribute>().right
+                AnchorsExpression<AnchorsDimensionAttribute>().centerXWithinMargins
+                AnchorsExpression<AnchorsDimensionAttribute>().leftMargin
+                AnchorsExpression<AnchorsDimensionAttribute>().rightMargin
+                AnchorsExpression<AnchorsDimensionAttribute>().leadingMargin
+                AnchorsExpression<AnchorsDimensionAttribute>().trailingMargin
+                AnchorsExpression<AnchorsDimensionAttribute>().centerY
+                AnchorsExpression<AnchorsDimensionAttribute>().top
+                AnchorsExpression<AnchorsDimensionAttribute>().bottom
+                AnchorsExpression<AnchorsDimensionAttribute>().firstBaseline
+                AnchorsExpression<AnchorsDimensionAttribute>().lastBaseline
+                AnchorsExpression<AnchorsDimensionAttribute>().centerYWithinMargins
+                AnchorsExpression<AnchorsDimensionAttribute>().topMargin
+                AnchorsExpression<AnchorsDimensionAttribute>().bottomMargin
+            }
+            let constraints = anchors.constraints(item: subview, toItem: superview)
+            let expected = [
+                NSLayoutConstraint(item: subview, attribute: .centerX, relatedBy: .equal, toItem: superview, attribute: .centerX, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .left, relatedBy: .equal, toItem: superview, attribute: .left, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .right, relatedBy: .equal, toItem: superview, attribute: .right, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .centerXWithinMargins, relatedBy: .equal, toItem: superview, attribute: .centerXWithinMargins, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .leftMargin, relatedBy: .equal, toItem: superview, attribute: .leftMargin, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .rightMargin, relatedBy: .equal, toItem: superview, attribute: .rightMargin, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .leadingMargin, relatedBy: .equal, toItem: superview, attribute: .leadingMargin, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .trailingMargin, relatedBy: .equal, toItem: superview, attribute: .trailingMargin, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .centerY, relatedBy: .equal, toItem: superview, attribute: .centerY, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .firstBaseline, relatedBy: .equal, toItem: superview, attribute: .firstBaseline, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .lastBaseline, relatedBy: .equal, toItem: superview, attribute: .lastBaseline, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .centerYWithinMargins, relatedBy: .equal, toItem: superview, attribute: .centerYWithinMargins, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .topMargin, relatedBy: .equal, toItem: superview, attribute: .topMargin, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: .bottomMargin, relatedBy: .equal, toItem: superview, attribute: .bottomMargin, multiplier: 1.0, constant: 0.0),
+            ]
+
+            SLTAssertConstraintsEqual(constraints, expected, tags)
+        }
+    }
+
+    func testMixedExpressionConstraints() {
+        let constant: CGFloat = 11.0
+        let attributes: [any AnchorsAttribute] = [
+            AnchorsXAxisAttribute.centerX,
+            AnchorsXAxisAttribute.leading,
+            AnchorsXAxisAttribute.trailing,
+            AnchorsXAxisAttribute.left,
+            AnchorsXAxisAttribute.right,
+            AnchorsXAxisAttribute.centerXWithinMargins,
+            AnchorsXAxisAttribute.leftMargin,
+            AnchorsXAxisAttribute.rightMargin,
+            AnchorsXAxisAttribute.leadingMargin,
+            AnchorsXAxisAttribute.trailingMargin,
+            AnchorsYAxisAttribute.centerY,
+            AnchorsYAxisAttribute.top,
+            AnchorsYAxisAttribute.bottom,
+            AnchorsYAxisAttribute.firstBaseline,
+            AnchorsYAxisAttribute.lastBaseline,
+            AnchorsYAxisAttribute.centerYWithinMargins,
+            AnchorsYAxisAttribute.topMargin,
+            AnchorsYAxisAttribute.bottomMargin,
+            AnchorsDimensionAttribute.height,
+            AnchorsDimensionAttribute.width,
+        ]
+
+        for attribute in attributes {
+            let mixedExpression: AnchorsMixedExpression = AnchorsMixedExpression(from: AnchorsExpression<AnchorsXAxisAttribute>(), appendedAttribute: attribute)
+            
+            @AnchorsBuilder
+            var anchors: Anchors {
+                mixedExpression.equalToSuper()
+                mixedExpression.equalToSuper(constant: constant)
+                mixedExpression.equalToSuper(inwardOffset: constant)
+
+                mixedExpression.greaterThanOrEqualToSuper()
+                mixedExpression.greaterThanOrEqualToSuper(constant: constant)
+                mixedExpression.greaterThanOrEqualToSuper(inwardOffset: constant)
+
+                mixedExpression.lessThanOrEqualToSuper()
+                mixedExpression.lessThanOrEqualToSuper(constant: constant)
+                mixedExpression.lessThanOrEqualToSuper(inwardOffset: constant)
+
+                mixedExpression.equalTo(siblingview)
+                mixedExpression.equalTo(siblingview, constant: constant)
+                mixedExpression.equalTo(siblingview, inwardOffset: constant)
+
+                mixedExpression.greaterThanOrEqualTo(siblingview)
+                mixedExpression.greaterThanOrEqualTo(siblingview, constant: constant)
+                mixedExpression.greaterThanOrEqualTo(siblingview, inwardOffset: constant)
+
+                mixedExpression.lessThanOrEqualTo(siblingview)
+                mixedExpression.lessThanOrEqualTo(siblingview, constant: constant)
+                mixedExpression.lessThanOrEqualTo(siblingview, inwardOffset: constant)
+            }
+            
+            let constrints = anchors.constraints(item: subview, toItem: superview)
+            let expected = [
+                NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: superview, attribute: attribute.attribute, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: superview, attribute: attribute.attribute, multiplier: 1.0, constant: constant),
+                NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: superview, attribute: attribute.attribute, multiplier: 1.0, constant: constant * attribute.inwardDirectionFactor),
+
+                NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: superview, attribute: attribute.attribute, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: superview, attribute: attribute.attribute, multiplier: 1.0, constant: constant),
+                NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: superview, attribute: attribute.attribute, multiplier: 1.0, constant: constant * attribute.inwardDirectionFactor),
+
+                NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: superview, attribute: attribute.attribute, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: superview, attribute: attribute.attribute, multiplier: 1.0, constant: constant),
+                NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: superview, attribute: attribute.attribute, multiplier: 1.0, constant: constant * attribute.inwardDirectionFactor),
+
+                NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: siblingview, attribute: attribute.attribute, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: siblingview, attribute: attribute.attribute, multiplier: 1.0, constant: constant),
+                NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .equal, toItem: siblingview, attribute: attribute.attribute, multiplier: 1.0, constant: constant * attribute.inwardDirectionFactor),
+
+                NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: siblingview, attribute: attribute.attribute, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: siblingview, attribute: attribute.attribute, multiplier: 1.0, constant: constant),
+                NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .greaterThanOrEqual, toItem: siblingview, attribute: attribute.attribute, multiplier: 1.0, constant: constant * attribute.inwardDirectionFactor),
+
+                NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: siblingview, attribute: attribute.attribute, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: siblingview, attribute: attribute.attribute, multiplier: 1.0, constant: constant),
+                NSLayoutConstraint(item: subview, attribute: attribute.attribute, relatedBy: .lessThanOrEqual, toItem: siblingview, attribute: attribute.attribute, multiplier: 1.0, constant: constant * attribute.inwardDirectionFactor),
+            ]
+
+            SLTAssertConstraintsEqual(constrints, expected, tags)
+        }
+    }
+
+    func testMixedExpressionChaining() {
+        @AnchorsBuilder
+        var anchors: Anchors {
+            AnchorsMixedExpression(from: AnchorsExpression<AnchorsXAxisAttribute>(), appendedAttribute: AnchorsXAxisAttribute.centerX)
+                .centerX
+                .leading
+                .trailing
+                .left
+                .right
+                .centerXWithinMargins
+                .leftMargin
+                .rightMargin
+                .leadingMargin
+                .trailingMargin
+                .centerY
+                .top
+                .bottom
+                .firstBaseline
+                .lastBaseline
+                .centerYWithinMargins
+                .topMargin
+                .bottomMargin
+                .height
+                .width
+        }
+        let constraints = anchors.constraints(item: subview, toItem: superview)
+        let expected = [
+            NSLayoutConstraint(item: subview, attribute: .centerX, relatedBy: .equal, toItem: superview, attribute: .centerX, multiplier: 1.0, constant: 0.0),
+
+            NSLayoutConstraint(item: subview, attribute: .centerX, relatedBy: .equal, toItem: superview, attribute: .centerX, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .left, relatedBy: .equal, toItem: superview, attribute: .left, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .right, relatedBy: .equal, toItem: superview, attribute: .right, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .centerXWithinMargins, relatedBy: .equal, toItem: superview, attribute: .centerXWithinMargins, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .leftMargin, relatedBy: .equal, toItem: superview, attribute: .leftMargin, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .rightMargin, relatedBy: .equal, toItem: superview, attribute: .rightMargin, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .leadingMargin, relatedBy: .equal, toItem: superview, attribute: .leadingMargin, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .trailingMargin, relatedBy: .equal, toItem: superview, attribute: .trailingMargin, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .centerY, relatedBy: .equal, toItem: superview, attribute: .centerY, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .firstBaseline, relatedBy: .equal, toItem: superview, attribute: .firstBaseline, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .lastBaseline, relatedBy: .equal, toItem: superview, attribute: .lastBaseline, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .centerYWithinMargins, relatedBy: .equal, toItem: superview, attribute: .centerYWithinMargins, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .topMargin, relatedBy: .equal, toItem: superview, attribute: .topMargin, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .bottomMargin, relatedBy: .equal, toItem: superview, attribute: .bottomMargin, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .height, relatedBy: .equal, toItem: superview, attribute: .height, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: superview, attribute: .width, multiplier: 1.0, constant: 0.0),
+        ]
+
+        SLTAssertConstraintsEqual(constraints, expected, tags)
+    }
+
     func testExpressionSafeArea() {
         @AnchorsBuilder
-        var anchors: AnchorsContainer {
+        var anchors: Anchors {
             for attribute in AnchorsXAxisAttribute.allCases {
                 AnchorsExpression(xAxis: attribute).equalTo(superview.safeAreaLayoutGuide)
             }
@@ -596,7 +840,7 @@ extension AnchorsImplementationTests {
 extension AnchorsImplementationTests {
     func testStaticsSingle() {
         @AnchorsBuilder
-        var anchors: AnchorsContainer {
+        var anchors: Anchors {
             Anchors.centerX
             Anchors.leading
             Anchors.trailing
@@ -649,7 +893,7 @@ extension AnchorsImplementationTests {
         let offset: CGFloat = 13
         
         @AnchorsBuilder
-        var anchors: AnchorsContainer {
+        var anchors: Anchors {
             Anchors.horizontal()
             Anchors.horizontal(offset: 13)
             Anchors.horizontal(siblingview)
@@ -674,7 +918,7 @@ extension AnchorsImplementationTests {
         let offset: CGFloat = 13
         
         @AnchorsBuilder
-        var anchors: AnchorsContainer {
+        var anchors: Anchors {
             Anchors.vertical()
             Anchors.vertical(offset: offset)
             Anchors.vertical(siblingview)
@@ -699,7 +943,7 @@ extension AnchorsImplementationTests {
         let offset: CGFloat = 13
         
         @AnchorsBuilder
-        var anchors: AnchorsContainer {
+        var anchors: Anchors {
             Anchors.allSides()
             Anchors.allSides(offset: offset)
             Anchors.allSides(siblingview)
@@ -732,7 +976,7 @@ extension AnchorsImplementationTests {
         let offset: CGFloat = 13
         
         @AnchorsBuilder
-        var anchors: AnchorsContainer {
+        var anchors: Anchors {
             Anchors.cap()
             Anchors.cap(offset: offset)
             Anchors.cap(siblingview)
@@ -761,7 +1005,7 @@ extension AnchorsImplementationTests {
         let offset: CGFloat = 13
         
         @AnchorsBuilder
-        var anchors: AnchorsContainer {
+        var anchors: Anchors {
             Anchors.shoe()
             Anchors.shoe(offset: offset)
             Anchors.shoe(siblingview)
@@ -791,12 +1035,15 @@ extension AnchorsImplementationTests {
         let height: CGFloat = 37
         
         @AnchorsBuilder
-        var anchors: AnchorsContainer {
+        var anchors: Anchors {
+            Anchors.size(CGSize(width: width, height: height))
             Anchors.size(width: width, height: height)
             Anchors.size(siblingview, width: width, height: height)
         }
         let constraints = anchors.constraints(item: subview, toItem: superview)
         let expected = [
+            NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: width),
+            NSLayoutConstraint(item: subview, attribute: .height, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: height),
             NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: width),
             NSLayoutConstraint(item: subview, attribute: .height, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: height),
             NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: siblingview, attribute: .width, multiplier: 1.0, constant: width),
@@ -811,7 +1058,7 @@ extension AnchorsImplementationTests {
         let offsetY: CGFloat = 37
         
         @AnchorsBuilder
-        var anchors: AnchorsContainer {
+        var anchors: Anchors {
             Anchors.center()
             Anchors.center(offsetX: offsetX, offsetY: offsetY)
             Anchors.center(siblingview)
@@ -840,7 +1087,7 @@ extension AnchorsImplementationTests {
         let multiplier: CGFloat = 0.25
         
         @AnchorsBuilder
-        var anchors: AnchorsContainer {
+        var anchors: Anchors {
             Anchors.size(siblingview, width: width, height: height).multiplier(multiplier)
             Anchors.center(offsetX: offsetX, offsetY: offsetY).multiplier(multiplier)
         }
@@ -863,7 +1110,7 @@ extension AnchorsImplementationTests {
         let priority: UILayoutPriority = .defaultLow
         
         @AnchorsBuilder
-        var anchors: AnchorsContainer {
+        var anchors: Anchors {
             Anchors.size(siblingview, width: width, height: height).priority(priority)
             Anchors.center(offsetX: offsetX, offsetY: offsetY).priority(priority)
         }

@@ -26,7 +26,7 @@ extension Optional where Wrapped == UIImage {
 
 extension Optional where Wrapped == UIFont {
     var configuration: String {
-        guard let self = self else {
+        guard let self else {
             return "nil"
         }
 
@@ -37,7 +37,7 @@ extension Optional where Wrapped == UIFont {
 
 extension Optional where Wrapped == UIColor {
     var configuration: String {
-        guard let self = self else {
+        guard let self else {
             return "nil"
         }
 

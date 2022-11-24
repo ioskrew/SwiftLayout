@@ -9,14 +9,14 @@ import UIKit
 
 public protocol Layout {
     var view: UIView? { get }
-    var anchors: AnchorsContainer { get }
-    var sublayouts: [Layout] { get }
+    var anchors: Anchors { get }
+    var sublayouts: [any Layout] { get }
     var option: LayoutOption? { get }
 }
 
 extension Layout {
     public var view: UIView? { nil }
-    public var anchors: AnchorsContainer { AnchorsContainer() }
+    public var anchors: Anchors { Anchors() }
     public var option: LayoutOption? { nil }
 }
 

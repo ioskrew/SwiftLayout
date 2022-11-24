@@ -6,7 +6,7 @@ public struct OptionalLayout<L: Layout>: Layout {
         self.layout = layout
     }
     
-    public var sublayouts: [Layout] {
+    public var sublayouts: [any Layout] {
         switch layout {
         case let .some(layout):
             return [layout]
