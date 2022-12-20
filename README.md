@@ -100,8 +100,8 @@ subview.addSubview(subsub2view)
 
 ## AnchorsBuilder
 
-`AnchorsBuilder`` is a DSL builder for Anchors types that aids in the creation of autolayout constraints between views.
-It is mainly used within anchors, a method of Layout.
+`AnchorsBuilder` is a DSL builder for `Anchors` types that aids in the creation of autolayout constraints between views.
+It is mainly used within `anchors`, a method of Layout.
 
 ### Anchors
 
