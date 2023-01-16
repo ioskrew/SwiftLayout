@@ -66,7 +66,7 @@ dependencies: [
 - `NSLayoutConstraint`, `NSLayoutAnchor` 를 대체하는 DSL이 제공됩니다.
 - view와 constraint에 대한 선택적 갱신이 가능합니다.
 - `if else`, `swift case`, `for` 등 조건문, 반복문을 통한 view, constraint 설정이 가능합니다.
-- 값의 변경을 통한 layout 개신을 자동으로 할 수 있게 도와주는 propertyWrapper를 제공합니다.
+- 값의 변경을 통한 layout 갱신을 자동으로 할 수 있게 도와주는 propertyWrapper를 제공합니다.
 - constraint의 연결을 돕는 다양한 API 제공합니다.
 
 # 사용법
