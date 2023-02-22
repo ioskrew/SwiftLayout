@@ -101,9 +101,8 @@ extension _UIViewExtension where Self: UIView {
     /// - Parameter config: A configuration block for this view.
     /// - Returns: The view itself with the configuration applied
     ///
-    public func config(_ config: (Self) -> Void) -> Self {
-        config(self)
-        return self
+    public func config(_ config: @escaping (Self) -> Void) -> ViewLayout<Self> {
+        return ViewLayout(self, config: config)
     }
     
     ///

@@ -29,6 +29,8 @@ enum LayoutExplorer {
         var elements: [Component] = []
         
         traversal(layout: layout, superview: nil, option: .none) { layout, superview, option in
+            layout.layoutWillActivate()
+
             if let view = layout.view {
                 elements.append(Component(superView: superview, view: view, anchors: layout.anchors, option: option))
             }

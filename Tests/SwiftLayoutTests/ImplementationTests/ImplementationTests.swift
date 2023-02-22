@@ -304,12 +304,14 @@ extension ImplementationTests {
             }
         }
         
-        let stack = UIStackView().config { stack in
+        let stack: UIStackView = {
+            let stack = UIStackView()
             stack.axis = .vertical
             stack.distribution = .fillEqually
             stack.alignment = .center
             stack.spacing = 0.0
-        }.identifying("stack")
+            return stack
+        }().identifying("stack")
         
         let a = UIView().identifying("a")
         let b = UIView().identifying("b")
