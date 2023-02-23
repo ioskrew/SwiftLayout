@@ -9,15 +9,23 @@ public struct ViewLayout<V: UIView>: Layout {
     public private(set) var anchors: Anchors
 
     public var option: LayoutOption? { LayoutOption.none }
+
+    typealias ConfigBlock = (V) -> Void
+    private let configBlock: ConfigBlock?
     
-    init(_ view: V, sublayouts: [any Layout] = [], anchors: Anchors = Anchors()) {
+    init(_ view: V, sublayouts: [any Layout] = [], anchors: Anchors = Anchors(), config: ConfigBlock? = nil) {
         self.innerView = view
         self.sublayouts = sublayouts
         self.anchors = anchors
+        self.configBlock = config
     }
     
     public var view: UIView? {
         self.innerView
+    }
+
+    public func layoutWillActivate() {
+        self.configBlock?(innerView)
     }
 }
 
@@ -52,7 +60,7 @@ extension ViewLayout {
     public func anchors(@AnchorsBuilder _ build: () -> Anchors) -> Self {
         let anchors = self.anchors
         anchors.append(build())
-        return Self.init(innerView, sublayouts: sublayouts, anchors: anchors)
+        return Self.init(innerView, sublayouts: sublayouts, anchors: anchors, config: configBlock)
     }
     
     ///
@@ -74,7 +82,7 @@ extension ViewLayout {
     public func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> Self {
         var sublayouts = self.sublayouts
         sublayouts.append(build())
-        return Self.init(innerView, sublayouts: sublayouts, anchors: anchors)
+        return Self.init(innerView, sublayouts: sublayouts, anchors: anchors, config: configBlock)
     }
     
     ///
