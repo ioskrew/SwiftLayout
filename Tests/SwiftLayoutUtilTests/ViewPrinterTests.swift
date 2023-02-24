@@ -770,11 +770,11 @@ extension ViewPrinterTests {
             $0.accessibilityIdentifier = "root"
             $0.alpha = 0.4000000059604645
             $0.contentMode = .scaleAspectFit
-        }.sublayout {
+        }.sl.sublayout {
             child.sl.config {
                 $0.accessibilityIdentifier = "child"
                 $0.accessibilityLabel = "child-accessibilityLabel"
-            }.anchors {
+            }.sl.anchors {
                 Anchors.top.bottom
                 Anchors.leading.trailing
             }.sublayout {
@@ -782,7 +782,7 @@ extension ViewPrinterTests {
                     $0.accessibilityIdentifier = "grandchild"
                     $0.accessibilityLabel = "grandchild-accessibilityLabel"
                     $0.isHidden = true
-                }.anchors {
+                }.sl.anchors {
                     Anchors.top.bottom
                     Anchors.leading.trailing
                 }
@@ -852,7 +852,7 @@ extension ViewPrinterTests {
         let expect = """
         root.sl.config {
             $0.accessibilityIdentifier = "root"
-        }.sublayout {
+        }.sl.sublayout {
             accessibilityIdentifier_child.sl.config {
                 $0.accessibilityHint = "accessibilityHint_child"
                 $0.accessibilityIdentifier = "accessibilityIdentifier_child"
@@ -892,7 +892,7 @@ extension ViewPrinterTests {
         let expect = """
         root.sl.config {
             $0.accessibilityIdentifier = "root"
-        }.sublayout {
+        }.sl.sublayout {
             child.sl.config {
                 $0.accessibilityIdentifier = "child"
                 $0.alpha = 0.8999999761581421
@@ -936,7 +936,7 @@ extension ViewPrinterTests {
         let expect = """
         root.sl.config {
             $0.accessibilityIdentifier = "root"
-        }.sublayout {
+        }.sl.sublayout {
             child.sl.config {
                 $0.accessibilityIdentifier = "child"
                 $0.contentHorizontalAlignment = .trailing
@@ -983,7 +983,7 @@ extension ViewPrinterTests {
         let expect = """
         root.sl.config {
             $0.accessibilityIdentifier = "root"
-        }.sublayout {
+        }.sl.sublayout {
             child.sl.config {
                 $0.accessibilityIdentifier = "child"
                 $0.adjustsFontForContentSizeCategory = true
@@ -1025,7 +1025,7 @@ extension ViewPrinterTests {
         let expect = """
         root.sl.config {
             $0.accessibilityIdentifier = "root"
-        }.sublayout {
+        }.sl.sublayout {
             child.sl.config {
                 $0.accessibilityIdentifier = "child"
                 $0.adjustsImageSizeForAccessibilityContentSizeCategory = true
@@ -1058,7 +1058,7 @@ extension ViewPrinterTests {
         let expect = """
         root.sl.config {
             $0.accessibilityIdentifier = "root"
-        }.sublayout {
+        }.sl.sublayout {
             child.sl.config {
                 $0.accessibilityIdentifier = "child"
                 $0.alignment = .leading
@@ -1099,7 +1099,7 @@ extension ViewPrinterTests {
             let expect = """
             root.sl.config {
                 $0.accessibilityIdentifier = "root"
-            }.sublayout {
+            }.sl.sublayout {
                 child.sl.config {
                     $0.accessibilityIdentifier = "child"
                     $0.isOn = true
@@ -1119,7 +1119,7 @@ extension ViewPrinterTests {
             let expect = """
             root.sl.config {
                 $0.accessibilityIdentifier = "root"
-            }.sublayout {
+            }.sl.sublayout {
                 child.sl.config {
                     $0.accessibilityIdentifier = "child"
                     $0.isOn = true
@@ -1178,7 +1178,7 @@ extension ViewPrinterTests {
         let expect = """
             root.sl.config {
                 $0.accessibilityIdentifier = "root"
-            }.sublayout {
+            }.sl.sublayout {
                 child.sl.config {
                     $0.accessibilityIdentifier = "child"
                     $0.alpha = 0.8999999761581421
@@ -1232,7 +1232,7 @@ extension ViewPrinterTests {
         let expect = """
             root.sl.config {
                 $0.accessibilityIdentifier = "root"
-            }.sublayout {
+            }.sl.sublayout {
                 child.sl.config {
                     $0.accessibilityIdentifier = "child"
                     $0.alpha = 0.8999999761581421
@@ -1261,7 +1261,7 @@ extension ViewPrinterTests {
         let expect2 = """
             root.sl.config {
                 $0.accessibilityIdentifier = "root"
-            }.sublayout {
+            }.sl.sublayout {
                 child.sl.config {
                     $0.accessibilityIdentifier = "child"
                     $0.alpha = 0.8999999761581421
@@ -1288,7 +1288,7 @@ extension ViewPrinterTests {
         let expect3 = """
             root.sl.config {
                 $0.accessibilityIdentifier = "root"
-            }.sublayout {
+            }.sl.sublayout {
                 child.sl.config {
                     $0.accessibilityIdentifier = "child"
                     $0.alpha = 0.8999999761581421
@@ -1352,7 +1352,7 @@ extension ViewPrinterTests {
         let expect = """
             root.sl.config {
                 $0.accessibilityIdentifier = "root"
-            }.sublayout {
+            }.sl.sublayout {
                 child.sl.config {
                     $0.accessibilityIdentifier = "child"
                     $0.alpha = 0.8999999761581421
@@ -1381,7 +1381,7 @@ extension ViewPrinterTests {
         let expect2 = """
             root.sl.config {
                 $0.accessibilityIdentifier = "root"
-            }.sublayout {
+            }.sl.sublayout {
                 child.sl.config {
                     $0.accessibilityIdentifier = "child"
                     $0.alpha = 0.8999999761581421
