@@ -42,8 +42,8 @@ class ReferenceTests: XCTestCase {
     
     class SelfReferenceView: UIView, Layoutable {
         var layout: some Layout {
-            self.sublayout {
-                DeinitView().anchors {
+            self.sl.sublayout {
+                DeinitView().sl.anchors {
                     Anchors.allSides()
                 }.sublayout {
                     DeinitView()

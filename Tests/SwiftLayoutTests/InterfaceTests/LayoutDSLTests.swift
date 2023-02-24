@@ -17,16 +17,16 @@ final class LayoutDSLTests: XCTestCase {
     var activation: Set<Activation> = []
     
     override func setUp() {
-        window = UIView(frame: .init(x: 0, y: 0, width: 150, height: 150)).identifying("window")
-        root = UIView().identifying("root")
+        window = UIView(frame: .init(x: 0, y: 0, width: 150, height: 150)).sl.identifying("window")
+        root = UIView().sl.identifying("root")
         root.translatesAutoresizingMaskIntoConstraints = false
         window.addSubview(root)
-        child = UIView().identifying("child")
-        button = UIButton().identifying("button")
-        label = UILabel().identifying("label")
-        red = UIView().identifying("red")
-        blue = UIView().identifying("blue")
-        image = UIImageView().identifying("image")
+        child = UIView().sl.identifying("child")
+        button = UIButton().sl.identifying("button")
+        label = UILabel().sl.identifying("label")
+        red = UIView().sl.identifying("red")
+        blue = UIView().sl.identifying("blue")
+        image = UIImageView().sl.identifying("image")
     }
     
     override func tearDown() {
@@ -39,11 +39,11 @@ extension LayoutDSLTests {
     func testActive() {
         @LayoutBuilder
         var layout: some Layout {
-            root.sublayout {
-                red.sublayout {
+            root.sl.sublayout {
+                red.sl.sublayout {
                     button
                     label
-                    blue.sublayout {
+                    blue.sl.sublayout {
                         image
                     }
                 }
@@ -63,11 +63,11 @@ extension LayoutDSLTests {
     func testDeactive() {
         @LayoutBuilder
         var layout: some Layout {
-            root.sublayout {
-                red.sublayout {
+            root.sl.sublayout {
+                red.sl.sublayout {
                     button
                     label
-                    blue.sublayout {
+                    blue.sl.sublayout {
                         image
                     }
                 }
@@ -89,11 +89,11 @@ extension LayoutDSLTests {
     func testFinalActive() {
         @LayoutBuilder
         var layout: some Layout {
-            root.sublayout {
-                red.sublayout {
+            root.sl.sublayout {
+                red.sl.sublayout {
                     button
                     label
-                    blue.sublayout {
+                    blue.sl.sublayout {
                         image
                     }
                 }
@@ -120,7 +120,7 @@ extension LayoutDSLTests {
         
         @LayoutBuilder
         var layout: some Layout {
-            parentView.sublayout {
+            parentView.sl.sublayout {
                 if flag {
                     childView_0
                 } else {
@@ -191,8 +191,8 @@ extension LayoutDSLTests {
         
         @LayoutBuilder
         var layout: some Layout {
-            root.sublayout {
-                red.sublayout {
+            root.sl.sublayout {
+                red.sl.sublayout {
                     button
                 }
                 
@@ -239,8 +239,8 @@ extension LayoutDSLTests {
         
         @LayoutBuilder
         func layout(_ test: Test) -> some Layout {
-            root.sublayout {
-                child.sublayout {
+            root.sl.sublayout {
+                child.sl.sublayout {
                     switch test {
                     case .first:
                         first
@@ -289,8 +289,8 @@ extension LayoutDSLTests {
         
         @LayoutBuilder
         var layout: some Layout {
-            root.sublayout {
-                red.sublayout {
+            root.sl.sublayout {
+                red.sl.sublayout {
                     optional
                 }
             }
@@ -324,7 +324,7 @@ extension LayoutDSLTests {
 
         @LayoutBuilder
         var layout: some Layout {
-            root.sublayout {
+            root.sl.sublayout {
                 for view in views {
                     view
                 }
@@ -346,11 +346,11 @@ extension LayoutDSLTests {
     func testConfig() {
         @LayoutBuilder
         var layout: some Layout {
-            root.sublayout {
-                child.config {
+            root.sl.sublayout {
+                child.sl.config {
                     $0.backgroundColor = .yellow
-                }.sublayout {
-                    label.config {
+                }.sl.sublayout {
+                    label.sl.config {
                         $0.text = "test config"
                         $0.textColor = .green
                     }
@@ -371,13 +371,13 @@ extension LayoutDSLTests {
     func testDuplicateLayoutBuilder() {
         @LayoutBuilder
         var layout: some Layout {
-            root.sublayout {
-                red.sublayout {
+            root.sl.sublayout {
+                red.sl.sublayout {
                     button
                 }.sublayout {
                     label
                 }.sublayout {
-                    blue.sublayout {
+                    blue.sl.sublayout {
                         image
                     }
                 }
@@ -397,18 +397,18 @@ extension LayoutDSLTests {
     func testSeparatedFromFirstLevel() {
         @LayoutBuilder
         var layout: some Layout {
-            root.sublayout {
+            root.sl.sublayout {
                 child
                 red
                 image
             }
             
-            child.sublayout {
+            child.sl.sublayout {
                 button
                 label
             }
             
-            red.sublayout {
+            red.sl.sublayout {
                 blue
                 green
             }
@@ -438,7 +438,7 @@ extension LayoutDSLTests {
         
         @LayoutBuilder
         var layout: some Layout {
-            root.sublayout {
+            root.sl.sublayout {
                 GroupLayout {
                     group1_1
                     group1_2
@@ -471,8 +471,8 @@ extension LayoutDSLTests {
 
         @LayoutBuilder
         var layout: some Layout {
-            root.sublayout {
-                stackView.sublayout {
+            root.sl.sublayout {
+                stackView.sl.sublayout {
                     GroupLayout(option: .isNotArranged) {
                         notArrangedview1
                         notArrangedview2
@@ -503,7 +503,7 @@ extension LayoutDSLTests {
         let view3 = UIView()
         
         @LayoutBuilder var layout: some Layout {
-            view1.sublayout {
+            view1.sl.sublayout {
                 view2
             }
             
@@ -519,7 +519,7 @@ extension LayoutDSLTests {
         @LayoutBuilder var layout: some Layout {
             view1
             
-            view2.sublayout {
+            view2.sl.sublayout {
                 view3
             }
         }
@@ -531,7 +531,7 @@ extension LayoutDSLTests {
         
         @LayoutBuilder
         var layout: some Layout {
-            root.sublayout {
+            root.sl.sublayout {
                 module1
                 module2
             }
@@ -575,7 +575,7 @@ extension LayoutDSLTests {
 
     @LayoutBuilder
     func layouts(_ rootView: UIView) -> some Layout {
-        rootView.identifying("root").sublayout {
+        rootView.sl.identifying("root").sl.sublayout {
             label(1)
             label(2)
             label(3)
