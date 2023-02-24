@@ -110,8 +110,8 @@ extension LayoutableTests {
         var activation: Activation?
         
         var layout: some Layout {
-            self.sublayout {
-                root.anchors {
+            self.sl.sublayout {
+                root.sl.anchors {
                     if flag {
                         Anchors.allSides()
                     } else {
@@ -120,11 +120,11 @@ extension LayoutableTests {
                     }
                 }.sublayout {
                     if flag {
-                        child.anchors {
+                        child.sl.anchors {
                             Anchors.allSides()
                         }
                     } else {
-                        friend.anchors {
+                        friend.sl.anchors {
                             Anchors.allSides()
                         }
                     }

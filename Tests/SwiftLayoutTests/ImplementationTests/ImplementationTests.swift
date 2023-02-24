@@ -4,17 +4,17 @@ import XCTest
 /// test cases for api rules except DSL syntax
 final class ImplementationTests: XCTestCase {
 
-    var root = UIView().identifying("root")
-    var child = UIView().identifying("child")
-    var friend = UIView().identifying("friend")
+    var root = UIView().sl.identifying("root")
+    var child = UIView().sl.identifying("child")
+    var friend = UIView().sl.identifying("friend")
     
     var activation: Activation?
     
     override func setUpWithError() throws {
         continueAfterFailure = false
-        root = UIView().identifying("root")
-        child = UIView().identifying("child")
-        friend = UIView().identifying("friend")
+        root = UIView().sl.identifying("root")
+        child = UIView().sl.identifying("child")
+        friend = UIView().sl.identifying("friend")
     }
     
     override func tearDownWithError() throws {
@@ -24,15 +24,15 @@ final class ImplementationTests: XCTestCase {
 
 extension ImplementationTests {
     func testLayoutTraversal() {
-        let root: UIView = UIView().identifying("root")
-        let button: UIButton = UIButton().identifying("button")
-        let label: UILabel = UILabel().identifying("label")
-        let redView: UIView = UIView().identifying("redView")
-        let image: UIImageView = UIImageView().identifying("image")
+        let root: UIView = UIView().sl.identifying("root")
+        let button: UIButton = UIButton().sl.identifying("button")
+        let label: UILabel = UILabel().sl.identifying("label")
+        let redView: UIView = UIView().sl.identifying("redView")
+        let image: UIImageView = UIImageView().sl.identifying("image")
         
-        let layout = root.sublayout {
+        let layout = root.sl.sublayout {
             redView
-            label.sublayout {
+            label.sl.sublayout {
                 button
                 image
             }
@@ -62,11 +62,11 @@ extension ImplementationTests {
     }
     
     func testLayoutFlattening() {
-        let layout = root.sublayout {
-            child.anchors {
+        let layout = root.sl.sublayout {
+            child.sl.anchors {
                 Anchors.allSides()
             }.sublayout {
-                friend.anchors {
+                friend.sl.anchors {
                     Anchors.allSides()
                 }
             }
@@ -77,33 +77,33 @@ extension ImplementationTests {
     }
     
     func testLayoutCompare() {
-        let f1 = root.sublayout {
+        let f1 = root.sl.sublayout {
             child
         }
         let e1 = LayoutElements(layout: f1)
         
-        let f2 = root.sublayout {
+        let f2 = root.sl.sublayout {
             child
         }
         let e2 = LayoutElements(layout: f2)
         
-        let f3 = root.sublayout {
-            child.anchors { Anchors.allSides() }
+        let f3 = root.sl.sublayout {
+            child.sl.anchors { Anchors.allSides() }
         }
         let e3 = LayoutElements(layout: f3)
         
-        let f4 = root.sublayout {
-            child.anchors { Anchors.allSides() }
+        let f4 = root.sl.sublayout {
+            child.sl.anchors { Anchors.allSides() }
         }
         let e4 = LayoutElements(layout: f4)
         
-        let f5 = root.sublayout {
-            child.anchors { Anchors.cap() }
+        let f5 = root.sl.sublayout {
+            child.sl.anchors { Anchors.cap() }
         }
         let e5 = LayoutElements(layout: f5)
         
-        let f6 = root.sublayout {
-            friend.anchors { Anchors.allSides() }
+        let f6 = root.sl.sublayout {
+            friend.sl.anchors { Anchors.allSides() }
         }
         let e6 = LayoutElements(layout: f6)
         
@@ -121,14 +121,14 @@ extension ImplementationTests {
     }
     
     func testDontTouchRootViewByDeactive() {
-        let root = UIView().identifying("root")
-        let red = UIView().identifying("red")
-        let old = UIView().identifying("old")
+        let root = UIView().sl.identifying("root")
+        let red = UIView().sl.identifying("red")
+        let old = UIView().sl.identifying("old")
         old.addSubview(root)
         root.translatesAutoresizingMaskIntoConstraints = true
         
-        activation = root.sublayout {
-            red.anchors {
+        activation = root.sl.sublayout {
+            red.sl.anchors {
                 Anchors.allSides()
             }
         }.active()
@@ -144,11 +144,11 @@ extension ImplementationTests {
 
 extension ImplementationTests {
     func testIdentifier() {
-        let activation = root.sublayout {
-            UILabel().identifying("label").anchors {
+        let activation = root.sl.sublayout {
+            UILabel().sl.identifying("label").sl.anchors {
                 Anchors.cap()
             }
-            UIView().identifying("secondView").anchors {
+            UIView().sl.identifying("secondView").sl.anchors {
                 Anchors.top.equalTo("label", attribute: .bottom)
                 Anchors.shoe()
             }
@@ -176,7 +176,7 @@ extension ImplementationTests {
 extension ImplementationTests {
     
     func testStackViewMaintainOrderingOfArrangedSubviews() {
-        let stack = StackView(frame: .init(x: 0, y: 0, width: 40, height: 80)).identifying("view")
+        let stack = StackView(frame: .init(x: 0, y: 0, width: 40, height: 80)).sl.identifying("view")
         var a: UIView {
             stack.a
         }
@@ -203,8 +203,8 @@ extension ImplementationTests {
     final class StackView: UIView, Layoutable {
         var activation: Activation?
         var layout: some Layout {
-            self.sublayout {
-                stack.anchors {
+            self.sl.sublayout {
+                stack.sl.anchors {
                     Anchors.allSides()
                 }.sublayout {
                     if isA {
@@ -215,15 +215,15 @@ extension ImplementationTests {
             }
         }
         
-        let stack = UIStackView().config { stack in
+        let stack = UIStackView().sl.config { stack in
             stack.axis = .vertical
             stack.distribution = .fillEqually
             stack.alignment = .center
             stack.spacing = 0.0
-        }.identifying("stack")
+        }.sl.identifying("stack")
         
-        let a = UIView().identifying("a")
-        let b = UIView().identifying("b")
+        let a = UIView().sl.identifying("a")
+        let b = UIView().sl.identifying("b")
         
         var isA: Bool = true
     }
@@ -233,9 +233,9 @@ extension ImplementationTests {
         let childs: [UIView] = (0..<10).map({ _ in UIView(frame: CGRect(x: 0, y: 0, width: 100, height: 100)) })
 
         var layout: some Layout {
-            superview.sublayout {
+            superview.sl.sublayout {
                 for child in childs {
-                    child.anchors {
+                    child.sl.anchors {
                         Anchors.top
                     }
                 }
