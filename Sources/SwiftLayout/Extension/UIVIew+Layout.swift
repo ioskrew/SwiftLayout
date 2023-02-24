@@ -9,7 +9,8 @@ import UIKit
 
 public protocol _UIViewExtension {}
 extension UIView: _UIViewExtension {}
-extension _UIViewExtension where Self: UIView {
+
+public extension _UIViewExtension where Self: UIView, Self: LayoutElement {
 
     ///
     /// Create a ``ViewLayout`` containing this view and the sublayouts.
@@ -20,10 +21,10 @@ extension _UIViewExtension where Self: UIView {
     /// - Returns: An ``ViewLayout`` that wraps this view and contains sublayouts .
     ///
     @available(*, deprecated, message: "Use the sublayout(_:) method instead.")
-    public func callAsFunction<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<Self> {
+    func callAsFunction<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<Self> {
         ViewLayout(self, sublayouts: [build()])
     }
-    
+
     ///
     /// Create a ``ViewLayout`` containing this view and the sublayouts and add anchors coordinator to this layout
     ///
@@ -50,10 +51,11 @@ extension _UIViewExtension where Self: UIView {
     /// - Parameter build: A ``AnchorsBuilder`` that  create ``Anchors`` to be applied to this layout
     /// - Returns: An ``ViewLayout`` that wraps this view and contains the anchors  coordinator.
     ///
-    public func anchors(@AnchorsBuilder _ build: () -> Anchors) -> ViewLayout<Self> {
-        ViewLayout(self, anchors: build())
+    @available(*, deprecated, message: "Use the sl.anchors(_:) method instead.")
+    func anchors(@AnchorsBuilder _ build: () -> Anchors) -> ViewLayout<Self> {
+        self.sl.anchors(build)
     }
-    
+
     ///
     /// Create a ``ViewLayout`` containing the sublayouts of this view.
     ///
@@ -70,7 +72,8 @@ extension _UIViewExtension where Self: UIView {
     /// - Parameter build: A ``LayoutBuilder`` that  create sublayouts of this view.
     /// - Returns: An ``ViewLayout`` that wraps this view and contains sublayouts .
     ///
-    public func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<Self> {
+    @available(*, deprecated, message: "Use the sl.sublayout(_:) method instead.")
+    func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<Self> {
         ViewLayout(self, sublayouts: [build()])
     }
 
@@ -79,10 +82,11 @@ extension _UIViewExtension where Self: UIView {
     ///
     /// - Returns: An ``AnyLayout`` wrapping this layout.
     ///
-    public func eraseToAnyLayout() -> AnyLayout {
+    @available(*, deprecated, message: "Use the sl.eraseToAnyLayout() method instead.")
+    func eraseToAnyLayout() -> AnyLayout {
         AnyLayout(ViewLayout(self))
     }
-    
+
     ///
     /// Provides a block that can change the properties of the view within the layout block.
     ///
@@ -101,19 +105,21 @@ extension _UIViewExtension where Self: UIView {
     /// - Parameter config: A configuration block for this view.
     /// - Returns: The view itself with the configuration applied
     ///
-    public func config(_ config: (Self) -> Void) -> Self {
-        config(self)
-        return self
+    @available(*, deprecated, message: "Use the sl.config(_:) method instead.")
+    func config(_ config: (Self) -> Void) -> Self {
+        self.sl.config(config)
     }
-    
+
     ///
     /// Set its **accessibilityIdentifier**.
     ///
     /// - Parameter accessibilityIdentifier: A string containing the identifier of the element.
     /// - Returns: The view itself with the accessibilityIdentifier applied
     ///
-    public func identifying(_ accessibilityIdentifier: String) -> Self {
+    @available(*, deprecated, message: "Use the sl.identifying(_:) method instead.")
+    func identifying(_ accessibilityIdentifier: String) -> Self {
         self.accessibilityIdentifier = accessibilityIdentifier
         return self
     }
+
 }
