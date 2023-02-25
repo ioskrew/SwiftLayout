@@ -7,7 +7,7 @@
 
 import UIKit
 
-public struct LayoutMethodWrapper<Base: LayoutBase> {
+public struct LayoutMethodWrapper<Base: LayoutMethodAccessible> {
     let base: Base
 }
 
@@ -105,5 +105,4 @@ public extension LayoutMethodWrapper where Base: UIView {
         self.base.accessibilityIdentifier = accessibilityIdentifier
         return self.base
     }
-
 }
