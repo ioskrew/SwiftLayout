@@ -10,13 +10,13 @@ import SwiftUI
 
 public extension LayoutMethodWrapper where Base: Layoutable&UIView {
     var swiftUI: SLViewRepresentable<Base> {
-        return SLViewRepresentable(layoutable)
+        return SLViewRepresentable(base)
     }
 }
 
 public extension LayoutMethodWrapper where Base: Layoutable&UIViewController {
     var swiftUI: SLViewControllerRepresentable<Base> {
-        return SLViewControllerRepresentable(layoutable)
+        return SLViewControllerRepresentable(base)
     }
 }
 
