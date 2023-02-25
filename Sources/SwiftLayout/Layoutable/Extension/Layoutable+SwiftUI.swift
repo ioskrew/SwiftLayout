@@ -8,14 +8,14 @@
 import UIKit
 import SwiftUI
 
-public extension LayoutableMethodWrapper where L: Layoutable&UIView {
-    var swiftUI: SLViewRepresentable<L> {
+public extension LayoutMethodWrapper where Base: Layoutable&UIView {
+    var swiftUI: SLViewRepresentable<Base> {
         return SLViewRepresentable(layoutable)
     }
 }
 
-public extension LayoutableMethodWrapper where L: Layoutable&UIViewController {
-    var swiftUI: SLViewControllerRepresentable<L> {
+public extension LayoutMethodWrapper where Base: Layoutable&UIViewController {
+    var swiftUI: SLViewControllerRepresentable<Base> {
         return SLViewControllerRepresentable(layoutable)
     }
 }

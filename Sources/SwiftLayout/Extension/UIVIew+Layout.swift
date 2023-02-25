@@ -10,7 +10,7 @@ import UIKit
 public protocol _UIViewExtension {}
 extension UIView: _UIViewExtension {}
 
-public extension _UIViewExtension where Self: UIView, Self: LayoutElement {
+public extension _UIViewExtension where Self: UIView {
 
     ///
     /// Create a ``ViewLayout`` containing this view and the sublayouts.
@@ -20,7 +20,7 @@ public extension _UIViewExtension where Self: UIView, Self: LayoutElement {
     /// - Parameter build: A ``LayoutBuilder`` that  create sublayouts of this view.
     /// - Returns: An ``ViewLayout`` that wraps this view and contains sublayouts .
     ///
-    @available(*, deprecated, message: "Use the sublayout(_:) method instead.")
+    @available(*, deprecated, message: "Use the sl.sublayout(_:) method instead.")
     func callAsFunction<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<Self> {
         ViewLayout(self, sublayouts: [build()])
     }

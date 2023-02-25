@@ -1,5 +1,5 @@
 //
-//  LayoutableMethodWrapper.swift
+//  LayoutMethodWrapper.swift
 //  
 //
 //  Created by oozoofrog on 2022/03/13.
@@ -7,25 +7,11 @@
 
 import UIKit
 
-public final class LayoutableMethodWrapper<L: LayoutElement> {
-    let layoutable: L
-    
-    init(_ layoutable: L) {
-        self.layoutable = layoutable
-    }
+public struct LayoutMethodWrapper<Base: LayoutBase> {
+    let base: Base
 }
 
-public extension LayoutableMethodWrapper where L: Layoutable {
-
-    func updateLayout(forceLayout: Bool = false) {
-        layoutable.activation = Activator.update(layout: layoutable.layout,
-                                                 fromActivation: layoutable.activation ?? Activation(),
-                                                 forceLayout: forceLayout)
-    }
-
-}
-
-public extension LayoutableMethodWrapper where L: UIView {
+public extension LayoutMethodWrapper where Base: UIView {
 
     ///
     /// Create a ``ViewLayout`` containing this view and the sublayouts and add anchors coordinator to this layout
@@ -53,8 +39,8 @@ public extension LayoutableMethodWrapper where L: UIView {
     /// - Parameter build: A ``AnchorsBuilder`` that  create ``Anchors`` to be applied to this layout
     /// - Returns: An ``ViewLayout`` that wraps this view and contains the anchors  coordinator.
     ///
-    func anchors(@AnchorsBuilder _ build: () -> Anchors) -> ViewLayout<L> {
-        ViewLayout(self.layoutable, anchors: build())
+    func anchors(@AnchorsBuilder _ build: () -> Anchors) -> ViewLayout<Base> {
+        ViewLayout(self.base, anchors: build())
     }
 
     ///
@@ -73,8 +59,8 @@ public extension LayoutableMethodWrapper where L: UIView {
     /// - Parameter build: A ``LayoutBuilder`` that  create sublayouts of this view.
     /// - Returns: An ``ViewLayout`` that wraps this view and contains sublayouts .
     ///
-    func sublayout<LayoutType: Layout>(@LayoutBuilder _ build: () -> LayoutType) -> ViewLayout<L> {
-        ViewLayout(self.layoutable, sublayouts: [build()])
+    func sublayout<LayoutType: Layout>(@LayoutBuilder _ build: () -> LayoutType) -> ViewLayout<Base> {
+        ViewLayout(self.base, sublayouts: [build()])
     }
 
     ///
@@ -83,7 +69,7 @@ public extension LayoutableMethodWrapper where L: UIView {
     /// - Returns: An ``AnyLayout`` wrapping this layout.
     ///
     func eraseToAnyLayout() -> AnyLayout {
-        AnyLayout(ViewLayout(self.layoutable))
+        AnyLayout(ViewLayout(self.base))
     }
 
     ///
@@ -104,9 +90,9 @@ public extension LayoutableMethodWrapper where L: UIView {
     /// - Parameter config: A configuration block for this view.
     /// - Returns: The view itself with the configuration applied
     ///
-    func config(_ config: (L) -> Void) -> L {
-        config(self.layoutable)
-        return self.layoutable
+    func config(_ config: (Base) -> Void) -> Base {
+        config(self.base)
+        return self.base
     }
 
     ///
@@ -115,9 +101,9 @@ public extension LayoutableMethodWrapper where L: UIView {
     /// - Parameter accessibilityIdentifier: A string containing the identifier of the element.
     /// - Returns: The view itself with the accessibilityIdentifier applied
     ///
-    func identifying(_ accessibilityIdentifier: String) -> L {
-        self.layoutable.accessibilityIdentifier = accessibilityIdentifier
-        return self.layoutable
+    func identifying(_ accessibilityIdentifier: String) -> Base {
+        self.base.accessibilityIdentifier = accessibilityIdentifier
+        return self.base
     }
 
 }
