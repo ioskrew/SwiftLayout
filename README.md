@@ -196,7 +196,7 @@ It is mainly used within `anchors`, a method of Layout.
       selfview.sl.anchors {
         Anchors.allSides()
       }.sublayout {
-        subview.anchors {
+        subview.sl.anchors {
           Anchors.allSides()
         }
       }
