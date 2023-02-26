@@ -197,7 +197,7 @@ Layout의 메소드인 `anchors` 안에서 주로 사용됩니다.
       selfview.sl.anchors {
         Anchors.allSides()
       }.sublayout {
-        subview.anchors {
+        subview.sl.anchors {
           Anchors.allSides()
         }
       }
