@@ -105,7 +105,7 @@ public extension _UIViewExtension where Self: UIView {
     /// - Parameter config: A configuration block for this view.
     /// - Returns: The view itself with the configuration applied
     ///
-    @available(*, deprecated, message: "Use the sl.config(_:) method instead.")
+    @available(*, deprecated, message: "Use the sl.onActivate(_:) method instead.")
     func config(_ config: (Self) -> Void) -> Self {
         config(self)
         return self

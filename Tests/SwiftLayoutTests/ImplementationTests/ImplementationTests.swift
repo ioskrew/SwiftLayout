@@ -141,23 +141,23 @@ extension ImplementationTests {
         XCTAssertEqual(root.superview, old)
     }
 
-    func testConfigBlockCallOnlyOnceWithConstantLayout() {
-        let root = UIView().identifying("root")
-        let button: UIButton = UIButton().identifying("button")
-        let label: UILabel = UILabel().identifying("label")
+    func testOnActivateBlockCallOnlyOnceWithConstantLayout() {
+        let root = UIView()
+        let button: UIButton = UIButton()
+        let label: UILabel = UILabel()
 
         var rootCount: Int = 0
         var buttonCount: Int = 0
         var labelCount: Int = 0
 
-        let layout: some Layout = root.config { _ in
+        let layout: some Layout = root.sl.onActivate { _ in
             rootCount += 1
         }.sublayout {
-            button.config { _ in
+            button.sl.onActivate { _ in
                 buttonCount += 1
             }
 
-            label.config { _ in
+            label.sl.onActivate { _ in
                 labelCount += 1
             }
         }
@@ -184,24 +184,24 @@ extension ImplementationTests {
         XCTAssertEqual(labelCount, 3)
     }
 
-    func testConfigBlockCallOnlyOnceWithComputedLayout() {
-        let root = UIView().identifying("root")
-        let button: UIButton = UIButton().identifying("button")
-        let label: UILabel = UILabel().identifying("label")
+    func testOnActivateBlockCallOnlyOnceWithComputedLayout() {
+        let root = UIView()
+        let button: UIButton = UIButton()
+        let label: UILabel = UILabel()
 
         var rootCount: Int = 0
         var buttonCount: Int = 0
         var labelCount: Int = 0
 
         var layout: some Layout {
-            root.config { _ in
+            root.sl.onActivate { _ in
                 rootCount += 1
             }.sublayout {
-                button.config { _ in
+                button.sl.onActivate { _ in
                     buttonCount += 1
                 }
 
-                label.config { _ in
+                label.sl.onActivate { _ in
                     labelCount += 1
                 }
             }
@@ -304,12 +304,14 @@ extension ImplementationTests {
             }
         }
         
-        let stack = UIStackView().sl.config { stack in
+        let stack: UIStackView = {
+            let stack = UIStackView()
             stack.axis = .vertical
             stack.distribution = .fillEqually
             stack.alignment = .center
             stack.spacing = 0.0
-        }.sl.identifying("stack")
+            return stack
+        }().sl.identifying("stack")
         
         let a = UIView().sl.identifying("a")
         let b = UIView().sl.identifying("b")

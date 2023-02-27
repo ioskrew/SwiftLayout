@@ -26,7 +26,7 @@ struct ViewDescriber {
         let isAfterConfig: Bool
         if configDescriptions.isEmpty == false {
             var last = descriptions.removeLast()
-            last.append(".sl.config {")
+            last.append(".sl.onActivate {")
             descriptions.append(last)
             descriptions.append(contentsOf: configDescriptions)
             descriptions.append("}")
