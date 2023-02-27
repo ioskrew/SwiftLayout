@@ -10,29 +10,29 @@
 
 ```swift
 @LayoutBuilder var layout: some Layout {
-  self.sublayout {
-    leftParenthesis.anchors {
+  self.sl.sublayout {
+    leftParenthesis.sl.anchors {
       Anchors.leading.equalToSuper(constant: 16)
       Anchors.centerY
     }
-    viewLogo.anchors {
+    viewLogo.sl.anchors {
       Anchors.leading.equalTo(leftParenthesis, attribute: .trailing, constant: 20)
       Anchors.centerY.equalToSuper(constant: 30)
       Anchors.size(width: 200, height: 200)
     }
-    UIImageView().identifying("plus").config { imageView in
+    UIImageView().sl.identifying("plus").sl.config { imageView in
       imageView.image = UIImage(systemName: "plus")
       imageView.tintColor = .SLColor
-    }.anchors {
+    }.sl.anchors {
       Anchors.center(offsetY: 30)
       Anchors.size(width: 150, height: 150)
     }
-    constraintLogo.anchors {
+    constraintLogo.sl.anchors {
       Anchors.trailing.equalTo(rightParenthesis.leadingAnchor)
       Anchors.centerY.equalTo("plus")
       Anchors.size(width: 200, height: 150)
     }
-    rightParenthesis.anchors {
+    rightParenthesis.sl.anchors {
       Anchors.trailing.equalToSuper(constant: -16)
       Anchors.centerY
     }
@@ -66,7 +66,7 @@ dependencies: [
 - `NSLayoutConstraint`, `NSLayoutAnchor` 를 대체하는 DSL이 제공됩니다.
 - view와 constraint에 대한 선택적 갱신이 가능합니다.
 - `if else`, `swift case`, `for` 등 조건문, 반복문을 통한 view, constraint 설정이 가능합니다.
-- 값의 변경을 통한 layout 개신을 자동으로 할 수 있게 도와주는 propertyWrapper를 제공합니다.
+- 값의 변경을 통한 layout 갱신을 자동으로 할 수 있게 도와주는 propertyWrapper를 제공합니다.
 - constraint의 연결을 돕는 다양한 API 제공합니다.
 
 # 사용법
@@ -82,8 +82,8 @@ dependencies: [
 
 ```swift
 @LayoutBuilder var layout: some Layout {
-  view.sublayout {
-    subview.sublayout {
+  view.sl.sublayout {
+    subview.sl.sublayout {
       subsubview
       subsub2view
     }
@@ -128,8 +128,8 @@ Layout의 메소드인 `anchors` 안에서 주로 사용됩니다.
 - equalTo와 같은 관계 메소드를 통해서 두번째 아이템(NSLayoutConstraint.secondItem, secondAttribute)을 설정할 수 있습니다.
   
   ```swift
-  superview.sublayout {
-    selfview.anchors {
+  superview.sl.sublayout {
+    selfview.sl.anchors {
       Anchors.top.equalTo(superview, attribute: .top, constant: 10)
     }
   }
@@ -144,8 +144,8 @@ Layout의 메소드인 `anchors` 안에서 주로 사용됩니다.
 - 관계 메소드를 생략할 경우 두번째 아이템은 자동으로 해당 뷰의 상위뷰로 설정됩니다.
   
   ```swift
-  superview.sublayout {
-    selfview.anchors {
+  superview.sl.sublayout {
+    selfview.sl.anchors {
       Anchors.top.bottom
     }
   }
@@ -169,8 +169,8 @@ Layout의 메소드인 `anchors` 안에서 주로 사용됩니다.
 - 너비와 높이는 두번째 아이템을 설정하지 않을 경우 자기 자신이 됩니다.
   
   ```swift
-  superview.sublayout {
-    selfview.anchors {
+  superview.sl.sublayout {
+    selfview.sl.anchors {
       Anchors.width.height.equalToSuper(constant: 10) // only for selfview
     }
   }
@@ -193,11 +193,11 @@ Layout의 메소드인 `anchors` 안에서 주로 사용됩니다.
   
   ```swift
   @LayoutBuilder func layout() -> some Layout {
-    superview.sublayout {
-      selfview.anchors {
+    superview.sl.sublayout {
+      selfview.sl.anchors {
         Anchors.allSides()
       }.sublayout {
-        subview.anchors {
+        subview.sl.anchors {
           Anchors.allSides()
         }
       }
@@ -209,13 +209,13 @@ Layout의 메소드인 `anchors` 안에서 주로 사용됩니다.
   
   ```swift
   @LayoutBuilder func layout() -> some Layout {
-    superview.sublayout {
-      selfview.anchors {
+    superview.sl.sublayout {
+      selfview.sl.anchors {
         Anchors.allSides()
       }
     }
-    selfview.sublayout {
-      subview.anchors {
+    selfview.sl.sublayout {
+      subview.sl.anchors {
         Anchors.allSides()
       }
     }
@@ -233,8 +233,8 @@ addSubview와 constraint의 적용을 위해서는 아래의 메소드를 호출
   
   ```swift
   @LayoutBuilder func layout() -> some Layout {
-    superview.sublayout {
-      selfview.anchors {
+    superview.sl.sublayout {
+      selfview.sl.anchors {
         Anchors.top
       }
     }
@@ -250,8 +250,8 @@ addSubview와 constraint의 적용을 위해서는 아래의 메소드를 호출
   
   ```swift
   @LayoutBuilder func layout() -> some Layout {
-    superview.sublayout {
-      selfview.anchors {
+    superview.sl.sublayout {
+      selfview.sl.anchors {
         if someCondition {
           Anchors.bottom
         } else {
@@ -286,7 +286,7 @@ addSubview와 constraint의 적용을 위해서는 아래의 메소드를 호출
   class SomeView: UIView, Layoutable {
     var activation: Activation?
     @LayoutBuilder var layout: some Layout {
-      self.sublayout {
+      self.sl.sublayout {
         ...
       }
     }
@@ -312,7 +312,7 @@ var showMiddleName: Bool = false {
 }
 
 var layout: some Layout {
-  self.sublayout {
+  self.sl.sublayout {
     firstNameLabel
     if showMiddleName {
       middleNameLabel
@@ -330,7 +330,7 @@ var layout: some Layout {
 @LayoutProeprty var showMiddleName: Bool = false // change value call updateLayout of Layoutable
 
 var layout: some Layout {
-  self.sublayout {
+  self.sl.sublayout {
     firstNameLabel
     if showMiddleName {
       middleNameLabel
@@ -369,27 +369,27 @@ final class PreviewView: UIView, Layoutable {
   var activation: Activation?
 
   var layout: some Layout {
-    self.sublayout {
-      top.anchors {
+    self.sl.sublayout {
+      top.sl.anchors {
         Anchors.cap()
       }
-      bottom.anchors {
+      bottom.sl.anchors {
         Anchors.top.equalTo(top.bottomAnchor)
         Anchors.height.equalTo(top)
         Anchors.shoe()
       }
-      title.config { label in
+      title.sl.config { label in
         label.text = "Top Title"
         UIView.transition(with: label, duration: 1.0, options: [.beginFromCurrentState, .transitionCrossDissolve]) {
           label.textColor = self.capTop ? .black : .yellow
         }
-      }.anchors {
+      }.sl.anchors {
         Anchors.center(top)
       }
-      UILabel().config { label in
+      UILabel().sl.config { label in
         label.text = "Bottom Title"
         label.textColor = capTop ? .yellow : .black
-      }.identifying("title.bottom").anchors {
+      }.sl.identifying("title.bottom").anchors {
         Anchors.center(bottom)
       }
     }
@@ -430,11 +430,11 @@ final class PreviewView: UIView, Layoutable {
 Layout안에서 뷰의 속성을 설정할 수 있습니다. (*Layout이 아닌 다른 곳에서도 유용하게 사용할 수 있습니다.*)
 
 ```swift
-contentView.sublayout {
-  nameLabel.config { label in 
+contentView.sl.sublayout {
+  nameLabel.sl.config { label in 
     label.text = "Hello"
     label.textColor = .black
-  }.anchors {
+  }.sl.anchors {
     Anchors.allSides()
   }
 }
@@ -445,11 +445,11 @@ contentView.sublayout {
 `accessibilityIdentifier`을 설정하고 view reference 대신 해당 문자열을 이용할 수 있습니다.
 
 ```swift
-contentView.sublayout {
-  nameLabel.identifying("name").anchors {
+contentView.sl.sublayout {
+  nameLabel.sl.identifying("name").sl.anchors {
     Anchors.cap()
   }
-  ageLabel.anchors {
+  ageLabel.sl.anchors {
     Anchors.top.equalTo("name", attribute: .bottom)
     Anchors.shoe()
   }
@@ -500,12 +500,12 @@ struct ViewUIView_Previews: PreviewProvider {
   
   ```swift
   var layout: some Layout {
-    root.sublayout {
-      child.anchors {
+    root.sl.sublayout {
+      child.sl.anchors {
         Anchors.top
         Anchors.leading.trailing
       }
-      friend.anchors {
+      friend.sl.anchors {
         Anchors.top.equalTo(child, attribute: .bottom)
         Anchors.bottom
         Anchors.leading.trailing
@@ -581,12 +581,12 @@ xib혹은 UIKit으로 직접 구현되어 있는 뷰를 SwiftLayout으로 마이
   
   ```swift
   SomeView {
-    root.sublayout {
-      child.anchors {
+    root.sl.sublayout {
+      child.sl.anchors {
         Anchors.top
         Anchors.leading.trailing
       }
-      friend.anchors {
+      friend.sl.anchors {
         Anchors.top.equalTo(child, attribute: .bottom)
         Anchors.bottom
         Anchors.leading.trailing
@@ -598,4 +598,5 @@ xib혹은 UIKit으로 직접 구현되어 있는 뷰를 SwiftLayout으로 마이
 # Credits
 
 - oozoofrog([@oozoofrog](https://twitter.com/oozoofrog))
-- gmlwhdtjd([gmlwhdtjd](https://github.com/gmlwhdtjd))
+- gmlwhdtjd([@gmlwhdtjd](https://github.com/gmlwhdtjd))
+- della-padula([@della-padula](https://github.com/della-padula))

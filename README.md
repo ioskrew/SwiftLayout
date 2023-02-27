@@ -10,29 +10,29 @@
 
 ```swift
 @LayoutBuilder var layout: some Layout {
-  self.sublayout {
-    leftParenthesis.anchors {
+  self.sl.sublayout {
+    leftParenthesis.sl.anchors {
       Anchors.leading.equalToSuper(constant: 16)
       Anchors.centerY
     }
-    viewLogo.anchors {
+    viewLogo.sl.anchors {
       Anchors.leading.equalTo(leftParenthesis, attribute: .trailing, constant: 20)
       Anchors.centerY.equalToSuper(constant: 30)
       Anchors.size(width: 200, height: 200)
     }
-    UIImageView().identifying("plus").config { imageView in
+    UIImageView().sl.identifying("plus").sl.config { imageView in
       imageView.image = UIImage(systemName: "plus")
       imageView.tintColor = .SLColor
-    }.anchors {
+    }.sl.anchors {
       Anchors.center(offsetY: 30)
       Anchors.size(width: 150, height: 150)
     }
-    constraintLogo.anchors {
+    constraintLogo.sl.anchors {
       Anchors.trailing.equalTo(rightParenthesis.leadingAnchor)
       Anchors.centerY.equalTo("plus")
       Anchors.size(width: 200, height: 150)
     }
-    rightParenthesis.anchors {
+    rightParenthesis.sl.anchors {
       Anchors.trailing.equalToSuper(constant: -16)
       Anchors.centerY
     }
@@ -56,7 +56,7 @@
 
 # Installation
 
-**SwiftLayout** supply **SPM** only
+**SwiftLayout** only supports deployments via **SPM(Swift Package Manager)**.
 
 ```swift
 dependencies: [
@@ -77,12 +77,12 @@ dependencies: [
 
 ## LayoutBuilder
 
-`LayoutBuilder` is DSL builder for UIView hierarchy. it presents simple doing add subview to superview.
+`LayoutBuilder` is a DSL builder for setting up the UIView hierarchy; this allows subviews to be added to the parent view in a simple and visible way.
 
 ```swift
 @LayoutBuilder var layout: some Layout {
-  view.sublayout {
-    subview.sublayout {
+  view.sl.sublayout {
+    subview.sl.sublayout {
       subsubview
       subsub2view
     }
@@ -100,7 +100,8 @@ subview.addSubview(subsub2view)
 
 ## AnchorsBuilder
 
-`AnchorsBuilder` is DSL builder of `Anchors` for making autolayout constraint between views or view itself. most are used within the `anchors` function of Layout.
+`AnchorsBuilder` is a DSL builder for `Anchors` types that aids in the creation of autolayout constraints between views.
+It is mainly used within `anchors`, a method of Layout.
 
 ### Anchors
 
@@ -115,19 +116,19 @@ subview.addSubview(subsub2view)
 > equation of constraint has following format:
 > Item1.attribute1 [= | >= | <= ] multiplier x item2.attribute2 + constant
 
-> you can read details [here](https://developer.apple.com/documentation/uikit/nslayoutconstraint).
+> Detailed information about NSLayoutConstraint can be found [here](https://developer.apple.com/documentation/uikit/nslayoutconstraint).
 
-- the first part is to get the necessary attributes using static values ​​defined in Anchors.
+- It starts by getting the required properties using static values ​​defined in Anchors.
   
   ```swift
   Anchors.top.bottom
   ```
 
-- enable to set of second part(item, attribute) through relation functions
+- You can set up a second item (NSLayoutConstraint.secondItem, secondAttribute) through a relationship method such as equalTo.
   
   ```swift
-  superview.sublayout {
-    selfview.anchors {
+  superview.sl.sublayout {
+    selfview.sl.anchors {
       Anchors.top.equalTo(superview, attribute: .top, constant: 10)
     }
   }
@@ -139,17 +140,17 @@ subview.addSubview(subsub2view)
   selfview.top = superview.top + 10
   ```
 
-- second item of Anchors with no relation functions may be its superview
+- Attributes in Anchors that do not have a relation function in the child can be configured to match the parent item
   
   ```swift
-  superview.sublayout {
-    selfview.anchors {
-      Anchors.top.bottom
+  superview.sl.sublayout {
+    selfview.sl.anchors {
+      Anchors.sl.top.bottom
     }
   }
   ```
   
-  this is same as following format exactly:
+  this can be expressed by the following expression:
   
   ```
   selfview.top = superview.top
@@ -157,24 +158,24 @@ subview.addSubview(subsub2view)
   ...
   ```
   
-  also, you can set constant and multiplier like this:
+  also, the constraint and multiplier can be set as follows.
   
   ```swift
   Anchors.top.constant(10)
   Anchors.top.multiplier(10)
   ```
 
-- width and height attributes can be set for first item(view) self not second item.
+- Width and height become the item itself if you do not set the second item.
   
   ```swift
-  superview.sublayout {
-    selfview.anchors {
+  superview.sl.sublayout {
+    selfview.sl.anchors {
       Anchors.width.height.equalToSuper(constant: 10) // only for selfview
     }
   }
   ```
   
-  this same as:
+  this represents the following expression.
   
   ```
   selfview.width = 10
@@ -185,17 +186,17 @@ subview.addSubview(subsub2view)
 
 ### *ah, finally*
 
-Now you can combine `LayoutBuilder` and `AnchorsBuilder` for add subview and make constraint between views, and make applying to view
+`LayoutBuilder` and `AnchorsBuilder` can now be used together to add subviews, create autolayouts, and apply them to views.
 
-- add subview to selfview after `anchors` needs `sublayout`
+- A `sublayout` method is required to add subviews after invoking an `anchors` method.
   
   ```swift
   @LayoutBuilder func layout() -> some Layout {
-    superview.sublayout {
-      selfview.anchors {
+    superview.sl.sublayout {
+      selfview.sl.anchors {
         Anchors.allSides()
       }.sublayout {
-        subview.anchors {
+        subview.sl.anchors {
           Anchors.allSides()
         }
       }
@@ -207,13 +208,13 @@ Now you can combine `LayoutBuilder` and `AnchorsBuilder` for add subview and mak
   
   ```swift
   @LayoutBuilder func layout() -> some Layout {
-    superview.sublayout {
-      selfview.anchors {
+    superview.sl.sublayout {
+      selfview.sl.anchors {
         Anchors.allSides()
       }
     }
-    selfview.sublayout {
-      subview.anchors {
+    selfview.sl.sublayout {
+      subview.sl.anchors {
         Anchors.allSides()
       }
     }
@@ -223,7 +224,7 @@ Now you can combine `LayoutBuilder` and `AnchorsBuilder` for add subview and mak
 ### active and finalActive
 
 The `Layout` types created with `LayoutBuilder` and `AnchorsBuilder` only contain information to actually work.  
-so, for do addSubview and active constraints needs following works:
+For the application of addSubview and constraint, the method below must be called:
 
 - you can call `finalActive` of `Layout` for instantly do all stuff in case of no needs to updates.
 
@@ -231,8 +232,8 @@ so, for do addSubview and active constraints needs following works:
   
   ```swift
   @LayoutBuilder func layout() -> some Layout {
-    superview.sublayout {
-      selfview.anchors {
+    superview.sl.sublayout {
+      selfview.sl.anchors {
         Anchors.top
       }
     }
@@ -248,8 +249,8 @@ so, for do addSubview and active constraints needs following works:
   
   ```swift
   @LayoutBuilder func layout() -> some Layout {
-    superview.sublayout {
-      selfview.anchors {
+    superview.sl.sublayout {
+      selfview.sl.anchors {
         if someCondition {
           Anchors.bottom
         } else {
@@ -284,7 +285,7 @@ For implementing `Layoutable`, you needs be write following codes
   class SomeView: UIView, Layoutable {
     var activation: Activation?
     @LayoutBuilder var layout: some Layout {
-      self.sublayout {
+      self.sl.sublayout {
         ...
       }
     }
@@ -310,7 +311,7 @@ var showMiddleName: Bool = false {
 }
 
 var layout: some Layout {
-  self.sublayout {
+  self.sl.sublayout {
     firstNameLabel
     if showMiddleName {
       middleNameLabel
@@ -328,7 +329,7 @@ In this case, you can update automatically by using `LayoutProperty`:
 @LayoutProeprty var showMiddleName: Bool = false // change value call updateLayout of Layoutable
 
 var layout: some Layout {
-  self.sublayout {
+  self.sl.sublayout {
     firstNameLabel
     if showMiddleName {
       middleNameLabel
@@ -367,27 +368,27 @@ final class PreviewView: UIView, Layoutable {
   var activation: Activation?
 
   var layout: some Layout {
-    self.sublayout {
-      top.anchors {
+    self.sl.sublayout {
+      top.sl.anchors {
         Anchors.cap()
       }
-      bottom.anchors {
+      bottom.sl.anchors {
         Anchors.top.equalTo(top.bottomAnchor)
         Anchors.height.equalTo(top)
         Anchors.shoe()
       }
-      title.config { label in
+      title.sl.config { label in
         label.text = "Top Title"
         UIView.transition(with: label, duration: 1.0, options: [.beginFromCurrentState, .transitionCrossDissolve]) {
           label.textColor = self.capTop ? .black : .yellow
         }
-      }.anchors {
+      }.sl.anchors {
         Anchors.center(top)
       }
-      UILabel().config { label in
+      UILabel().sl.config { label in
         label.text = "Bottom Title"
         label.textColor = capTop ? .yellow : .black
-      }.identifying("title.bottom").anchors {
+      }.sl.identifying("title.bottom").sl.anchors {
         Anchors.center(bottom)
       }
     }
@@ -429,10 +430,10 @@ You can decorate view in Layout with config function (*and using outside freely*
 
 ```swift
 contentView.sublayout {
-  nameLabel.config { label in 
+  nameLabel.sl.config { label in 
     label.text = "Hello"
     label.textColor = .black
-  }.anchors {
+  }.sl.anchors {
     Anchors.allSides()
   }
 }
@@ -443,11 +444,11 @@ contentView.sublayout {
 You can set `accessibilityIdentifier` and use that instead of the view reference.
 
 ```swift
-contentView.sublayout {
-  nameLabel.identifying("name").anchors {
+contentView.sl.sublayout {
+  nameLabel.sl.identifying("name").sl.anchors {
     Anchors.cap()
   }
-  ageLabel.anchors {
+  ageLabel.sl.anchors {
     Anchors.top.equalTo("name", attribute: .bottom)
     Anchors.shoe()
   }
@@ -498,12 +499,12 @@ This can be useful when you want to make sure the current layout is configured t
   
   ```swift
   var layout: some Layout {
-    root.sublayout {
-      child.anchors {
+    root.sl.sublayout {
+      child.sl.anchors {
         Anchors.top
         Anchors.leading.trailing
       }
-      friend.anchors {
+      friend.sl.anchors {
         Anchors.top.equalTo(child, attribute: .bottom)
         Anchors.bottom
         Anchors.leading.trailing
@@ -579,12 +580,12 @@ This can be useful when you want to migrate your current view to SwiftLayout for
   
   ```swift
   SomeView {
-    root.sublayout {
-      child.anchors {
+    root.sl.sublayout {
+      child.sl.anchors {
         Anchors.top
         Anchors.leading.trailing
       }
-      friend.anchors {
+      friend.sl.anchors {
         Anchors.top.equalTo(child, attribute: .bottom)
         Anchors.bottom
         Anchors.leading.trailing
@@ -596,4 +597,5 @@ This can be useful when you want to migrate your current view to SwiftLayout for
 # Credits
 
 - oozoofrog([@oozoofrog](https://twitter.com/oozoofrog))
-- gmlwhdtjd([gmlwhdtjd](https://github.com/gmlwhdtjd))
+- gmlwhdtjd([@gmlwhdtjd](https://github.com/gmlwhdtjd))
+- della-padula([@della-padula](https://github.com/della-padula))
