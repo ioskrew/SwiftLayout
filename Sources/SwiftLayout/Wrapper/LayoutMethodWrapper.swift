@@ -73,26 +73,25 @@ public extension LayoutMethodWrapper where Base: UIView {
     }
 
     ///
-    /// Provides a block that can change the properties of the view within the layout block.
+    /// Create a ``ViewLayout``  for this view that includes an action to always perform before every activation, including updates.
     ///
     /// ```swift
     /// // Create an instant view within the layout block
     /// // and modify the properties of the view as follows
     ///
     /// var layout: some Layout {
-    ///     UILabel().sl.config { view in
+    ///     UILabel().sl.onActivate { view in
     ///         view.backgroundColor = .blue
     ///         view.text = "hello"
     ///     }
     /// }
     /// ```
     ///
-    /// - Parameter config: A configuration block for this view.
-    /// - Returns: The view itself with the configuration applied
+    /// - Parameter onActivate: A perform block for new layout.
+    /// - Returns:  An ``ViewLayout`` with onActivate action added
     ///
-    func config(_ config: (Base) -> Void) -> Base {
-        config(self.base)
-        return self.base
+    func onActivate(_ perform: @escaping (Base) -> Void) -> ViewLayout<Base> {
+        ViewLayout<Base>(self.base, onActivate: perform)
     }
 
     ///

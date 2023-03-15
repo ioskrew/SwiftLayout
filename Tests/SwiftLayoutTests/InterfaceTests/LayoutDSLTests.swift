@@ -347,11 +347,11 @@ extension LayoutDSLTests {
         @LayoutBuilder
         var layout: some Layout {
             root.sl.sublayout {
-                child.sl.config {
+                child.sl.onActivate {
                     $0.backgroundColor = .yellow
-                }.sl.sublayout {
-                    label.sl.config {
-                        $0.text = "test config"
+                }.sublayout {
+                    label.sl.onActivate {
+                        $0.text = "test onActivate"
                         $0.textColor = .green
                     }
                 }
@@ -364,7 +364,7 @@ extension LayoutDSLTests {
         SLTAssertView(child, superview: root, subviews: [label])
         SLTAssertView(label, superview: child, subviews: [])
         XCTAssertEqual(child.backgroundColor, UIColor.yellow)
-        XCTAssertEqual(label.text, "test config")
+        XCTAssertEqual(label.text, "test onActivate")
         XCTAssertEqual(label.textColor, UIColor.green)
     }
     

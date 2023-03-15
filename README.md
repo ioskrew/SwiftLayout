@@ -20,10 +20,10 @@
       Anchors.centerY.equalToSuper(constant: 30)
       Anchors.size(width: 200, height: 200)
     }
-    UIImageView().sl.identifying("plus").sl.config { imageView in
+    UIImageView().sl.identifying("plus").sl.onActivate { imageView in
       imageView.image = UIImage(systemName: "plus")
       imageView.tintColor = .SLColor
-    }.sl.anchors {
+    }.anchors {
       Anchors.center(offsetY: 30)
       Anchors.size(width: 150, height: 150)
     }
@@ -377,18 +377,18 @@ final class PreviewView: UIView, Layoutable {
         Anchors.height.equalTo(top)
         Anchors.shoe()
       }
-      title.sl.config { label in
+      title.sl.onActivate { label in
         label.text = "Top Title"
         UIView.transition(with: label, duration: 1.0, options: [.beginFromCurrentState, .transitionCrossDissolve]) {
           label.textColor = self.capTop ? .black : .yellow
         }
-      }.sl.anchors {
+      }.anchors {
         Anchors.center(top)
       }
-      UILabel().sl.config { label in
+      UILabel().sl.onActivate { label in
         label.text = "Bottom Title"
         label.textColor = capTop ? .yellow : .black
-      }.sl.identifying("title.bottom").sl.anchors {
+      }.identifying("title.bottom").sl.anchors {
         Anchors.center(bottom)
       }
     }
@@ -424,16 +424,16 @@ final class PreviewView: UIView, Layoutable {
 
 ## Other useful features
 
-### `config(_:)` of UIView
+### `onActivate(_:)` of UIView
 
-You can decorate view in Layout with config function (*and using outside freely*)
+You can decorate view in Layout with onActivate function
 
 ```swift
 contentView.sublayout {
-  nameLabel.sl.config { label in 
+  nameLabel.sl.onActivate { label in 
     label.text = "Hello"
     label.textColor = .black
-  }.sl.anchors {
+  }.anchors {
     Anchors.allSides()
   }
 }

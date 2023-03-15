@@ -20,10 +20,10 @@
       Anchors.centerY.equalToSuper(constant: 30)
       Anchors.size(width: 200, height: 200)
     }
-    UIImageView().sl.identifying("plus").sl.config { imageView in
+    UIImageView().sl.identifying("plus").sl.onActivate { imageView in
       imageView.image = UIImage(systemName: "plus")
       imageView.tintColor = .SLColor
-    }.sl.anchors {
+    }.anchors {
       Anchors.center(offsetY: 30)
       Anchors.size(width: 150, height: 150)
     }
@@ -378,18 +378,18 @@ final class PreviewView: UIView, Layoutable {
         Anchors.height.equalTo(top)
         Anchors.shoe()
       }
-      title.sl.config { label in
+      title.sl.onActivate { label in
         label.text = "Top Title"
         UIView.transition(with: label, duration: 1.0, options: [.beginFromCurrentState, .transitionCrossDissolve]) {
           label.textColor = self.capTop ? .black : .yellow
         }
-      }.sl.anchors {
+      }.anchors {
         Anchors.center(top)
       }
-      UILabel().sl.config { label in
+      UILabel().sl.onActivate { label in
         label.text = "Bottom Title"
         label.textColor = capTop ? .yellow : .black
-      }.sl.identifying("title.bottom").anchors {
+      }.identifying("title.bottom").anchors {
         Anchors.center(bottom)
       }
     }
@@ -425,16 +425,16 @@ final class PreviewView: UIView, Layoutable {
 
 ## 그 밖의 유용한 기능들
 
-### UIView의 `config(_:)`
+### UIView의 `onActivate(_:)`
 
-Layout안에서 뷰의 속성을 설정할 수 있습니다. (*Layout이 아닌 다른 곳에서도 유용하게 사용할 수 있습니다.*)
+Layout안에서 뷰의 속성을 설정할 수 있습니다.
 
 ```swift
 contentView.sl.sublayout {
-  nameLabel.sl.config { label in 
+  nameLabel.sl.onActivate { label in 
     label.text = "Hello"
     label.textColor = .black
-  }.sl.anchors {
+  }.anchors {
     Anchors.allSides()
   }
 }

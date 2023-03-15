@@ -140,6 +140,95 @@ extension ImplementationTests {
         
         XCTAssertEqual(root.superview, old)
     }
+
+    func testOnActivateBlockCallOnlyOnceWithConstantLayout() {
+        let root = UIView()
+        let button: UIButton = UIButton()
+        let label: UILabel = UILabel()
+
+        var rootCount: Int = 0
+        var buttonCount: Int = 0
+        var labelCount: Int = 0
+
+        let layout: some Layout = root.sl.onActivate { _ in
+            rootCount += 1
+        }.sublayout {
+            button.sl.onActivate { _ in
+                buttonCount += 1
+            }
+
+            label.sl.onActivate { _ in
+                labelCount += 1
+            }
+        }
+
+        activation = layout.active()
+        XCTAssertEqual(rootCount, 1)
+        XCTAssertEqual(buttonCount, 1)
+        XCTAssertEqual(labelCount, 1)
+
+        activation = layout.update(fromActivation: activation!)
+        XCTAssertEqual(rootCount, 2)
+        XCTAssertEqual(buttonCount, 2)
+        XCTAssertEqual(labelCount, 2)
+
+        activation = layout.update(fromActivation: activation!)
+        XCTAssertEqual(rootCount, 3)
+        XCTAssertEqual(buttonCount, 3)
+        XCTAssertEqual(labelCount, 3)
+
+        activation?.deactive()
+        activation = nil
+        XCTAssertEqual(rootCount, 3)
+        XCTAssertEqual(buttonCount, 3)
+        XCTAssertEqual(labelCount, 3)
+    }
+
+    func testOnActivateBlockCallOnlyOnceWithComputedLayout() {
+        let root = UIView()
+        let button: UIButton = UIButton()
+        let label: UILabel = UILabel()
+
+        var rootCount: Int = 0
+        var buttonCount: Int = 0
+        var labelCount: Int = 0
+
+        var layout: some Layout {
+            root.sl.onActivate { _ in
+                rootCount += 1
+            }.sublayout {
+                button.sl.onActivate { _ in
+                    buttonCount += 1
+                }
+
+                label.sl.onActivate { _ in
+                    labelCount += 1
+                }
+            }
+        }
+
+        activation = layout.active()
+        XCTAssertEqual(rootCount, 1)
+        XCTAssertEqual(buttonCount, 1)
+        XCTAssertEqual(labelCount, 1)
+
+        var _ = layout
+        activation = layout.update(fromActivation: activation!)
+        XCTAssertEqual(rootCount, 2)
+        XCTAssertEqual(buttonCount, 2)
+        XCTAssertEqual(labelCount, 2)
+
+        activation = layout.update(fromActivation: activation!)
+        XCTAssertEqual(rootCount, 3)
+        XCTAssertEqual(buttonCount, 3)
+        XCTAssertEqual(labelCount, 3)
+
+        activation?.deactive()
+        activation = nil
+        XCTAssertEqual(rootCount, 3)
+        XCTAssertEqual(buttonCount, 3)
+        XCTAssertEqual(labelCount, 3)
+    }
 }
 
 extension ImplementationTests {
@@ -215,12 +304,14 @@ extension ImplementationTests {
             }
         }
         
-        let stack = UIStackView().sl.config { stack in
+        let stack: UIStackView = {
+            let stack = UIStackView()
             stack.axis = .vertical
             stack.distribution = .fillEqually
             stack.alignment = .center
             stack.spacing = 0.0
-        }.sl.identifying("stack")
+            return stack
+        }().sl.identifying("stack")
         
         let a = UIView().sl.identifying("a")
         let b = UIView().sl.identifying("b")

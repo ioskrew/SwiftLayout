@@ -746,39 +746,39 @@ extension ViewPrinterTests {
         let child = UIView().sl.identifying("child")
         let grandchild = UIView().sl.identifying("grandchild")
 
-        activation = root.sl.config {
+        activation = root.sl.onActivate {
             $0.alpha = 0.4
             $0.contentMode = .scaleAspectFit
-        }.sl.sublayout {
-            child.sl.config {
+        }.sublayout {
+            child.sl.onActivate {
                 $0.alpha = 1.0
                 $0.accessibilityLabel = "child-accessibilityLabel"
-            }.sl.anchors{
+            }.anchors{
                 Anchors.allSides()
             }.sublayout {
-                grandchild.sl.config {
+                grandchild.sl.onActivate {
                     $0.isHidden = true
                     $0.accessibilityLabel = "grandchild-accessibilityLabel"
-                }.sl.anchors {
+                }.anchors {
                     Anchors.allSides()
                 }
             }
         }.active()
 
         let expect = """
-        root.sl.config {
+        root.sl.onActivate {
             $0.accessibilityIdentifier = "root"
             $0.alpha = 0.4000000059604645
             $0.contentMode = .scaleAspectFit
         }.sl.sublayout {
-            child.sl.config {
+            child.sl.onActivate {
                 $0.accessibilityIdentifier = "child"
                 $0.accessibilityLabel = "child-accessibilityLabel"
             }.sl.anchors {
                 Anchors.top.bottom
                 Anchors.leading.trailing
             }.sublayout {
-                grandchild.sl.config {
+                grandchild.sl.onActivate {
                     $0.accessibilityIdentifier = "grandchild"
                     $0.accessibilityLabel = "grandchild-accessibilityLabel"
                     $0.isHidden = true
@@ -799,19 +799,19 @@ extension ViewPrinterTests {
         let child = UIView().sl.identifying("child")
         let grandchild = UIView().sl.identifying("grandchild")
 
-        activation = root.sl.config {
+        activation = root.sl.onActivate {
             $0.alpha = 0.4
-        }.sl.sublayout {
-            child.sl.config {
+        }.sublayout {
+            child.sl.onActivate {
                 $0.alpha = 1.0
                 $0.accessibilityLabel = "child-accessibilityLabel"
-            }.sl.anchors{
+            }.anchors{
                 Anchors.allSides()
             }.sublayout {
-                grandchild.sl.config {
+                grandchild.sl.onActivate {
                     $0.isHidden = true
                     $0.accessibilityLabel = "grandchild-accessibilityLabel"
-                }.sl.anchors {
+                }.anchors {
                     Anchors.allSides()
                 }
             }
@@ -840,7 +840,7 @@ extension ViewPrinterTests {
         let child = UIControl()
 
         activation = root.sl.sublayout {
-            child.sl.config {
+            child.sl.onActivate {
                 $0.isAccessibilityElement = true
                 $0.accessibilityLabel = "accessibilityLabel_child"
                 $0.accessibilityHint = "accessibilityHint_child"
@@ -850,10 +850,10 @@ extension ViewPrinterTests {
         }.active()
 
         let expect = """
-        root.sl.config {
+        root.sl.onActivate {
             $0.accessibilityIdentifier = "root"
         }.sl.sublayout {
-            accessibilityIdentifier_child.sl.config {
+            accessibilityIdentifier_child.sl.onActivate {
                 $0.accessibilityHint = "accessibilityHint_child"
                 $0.accessibilityIdentifier = "accessibilityIdentifier_child"
                 $0.accessibilityLabel = "accessibilityLabel_child"
@@ -872,7 +872,7 @@ extension ViewPrinterTests {
         let child = UIView().sl.identifying("child")
 
         activation = root.sl.sublayout {
-            child.sl.config {
+            child.sl.onActivate {
                 $0.contentMode = .scaleAspectFill
                 $0.semanticContentAttribute = .forceLeftToRight
                 $0.tag = 7
@@ -890,10 +890,10 @@ extension ViewPrinterTests {
         }.active()
 
         let expect = """
-        root.sl.config {
+        root.sl.onActivate {
             $0.accessibilityIdentifier = "root"
         }.sl.sublayout {
-            child.sl.config {
+            child.sl.onActivate {
                 $0.accessibilityIdentifier = "child"
                 $0.alpha = 0.8999999761581421
                 $0.autoresizesSubviews = false
@@ -922,29 +922,29 @@ extension ViewPrinterTests {
         let friend = UIControl().sl.identifying("friend")
 
         activation = root.sl.sublayout {
-            child.sl.config {
+            child.sl.onActivate {
                 $0.contentHorizontalAlignment = .trailing
                 $0.contentVerticalAlignment = .top
                 $0.isSelected = true
                 $0.isHighlighted = true
             }
-            friend.sl.config {
+            friend.sl.onActivate {
                 $0.isEnabled = false
             }
         }.active()
 
         let expect = """
-        root.sl.config {
+        root.sl.onActivate {
             $0.accessibilityIdentifier = "root"
         }.sl.sublayout {
-            child.sl.config {
+            child.sl.onActivate {
                 $0.accessibilityIdentifier = "child"
                 $0.contentHorizontalAlignment = .trailing
                 $0.contentVerticalAlignment = .top
                 $0.isHighlighted = true
                 $0.isSelected = true
             }
-            friend.sl.config {
+            friend.sl.onActivate {
                 $0.accessibilityIdentifier = "friend"
                 $0.isEnabled = false
             }
@@ -960,7 +960,7 @@ extension ViewPrinterTests {
         let child = UILabel().sl.identifying("child")
 
         activation = root.sl.sublayout {
-            child.sl.config {
+            child.sl.onActivate {
                 $0.text = "text_child"
                 $0.textColor = .gray
                 $0.font = .systemFont(ofSize: 16, weight: .semibold)
@@ -981,10 +981,10 @@ extension ViewPrinterTests {
         }.active()
 
         let expect = """
-        root.sl.config {
+        root.sl.onActivate {
             $0.accessibilityIdentifier = "root"
         }.sl.sublayout {
-            child.sl.config {
+            child.sl.onActivate {
                 $0.accessibilityIdentifier = "child"
                 $0.adjustsFontForContentSizeCategory = true
                 $0.adjustsFontSizeToFitWidth = true
@@ -1014,7 +1014,7 @@ extension ViewPrinterTests {
         let child = UIImageView().sl.identifying("child")
 
         activation = root.sl.sublayout {
-            child.sl.config {
+            child.sl.onActivate {
                 $0.image = UIImage(systemName: "star")
                 $0.highlightedImage = UIImage(systemName: "star.fill")
                 $0.isHighlighted = true
@@ -1023,10 +1023,10 @@ extension ViewPrinterTests {
         }.active()
 
         let expect = """
-        root.sl.config {
+        root.sl.onActivate {
             $0.accessibilityIdentifier = "root"
         }.sl.sublayout {
-            child.sl.config {
+            child.sl.onActivate {
                 $0.accessibilityIdentifier = "child"
                 $0.adjustsImageSizeForAccessibilityContentSizeCategory = true
                 $0.highlightedImage = /* Modified! Check it manually. */
@@ -1046,7 +1046,7 @@ extension ViewPrinterTests {
         let child = UIStackView().sl.identifying("child")
 
         activation = root.sl.sublayout {
-            child.sl.config {
+            child.sl.onActivate {
                 $0.axis = .vertical
                 $0.alignment = .leading
                 $0.distribution = .fillEqually
@@ -1056,10 +1056,10 @@ extension ViewPrinterTests {
         }.active()
 
         let expect = """
-        root.sl.config {
+        root.sl.onActivate {
             $0.accessibilityIdentifier = "root"
         }.sl.sublayout {
-            child.sl.config {
+            child.sl.onActivate {
                 $0.accessibilityIdentifier = "child"
                 $0.alignment = .leading
                 $0.axis = .vertical
@@ -1079,7 +1079,7 @@ extension ViewPrinterTests {
         let child = UISwitch().sl.identifying("child")
 
         activation = root.sl.sublayout {
-            child.sl.config { child in
+            child.sl.onActivate { child in
                 for subview in child.subviews {
                     subview.removeFromSuperview()
                 }
@@ -1097,10 +1097,10 @@ extension ViewPrinterTests {
         
         if #available(iOS 14.0, *) {
             let expect = """
-            root.sl.config {
+            root.sl.onActivate {
                 $0.accessibilityIdentifier = "root"
             }.sl.sublayout {
-                child.sl.config {
+                child.sl.onActivate {
                     $0.accessibilityIdentifier = "child"
                     $0.isOn = true
                     $0.isSelected = true
@@ -1117,10 +1117,10 @@ extension ViewPrinterTests {
             XCTAssertEqual(result, expect)
         } else {
             let expect = """
-            root.sl.config {
+            root.sl.onActivate {
                 $0.accessibilityIdentifier = "root"
             }.sl.sublayout {
-                child.sl.config {
+                child.sl.onActivate {
                     $0.accessibilityIdentifier = "child"
                     $0.isOn = true
                     $0.isSelected = true
@@ -1156,7 +1156,7 @@ extension ViewPrinterTests {
         let child = CustomConfigurableView().sl.identifying("child")
         
         activation = root.sl.sublayout {
-            child.sl.config {
+            child.sl.onActivate {
                 $0.contentMode = .scaleAspectFill
                 $0.semanticContentAttribute = .forceLeftToRight
                 $0.tag = 7
@@ -1176,10 +1176,10 @@ extension ViewPrinterTests {
         }.active()
         
         let expect = """
-            root.sl.config {
+            root.sl.onActivate {
                 $0.accessibilityIdentifier = "root"
             }.sl.sublayout {
-                child.sl.config {
+                child.sl.onActivate {
                     $0.accessibilityIdentifier = "child"
                     $0.alpha = 0.8999999761581421
                     $0.autoresizesSubviews = false
@@ -1210,7 +1210,7 @@ extension ViewPrinterTests {
         let child = CustomConfigurableView().sl.identifying("child")
         
         activation = root.sl.sublayout {
-            child.sl.config {
+            child.sl.onActivate {
                 $0.contentMode = .scaleAspectFill
                 $0.semanticContentAttribute = .forceLeftToRight
                 $0.tag = 7
@@ -1230,10 +1230,10 @@ extension ViewPrinterTests {
         }.active()
         
         let expect = """
-            root.sl.config {
+            root.sl.onActivate {
                 $0.accessibilityIdentifier = "root"
             }.sl.sublayout {
-                child.sl.config {
+                child.sl.onActivate {
                     $0.accessibilityIdentifier = "child"
                     $0.alpha = 0.8999999761581421
                     $0.autoresizesSubviews = false
@@ -1259,10 +1259,10 @@ extension ViewPrinterTests {
         child.someFlag = false
         child.someValue = 10
         let expect2 = """
-            root.sl.config {
+            root.sl.onActivate {
                 $0.accessibilityIdentifier = "root"
             }.sl.sublayout {
-                child.sl.config {
+                child.sl.onActivate {
                     $0.accessibilityIdentifier = "child"
                     $0.alpha = 0.8999999761581421
                     $0.autoresizesSubviews = false
@@ -1286,10 +1286,10 @@ extension ViewPrinterTests {
         
         child.someFlag = true
         let expect3 = """
-            root.sl.config {
+            root.sl.onActivate {
                 $0.accessibilityIdentifier = "root"
             }.sl.sublayout {
-                child.sl.config {
+                child.sl.onActivate {
                     $0.accessibilityIdentifier = "child"
                     $0.alpha = 0.8999999761581421
                     $0.autoresizesSubviews = false
@@ -1330,7 +1330,7 @@ extension ViewPrinterTests {
         }
         
         activation = root.sl.sublayout {
-            child.sl.config {
+            child.sl.onActivate {
                 $0.contentMode = .scaleAspectFill
                 $0.semanticContentAttribute = .forceLeftToRight
                 $0.tag = 7
@@ -1350,10 +1350,10 @@ extension ViewPrinterTests {
         }.active()
         
         let expect = """
-            root.sl.config {
+            root.sl.onActivate {
                 $0.accessibilityIdentifier = "root"
             }.sl.sublayout {
-                child.sl.config {
+                child.sl.onActivate {
                     $0.accessibilityIdentifier = "child"
                     $0.alpha = 0.8999999761581421
                     $0.autoresizesSubviews = false
@@ -1379,10 +1379,10 @@ extension ViewPrinterTests {
         
         child.someFlag = true
         let expect2 = """
-            root.sl.config {
+            root.sl.onActivate {
                 $0.accessibilityIdentifier = "root"
             }.sl.sublayout {
-                child.sl.config {
+                child.sl.onActivate {
                     $0.accessibilityIdentifier = "child"
                     $0.alpha = 0.8999999761581421
                     $0.autoresizesSubviews = false
