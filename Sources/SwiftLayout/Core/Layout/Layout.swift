@@ -14,6 +14,7 @@ public protocol Layout {
     var option: LayoutOption? { get }
 
     func layoutWillActivate()
+    func layoutDidActivate()
 }
 
 extension Layout {
@@ -22,6 +23,7 @@ extension Layout {
     public var option: LayoutOption? { nil }
 
     public func layoutWillActivate() {}
+    public func layoutDidActivate() {}
 }
 
 extension Layout {
