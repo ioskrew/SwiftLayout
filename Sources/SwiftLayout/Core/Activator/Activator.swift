@@ -15,6 +15,8 @@ enum Activator {
 
     @discardableResult
     static func update<L: Layout>(layout: L, fromActivation activation: Activation, forceLayout: Bool) -> Activation {
+        willActivate(layout: layout)
+
         let prevInfoHashValues = Set(activation.viewInfos.map(\.hashValue))
 
         let elements = LayoutElements(layout: layout)
@@ -29,12 +31,16 @@ enum Activator {
             layoutIfNeeded(viewInfos, prevInfoHashValues)
         }
 
+        didActivate(layout: layout)
+
         return activation
     }
 }
 
 extension Activator {
     public static func finalActive<L: Layout>(layout: L, forceLayout: Bool) {
+        willActivate(layout: layout)
+
         let elements = LayoutElements(layout: layout)
 
         let viewInfos = elements.viewInformations
@@ -46,10 +52,20 @@ extension Activator {
         if forceLayout {
             layoutIfNeeded(viewInfos)
         }
+
+        didActivate(layout: layout)
     }
 }
 
 private extension Activator {
+    static func willActivate<L: Layout>(layout: L) {
+        LayoutExplorer.traversal(layout: layout) { $0.layoutWillActivate() }
+    }
+
+    static func didActivate<L: Layout>(layout: L) {
+        LayoutExplorer.traversal(layout: layout) { $0.layoutDidActivate() }
+    }
+
     static func updateViews(activation: Activation, viewInfos: [ViewInformation]) {
         let newInfos = viewInfos
         let newInfosSet = Set(newInfos)
