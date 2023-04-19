@@ -28,7 +28,7 @@ final class LayoutableTests: XCTestCase {
             XCTAssertEqual(view.root.removeFromSuperviewCallCount, 0)
             
             SLTAssertConstraintsHasSameElements(view.constraints, firstView: view.root, secondView: view, tags: [view: "layoutableView", view.root: "layoutableView.root"]) {
-                Anchors.allSides()
+                Anchors.allSides.equalToSuper()
             }
 
             SLTAssertConstraintsIsEmpty(view.child.constraints)
@@ -52,14 +52,14 @@ final class LayoutableTests: XCTestCase {
             XCTAssertEqual(view.root.removeFromSuperviewCallCount, 0)
             
             SLTAssertConstraintsHasSameElements(view.constraints, firstView: view.root, secondView: view) {
-                Anchors.center()
+                Anchors.center
             }
             SLTAssertConstraintsHasSameElements(view.root.constraints) {
                 TestAnchors(first: view.root) {
-                    Anchors.size(width: 50, height: 50)
+                    Anchors.size.equalTo(width: 50, height: 50)
                 }
                 TestAnchors(first: view.friend, second: view.root) {
-                    Anchors.allSides()
+                    Anchors.allSides.equalToSuper()
                 }
             }
             SLTAssertConstraintsIsEmpty(view.child.constraints)
@@ -83,14 +83,14 @@ final class LayoutableTests: XCTestCase {
             XCTAssertEqual(view.root.removeFromSuperviewCallCount, 0)
             
             SLTAssertConstraintsHasSameElements(view.constraints, firstView: view.root, secondView: view) {
-                Anchors.center()
+                Anchors.center
             }
             SLTAssertConstraintsHasSameElements(view.root.constraints) {
                 TestAnchors(first: view.root) {
-                    Anchors.size(width: 50, height: 50)
+                    Anchors.size.equalTo(width: 50, height: 50)
                 }
                 TestAnchors(first: view.friend, second: view.root) {
-                    Anchors.allSides()
+                    Anchors.allSides.equalToSuper()
                 }
             }
             SLTAssertConstraintsIsEmpty(view.child.constraints)
@@ -113,19 +113,19 @@ extension LayoutableTests {
             self.sl.sublayout {
                 root.sl.anchors {
                     if flag {
-                        Anchors.allSides()
+                        Anchors.allSides.equalToSuper()
                     } else {
-                        Anchors.size(width: 50, height: 50)
-                        Anchors.center()
+                        Anchors.size.equalTo(width: 50, height: 50)
+                        Anchors.center.equalToSuper()
                     }
                 }.sublayout {
                     if flag {
                         child.sl.anchors {
-                            Anchors.allSides()
+                            Anchors.allSides.equalToSuper()
                         }
                     } else {
                         friend.sl.anchors {
-                            Anchors.allSides()
+                            Anchors.allSides.equalToSuper()
                         }
                     }
                 }

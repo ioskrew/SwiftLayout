@@ -223,7 +223,7 @@ extension ViewPrinterTests {
         let root = UIView().sl.identifying("root")
         activation = root.sl.sublayout {
             UILabel().sl.identifying("label").sl.anchors {
-                Anchors.allSides()
+                Anchors.allSides.equalToSuper()
             }
         }.active()
         
@@ -248,10 +248,10 @@ extension ViewPrinterTests {
         
         activation = root.sl.sublayout {
             child.sl.anchors{
-                Anchors.allSides()
+                Anchors.allSides.equalToSuper()
             }.sublayout {
                 grandchild.sl.anchors {
-                    Anchors.allSides()
+                    Anchors.allSides.equalToSuper()
                 }
             }
         }.active()
@@ -347,7 +347,7 @@ extension ViewPrinterTests {
         
         activation = root.sl.sublayout {
             child.sl.anchors {
-                Anchors.cap()
+                Anchors.cap.equalToSuper()
             }
             friend.sl.anchors {
                 Anchors.leading
@@ -529,7 +529,7 @@ extension ViewPrinterTests {
         var layout: some Layout {
             self.sl.sublayout {
                 sea.sl.anchors {
-                    Anchors.allSides()
+                    Anchors.allSides.equalToSuper()
                 } .sublayout {
                     duny.sl.anchors {
                         Anchors.centerX.equalToSuper().multiplier(1.2)
@@ -568,18 +568,18 @@ extension ViewPrinterTests {
         var layout: some Layout {
             self.sl.sublayout {
                 nickname.sl.anchors {
-                    Anchors.cap()
+                    Anchors.cap.equalToSuper()
                 }.sublayout {
                     UIView().sl.identifying("sparrowhawk").sl.anchors {
-                        Anchors.allSides()
+                        Anchors.allSides.equalToSuper()
                     }
                 }
                 truename.sl.anchors {
                     Anchors.top.equalTo(nickname.bottomAnchor)
-                    Anchors.shoe()
+                    Anchors.shoe.equalToSuper()
                 }.sublayout {
                     UIView().sl.identifying("ged").sl.anchors {
-                        Anchors.allSides()
+                        Anchors.allSides.equalToSuper()
                     }
                 }
             }
@@ -610,7 +610,7 @@ extension ViewPrinterTests {
         func layout() -> some Layout {
             root.sl.sublayout {
                 label.sl.anchors {
-                    Anchors.allSides()
+                    Anchors.allSides.equalToSuper()
                 }
             }
         }
@@ -719,11 +719,11 @@ extension ViewPrinterTests {
         var layout: some Layout {
             self.sl.sublayout {
                 red.sl.anchors {
-                    Anchors.cap()
+                    Anchors.cap.equalToSuper()
                 }
                 blue.sl.anchors {
                     Anchors.top.equalTo(red.bottomAnchor)
-                    Anchors.shoe()
+                    Anchors.shoe.equalToSuper()
                 }
             }
         }
@@ -754,13 +754,13 @@ extension ViewPrinterTests {
                 $0.alpha = 1.0
                 $0.accessibilityLabel = "child-accessibilityLabel"
             }.anchors{
-                Anchors.allSides()
+                Anchors.allSides.equalToSuper()
             }.sublayout {
                 grandchild.sl.onActivate {
                     $0.isHidden = true
                     $0.accessibilityLabel = "grandchild-accessibilityLabel"
                 }.anchors {
-                    Anchors.allSides()
+                    Anchors.allSides.equalToSuper()
                 }
             }
         }.active()
@@ -806,13 +806,13 @@ extension ViewPrinterTests {
                 $0.alpha = 1.0
                 $0.accessibilityLabel = "child-accessibilityLabel"
             }.anchors{
-                Anchors.allSides()
+                Anchors.allSides.equalToSuper()
             }.sublayout {
                 grandchild.sl.onActivate {
                     $0.isHidden = true
                     $0.accessibilityLabel = "grandchild-accessibilityLabel"
                 }.anchors {
-                    Anchors.allSides()
+                    Anchors.allSides.equalToSuper()
                 }
             }
         }.active()

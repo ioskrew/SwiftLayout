@@ -32,7 +32,7 @@ extension AnchorsDSLTests {
         var layout: some Layout {
             superview.sl.sublayout {
                 subview.sl.anchors {
-                    Anchors.cap()
+                    Anchors.cap.equalToSuper()
                     Anchors.bottom.equalTo(siblingview, attribute: .top)
                 }
                 siblingview.sl.anchors {
@@ -47,7 +47,7 @@ extension AnchorsDSLTests {
         
         SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
             TestAnchors(first: subview, second: superview) {
-                Anchors.cap()
+                Anchors.cap.equalToSuper()
             }
             TestAnchors(first: subview, second: siblingview) {
                 Anchors.bottom.equalTo(siblingview, attribute: .top)
@@ -70,7 +70,7 @@ extension AnchorsDSLTests {
         var layout: some Layout {
             superview.sl.sublayout {
                 subview.sl.anchors {
-                    Anchors.cap()
+                    Anchors.cap.equalToSuper()
                     Anchors.bottom.equalTo(siblingview, attribute: .top)
                 }
                 siblingview.sl.anchors {
@@ -95,7 +95,7 @@ extension AnchorsDSLTests {
         var layout: some Layout {
             superview.sl.sublayout {
                 subview.sl.anchors {
-                    Anchors.cap()
+                    Anchors.cap.equalToSuper()
                     Anchors.bottom.equalTo(siblingview, attribute: .top)
                 }
                 siblingview.sl.anchors {
@@ -110,7 +110,7 @@ extension AnchorsDSLTests {
         
         SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
             TestAnchors(first: subview, second: superview) {
-                Anchors.cap()
+                Anchors.cap.equalToSuper()
             }
             TestAnchors(first: subview, second: siblingview) {
                 Anchors.bottom.equalToSuper(attribute: .top)
@@ -138,10 +138,10 @@ extension AnchorsDSLTests {
             superview.sl.sublayout {
                 subview.sl.anchors {
                     if flag {
-                        Anchors.cap()
+                        Anchors.cap.equalToSuper()
                         Anchors.bottom.equalTo(siblingview, attribute: .top)
                     } else {
-                        Anchors.size(width: 37, height: 19)
+                        Anchors.size.equalTo(width: 37, height: 19)
                         Anchors.top.equalToSuper(constant: 10)
                     }
                 }
@@ -158,7 +158,7 @@ extension AnchorsDSLTests {
             
             SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
                 TestAnchors(first: subview, second: superview) {
-                    Anchors.cap()
+                    Anchors.cap.equalToSuper()
                 }
                 TestAnchors(first: subview, second: siblingview) {
                     Anchors.bottom.equalToSuper(attribute: .top)
@@ -181,7 +181,7 @@ extension AnchorsDSLTests {
             
             SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
                 TestAnchors(first: subview, second: superview) {
-                    Anchors.cap()
+                    Anchors.cap.equalToSuper()
                 }
                 TestAnchors(first: subview, second: siblingview) {
                     Anchors.bottom.equalToSuper(attribute: .top)
@@ -218,7 +218,7 @@ extension AnchorsDSLTests {
             }
             SLTAssertConstraintsHasSameElements(subview.constraints, tags: tags) {
                 TestAnchors(first: subview) {
-                    Anchors.size(width: 37, height: 19)
+                    Anchors.size.equalTo(width: 37, height: 19)
                 }
             }
             SLTAssertConstraintsHasSameElements(siblingview.constraints, tags: tags) {
@@ -249,9 +249,9 @@ extension AnchorsDSLTests {
             superview.sl.sublayout {
                 subview.sl.anchors {
                     if flag {
-                        Anchors.cap()
+                        Anchors.cap.equalToSuper()
                     } else {
-                        Anchors.shoe()
+                        Anchors.shoe.equalToSuper()
                     }
                 }
             }
@@ -263,7 +263,7 @@ extension AnchorsDSLTests {
             
             SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
                 TestAnchors(first: subview, second: superview) {
-                    Anchors.cap()
+                    Anchors.cap.equalToSuper()
                 }
             }
             SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
@@ -275,7 +275,7 @@ extension AnchorsDSLTests {
             
             SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
                 TestAnchors(first: subview, second: superview) {
-                    Anchors.shoe()
+                    Anchors.shoe.equalToSuper()
                 }
             }
             SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
@@ -295,13 +295,13 @@ extension AnchorsDSLTests {
                 subview.sl.anchors {
                     switch test {
                     case .first:
-                        Anchors.allSides()
+                        Anchors.allSides.equalToSuper()
                     case .second:
-                        Anchors.center()
-                        Anchors.size(width: 11, height: 37)
+                        Anchors.center.equalToSuper()
+                        Anchors.size.equalTo(width: 11, height: 37)
                     case .third:
-                        Anchors.horizontal()
-                        Anchors.vertical(offset: 11)
+                        Anchors.horizontal.equalToSuper()
+                        Anchors.vertical.equalToSuper(inwardOffset: 11)
                     }
                 }
             }
@@ -373,7 +373,7 @@ extension AnchorsDSLTests {
         }
         
         context("is optional") {
-            optionalAnchors = Anchors.center()
+            optionalAnchors = Anchors.center.equalToSuper()
             optionalExpression = Anchors.width.height
             optionalMixedExpression = Anchors.leading.top
 
@@ -381,7 +381,7 @@ extension AnchorsDSLTests {
             
             SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
                 TestAnchors(first: subview, second: superview) {
-                    Anchors.center()
+                    Anchors.center
                     Anchors.width.height
                     Anchors.leading
                     Anchors.top
@@ -417,7 +417,7 @@ extension AnchorsDSLTests {
         layout.active().store(&activation)
 
         SLTAssertConstraintsHasSameElements(superview.constraints, firstView: subview, secondView: superview, tags: tags) {
-            Anchors.allSides()
+            Anchors.allSides.equalToSuper()
         }
         SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
     }
@@ -425,6 +425,40 @@ extension AnchorsDSLTests {
 
 // MARK: - complex usage
 extension AnchorsDSLTests {
+    func testOmitable() {
+        var layout: some Layout {
+            superview.sl.sublayout {
+                subview.sl.anchors {
+                    Anchors.top
+                    Anchors.bottom
+                    Anchors.horizontal
+                }
+                siblingview.sl.anchors {
+                    Anchors.center
+                    Anchors.size
+                    Anchors.allSides
+                }
+            }
+        }
+
+        layout.finalActive()
+
+        SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
+            TestAnchors(first: subview, second: superview) {
+                Anchors.top.equalToSuper()
+                Anchors.bottom.equalToSuper()
+                Anchors.horizontal.equalToSuper()
+            }
+            TestAnchors(first: siblingview, second: superview) {
+                Anchors.center.equalToSuper()
+                Anchors.size.equalToSuper()
+                Anchors.allSides.equalToSuper()
+            }
+        }
+        SLTAssertConstraintsIsEmpty(subview.constraints)
+        SLTAssertConstraintsIsEmpty(siblingview.constraints)
+    }
+
     func testWithIdentifier() {
         let identifyingView = UIView()
         
@@ -432,7 +466,7 @@ extension AnchorsDSLTests {
         var layout: some Layout {
             superview.sl.sublayout {
                 subview.sl.anchors {
-                    Anchors.cap()
+                    Anchors.cap.equalToSuper()
                     Anchors.bottom.equalTo("someIdentifier", attribute: .top)
                 }
                 identifyingView.sl.identifying("someIdentifier").sl.anchors {
@@ -448,7 +482,7 @@ extension AnchorsDSLTests {
         
         SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
             TestAnchors(first: subview, second: superview) {
-                Anchors.cap()
+                Anchors.cap.equalToSuper()
             }
             TestAnchors(first: subview, second: identifyingView) {
                 Anchors.bottom.equalTo(identifyingView, attribute: .top)
@@ -472,7 +506,7 @@ extension AnchorsDSLTests {
         var layout: some Layout {
             superview.sl.sublayout {
                 subview.sl.anchors {
-                    Anchors.cap()
+                    Anchors.cap.equalToSuper()
                     Anchors.leading.trailing
                     Anchors.top
                     Anchors.bottom.equalTo(siblingview, attribute: .top)
@@ -480,7 +514,7 @@ extension AnchorsDSLTests {
                 siblingview.sl.anchors {
                     Anchors.width.equalTo(constant: 37)
                     Anchors.height.equalTo(constant: 37)
-                    Anchors.size(width: 37, height: 37)
+                    Anchors.size.equalTo(width: 37, height: 37)
                     Anchors.centerX
                     Anchors.bottom
                     Anchors.centerX
@@ -493,7 +527,7 @@ extension AnchorsDSLTests {
         
         SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
             TestAnchors(first: subview, second: superview) {
-                Anchors.cap()
+                Anchors.cap.equalToSuper()
             }
             TestAnchors(first: subview, second: siblingview) {
                 Anchors.bottom.equalToSuper(attribute: .top)
@@ -506,7 +540,7 @@ extension AnchorsDSLTests {
         SLTAssertConstraintsIsEmpty(subview.constraints)
         SLTAssertConstraintsHasSameElements(siblingview.constraints) {
             TestAnchors(first: siblingview) {
-                Anchors.size(width: 37, height: 37)
+                Anchors.size.equalTo(width: 37, height: 37)
             }
         }
     }
@@ -516,7 +550,7 @@ extension AnchorsDSLTests {
         var layout: some Layout {
             superview.sl.sublayout {
                 subview.sl.anchors {
-                    Anchors.cap()
+                    Anchors.cap.equalToSuper()
                 }.anchors {
                     Anchors.bottom.equalTo(siblingview, attribute: .top)
                 }
@@ -536,7 +570,7 @@ extension AnchorsDSLTests {
         
         SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
             TestAnchors(first: subview, second: superview) {
-                Anchors.cap()
+                Anchors.cap.equalToSuper()
             }
             TestAnchors(first: subview, second: siblingview) {
                 Anchors.bottom.equalToSuper(attribute: .top)
@@ -559,7 +593,7 @@ extension AnchorsDSLTests {
         var layout: some Layout {
             superview.sl.sublayout {
                 subview.sl.anchors {
-                    Anchors.cap()
+                    Anchors.cap.equalToSuper()
                     
                 }
                 siblingview.sl.anchors {
@@ -582,7 +616,7 @@ extension AnchorsDSLTests {
         
         SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
             TestAnchors(first: subview, second: superview) {
-                Anchors.cap()
+                Anchors.cap.equalToSuper()
             }
             TestAnchors(first: subview, second: siblingview) {
                 Anchors.bottom.equalToSuper(attribute: .top)
@@ -615,7 +649,7 @@ extension AnchorsDSLTests {
             window.sl.sublayout {
                 superview.sl.sublayout {
                     subview.sl.anchors {
-                        Anchors.cap()
+                        Anchors.cap.equalToSuper()
                         Anchors.bottom.equalTo(siblingview, attribute: .top)
                     }
                     siblingview.sl.anchors {
@@ -625,7 +659,7 @@ extension AnchorsDSLTests {
                         Anchors.bottom
                     }
                 }.anchors {
-                    Anchors.allSides()
+                    Anchors.allSides.equalToSuper()
                 }
             }
         }
