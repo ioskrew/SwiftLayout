@@ -343,17 +343,17 @@ extension LayoutDSLTests {
 
 // MARK: - complex usage
 extension LayoutDSLTests {
-    func testConfig() {
+    func testOnActivate() {
         @LayoutBuilder
         var layout: some Layout {
             root.sl.sublayout {
-                child.sl.onActivate {
-                    $0.backgroundColor = .yellow
-                }.sublayout {
+                child.sl.sublayout {
                     label.sl.onActivate {
                         $0.text = "test onActivate"
                         $0.textColor = .green
                     }
+                }.onActivate {
+                    $0.backgroundColor = .yellow
                 }
             }
         }

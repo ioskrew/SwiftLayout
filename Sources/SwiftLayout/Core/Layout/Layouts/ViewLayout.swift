@@ -103,7 +103,7 @@ extension ViewLayout {
     /// - Parameter onActivate: A perform block for this layout.
     /// - Returns: The layout itself with onActivate action added
     ///
-    func onActivate(_ perform: @escaping (V) -> Void) -> Self {
+    public func onActivate(_ perform: @escaping (V) -> Void) -> Self {
         Self.init(innerView, sublayouts: sublayouts, anchors: anchors, onActivate: perform)
     }
     
