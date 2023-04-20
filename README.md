@@ -18,19 +18,19 @@
     viewLogo.sl.anchors {
       Anchors.leading.equalTo(leftParenthesis, attribute: .trailing, constant: 20)
       Anchors.centerY.equalToSuper(constant: 30)
-      Anchors.size(width: 200, height: 200)
+      Anchors.size.equalTo(width: 200, height: 200)
     }
     UIImageView().sl.identifying("plus").sl.onActivate { imageView in
       imageView.image = UIImage(systemName: "plus")
       imageView.tintColor = .SLColor
     }.anchors {
-      Anchors.center(offsetY: 30)
-      Anchors.size(width: 150, height: 150)
+      Anchors.center.equalToSuper(yOffset: 30)
+      Anchors.size.equalTo(width: 150, height: 150)
     }
     constraintLogo.sl.anchors {
       Anchors.trailing.equalTo(rightParenthesis.leadingAnchor)
       Anchors.centerY.equalTo("plus")
-      Anchors.size(width: 200, height: 150)
+      Anchors.size.equalTo(width: 200, height: 150)
     }
     rightParenthesis.sl.anchors {
       Anchors.trailing.equalToSuper(constant: -16)
@@ -158,10 +158,9 @@ It is mainly used within `anchors`, a method of Layout.
   ...
   ```
   
-  also, the constraint and multiplier can be set as follows.
+  also, the multiplier can be set as follows.
   
   ```swift
-  Anchors.top.constant(10)
   Anchors.top.multiplier(10)
   ```
 
@@ -170,7 +169,7 @@ It is mainly used within `anchors`, a method of Layout.
   ```swift
   superview.sl.sublayout {
     selfview.sl.anchors {
-      Anchors.width.height.equalToSuper(constant: 10) // only for selfview
+      Anchors.width.height.equalTo(constant: 10) // only for selfview
     }
   }
   ```
@@ -194,10 +193,10 @@ It is mainly used within `anchors`, a method of Layout.
   @LayoutBuilder func layout() -> some Layout {
     superview.sl.sublayout {
       selfview.sl.anchors {
-        Anchors.allSides()
+        Anchors.allSides
       }.sublayout {
         subview.sl.anchors {
-          Anchors.allSides()
+          Anchors.allSides
         }
       }
     } 
@@ -210,12 +209,12 @@ It is mainly used within `anchors`, a method of Layout.
   @LayoutBuilder func layout() -> some Layout {
     superview.sl.sublayout {
       selfview.sl.anchors {
-        Anchors.allSides()
+        Anchors.allSides
       }
     }
     selfview.sl.sublayout {
       subview.sl.anchors {
-        Anchors.allSides()
+        Anchors.allSides
       }
     }
   }
@@ -357,64 +356,62 @@ final class PreviewView: UIView, Layoutable {
   }
   // or just use the convenient propertyWrapper like below
   // @AnimatableLayoutProperty(duration: 1.0) var capTop = true
-
-  let cap = UIButton()
-  let shoe = UIButton()
-  let title = UILabel()
-
-  var top: UIButton { capTop ? cap : shoe }
-  var bottom: UIButton { capTop ? shoe : cap }
-
+  
+  let capButton = UIButton()
+  let shoeButton = UIButton()
+  let titleLabel = UILabel()
+  
+  var topView: UIButton { capTop ? capButton : shoeButton }
+  var bottomView: UIButton { capTop ? shoeButton : capButton }
+  
   var activation: Activation?
-
+  
   var layout: some Layout {
     self.sl.sublayout {
-      top.sl.anchors {
-        Anchors.cap()
+      topView.sl.anchors {
+        Anchors.cap
       }
-      bottom.sl.anchors {
-        Anchors.top.equalTo(top.bottomAnchor)
-        Anchors.height.equalTo(top)
-        Anchors.shoe()
+      bottomView.sl.anchors {
+        Anchors.top.equalTo(topView.bottomAnchor)
+        Anchors.height.equalTo(topView)
+        Anchors.shoe
       }
-      title.sl.onActivate { label in
+      titleLabel.sl.onActivate { label in
         label.text = "Top Title"
         UIView.transition(with: label, duration: 1.0, options: [.beginFromCurrentState, .transitionCrossDissolve]) {
           label.textColor = self.capTop ? .black : .yellow
         }
       }.anchors {
-        Anchors.center(top)
+        Anchors.center.equalTo(topView)
       }
       UILabel().sl.onActivate { label in
         label.text = "Bottom Title"
-        label.textColor = capTop ? .yellow : .black
-      }.identifying("title.bottom").sl.anchors {
-        Anchors.center(bottom)
+        label.textColor = self.capTop ? .yellow : .black
+      }.identifying("title.bottom").anchors {
+        Anchors.center.equalTo(bottomView)
       }
     }
   }
-
+  
   override init(frame: CGRect) {
     super.init(frame: frame)
     initViews()
   }
-
+  
   required init?(coder: NSCoder) {
     super.init(coder: coder)
     initViews()
   }
-
+  
   func initViews() {
-    cap.backgroundColor = .yellow
-    shoe.backgroundColor = .black
-    cap.addAction(.init(handler: { [weak self] _ in
+    capButton.backgroundColor = .yellow
+    shoeButton.backgroundColor = .black
+    capButton.addAction(.init(handler: { [weak self] _ in
       self?.capTop.toggle()
     }), for: .touchUpInside)
-    shoe.addAction(.init(handler: { [weak self] _ in
+    shoeButton.addAction(.init(handler: { [weak self] _ in
       self?.capTop.toggle()
     }), for: .touchUpInside)
-    self.accessibilityIdentifier = "root"
-    updateIdentifiers(rootObject: self)
     self.sl.updateLayout()
   }
 }
@@ -429,12 +426,12 @@ final class PreviewView: UIView, Layoutable {
 You can decorate view in Layout with onActivate function
 
 ```swift
-contentView.sublayout {
+contentView.sl.sublayout {
   nameLabel.sl.onActivate { label in 
     label.text = "Hello"
     label.textColor = .black
   }.anchors {
-    Anchors.allSides()
+    Anchors.allSides
   }
 }
 ```
@@ -446,11 +443,11 @@ You can set `accessibilityIdentifier` and use that instead of the view reference
 ```swift
 contentView.sl.sublayout {
   nameLabel.sl.identifying("name").sl.anchors {
-    Anchors.cap()
+    Anchors.cap
   }
   ageLabel.sl.anchors {
     Anchors.top.equalTo("name", attribute: .bottom)
-    Anchors.shoe()
+    Anchors.shoe
   }
 }
 ```

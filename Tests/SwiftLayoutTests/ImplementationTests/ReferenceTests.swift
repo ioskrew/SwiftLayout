@@ -44,7 +44,7 @@ class ReferenceTests: XCTestCase {
         var layout: some Layout {
             self.sl.sublayout {
                 DeinitView().sl.anchors {
-                    Anchors.allSides()
+                    Anchors.allSides.equalToSuper()
                 }.sublayout {
                     DeinitView()
                 }

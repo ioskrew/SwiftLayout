@@ -28,7 +28,7 @@ class LayoutPrinterTests: XCTestCase {
                 image.sl.anchors {
                     Anchors.leading.equalToSuper(constant: 10.0)
                     Anchors.centerY
-                    Anchors.size(width: 70, height: 70)
+                    Anchors.size.equalTo(width: 70, height: 70)
                 }
                 
                 title.sl.anchors {

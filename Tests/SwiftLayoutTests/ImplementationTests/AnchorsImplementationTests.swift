@@ -894,10 +894,10 @@ extension AnchorsImplementationTests {
         
         @AnchorsBuilder
         var anchors: Anchors {
-            Anchors.horizontal()
-            Anchors.horizontal(offset: 13)
-            Anchors.horizontal(siblingview)
-            Anchors.horizontal(siblingview, offset: 13)
+            Anchors.horizontal.equalToSuper()
+            Anchors.horizontal.equalToSuper(inwardOffset: 13)
+            Anchors.horizontal.equalTo(siblingview)
+            Anchors.horizontal.equalTo(siblingview, inwardOffset: 13)
         }
         let constraints = anchors.constraints(item: subview, toItem: superview)
         let expected = [
@@ -919,10 +919,10 @@ extension AnchorsImplementationTests {
         
         @AnchorsBuilder
         var anchors: Anchors {
-            Anchors.vertical()
-            Anchors.vertical(offset: offset)
-            Anchors.vertical(siblingview)
-            Anchors.vertical(siblingview, offset: offset)
+            Anchors.vertical.equalToSuper()
+            Anchors.vertical.equalToSuper(inwardOffset: offset)
+            Anchors.vertical.equalTo(siblingview)
+            Anchors.vertical.equalTo(siblingview, inwardOffset: offset)
         }
         let constraints = anchors.constraints(item: subview, toItem: superview)
         let expected = [
@@ -944,10 +944,10 @@ extension AnchorsImplementationTests {
         
         @AnchorsBuilder
         var anchors: Anchors {
-            Anchors.allSides()
-            Anchors.allSides(offset: offset)
-            Anchors.allSides(siblingview)
-            Anchors.allSides(siblingview, offset: offset)
+            Anchors.allSides.equalToSuper()
+            Anchors.allSides.equalToSuper(inwardOffset: offset)
+            Anchors.allSides.equalTo(siblingview)
+            Anchors.allSides.equalTo(siblingview, inwardOffset: offset)
         }
         let constraints = anchors.constraints(item: subview, toItem: superview)
         let expected = [
@@ -977,10 +977,10 @@ extension AnchorsImplementationTests {
         
         @AnchorsBuilder
         var anchors: Anchors {
-            Anchors.cap()
-            Anchors.cap(offset: offset)
-            Anchors.cap(siblingview)
-            Anchors.cap(siblingview, offset: offset)
+            Anchors.cap.equalToSuper()
+            Anchors.cap.equalToSuper(inwardOffset: offset)
+            Anchors.cap.equalTo(siblingview)
+            Anchors.cap.equalTo(siblingview, inwardOffset: offset)
         }
         let constraints = anchors.constraints(item: subview, toItem: superview)
         let expected = [
@@ -1006,10 +1006,10 @@ extension AnchorsImplementationTests {
         
         @AnchorsBuilder
         var anchors: Anchors {
-            Anchors.shoe()
-            Anchors.shoe(offset: offset)
-            Anchors.shoe(siblingview)
-            Anchors.shoe(siblingview, offset: offset)
+            Anchors.shoe.equalToSuper()
+            Anchors.shoe.equalToSuper(inwardOffset: offset)
+            Anchors.shoe.equalTo(siblingview)
+            Anchors.shoe.equalTo(siblingview, inwardOffset: offset)
         }
         let constraints = anchors.constraints(item: subview, toItem: superview)
         let expected = [
@@ -1036,12 +1036,15 @@ extension AnchorsImplementationTests {
         
         @AnchorsBuilder
         var anchors: Anchors {
-            Anchors.size(CGSize(width: width, height: height))
-            Anchors.size(width: width, height: height)
-            Anchors.size(siblingview, width: width, height: height)
+            Anchors.size.equalToSuper()
+            Anchors.size.equalTo(CGSize(width: width, height: height))
+            Anchors.size.equalTo(width: width, height: height)
+            Anchors.size.equalTo(siblingview, widthOffset: width, heightOffset: height)
         }
         let constraints = anchors.constraints(item: subview, toItem: superview)
         let expected = [
+            NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: superview, attribute: .width, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .height, relatedBy: .equal, toItem: superview, attribute: .height, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: width),
             NSLayoutConstraint(item: subview, attribute: .height, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: height),
             NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: width),
@@ -1059,10 +1062,10 @@ extension AnchorsImplementationTests {
         
         @AnchorsBuilder
         var anchors: Anchors {
-            Anchors.center()
-            Anchors.center(offsetX: offsetX, offsetY: offsetY)
-            Anchors.center(siblingview)
-            Anchors.center(siblingview, offsetX: offsetX, offsetY: offsetY)
+            Anchors.center.equalToSuper()
+            Anchors.center.equalToSuper(xOffset: offsetX, yOffset: offsetY)
+            Anchors.center.equalTo(siblingview)
+            Anchors.center.equalTo(siblingview, xOffset: offsetX, yOffset: offsetY)
         }
         let constraints = anchors.constraints(item: subview, toItem: superview)
         let expected = [
@@ -1088,8 +1091,8 @@ extension AnchorsImplementationTests {
         
         @AnchorsBuilder
         var anchors: Anchors {
-            Anchors.size(siblingview, width: width, height: height).multiplier(multiplier)
-            Anchors.center(offsetX: offsetX, offsetY: offsetY).multiplier(multiplier)
+            Anchors.size.equalTo(siblingview, widthOffset: width, heightOffset: height).multiplier(multiplier)
+            Anchors.center.equalToSuper(xOffset: offsetX, yOffset: offsetY).multiplier(multiplier)
         }
         let constraints = anchors.constraints(item: subview, toItem: superview)
         let expected = [
@@ -1111,8 +1114,8 @@ extension AnchorsImplementationTests {
         
         @AnchorsBuilder
         var anchors: Anchors {
-            Anchors.size(siblingview, width: width, height: height).priority(priority)
-            Anchors.center(offsetX: offsetX, offsetY: offsetY).priority(priority)
+            Anchors.size.equalTo(siblingview, widthOffset: width, heightOffset: height).priority(priority)
+            Anchors.center.equalToSuper(xOffset: offsetX, yOffset: offsetY).priority(priority)
         }
         let constraints = anchors.constraints(item: subview, toItem: superview)
         let expected = [

@@ -64,10 +64,10 @@ extension ImplementationTests {
     func testLayoutFlattening() {
         let layout = root.sl.sublayout {
             child.sl.anchors {
-                Anchors.allSides()
+                Anchors.allSides.equalToSuper()
             }.sublayout {
                 friend.sl.anchors {
-                    Anchors.allSides()
+                    Anchors.allSides.equalToSuper()
                 }
             }
         }
@@ -88,22 +88,22 @@ extension ImplementationTests {
         let e2 = LayoutElements(layout: f2)
         
         let f3 = root.sl.sublayout {
-            child.sl.anchors { Anchors.allSides() }
+            child.sl.anchors { Anchors.allSides.equalToSuper() }
         }
         let e3 = LayoutElements(layout: f3)
         
         let f4 = root.sl.sublayout {
-            child.sl.anchors { Anchors.allSides() }
+            child.sl.anchors { Anchors.allSides.equalToSuper() }
         }
         let e4 = LayoutElements(layout: f4)
         
         let f5 = root.sl.sublayout {
-            child.sl.anchors { Anchors.cap() }
+            child.sl.anchors { Anchors.cap.equalToSuper() }
         }
         let e5 = LayoutElements(layout: f5)
         
         let f6 = root.sl.sublayout {
-            friend.sl.anchors { Anchors.allSides() }
+            friend.sl.anchors { Anchors.allSides.equalToSuper() }
         }
         let e6 = LayoutElements(layout: f6)
         
@@ -129,7 +129,7 @@ extension ImplementationTests {
         
         activation = root.sl.sublayout {
             red.sl.anchors {
-                Anchors.allSides()
+                Anchors.allSides.equalToSuper()
             }
         }.active()
         
@@ -235,11 +235,11 @@ extension ImplementationTests {
     func testIdentifier() {
         let activation = root.sl.sublayout {
             UILabel().sl.identifying("label").sl.anchors {
-                Anchors.cap()
+                Anchors.cap.equalToSuper()
             }
             UIView().sl.identifying("secondView").sl.anchors {
                 Anchors.top.equalTo("label", attribute: .bottom)
-                Anchors.shoe()
+                Anchors.shoe.equalToSuper()
             }
         }.active()
         
@@ -251,10 +251,10 @@ extension ImplementationTests {
         XCTAssertEqual(secondView?.accessibilityIdentifier, "secondView")
         
         let currents = activation.constraints
-        let labelConstraints = Set(ofWeakConstraintsFrom: Anchors.cap().constraints(item: label!, toItem: root))
+        let labelConstraints = Set(ofWeakConstraintsFrom: Anchors.cap.equalToSuper().constraints(item: label!, toItem: root))
         XCTAssertEqual(currents.intersection(labelConstraints), labelConstraints)
 
-        let secondViewConstraints = Set(ofWeakConstraintsFrom: Anchors.cap().constraints(item: label!, toItem: root))
+        let secondViewConstraints = Set(ofWeakConstraintsFrom: Anchors.cap.equalToSuper().constraints(item: label!, toItem: root))
         XCTAssertEqual(currents.intersection(secondViewConstraints), secondViewConstraints)
         
         let constraintsBetweebViews = Set(ofWeakConstraintsFrom: Anchors.top.equalTo(label!, attribute: .bottom).constraints(item: secondView!, toItem: label))
@@ -294,7 +294,7 @@ extension ImplementationTests {
         var layout: some Layout {
             self.sl.sublayout {
                 stack.sl.anchors {
-                    Anchors.allSides()
+                    Anchors.allSides.equalToSuper()
                 }.sublayout {
                     if isA {
                         a
