@@ -20,7 +20,7 @@ public extension _UIViewExtension where Self: UIView {
     /// - Parameter build: A ``LayoutBuilder`` that  create sublayouts of this view.
     /// - Returns: An ``ViewLayout`` that wraps this view and contains sublayouts .
     ///
-    @available(*, deprecated, message: "Use the sl.sublayout(_:) method instead.")
+    @available(*, deprecated,  renamed: "sl.sublayout(_:)")
     func callAsFunction<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<Self> {
         ViewLayout(self, sublayouts: [build()])
     }
@@ -51,7 +51,7 @@ public extension _UIViewExtension where Self: UIView {
     /// - Parameter build: A ``AnchorsBuilder`` that  create ``Anchors`` to be applied to this layout
     /// - Returns: An ``ViewLayout`` that wraps this view and contains the anchors  coordinator.
     ///
-    @available(*, deprecated, message: "Use the sl.anchors(_:) method instead.")
+    @available(*, deprecated, renamed: "sl.anchors(_:)")
     func anchors(@AnchorsBuilder _ build: () -> Anchors) -> ViewLayout<Self> {
         ViewLayout(self, anchors: build())
     }
@@ -72,7 +72,7 @@ public extension _UIViewExtension where Self: UIView {
     /// - Parameter build: A ``LayoutBuilder`` that  create sublayouts of this view.
     /// - Returns: An ``ViewLayout`` that wraps this view and contains sublayouts .
     ///
-    @available(*, deprecated, message: "Use the sl.sublayout(_:) method instead.")
+    @available(*, deprecated, renamed: "sl.sublayout(_:)")
     func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<Self> {
         ViewLayout(self, sublayouts: [build()])
     }
@@ -82,7 +82,7 @@ public extension _UIViewExtension where Self: UIView {
     ///
     /// - Returns: An ``AnyLayout`` wrapping this layout.
     ///
-    @available(*, deprecated, message: "Use the sl.eraseToAnyLayout() method instead.")
+    @available(*, deprecated, renamed: "sl.eraseToAnyLayout()")
     func eraseToAnyLayout() -> AnyLayout {
         AnyLayout(ViewLayout(self))
     }
@@ -105,7 +105,7 @@ public extension _UIViewExtension where Self: UIView {
     /// - Parameter config: A configuration block for this view.
     /// - Returns: The view itself with the configuration applied
     ///
-    @available(*, deprecated, message: "Use the sl.onActivate(_:) method instead.")
+    @available(*, deprecated, renamed: "sl.onActivate(_:)")
     func config(_ config: (Self) -> Void) -> Self {
         config(self)
         return self
@@ -117,7 +117,7 @@ public extension _UIViewExtension where Self: UIView {
     /// - Parameter accessibilityIdentifier: A string containing the identifier of the element.
     /// - Returns: The view itself with the accessibilityIdentifier applied
     ///
-    @available(*, deprecated, message: "Use the sl.identifying(_:) method instead.")
+    @available(*, deprecated, renamed: "sl.identifying(_:)")
     func identifying(_ accessibilityIdentifier: String) -> Self {
         self.accessibilityIdentifier = accessibilityIdentifier
         return self
