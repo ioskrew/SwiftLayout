@@ -56,7 +56,7 @@
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "2.8.0"),
+  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "3.0.0"),
 ],
 ```
 
@@ -425,6 +425,7 @@ final class PreviewView: UIView, Layoutable {
 ### UIView의 `onActivate(_:)`
 
 Layout안에서 뷰의 속성을 설정할 수 있습니다.
+onActivate 함수에 전달된 클로저는 활성화 프로세스 중에 호출됩니다.
 
 ```swift
 contentView.sl.sublayout {

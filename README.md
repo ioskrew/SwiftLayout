@@ -60,7 +60,7 @@
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "2.8.0"),
+  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "3.0.0"),
 ],
 ```
 
@@ -423,7 +423,8 @@ final class PreviewView: UIView, Layoutable {
 
 ### `onActivate(_:)` of UIView
 
-You can decorate view in Layout with onActivate function
+You can use the onActivate function in a layout to decorate and modify the view. 
+The closure passed to the onActivate function is called during the activation process.
 
 ```swift
 contentView.sl.sublayout {
