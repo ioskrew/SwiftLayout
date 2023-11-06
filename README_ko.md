@@ -10,29 +10,29 @@
 
 ```swift
 @LayoutBuilder var layout: some Layout {
-  self.sublayout {
-    leftParenthesis.anchors {
+  self.sl.sublayout {
+    leftParenthesis.sl.anchors {
       Anchors.leading.equalToSuper(constant: 16)
       Anchors.centerY
     }
-    viewLogo.anchors {
+    viewLogo.sl.anchors {
       Anchors.leading.equalTo(leftParenthesis, attribute: .trailing, constant: 20)
       Anchors.centerY.equalToSuper(constant: 30)
-      Anchors.size(width: 200, height: 200)
+      Anchors.size.equalTo(width: 200, height: 200)
     }
-    UIImageView().identifying("plus").config { imageView in
+    UIImageView().sl.identifying("plus").sl.onActivate { imageView in
       imageView.image = UIImage(systemName: "plus")
       imageView.tintColor = .SLColor
     }.anchors {
-      Anchors.center(offsetY: 30)
-      Anchors.size(width: 150, height: 150)
+      Anchors.center.equalToSuper(yOffset: 30)
+      Anchors.size.equalTo(width: 150, height: 150)
     }
-    constraintLogo.anchors {
+    constraintLogo.sl.anchors {
       Anchors.trailing.equalTo(rightParenthesis.leadingAnchor)
       Anchors.centerY.equalTo("plus")
-      Anchors.size(width: 200, height: 150)
+      Anchors.size.equalTo(width: 200, height: 150)
     }
-    rightParenthesis.anchors {
+    rightParenthesis.sl.anchors {
       Anchors.trailing.equalToSuper(constant: -16)
       Anchors.centerY
     }
@@ -52,11 +52,11 @@
 
 # 설치
 
-**SwiftLayout**은 현재 **SPM**만 지원합니다.
+**SwiftLayout**은 현재 **SPM(Swift Package Manager)**만 지원합니다.
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "2.8.0"),
+  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "3.0.0"),
 ],
 ```
 
@@ -82,8 +82,8 @@ dependencies: [
 
 ```swift
 @LayoutBuilder var layout: some Layout {
-  view.sublayout {
-    subview.sublayout {
+  view.sl.sublayout {
+    subview.sl.sublayout {
       subsubview
       subsub2view
     }
@@ -128,8 +128,8 @@ Layout의 메소드인 `anchors` 안에서 주로 사용됩니다.
 - equalTo와 같은 관계 메소드를 통해서 두번째 아이템(NSLayoutConstraint.secondItem, secondAttribute)을 설정할 수 있습니다.
   
   ```swift
-  superview.sublayout {
-    selfview.anchors {
+  superview.sl.sublayout {
+    selfview.sl.anchors {
       Anchors.top.equalTo(superview, attribute: .top, constant: 10)
     }
   }
@@ -144,9 +144,9 @@ Layout의 메소드인 `anchors` 안에서 주로 사용됩니다.
 - 관계 메소드를 생략할 경우 두번째 아이템은 자동으로 해당 뷰의 상위뷰로 설정됩니다.
   
   ```swift
-  superview.sublayout {
-    selfview.anchors {
-      Anchors.top.bottom
+  superview.sl.sublayout {
+    selfview.sl.anchors {
+      Anchors.sl.top.bottom
     }
   }
   ```
@@ -159,19 +159,18 @@ Layout의 메소드인 `anchors` 안에서 주로 사용됩니다.
   ...
   ```
   
-  또한, 추가적으로 constraint와 multiplier를 다음과 같이 설정할 수 있습니다.
+  또한, 추가적으로 multiplier를 다음과 같이 설정할 수 있습니다.
   
   ```swift
-  Anchors.top.constant(10)
   Anchors.top.multiplier(10)
   ```
 
 - 너비와 높이는 두번째 아이템을 설정하지 않을 경우 자기 자신이 됩니다.
   
   ```swift
-  superview.sublayout {
-    selfview.anchors {
-      Anchors.width.height.equalToSuper(constant: 10) // only for selfview
+  superview.sl.sublayout {
+    selfview.sl.anchors {
+      Anchors.width.height.equalTo(constant: 10) // only for selfview
     }
   }
   ```
@@ -193,12 +192,12 @@ Layout의 메소드인 `anchors` 안에서 주로 사용됩니다.
   
   ```swift
   @LayoutBuilder func layout() -> some Layout {
-    superview.sublayout {
-      selfview.anchors {
-        Anchors.allSides()
+    superview.sl.sublayout {
+      selfview.sl.anchors {
+        Anchors.allSides
       }.sublayout {
-        subview.anchors {
-          Anchors.allSides()
+        subview.sl.anchors {
+          Anchors.allSides
         }
       }
     } 
@@ -209,14 +208,14 @@ Layout의 메소드인 `anchors` 안에서 주로 사용됩니다.
   
   ```swift
   @LayoutBuilder func layout() -> some Layout {
-    superview.sublayout {
-      selfview.anchors {
-        Anchors.allSides()
+    superview.sl.sublayout {
+      selfview.sl.anchors {
+        Anchors.allSides
       }
     }
-    selfview.sublayout {
-      subview.anchors {
-        Anchors.allSides()
+    selfview.sl.sublayout {
+      subview.sl.anchors {
+        Anchors.allSides
       }
     }
   }
@@ -233,8 +232,8 @@ addSubview와 constraint의 적용을 위해서는 아래의 메소드를 호출
   
   ```swift
   @LayoutBuilder func layout() -> some Layout {
-    superview.sublayout {
-      selfview.anchors {
+    superview.sl.sublayout {
+      selfview.sl.anchors {
         Anchors.top
       }
     }
@@ -250,8 +249,8 @@ addSubview와 constraint의 적용을 위해서는 아래의 메소드를 호출
   
   ```swift
   @LayoutBuilder func layout() -> some Layout {
-    superview.sublayout {
-      selfview.anchors {
+    superview.sl.sublayout {
+      selfview.sl.anchors {
         if someCondition {
           Anchors.bottom
         } else {
@@ -286,7 +285,7 @@ addSubview와 constraint의 적용을 위해서는 아래의 메소드를 호출
   class SomeView: UIView, Layoutable {
     var activation: Activation?
     @LayoutBuilder var layout: some Layout {
-      self.sublayout {
+      self.sl.sublayout {
         ...
       }
     }
@@ -312,7 +311,7 @@ var showMiddleName: Bool = false {
 }
 
 var layout: some Layout {
-  self.sublayout {
+  self.sl.sublayout {
     firstNameLabel
     if showMiddleName {
       middleNameLabel
@@ -330,7 +329,7 @@ var layout: some Layout {
 @LayoutProeprty var showMiddleName: Bool = false // change value call updateLayout of Layoutable
 
 var layout: some Layout {
-  self.sublayout {
+  self.sl.sublayout {
     firstNameLabel
     if showMiddleName {
       middleNameLabel
@@ -358,64 +357,62 @@ final class PreviewView: UIView, Layoutable {
   }
   // or just use the convenient propertyWrapper like below
   // @AnimatableLayoutProperty(duration: 1.0) var capTop = true
-
-  let cap = UIButton()
-  let shoe = UIButton()
-  let title = UILabel()
-
-  var top: UIButton { capTop ? cap : shoe }
-  var bottom: UIButton { capTop ? shoe : cap }
-
+  
+  let capButton = UIButton()
+  let shoeButton = UIButton()
+  let titleLabel = UILabel()
+  
+  var topView: UIButton { capTop ? capButton : shoeButton }
+  var bottomView: UIButton { capTop ? shoeButton : capButton }
+  
   var activation: Activation?
-
+  
   var layout: some Layout {
-    self.sublayout {
-      top.anchors {
-        Anchors.cap()
+    self.sl.sublayout {
+      topView.sl.anchors {
+        Anchors.cap
       }
-      bottom.anchors {
-        Anchors.top.equalTo(top.bottomAnchor)
-        Anchors.height.equalTo(top)
-        Anchors.shoe()
+      bottomView.sl.anchors {
+        Anchors.top.equalTo(topView.bottomAnchor)
+        Anchors.height.equalTo(topView)
+        Anchors.shoe
       }
-      title.config { label in
+      titleLabel.sl.onActivate { label in
         label.text = "Top Title"
         UIView.transition(with: label, duration: 1.0, options: [.beginFromCurrentState, .transitionCrossDissolve]) {
           label.textColor = self.capTop ? .black : .yellow
         }
       }.anchors {
-        Anchors.center(top)
+        Anchors.center.equalTo(topView)
       }
-      UILabel().config { label in
+      UILabel().sl.onActivate { label in
         label.text = "Bottom Title"
-        label.textColor = capTop ? .yellow : .black
+        label.textColor = self.capTop ? .yellow : .black
       }.identifying("title.bottom").anchors {
-        Anchors.center(bottom)
+        Anchors.center.equalTo(bottomView)
       }
     }
   }
-
+  
   override init(frame: CGRect) {
     super.init(frame: frame)
     initViews()
   }
-
+  
   required init?(coder: NSCoder) {
     super.init(coder: coder)
     initViews()
   }
-
+  
   func initViews() {
-    cap.backgroundColor = .yellow
-    shoe.backgroundColor = .black
-    cap.addAction(.init(handler: { [weak self] _ in
+    capButton.backgroundColor = .yellow
+    shoeButton.backgroundColor = .black
+    capButton.addAction(.init(handler: { [weak self] _ in
       self?.capTop.toggle()
     }), for: .touchUpInside)
-    shoe.addAction(.init(handler: { [weak self] _ in
+    shoeButton.addAction(.init(handler: { [weak self] _ in
       self?.capTop.toggle()
     }), for: .touchUpInside)
-    self.accessibilityIdentifier = "root"
-    updateIdentifiers(rootObject: self)
     self.sl.updateLayout()
   }
 }
@@ -425,17 +422,18 @@ final class PreviewView: UIView, Layoutable {
 
 ## 그 밖의 유용한 기능들
 
-### UIView의 `config(_:)`
+### UIView의 `onActivate(_:)`
 
-Layout안에서 뷰의 속성을 설정할 수 있습니다. (*Layout이 아닌 다른 곳에서도 유용하게 사용할 수 있습니다.*)
+Layout안에서 뷰의 속성을 설정할 수 있습니다.
+onActivate 함수에 전달된 클로저는 활성화 프로세스 중에 호출됩니다.
 
 ```swift
-contentView.sublayout {
-  nameLabel.config { label in 
+contentView.sl.sublayout {
+  nameLabel.sl.onActivate { label in 
     label.text = "Hello"
     label.textColor = .black
   }.anchors {
-    Anchors.allSides()
+    Anchors.allSides
   }
 }
 ```
@@ -445,13 +443,13 @@ contentView.sublayout {
 `accessibilityIdentifier`을 설정하고 view reference 대신 해당 문자열을 이용할 수 있습니다.
 
 ```swift
-contentView.sublayout {
-  nameLabel.identifying("name").anchors {
-    Anchors.cap()
+contentView.sl.sublayout {
+  nameLabel.sl.identifying("name").sl.anchors {
+    Anchors.cap
   }
-  ageLabel.anchors {
+  ageLabel.sl.anchors {
     Anchors.top.equalTo("name", attribute: .bottom)
-    Anchors.shoe()
+    Anchors.shoe
   }
 }
 ```
@@ -500,12 +498,12 @@ struct ViewUIView_Previews: PreviewProvider {
   
   ```swift
   var layout: some Layout {
-    root.sublayout {
-      child.anchors {
+    root.sl.sublayout {
+      child.sl.anchors {
         Anchors.top
         Anchors.leading.trailing
       }
-      friend.anchors {
+      friend.sl.anchors {
         Anchors.top.equalTo(child, attribute: .bottom)
         Anchors.bottom
         Anchors.leading.trailing
@@ -581,12 +579,12 @@ xib혹은 UIKit으로 직접 구현되어 있는 뷰를 SwiftLayout으로 마이
   
   ```swift
   SomeView {
-    root.sublayout {
-      child.anchors {
+    root.sl.sublayout {
+      child.sl.anchors {
         Anchors.top
         Anchors.leading.trailing
       }
-      friend.anchors {
+      friend.sl.anchors {
         Anchors.top.equalTo(child, attribute: .bottom)
         Anchors.bottom
         Anchors.leading.trailing
@@ -598,4 +596,5 @@ xib혹은 UIKit으로 직접 구현되어 있는 뷰를 SwiftLayout으로 마이
 # Credits
 
 - oozoofrog([@oozoofrog](https://twitter.com/oozoofrog))
-- gmlwhdtjd([gmlwhdtjd](https://github.com/gmlwhdtjd))
+- gmlwhdtjd([@gmlwhdtjd](https://github.com/gmlwhdtjd))
+- della-padula([@della-padula](https://github.com/della-padula))

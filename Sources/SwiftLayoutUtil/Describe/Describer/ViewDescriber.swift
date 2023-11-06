@@ -18,30 +18,51 @@ struct ViewDescriber {
     
     func descriptions(indents: String = "") -> [String] {
         let configDescriptions = viewToken.configuration.map(Constant.indents.appending).sorted()
-        let anchersDescriptions = AnchorsDescriber.descriptionFromConstraints(constraintTokens).map(Constant.indents.appending)
+        let anchorsDescriptions = AnchorsDescriber.descriptionFromConstraints(constraintTokens).map(Constant.indents.appending)
         let sublayoutDescriptions = subdescribes.flatMap { $0.descriptions(indents: Constant.indents) }
 
         var descriptions: [String] = [viewToken.viewTag]
 
+        let isAfterConfig: Bool
         if configDescriptions.isEmpty == false {
             var last = descriptions.removeLast()
-            last.append(".config {")
+            last.append(".sl.onActivate {")
             descriptions.append(last)
             descriptions.append(contentsOf: configDescriptions)
             descriptions.append("}")
+            isAfterConfig = true
+        } else {
+            isAfterConfig = false
         }
 
-        if anchersDescriptions.isEmpty == false {
+        let startFromFirstElement = descriptions.count == 1
+        let isAfterAnchors: Bool
+        if anchorsDescriptions.isEmpty == false {
             var last = descriptions.removeLast()
-            last.append(".anchors {")
+            if isAfterConfig {
+                last.append(".sl.anchors {")
+            } else {
+                if startFromFirstElement {
+                    last.append(".sl.anchors {")
+                } else {
+                    last.append(".anchors {")
+                }
+            }
             descriptions.append(last)
-            descriptions.append(contentsOf: anchersDescriptions)
+            descriptions.append(contentsOf: anchorsDescriptions)
             descriptions.append("}")
+            isAfterAnchors = true
+        } else {
+            isAfterAnchors = false
         }
 
         if sublayoutDescriptions.isEmpty == false {
             var last = descriptions.removeLast()
-            last.append(".sublayout {")
+            if isAfterAnchors {
+                last.append(".sublayout {")
+            } else {
+                last.append(".sl.sublayout {")
+            }
             descriptions.append(last)
             descriptions.append(contentsOf: sublayoutDescriptions)
             descriptions.append("}")

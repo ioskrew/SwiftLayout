@@ -1,29 +1,17 @@
 //
-//  UIVIew+Layout.swift
+//  LayoutMethodWrapper.swift
 //  
 //
-//  Created by aiden_h on 2022/02/21.
+//  Created by oozoofrog on 2022/03/13.
 //
 
 import UIKit
 
-public protocol _UIViewExtension {}
-extension UIView: _UIViewExtension {}
+public struct LayoutMethodWrapper<Base: LayoutMethodAccessible> {
+    let base: Base
+}
 
-public extension _UIViewExtension where Self: UIView {
-
-    ///
-    /// Create a ``ViewLayout`` containing this view and the sublayouts.
-    ///
-    /// Sublayouts contained within the builder block are added to the view hierarchy through **addSubview(_:)** to the view.
-    ///
-    /// - Parameter build: A ``LayoutBuilder`` that  create sublayouts of this view.
-    /// - Returns: An ``ViewLayout`` that wraps this view and contains sublayouts .
-    ///
-    @available(*, deprecated,  renamed: "sl.sublayout(_:)")
-    func callAsFunction<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<Self> {
-        ViewLayout(self, sublayouts: [build()])
-    }
+public extension LayoutMethodWrapper where Base: UIView {
 
     ///
     /// Create a ``ViewLayout`` containing this view and the sublayouts and add anchors coordinator to this layout
@@ -32,7 +20,7 @@ public extension _UIViewExtension where Self: UIView {
     /// ```swift
     /// // The constraint of the view can be expressed as follows.
     ///
-    /// subView.anchors {
+    /// subView.sl.anchors {
     ///     Anchors(.top).equalTo(rootView, constant: 10)
     ///     Anchors(.centerX).equalTo(rootView)
     ///     Anchors(.width, .height).equalTo(rootView).setMultiplier(0.5)
@@ -51,9 +39,8 @@ public extension _UIViewExtension where Self: UIView {
     /// - Parameter build: A ``AnchorsBuilder`` that  create ``Anchors`` to be applied to this layout
     /// - Returns: An ``ViewLayout`` that wraps this view and contains the anchors  coordinator.
     ///
-    @available(*, deprecated, renamed: "sl.anchors(_:)")
-    func anchors(@AnchorsBuilder _ build: () -> Anchors) -> ViewLayout<Self> {
-        ViewLayout(self, anchors: build())
+    func anchors(@AnchorsBuilder _ build: () -> Anchors) -> ViewLayout<Base> {
+        ViewLayout(self.base, anchors: build())
     }
 
     ///
@@ -64,7 +51,7 @@ public extension _UIViewExtension where Self: UIView {
     /// // The hierarchy of views can be expressed as follows,
     /// // and means that UILabel is a subview of UIView.
     ///
-    /// UIView().sublayout {
+    /// UIView().sl.sublayout {
     ///     UILabel()
     /// }
     /// ```
@@ -72,9 +59,8 @@ public extension _UIViewExtension where Self: UIView {
     /// - Parameter build: A ``LayoutBuilder`` that  create sublayouts of this view.
     /// - Returns: An ``ViewLayout`` that wraps this view and contains sublayouts .
     ///
-    @available(*, deprecated, renamed: "sl.sublayout(_:)")
-    func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<Self> {
-        ViewLayout(self, sublayouts: [build()])
+    func sublayout<LayoutType: Layout>(@LayoutBuilder _ build: () -> LayoutType) -> ViewLayout<Base> {
+        ViewLayout(self.base, sublayouts: [build()])
     }
 
     ///
@@ -82,33 +68,30 @@ public extension _UIViewExtension where Self: UIView {
     ///
     /// - Returns: An ``AnyLayout`` wrapping this layout.
     ///
-    @available(*, deprecated, renamed: "sl.eraseToAnyLayout()")
     func eraseToAnyLayout() -> AnyLayout {
-        AnyLayout(ViewLayout(self))
+        AnyLayout(ViewLayout(self.base))
     }
 
     ///
-    /// Provides a block that can change the properties of the view within the layout block.
+    /// Create a ``ViewLayout``  for this view that includes an action to always perform before every activation, including updates.
     ///
     /// ```swift
     /// // Create an instant view within the layout block
     /// // and modify the properties of the view as follows
     ///
     /// var layout: some Layout {
-    ///     UILabel().config { view in
+    ///     UILabel().sl.onActivate { view in
     ///         view.backgroundColor = .blue
     ///         view.text = "hello"
     ///     }
     /// }
     /// ```
     ///
-    /// - Parameter config: A configuration block for this view.
-    /// - Returns: The view itself with the configuration applied
+    /// - Parameter onActivate: A perform block for new layout.
+    /// - Returns:  An ``ViewLayout`` with onActivate action added
     ///
-    @available(*, deprecated, renamed: "sl.onActivate(_:)")
-    func config(_ config: (Self) -> Void) -> Self {
-        config(self)
-        return self
+    func onActivate(_ perform: @escaping (Base) -> Void) -> ViewLayout<Base> {
+        ViewLayout<Base>(self.base, onActivate: perform)
     }
 
     ///
@@ -117,10 +100,8 @@ public extension _UIViewExtension where Self: UIView {
     /// - Parameter accessibilityIdentifier: A string containing the identifier of the element.
     /// - Returns: The view itself with the accessibilityIdentifier applied
     ///
-    @available(*, deprecated, renamed: "sl.identifying(_:)")
-    func identifying(_ accessibilityIdentifier: String) -> Self {
-        self.accessibilityIdentifier = accessibilityIdentifier
-        return self
+    func identifying(_ accessibilityIdentifier: String) -> Base {
+        self.base.accessibilityIdentifier = accessibilityIdentifier
+        return self.base
     }
-
 }

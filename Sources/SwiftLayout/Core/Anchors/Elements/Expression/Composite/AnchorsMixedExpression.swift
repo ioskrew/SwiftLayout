@@ -4,7 +4,7 @@
 
 import UIKit
 
-public struct AnchorsMixedExpression {
+public struct AnchorsMixedExpression: AnchorsExpressionOmitable {
     private var attributes: [any AnchorsAttribute]
 
     init<A1, A2>(from anchors: AnchorsExpression<A1>, appendedAttribute: A2) where A1: AnchorsAttribute, A2: AnchorsAttribute {
@@ -15,10 +15,14 @@ public struct AnchorsMixedExpression {
         self.attributes = mixedExpression.attributes + [appendedAttribute]
     }
 
+    public func defaultExpression() -> Anchors {
+        equalToSuper()
+    }
+
     func constraintProperties(
-        relation: NSLayoutConstraint.Relation = .equal,
-        toItem: AnchorsItem = .transparent,
-        constant: CGFloat = 0.0
+        relation: NSLayoutConstraint.Relation,
+        toItem: AnchorsItem,
+        constant: CGFloat
     ) ->  [AnchorsConstraintProperty] {
         attributes.map {
             AnchorsConstraintProperty(

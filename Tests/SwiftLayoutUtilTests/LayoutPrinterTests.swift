@@ -11,33 +11,33 @@ import SwiftLayoutUtil
 
 class LayoutPrinterTests: XCTestCase {
     
-    let root: UIView = UIView().identifying("root")
-    let contentView: UIView = UIView().identifying("contentView")
-    let image: UIImageView = UIImageView().identifying("image")
-    let title: UILabel = UILabel().identifying("title")
-    let descriptionLabel: UILabel = UILabel().identifying("descriptionLabel")
+    let root: UIView = UIView().sl.identifying("root")
+    let contentView: UIView = UIView().sl.identifying("contentView")
+    let image: UIImageView = UIImageView().sl.identifying("image")
+    let title: UILabel = UILabel().sl.identifying("title")
+    let descriptionLabel: UILabel = UILabel().sl.identifying("descriptionLabel")
     
     var layout: some Layout {
-        root.sublayout {
-            contentView.anchors {
+        root.sl.sublayout {
+            contentView.sl.anchors {
                 Anchors.leading.equalTo(root.safeAreaLayoutGuide, constant: 16.0)
                 Anchors.trailing.equalTo(root.safeAreaLayoutGuide, constant: -16.0)
                 Anchors.centerY.equalTo(root)
                 Anchors.height.equalTo(constant: 80.0)
             }.sublayout {
-                image.anchors {
+                image.sl.anchors {
                     Anchors.leading.equalToSuper(constant: 10.0)
                     Anchors.centerY
-                    Anchors.size(width: 70, height: 70)
+                    Anchors.size.equalTo(width: 70, height: 70)
                 }
                 
-                title.anchors {
+                title.sl.anchors {
                     Anchors.top.equalToSuper(constant: 8.0)
                     Anchors.leading.equalTo(image, attribute: .trailing, constant: 10.0)
                     Anchors.height.equalTo(constant: 24.0)
                 }.eraseToAnyLayout()
                 
-                descriptionLabel.anchors {
+                descriptionLabel.sl.anchors {
                     Anchors.top.equalTo(title, attribute: .bottom, constant: 5.0)
                     Anchors.leading.equalTo(image, attribute: .trailing, constant: 10.0)
                     Anchors.bottom.equalToSuper(constant: -8.0)

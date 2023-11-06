@@ -9,15 +9,23 @@ public struct ViewLayout<V: UIView>: Layout {
     public private(set) var anchors: Anchors
 
     public var option: LayoutOption? { LayoutOption.none }
+
+    typealias OnActivateBlock = (V) -> Void
+    private let onActivateBlock: OnActivateBlock?
     
-    init(_ view: V, sublayouts: [any Layout] = [], anchors: Anchors = Anchors()) {
+    init(_ view: V, sublayouts: [any Layout] = [], anchors: Anchors = Anchors(), onActivate: OnActivateBlock? = nil) {
         self.innerView = view
         self.sublayouts = sublayouts
         self.anchors = anchors
+        self.onActivateBlock = onActivate
     }
     
     public var view: UIView? {
         self.innerView
+    }
+
+    public func layoutWillActivate() {
+        self.onActivateBlock?(innerView)
     }
 }
 
@@ -52,7 +60,7 @@ extension ViewLayout {
     public func anchors(@AnchorsBuilder _ build: () -> Anchors) -> Self {
         let anchors = self.anchors
         anchors.append(build())
-        return Self.init(innerView, sublayouts: sublayouts, anchors: anchors)
+        return Self.init(innerView, sublayouts: sublayouts, anchors: anchors, onActivate: onActivateBlock)
     }
     
     ///
@@ -74,7 +82,29 @@ extension ViewLayout {
     public func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> Self {
         var sublayouts = self.sublayouts
         sublayouts.append(build())
-        return Self.init(innerView, sublayouts: sublayouts, anchors: anchors)
+        return Self.init(innerView, sublayouts: sublayouts, anchors: anchors, onActivate: onActivateBlock)
+    }
+
+    ///
+    /// Add an action to this layout to always perform before every activation, including updates.
+    ///
+    /// ```swift
+    /// // Create an instant view within the layout block
+    /// // and modify the properties of the view as follows
+    ///
+    /// var layout: some Layout {
+    ///     UILabel().sl.onActivate { view in
+    ///         view.backgroundColor = .blue
+    ///         view.text = "hello"
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// - Parameter onActivate: A perform block for this layout.
+    /// - Returns: The layout itself with onActivate action added
+    ///
+    public func onActivate(_ perform: @escaping (V) -> Void) -> Self {
+        Self.init(innerView, sublayouts: sublayouts, anchors: anchors, onActivate: perform)
     }
     
     ///

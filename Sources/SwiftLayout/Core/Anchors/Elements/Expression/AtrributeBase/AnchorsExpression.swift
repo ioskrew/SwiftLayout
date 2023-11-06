@@ -4,7 +4,7 @@
 
 import UIKit
 
-public struct AnchorsExpression<Attribute: AnchorsAttribute> {
+public struct AnchorsExpression<Attribute: AnchorsAttribute>: AnchorsExpressionOmitable {
     var attributes: [Attribute]
 
     init(from anchors: AnchorsExpression<Attribute>, appendedAttribute: Attribute) {
@@ -12,11 +12,15 @@ public struct AnchorsExpression<Attribute: AnchorsAttribute> {
         self.attributes += [appendedAttribute]
     }
 
+    public func defaultExpression() -> Anchors {
+        equalToSuper()
+    }
+
     func constraintProperties(
-        relation: NSLayoutConstraint.Relation = .equal,
-        toItem: AnchorsItem = .transparent,
-        toAttribute: Attribute? = nil,
-        constant: CGFloat = 0.0
+        relation: NSLayoutConstraint.Relation,
+        toItem: AnchorsItem,
+        toAttribute: Attribute?,
+        constant: CGFloat
     ) ->  [AnchorsConstraintProperty] {
         attributes.map {
             AnchorsConstraintProperty(
