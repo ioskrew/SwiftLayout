@@ -6,24 +6,45 @@
 //
 
 import UIKit
+import Synchronization
 
+@MainActor private var activations = [Int: Activation]()
+
+@MainActor
+private func _setActivation(_ activation: Activation) {
+    activations[activation.hashValue]
+}
+
+@MainActor
+private func _unsetActivation(_ hashValue: Int) {
+    activations[hashValue]?.deactive()
+    activations[hashValue] = nil
+}
 
 public final class Activation: Hashable {
     var viewInfos: [ViewInformation]
     var constraints: Set<WeakConstraint>
 
+    @MainActor
     convenience init() {
         self.init(viewInfos: .init(), constraints: .init())
     }
 
+    @MainActor
     init(viewInfos: [ViewInformation], constraints: Set<WeakConstraint>) {
         self.viewInfos = viewInfos
         self.constraints = constraints
+        _setActivation(self)
     }
 
     deinit {
         // TODO: Need a way to properly deactivate when activation is released
-//        deactive()
+        let hashValue = self.hashValue
+        Task {
+            await MainActor.run {
+                _unsetActivation(hashValue)
+            }
+        }
     }
 
     @MainActor
