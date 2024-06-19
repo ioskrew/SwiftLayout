@@ -11,7 +11,7 @@ import UIKit
 public final class Activation: Hashable {
     var viewInfos: [ViewInformation]
     var constraints: Set<WeakConstraint>
-
+    
     convenience init() {
         self.init(viewInfos: .init(), constraints: .init())
     }
@@ -23,34 +23,31 @@ public final class Activation: Hashable {
 
     deinit {
         // TODO: Need a way to properly deactivate when activation is released
-//        deactive()
+        let views = self.viewInfos.compactMap(\.view)
+        let constraints = self.constraints
+        Task {
+            await Self.deactiveViews(views)
+            await Self.deactiveConstraints(constraints)
+        }
     }
 
     @MainActor
-    func deactiveConstraints() {
+    static func deactiveConstraints(_ constraints: Set<WeakConstraint>) {
         let constraints = constraints.compactMap(\.origin).filter(\.isActive)
         NSLayoutConstraint.deactivate(constraints)
-        self.constraints = .init()
     }
 
     @MainActor
-    func deactiveViews() {
-        let views = viewInfos.compactMap(\.view)
+    static func deactiveViews(_ views: [UIView]) {
         for view in views {
             if views.contains(where: { $0 == view.superview }) {
                 view.removeFromSuperview()
             }
         }
-        self.viewInfos = .init()
     }
 }
 
 extension Activation {
-    @MainActor
-    public func deactive() {
-        deactiveViews()
-        deactiveConstraints()
-    }
 
     @MainActor
     public func viewForIdentifier(_ identifier: String) -> UIView? {
