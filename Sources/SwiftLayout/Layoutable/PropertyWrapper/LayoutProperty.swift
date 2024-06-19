@@ -28,6 +28,7 @@
 
  > ``LayoutProperty`` must using only in Layoutable, otherwise, cause of crash.
  */
+@MainActor
 @propertyWrapper
 public final class LayoutProperty<Value> {
 

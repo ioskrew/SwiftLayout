@@ -7,6 +7,7 @@
 
 import UIKit
 
+
 public final class Activation: Hashable {
     var viewInfos: [ViewInformation]
     var constraints: Set<WeakConstraint>
@@ -21,15 +22,18 @@ public final class Activation: Hashable {
     }
 
     deinit {
-        deactive()
+        // TODO: Need a way to properly deactivate when activation is released
+//        deactive()
     }
 
+    @MainActor
     func deactiveConstraints() {
         let constraints = constraints.compactMap(\.origin).filter(\.isActive)
         NSLayoutConstraint.deactivate(constraints)
         self.constraints = .init()
     }
 
+    @MainActor
     func deactiveViews() {
         let views = viewInfos.compactMap(\.view)
         for view in views {
@@ -42,11 +46,13 @@ public final class Activation: Hashable {
 }
 
 extension Activation {
+    @MainActor
     public func deactive() {
         deactiveViews()
         deactiveConstraints()
     }
 
+    @MainActor
     public func viewForIdentifier(_ identifier: String) -> UIView? {
         viewInfos.first(where: { $0.identifier == identifier })?.view
     }

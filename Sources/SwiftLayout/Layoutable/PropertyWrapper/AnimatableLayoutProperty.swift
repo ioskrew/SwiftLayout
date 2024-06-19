@@ -7,6 +7,7 @@
 
 import UIKit
 
+@MainActor
 @propertyWrapper
 public final class AnimatableLayoutProperty<Value> {
 

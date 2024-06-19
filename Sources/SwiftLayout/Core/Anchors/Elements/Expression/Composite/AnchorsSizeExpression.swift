@@ -7,6 +7,7 @@
 
 import UIKit
 
+@MainActor
 public struct AnchorsSizeExpression: AnchorsExpressionOmitable {
     init() {}
 

@@ -1,4 +1,4 @@
-// swift-tools-version:5.7
+// swift-tools-version:6.0
 
 import PackageDescription
 
@@ -10,10 +10,10 @@ let package = Package(
             name: "SwiftLayout",
             targets: ["SwiftLayout"]
         ),
-        .library(
-            name: "SwiftLayoutUtil",
-            targets: ["SwiftLayoutUtil"]
-        )
+//        .library(
+//            name: "SwiftLayoutUtil",
+//            targets: ["SwiftLayoutUtil"]
+//        )
     ],
     dependencies: [],
     targets: [
@@ -21,24 +21,25 @@ let package = Package(
             name: "SwiftLayout",
             dependencies: []
         ),
-        .target(
-            name: "SwiftLayoutUtil",
-            dependencies: [
-                "SwiftLayout"
-            ]
-        ),
+//        .target(
+//            name: "SwiftLayoutUtil",
+//            dependencies: [
+//                "SwiftLayout"
+//            ]
+//        ),
         .testTarget(
             name: "SwiftLayoutTests",
             dependencies: [
                 "SwiftLayout"
             ]
         ),
-        .testTarget(
-            name: "SwiftLayoutUtilTests",
-            dependencies: [
-                "SwiftLayout",
-                "SwiftLayoutUtil"
-            ]
-        )
-    ]
+//        .testTarget(
+//            name: "SwiftLayoutUtilTests",
+//            dependencies: [
+//                "SwiftLayout",
+//                "SwiftLayoutUtil"
+//            ]
+//        )
+    ],
+    swiftLanguageVersions: [.version("6")]
 )

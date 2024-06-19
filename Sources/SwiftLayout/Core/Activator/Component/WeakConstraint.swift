@@ -11,6 +11,7 @@ struct WeakConstraint {
     private(set) weak var origin: NSLayoutConstraint?
     private var customHashValue: Int
 
+    @MainActor
     init(origin: NSLayoutConstraint? = nil) {
         self.origin = origin
 
@@ -38,6 +39,7 @@ extension WeakConstraint: Hashable, Equatable {
 }
 
 extension Set where Element == WeakConstraint {
+    @MainActor
     init(ofWeakConstraintsFrom sequence: [NSLayoutConstraint]) {
         self.init(sequence.map(WeakConstraint.init))
     }

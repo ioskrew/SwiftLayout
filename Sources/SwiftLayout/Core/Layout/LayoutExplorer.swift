@@ -7,7 +7,10 @@
 
 import UIKit
 
+@MainActor
 enum LayoutExplorer {
+
+    @MainActor
     struct Component {
         var superView: UIView? 
         var view: UIView

@@ -2,6 +2,7 @@
 //  AnchorsBuilder.swift
 //  
 
+@MainActor
 @resultBuilder
 public struct AnchorsBuilder {
     public static func buildExpression<Omitable: AnchorsExpressionOmitable>(_ expression: Omitable) -> Anchors {
