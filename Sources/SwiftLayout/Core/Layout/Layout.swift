@@ -54,16 +54,6 @@ extension Layout {
     public func finalActive(forceLayout: Bool = false) {
         Activator.finalActive(layout: self, forceLayout: forceLayout)
     }
-    
-    ///
-    /// Wraps this layout with a type eraser.
-    ///
-    /// - Returns: An ``AnyLayout`` wrapping this layout.
-    ///
-    @available(*, deprecated, renamed: "eraseToAnyLayout()")
-    public var anyLayout: AnyLayout {
-        AnyLayout(self)
-    }
 
     ///
     /// Wraps this layout with a type eraser.
