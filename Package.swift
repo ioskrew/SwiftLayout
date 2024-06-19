@@ -4,7 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "SwiftLayout",
-    platforms: [.iOS(.v15)],
+    platforms: [.iOS(.v13)],
     products: [
         .library(
             name: "SwiftLayout",
@@ -27,12 +27,12 @@ let package = Package(
 //                "SwiftLayout"
 //            ]
 //        ),
-//        .testTarget(
-//            name: "SwiftLayoutTests",
-//            dependencies: [
-//                "SwiftLayout"
-//            ]
-//        ),
+        .testTarget(
+            name: "SwiftLayoutTests",
+            dependencies: [
+                "SwiftLayout"
+            ]
+        ),
 //        .testTarget(
 //            name: "SwiftLayoutUtilTests",
 //            dependencies: [
