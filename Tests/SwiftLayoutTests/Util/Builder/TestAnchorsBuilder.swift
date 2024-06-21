@@ -3,9 +3,10 @@
 //  
 
 import Foundation
+import UIKit
 @testable import SwiftLayout
-import XCTest
 
+@MainActor
 struct TestAnchors {
     let constraints: [NSLayoutConstraint]
     init(first: NSObject, second: NSObject? = nil, @AnchorsBuilder anchors: () -> Anchors) {
