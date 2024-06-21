@@ -48,6 +48,14 @@ public final class Activation: Hashable {
 }
 
 extension Activation {
+    @MainActor
+    public func deactive() {
+        let views = self.viewInfos.compactMap(\.view)
+        let constraints = self.constraints
+
+        Self.deactiveViews(views)
+        Self.deactiveConstraints(constraints)
+    }
 
     @MainActor
     public func viewForIdentifier(_ identifier: String) -> UIView? {
