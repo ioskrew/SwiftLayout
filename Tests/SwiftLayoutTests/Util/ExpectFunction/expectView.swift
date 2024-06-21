@@ -7,7 +7,7 @@ import UIKit
 import Testing
 
 @MainActor
-func expeactView(
+func expectView(
     _ view: @autoclosure () throws -> UIView,
     superview: @autoclosure () throws -> UIView?,
     subviews: @autoclosure () throws -> [UIView]?,
@@ -15,7 +15,7 @@ func expeactView(
     _ filePath: String = #filePath,
     _ line: Int = #line,
     _ column: Int = #column
-) throws {
+) rethrows {
     let view = try view()
     let superview = try superview()
     let subviews = try subviews() ?? []
