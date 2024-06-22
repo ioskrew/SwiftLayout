@@ -1,101 +1,132 @@
-import XCTest
-import SwiftLayout
+import Testing
+@testable import SwiftLayout
+import UIKit
 
-final class LayoutableTests: XCTestCase {
+@MainActor
+struct LayoutableTests {
     
-    override func setUpWithError() throws {
-        continueAfterFailure = false
-    }
-    
-    func testUpdateLayout() {
+    @Test
+    func IFTrue() {
         let view = LayoutableView()
         view.frame = .init(x: 0, y: 0, width: 90, height: 90)
         view.layoutIfNeeded()
         
-        XCTAssertEqual(view.root.frame, CGRect(x: .zero, y: .zero, width: 90, height: 90))
-        XCTAssertEqual(view.child.frame, CGRect(x: .zero, y: .zero, width: 90, height: 90))
+        #expect(view.root.frame == CGRect(x: .zero, y: .zero, width: 90, height: 90))
+        #expect(view.child.frame == CGRect(x: .zero, y: .zero, width: 90, height: 90))
         
-        contextInActivity("if true") { _ in
-            SLTAssertView(view, superview: nil, subviews: [view.root])
-            SLTAssertView(view.root, superview: view, subviews: [view.child])
-            SLTAssertView(view.child, superview: view.root, subviews: [])
-            SLTAssertView(view.friend, superview: nil, subviews: [])
-            
-            XCTAssertEqual(view.root.addSubviewCallCount(view.child), 1)
-            XCTAssertEqual(view.root.addSubviewCallCount(view.friend), 0)
-            XCTAssertEqual(view.root.removeFromSuperviewCallCount, 0)
-            XCTAssertEqual(view.child.removeFromSuperviewCallCount, 0)
-            XCTAssertEqual(view.root.removeFromSuperviewCallCount, 0)
-            
-            SLTAssertConstraintsHasSameElements(view.constraints, firstView: view.root, secondView: view, tags: [view: "layoutableView", view.root: "layoutableView.root"]) {
-                Anchors.allSides.equalToSuper()
-            }
-
-            SLTAssertConstraintsIsEmpty(view.child.constraints)
-            SLTAssertConstraintsIsEmpty(view.friend.constraints)
-        }
+        #expect(view.superview == nil && view.subviews == [view.root])
+        #expect(view.root.superview == view && view.root.subviews == [view.child])
+        #expect(view.child.superview == view.root && view.child.subviews == [])
+        #expect(view.friend.superview == nil && view.friend.subviews == [])
         
-        view.flag.toggle()
+        #expect(view.root.addSubviewCallCount(view.child) == 1)
+        #expect(view.root.addSubviewCallCount(view.friend) == 0)
+        #expect(view.root.removeFromSuperviewCallCount == 0)
+        #expect(view.child.removeFromSuperviewCallCount == 0)
+        #expect(view.root.removeFromSuperviewCallCount == 0)
         
-        XCTAssertEqual(view.root.frame, CGRect(x: .zero, y: .zero, width: 90, height: 90))
-        XCTAssertEqual(view.friend.frame, CGRect.zero)
-        contextInActivity("if false") { _ in
-            SLTAssertView(view, superview: nil, subviews: [view.root])
-            SLTAssertView(view.root, superview: view, subviews: [view.friend])
-            SLTAssertView(view.child, superview: nil, subviews: [])
-            SLTAssertView(view.friend, superview: view.root, subviews: [])
-            
-            XCTAssertEqual(view.root.addSubviewCallCount(view.child), 1)
-            XCTAssertEqual(view.root.addSubviewCallCount(view.friend), 1)
-            XCTAssertEqual(view.root.removeFromSuperviewCallCount, 0)
-            XCTAssertEqual(view.child.removeFromSuperviewCallCount, 1)
-            XCTAssertEqual(view.root.removeFromSuperviewCallCount, 0)
-            
-            SLTAssertConstraintsHasSameElements(view.constraints, firstView: view.root, secondView: view) {
-                Anchors.center
-            }
-            SLTAssertConstraintsHasSameElements(view.root.constraints) {
-                TestAnchors(first: view.root) {
-                    Anchors.size.equalTo(width: 50, height: 50)
-                }
-                TestAnchors(first: view.friend, second: view.root) {
-                    Anchors.allSides.equalToSuper()
-                }
-            }
-            SLTAssertConstraintsIsEmpty(view.child.constraints)
-            SLTAssertConstraintsIsEmpty(view.friend.constraints)
-        }
+        let constraints = view.constraints.map(\.normalizedDescription).sorted()
+        let expectConstraints = Anchors.allSides.equalToSuper().constraints(
+            item: view.root,
+            toItem: view
+        ).map(\.normalizedDescription).sorted()
+        #expect(constraints == expectConstraints)
         
+        #expect(view.child.constraints.isEmpty)
+        #expect(view.friend.constraints.isEmpty)
+    }
+    
+    @Test
+    func IFFalse() {
+        let view = LayoutableView()
+        view.frame = .init(x: 0, y: 0, width: 90, height: 90)
+        view.layoutIfNeeded()
+        view.flag = false
+        
+        #expect(view.root.frame == CGRect(x: .zero, y: .zero, width: 90, height: 90))
+        #expect(view.friend.frame == CGRect.zero)
+        #expect(view.superview == nil && view.subviews == [view.root])
+        #expect(view.root.superview == view && view.root.subviews == [view.friend])
+        #expect(view.child.superview == nil && view.child.subviews == [])
+        #expect(view.friend.superview == view.root && view.friend.subviews == [])
+        
+        #expect(view.root.addSubviewCallCount(view.child) == 1)
+        #expect(view.root.addSubviewCallCount(view.friend) == 1)
+        #expect(view.root.removeFromSuperviewCallCount == 0)
+        #expect(view.child.removeFromSuperviewCallCount == 1)
+        #expect(view.root.removeFromSuperviewCallCount == 0)
+        
+        let constraints = view.constraints.map(\.normalizedDescription).sorted()
+        let expectConstraints = Anchors.center.equalToSuper().constraints(
+            item: view.root,
+            toItem: view
+        ).map(\.normalizedDescription).sorted()
+        #expect(constraints == expectConstraints)
+        #expect(
+            view.root.constraints.map(\.normalizedDescription).sorted() ==
+            (
+                Anchors.size.equalTo(
+                    width: 50,
+                    height: 50
+                ).constraints(
+                    item: view.root,
+                    toItem: nil
+                )
+                + Anchors.allSides.equalToSuper().constraints(
+                    item: view.friend,
+                    toItem: view.root
+                )
+            ).map(\.normalizedDescription).sorted()
+        )
+        #expect(view.child.constraints.isEmpty)
+        #expect(view.friend.constraints.isEmpty)
+    }
+    
+    @Test
+    func IFFalseAndForceLayout() {
+        let view = LayoutableView()
+        view.frame = .init(x: 0, y: 0, width: 90, height: 90)
+        view.layoutIfNeeded()
+        view.flag = false
         view.sl.updateLayout(forceLayout: true)
         
-        XCTAssertEqual(view.root.frame, CGRect(x: 20, y: 20, width: 50, height: 50))
-        XCTAssertEqual(view.friend.frame, CGRect(x: .zero, y: .zero, width: 50, height: 50))
-        contextInActivity("if false after update layout") { _ in
-            SLTAssertView(view, superview: nil, subviews: [view.root])
-            SLTAssertView(view.root, superview: view, subviews: [view.friend])
-            SLTAssertView(view.child, superview: nil, subviews: [])
-            SLTAssertView(view.friend, superview: view.root, subviews: [])
-            
-            XCTAssertEqual(view.root.addSubviewCallCount(view.child), 1)
-            XCTAssertEqual(view.root.addSubviewCallCount(view.friend), 2)
-            XCTAssertEqual(view.root.removeFromSuperviewCallCount, 0)
-            XCTAssertEqual(view.child.removeFromSuperviewCallCount, 1)
-            XCTAssertEqual(view.root.removeFromSuperviewCallCount, 0)
-            
-            SLTAssertConstraintsHasSameElements(view.constraints, firstView: view.root, secondView: view) {
-                Anchors.center
-            }
-            SLTAssertConstraintsHasSameElements(view.root.constraints) {
-                TestAnchors(first: view.root) {
-                    Anchors.size.equalTo(width: 50, height: 50)
-                }
-                TestAnchors(first: view.friend, second: view.root) {
-                    Anchors.allSides.equalToSuper()
-                }
-            }
-            SLTAssertConstraintsIsEmpty(view.child.constraints)
-            SLTAssertConstraintsIsEmpty(view.friend.constraints)
-        }
+        #expect(view.root.frame == CGRect(x: 20, y: 20, width: 50, height: 50))
+        #expect(view.friend.frame == CGRect(x: .zero, y: .zero, width: 50, height: 50))
+        #expect(view.superview == nil && view.subviews == [view.root])
+        #expect(view.root.superview == view && view.root.subviews == [view.friend])
+        #expect(view.child.superview == nil && view.child.subviews == [])
+        #expect(view.friend.superview == view.root && view.friend.subviews == [])
+        
+        #expect(view.root.addSubviewCallCount(view.child) == 1)
+        #expect(view.root.addSubviewCallCount(view.friend) == 2)
+        #expect(view.root.removeFromSuperviewCallCount == 0)
+        #expect(view.child.removeFromSuperviewCallCount == 1)
+        #expect(view.root.removeFromSuperviewCallCount == 0)
+        
+        let constraints = view.constraints.map(\.normalizedDescription).sorted()
+        let expectConstraints = Anchors.center.equalToSuper().constraints(
+            item: view.root,
+            toItem: view
+        ).map(\.normalizedDescription).sorted()
+        #expect(constraints == expectConstraints)
+        #expect(
+            view.root.constraints.map(\.normalizedDescription).sorted() ==
+            (
+                Anchors.size.equalTo(
+                    width: 50,
+                    height: 50
+                ).constraints(
+                    item: view.root,
+                    toItem: nil
+                )
+                + Anchors.allSides.equalToSuper().constraints(
+                    item: view.friend,
+                    toItem: view.root
+                )
+            ).map(\.normalizedDescription).sorted()
+        )
+        #expect(view.child.constraints.isEmpty)
+        #expect(view.friend.constraints.isEmpty)
     }
 }
 
