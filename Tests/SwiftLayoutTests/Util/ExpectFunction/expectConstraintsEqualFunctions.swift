@@ -107,8 +107,8 @@ func isEqual(
     _ constraints2: [NSLayoutConstraint],
     _ tags: [UIView : String] = [:]
 ) -> Bool {
-    let descriptions1: [String] = constraints1.map(testDescriptionFromConstraint(tags))
-    let descriptions2: [String] = constraints2.map(testDescriptionFromConstraint(tags))
+    let descriptions1: [String] = constraints1.map(testDescriptionFromConstraint(tags)).sorted()
+    let descriptions2: [String] = constraints2.map(testDescriptionFromConstraint(tags)).sorted()
 
     return descriptions1.elementsEqual(descriptions2)
 }

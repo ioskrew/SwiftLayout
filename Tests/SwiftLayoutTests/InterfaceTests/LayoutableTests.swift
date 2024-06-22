@@ -25,12 +25,12 @@ struct LayoutableTests {
         #expect(view.child.removeFromSuperviewCallCount == 0)
         #expect(view.root.removeFromSuperviewCallCount == 0)
         
-        let constraints = view.constraints.map(\.normalizedDescription).sorted()
-        let expectConstraints = Anchors.allSides.equalToSuper().constraints(
+        let constraints = view.constraints
+        let expected = Anchors.allSides.equalToSuper().constraints(
             item: view.root,
             toItem: view
-        ).map(\.normalizedDescription).sorted()
-        #expect(constraints == expectConstraints)
+        )
+        #expect(isEqual(constraints, expected))
         
         #expect(view.child.constraints.isEmpty)
         #expect(view.friend.constraints.isEmpty)
@@ -56,28 +56,25 @@ struct LayoutableTests {
         #expect(view.child.removeFromSuperviewCallCount == 1)
         #expect(view.root.removeFromSuperviewCallCount == 0)
         
-        let constraints = view.constraints.map(\.normalizedDescription).sorted()
-        let expectConstraints = Anchors.center.equalToSuper().constraints(
+        let constraints = view.constraints
+        let expected = Anchors.center.equalToSuper().constraints(
             item: view.root,
             toItem: view
-        ).map(\.normalizedDescription).sorted()
-        #expect(constraints == expectConstraints)
-        #expect(
-            view.root.constraints.map(\.normalizedDescription).sorted() ==
-            (
-                Anchors.size.equalTo(
-                    width: 50,
-                    height: 50
-                ).constraints(
-                    item: view.root,
-                    toItem: nil
-                )
-                + Anchors.allSides.equalToSuper().constraints(
-                    item: view.friend,
-                    toItem: view.root
-                )
-            ).map(\.normalizedDescription).sorted()
         )
+        #expect(isEqual(constraints, expected))
+        #expect(isEqual(
+            view.root.constraints, Anchors.size.equalTo(
+                width: 50,
+                height: 50
+            ).constraints(
+                item: view.root,
+                toItem: nil
+            )
+            + Anchors.allSides.equalToSuper().constraints(
+                item: view.friend,
+                toItem: view.root
+            )
+        ))
         #expect(view.child.constraints.isEmpty)
         #expect(view.friend.constraints.isEmpty)
     }
@@ -103,28 +100,27 @@ struct LayoutableTests {
         #expect(view.child.removeFromSuperviewCallCount == 1)
         #expect(view.root.removeFromSuperviewCallCount == 0)
         
-        let constraints = view.constraints.map(\.normalizedDescription).sorted()
-        let expectConstraints = Anchors.center.equalToSuper().constraints(
+        let constraints = view.constraints
+        let expected = Anchors.center.equalToSuper().constraints(
             item: view.root,
             toItem: view
-        ).map(\.normalizedDescription).sorted()
-        #expect(constraints == expectConstraints)
-        #expect(
-            view.root.constraints.map(\.normalizedDescription).sorted() ==
-            (
-                Anchors.size.equalTo(
-                    width: 50,
-                    height: 50
-                ).constraints(
-                    item: view.root,
-                    toItem: nil
-                )
-                + Anchors.allSides.equalToSuper().constraints(
+        )
+        #expect(isEqual(constraints, expected))
+        #expect(isEqual(
+            view.root.constraints,
+            Anchors.size.equalTo(
+                width: 50,
+                height: 50
+            ).constraints(
+                item: view.root,
+                toItem: nil
+            )
+            + Anchors.allSides.equalToSuper()
+                .constraints(
                     item: view.friend,
                     toItem: view.root
                 )
-            ).map(\.normalizedDescription).sorted()
-        )
+        ))
         #expect(view.child.constraints.isEmpty)
         #expect(view.friend.constraints.isEmpty)
     }
