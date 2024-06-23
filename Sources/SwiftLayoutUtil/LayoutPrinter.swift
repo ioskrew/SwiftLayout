@@ -8,7 +8,8 @@
 import UIKit
 import SwiftLayout
 
-public struct LayoutPrinter: CustomStringConvertible {
+@MainActor
+public struct LayoutPrinter: @preconcurrency CustomStringConvertible {
     let layout: Layout
     let withAnchors: Bool
     
