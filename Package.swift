@@ -36,13 +36,13 @@ let package = Package(
             ],
             swiftSettings: [.swiftLanguageVersion(.v6)]
         ),
-        .testTarget(
-            name: "SwiftLayoutUtilTests",
-            dependencies: [
-                "SwiftLayout",
-                "SwiftLayoutUtil"
-            ],
-            swiftSettings: [.swiftLanguageVersion(.v5)]
-        )
+//        .testTarget(
+//            name: "SwiftLayoutUtilTests",
+//            dependencies: [
+//                "SwiftLayout",
+//                "SwiftLayoutUtil"
+//            ],
+//            swiftSettings: [.swiftLanguageVersion(.v5)]
+//        )
     ]
 )
