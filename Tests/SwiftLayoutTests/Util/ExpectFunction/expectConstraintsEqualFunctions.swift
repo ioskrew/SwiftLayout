@@ -126,15 +126,6 @@ func isEqual(
 }
 
 @MainActor
-func isEqualExpect(
-    _ constraints1: [NSLayoutConstraint],
-    _ constraints2: [NSLayoutConstraint],
-    _ tags: [UIView : String] = [:]
-) -> Bool {
-    isEqual(constraints1, constraints2, tags)
-}
-
-@MainActor
 func isNotEqual(
     _ constraints1: [NSLayoutConstraint],
     _ constraints2: [NSLayoutConstraint],

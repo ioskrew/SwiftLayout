@@ -2,52 +2,13 @@ import Testing
 @testable import SwiftLayout
 import UIKit
 
-final class LayoutableViewTest: UIView, Layoutable {
-    @LayoutProperty var flag = true
+@MainActor
+struct LayoutableTests {
     
-    let root = CallCountView()
-    let child = CallCountView()
-    let friend = CallCountView()
-    
-    var activation: Activation?
-    
-    var layout: some Layout {
-        self.sl.sublayout {
-            root.sl.anchors {
-                if flag {
-                    Anchors.allSides.equalToSuper()
-                } else {
-                    Anchors.size.equalTo(width: 50, height: 50)
-                    Anchors.center.equalToSuper()
-                }
-            }.sublayout {
-                if flag {
-                    child.sl.anchors {
-                        Anchors.allSides.equalToSuper()
-                    }
-                } else {
-                    friend.sl.anchors {
-                        Anchors.allSides.equalToSuper()
-                    }
-                }
-            }
-        }
-    }
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        sl.updateLayout()
-    }
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        sl.updateLayout()
-    }
-    
+    let view = LayoutableView()
     
     @Test
     func ifTrue() {
-        let view = self
         view.frame = .init(x: 0, y: 0, width: 90, height: 90)
         view.layoutIfNeeded()
         
@@ -65,12 +26,11 @@ final class LayoutableViewTest: UIView, Layoutable {
         #expect(view.child.removeFromSuperviewCallCount == 0)
         #expect(view.root.removeFromSuperviewCallCount == 0)
         
-        let constraints = view.constraints
-        let expected = Anchors.allSides.equalToSuper().constraints(
-            item: view.root,
-            toItem: view
-        )
-        #expect(isEqualExpect(constraints, expected))
+        #expect(isEqual(view.constraints, view.tags) {
+            TestAnchors(first: view.root, second: view) {
+                Anchors.allSides.equalToSuper()
+            }
+        })
         
         #expect(view.child.constraints.isEmpty)
         #expect(view.friend.constraints.isEmpty)
@@ -78,7 +38,6 @@ final class LayoutableViewTest: UIView, Layoutable {
     
     @Test
     func ifFalse() {
-        let view = self
         view.frame = .init(x: 0, y: 0, width: 90, height: 90)
         view.layoutIfNeeded()
         view.flag = false
@@ -101,27 +60,28 @@ final class LayoutableViewTest: UIView, Layoutable {
             item: view.root,
             toItem: view
         )
-        #expect(isEqualExpect(constraints, expected))
-        #expect(isEqualExpect(
-            view.root.constraints, Anchors.size.equalTo(
-                width: 50,
-                height: 50
-            ).constraints(
-                item: view.root,
-                toItem: nil
-            )
-            + Anchors.allSides.equalToSuper().constraints(
-                item: view.friend,
-                toItem: view.root
-            )
-        ))
-        #expect(view.child.constraints.isEmpty)
-        #expect(view.friend.constraints.isEmpty)
+        #expect(isEqual(view.constraints, view.tags) {
+            TestAnchors(first: view.root, second: view) {
+                Anchors.center.equalToSuper()
+            }
+        })
+        #expect(isEqual(view.root.constraints, view.tags) {
+            TestAnchors(first: view.root) {
+                Anchors.size.equalTo(
+                    width: 50,
+                    height: 50
+                )
+            }
+            TestAnchors(first: view.friend, second: view.root) {
+                Anchors.allSides.equalToSuper()
+            }
+        })
+        #expect(view.child.constraints.testDescriptions(view.tags).isEmpty)
+        #expect(view.friend.constraints.testDescriptions(view.tags).isEmpty)
     }
     
     @Test
     func ifFalseAndForceLayout() {
-        let view = self
         view.frame = .init(x: 0, y: 0, width: 90, height: 90)
         view.layoutIfNeeded()
         view.flag = false
@@ -140,28 +100,70 @@ final class LayoutableViewTest: UIView, Layoutable {
         #expect(view.child.removeFromSuperviewCallCount == 1)
         #expect(view.root.removeFromSuperviewCallCount == 0)
         
-        let constraints = view.constraints
-        let expected = Anchors.center.equalToSuper().constraints(
-            item: view.root,
-            toItem: view
-        )
-        #expect(isEqualExpect(constraints, expected))
-        #expect(isEqualExpect(
-            view.root.constraints,
-            Anchors.size.equalTo(
-                width: 50,
-                height: 50
-            ).constraints(
-                item: view.root,
-                toItem: nil
-            )
-            + Anchors.allSides.equalToSuper()
-                .constraints(
-                    item: view.friend,
-                    toItem: view.root
+        #expect(isEqual(view.constraints, view.tags) {
+            TestAnchors(first: view.root, second: view) {
+                Anchors.center.equalToSuper()
+            }
+        })
+        #expect(isEqual(view.root.constraints, view.tags) {
+            TestAnchors(first: view.root) {
+                Anchors.size.equalTo(
+                    width: 50,
+                    height: 50
                 )
-        ))
+            }
+            TestAnchors(first: view.friend, second: view.root) {
+                Anchors.allSides.equalToSuper()
+            }
+        })
         #expect(view.child.constraints.isEmpty)
         #expect(view.friend.constraints.isEmpty)
+    }
+    
+    final class LayoutableView: UIView, Layoutable {
+        @LayoutProperty var flag = true
+        
+        let root = CallCountView()
+        let child = CallCountView()
+        let friend = CallCountView()
+        
+        var activation: Activation?
+        
+        var layout: some Layout {
+            self.sl.sublayout {
+                root.sl.anchors {
+                    if flag {
+                        Anchors.allSides.equalToSuper()
+                    } else {
+                        Anchors.size.equalTo(width: 50, height: 50)
+                        Anchors.center.equalToSuper()
+                    }
+                }.sublayout {
+                    if flag {
+                        child.sl.anchors {
+                            Anchors.allSides.equalToSuper()
+                        }
+                    } else {
+                        friend.sl.anchors {
+                            Anchors.allSides.equalToSuper()
+                        }
+                    }
+                }
+            }
+        }
+        
+        var tags: [UIView: String] {
+            [self: "layoutableView", root: "layoutableView.root"]
+        }
+        
+        override init(frame: CGRect) {
+            super.init(frame: frame)
+            sl.updateLayout()
+        }
+        
+        required init?(coder: NSCoder) {
+            super.init(coder: coder)
+            sl.updateLayout()
+        }
     }
 }
