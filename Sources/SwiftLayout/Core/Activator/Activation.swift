@@ -26,8 +26,8 @@ public final class Activation: Hashable {
         let views = self.viewInfos.compactMap(\.view)
         let constraints = self.constraints
         Task {
-            await Self.deactiveViews(views)
             await Self.deactiveConstraints(constraints)
+            await Self.deactiveViews(views)
         }
     }
 

@@ -114,6 +114,18 @@ func isEqual(
 }
 
 @MainActor
+func isEqual(
+    _ constraints: [NSLayoutConstraint],
+    _ tags: [UIView : String] = [:],
+    @TestAnchorsBuilder _ expected: () -> [NSLayoutConstraint]
+) -> Bool {
+    let descriptions1: [String] = constraints.map(testDescriptionFromConstraint(tags)).sorted()
+    let descriptions2: [String] = expected().map(testDescriptionFromConstraint(tags)).sorted()
+
+    return descriptions1.elementsEqual(descriptions2)
+}
+
+@MainActor
 func isEqualExpect(
     _ constraints1: [NSLayoutConstraint],
     _ constraints2: [NSLayoutConstraint],
@@ -159,5 +171,12 @@ private extension String {
     @MainActor
     func replacingRegex(of: String, with: String = "") -> String {
         replacingOccurrences(of: of, with: with, options: .regularExpression, range: startIndex..<endIndex)
+    }
+}
+
+extension Sequence where Element == NSLayoutConstraint {
+    @MainActor
+    func testDescriptions(_ tags: [UIView: String]) -> [String] {
+        map(testDescriptionFromConstraint(tags))
     }
 }
