@@ -2,12 +2,52 @@ import Testing
 @testable import SwiftLayout
 import UIKit
 
-@MainActor
-struct LayoutableTests {
+final class LayoutableViewTest: UIView, Layoutable {
+    @LayoutProperty var flag = true
+    
+    let root = CallCountView()
+    let child = CallCountView()
+    let friend = CallCountView()
+    
+    var activation: Activation?
+    
+    var layout: some Layout {
+        self.sl.sublayout {
+            root.sl.anchors {
+                if flag {
+                    Anchors.allSides.equalToSuper()
+                } else {
+                    Anchors.size.equalTo(width: 50, height: 50)
+                    Anchors.center.equalToSuper()
+                }
+            }.sublayout {
+                if flag {
+                    child.sl.anchors {
+                        Anchors.allSides.equalToSuper()
+                    }
+                } else {
+                    friend.sl.anchors {
+                        Anchors.allSides.equalToSuper()
+                    }
+                }
+            }
+        }
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        sl.updateLayout()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        sl.updateLayout()
+    }
+    
     
     @Test
-    func IFTrue() {
-        let view = LayoutableView()
+    func ifTrue() {
+        let view = self
         view.frame = .init(x: 0, y: 0, width: 90, height: 90)
         view.layoutIfNeeded()
         
@@ -30,15 +70,15 @@ struct LayoutableTests {
             item: view.root,
             toItem: view
         )
-        #expect(isEqual(constraints, expected))
+        #expect(isEqualExpect(constraints, expected))
         
         #expect(view.child.constraints.isEmpty)
         #expect(view.friend.constraints.isEmpty)
     }
     
     @Test
-    func IFFalse() {
-        let view = LayoutableView()
+    func ifFalse() {
+        let view = self
         view.frame = .init(x: 0, y: 0, width: 90, height: 90)
         view.layoutIfNeeded()
         view.flag = false
@@ -61,8 +101,8 @@ struct LayoutableTests {
             item: view.root,
             toItem: view
         )
-        #expect(isEqual(constraints, expected))
-        #expect(isEqual(
+        #expect(isEqualExpect(constraints, expected))
+        #expect(isEqualExpect(
             view.root.constraints, Anchors.size.equalTo(
                 width: 50,
                 height: 50
@@ -80,8 +120,8 @@ struct LayoutableTests {
     }
     
     @Test
-    func IFFalseAndForceLayout() {
-        let view = LayoutableView()
+    func ifFalseAndForceLayout() {
+        let view = self
         view.frame = .init(x: 0, y: 0, width: 90, height: 90)
         view.layoutIfNeeded()
         view.flag = false
@@ -105,8 +145,8 @@ struct LayoutableTests {
             item: view.root,
             toItem: view
         )
-        #expect(isEqual(constraints, expected))
-        #expect(isEqual(
+        #expect(isEqualExpect(constraints, expected))
+        #expect(isEqualExpect(
             view.root.constraints,
             Anchors.size.equalTo(
                 width: 50,
@@ -124,50 +164,4 @@ struct LayoutableTests {
         #expect(view.child.constraints.isEmpty)
         #expect(view.friend.constraints.isEmpty)
     }
-}
-
-extension LayoutableTests {
-    private class LayoutableView: UIView, Layoutable {
-        @LayoutProperty var flag = true
-        
-        let root = CallCountView()
-        let child = CallCountView()
-        let friend = CallCountView()
-        
-        var activation: Activation?
-        
-        var layout: some Layout {
-            self.sl.sublayout {
-                root.sl.anchors {
-                    if flag {
-                        Anchors.allSides.equalToSuper()
-                    } else {
-                        Anchors.size.equalTo(width: 50, height: 50)
-                        Anchors.center.equalToSuper()
-                    }
-                }.sublayout {
-                    if flag {
-                        child.sl.anchors {
-                            Anchors.allSides.equalToSuper()
-                        }
-                    } else {
-                        friend.sl.anchors {
-                            Anchors.allSides.equalToSuper()
-                        }
-                    }
-                }
-            }
-        }
-        
-        override init(frame: CGRect) {
-            super.init(frame: frame)
-            sl.updateLayout()
-        }
-        
-        required init?(coder: NSCoder) {
-            super.init(coder: coder)
-            sl.updateLayout()
-        }
-    }
-    
 }
