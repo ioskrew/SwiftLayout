@@ -7,102 +7,8 @@ import UIKit
 import Testing
 @testable import SwiftLayout
 
-//@MainActor
-//func SLTAssertConstraintsHasSameElements(
-//    _ constraints: [NSLayoutConstraint],
-//    firstView: UIView, secondView: UIView, tags: [UIView: String] = [:],
-//    @AnchorsBuilder anchors: () -> Anchors,
-//    _ fileID: String = #fileID,
-//    _ filePath: String = #filePath,
-//    _ line: Int = #line,
-//    _ column: Int = #column
-//) {
-//    SLTAssertConstraintsHasSameElements(constraints, anchors().constraints(item: firstView, toItem: secondView), tags: tags, fileID, filePath, line, column)
-//}
-//
-//@MainActor
-//func SLTAssertConstraintsHasSameElements(
-//    _ constraints: [NSLayoutConstraint],
-//    firstView: UIView, tags: [UIView: String] = [:],
-//    @AnchorsBuilder anchors: () -> Anchors,
-//    _ fileID: String = #fileID,
-//    _ filePath: String = #filePath,
-//    _ line: Int = #line,
-//    _ column: Int = #column
-//) {
-//    SLTAssertConstraintsHasSameElements(constraints, anchors().constraints(item: firstView, toItem: nil), fileID, filePath, line, column)
-//}
-//
-//@MainActor
-//func SLTAssertConstraintsHasSameElements(
-//    _ constraints: [NSLayoutConstraint],
-//    tags: [UIView: String] = [:],
-//    @TestAnchorsBuilder anchors: () -> [NSLayoutConstraint],
-//    _ fileID: String = #fileID,
-//    _ filePath: String = #filePath,
-//    _ line: Int = #line,
-//    _ column: Int = #column
-//) {
-//    SLTAssertConstraintsHasSameElements(constraints, anchors(), fileID, filePath, line, column)
-//}
-//
-//@MainActor
-//func SLTAssertConstraintsIsEmpty(
-//    _ constraints: [NSLayoutConstraint],
-//    tags: [UIView: String] = [:],
-//    _ fileID: String = #fileID,
-//    _ filePath: String = #filePath,
-//    _ line: Int = #line,
-//    _ column: Int = #column
-//) {
-//    SLTAssertConstraintsHasSameElements(constraints, [], fileID, filePath, line, column)
-//}
-//
-//@MainActor
-//func SLTAssertConstraintsHasSameElements(
-//    _ constraints1: [NSLayoutConstraint],
-//    _ constraints2: [NSLayoutConstraint],
-//    tags: [UIView: String] = [:],
-//    _ fileID: String = #fileID,
-//    _ filePath: String = #filePath,
-//    _ line: Int = #line,
-//    _ column: Int = #column
-//) {
-//    let descriptions1: [String] = constraints1.map(testDescriptionFromConstraint(tags)).sorted()
-//    let descriptions2: [String] = constraints2.map(testDescriptionFromConstraint(tags)).sorted()
-//
-//    let diffs = descriptions2.difference(from: descriptions1)
-//    var failInsertDescriptions: [String] = []
-//    var failRemoveDescriptions: [String] = []
-//    for diff in diffs {
-//        switch diff {
-//        case let .insert(_, element: description, _):
-//            failInsertDescriptions.append("[\(description)] should be inserted")
-//        case let .remove(_, element: description, _):
-//            failRemoveDescriptions.append("[\(description)] should be removed")
-//        }
-//    }
-//    if failInsertDescriptions.isEmpty && failRemoveDescriptions.isEmpty {
-//        return
-//    }
-//
-//    Issue.record(
-//        Comment(
-//            rawValue:
-//                "+\(failInsertDescriptions.count), -\(failRemoveDescriptions.count) constraints\n"
-//                    .appending(failInsertDescriptions.joined(separator: "\n"))
-//                    .appending("\n")
-//                    .appending(failRemoveDescriptions.joined(separator: "\n"))
-//        ),
-//        fileID: fileID,
-//        filePath: filePath,
-//        line: line,
-//        column: column
-//    )
-//}
-
 @MainActor
-func isEqual(
+func hasSameElements(
     _ constraints1: [NSLayoutConstraint],
     _ constraints2: [NSLayoutConstraint],
     _ tags: [UIView : String] = [:]
@@ -115,12 +21,12 @@ func isEqual(
 
 @MainActor
 func isEqual(
-    _ constraints: [NSLayoutConstraint],
-    _ tags: [UIView : String] = [:],
-    @TestAnchorsBuilder _ expected: () -> [NSLayoutConstraint]
+    _ constraints1: [NSLayoutConstraint],
+    _ constraints2: [NSLayoutConstraint],
+    _ tags: [UIView : String] = [:]
 ) -> Bool {
-    let descriptions1: [String] = constraints.map(testDescriptionFromConstraint(tags)).sorted()
-    let descriptions2: [String] = expected().map(testDescriptionFromConstraint(tags)).sorted()
+    let descriptions1: [String] = constraints1.map(testDescriptionFromConstraint(tags))
+    let descriptions2: [String] = constraints2.map(testDescriptionFromConstraint(tags))
 
     return descriptions1.elementsEqual(descriptions2)
 }
@@ -136,7 +42,6 @@ func isNotEqual(
 
     return !descriptions1.elementsEqual(descriptions2)
 }
-
 
 @MainActor
 private func testDescriptionFromConstraint(_ tags: [UIView: String] = [:]) -> (_ constraint: NSLayoutConstraint) -> String {

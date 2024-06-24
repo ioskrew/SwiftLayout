@@ -25,13 +25,15 @@ struct LayoutableTests {
         #expect(view.root.removeFromSuperviewCallCount == 0)
         #expect(view.child.removeFromSuperviewCallCount == 0)
         #expect(view.root.removeFromSuperviewCallCount == 0)
-        
-        #expect(isEqual(view.constraints, view.tags) {
-            TestAnchors(first: view.root, second: view) {
-                Anchors.allSides.equalToSuper()
-            }
-        })
-        
+
+        let expectedConstraints = [
+            NSLayoutConstraint(item: view.root, attribute: .leading, relatedBy: .equal, toItem: view, attribute: .leading, multiplier: 1.0, constant: 0),
+            NSLayoutConstraint(item: view.root, attribute: .trailing, relatedBy: .equal, toItem: view, attribute: .trailing, multiplier: 1.0, constant: 0),
+            NSLayoutConstraint(item: view.root, attribute: .top, relatedBy: .equal, toItem: view, attribute: .top, multiplier: 1.0, constant: 0),
+            NSLayoutConstraint(item: view.root, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1.0, constant: 0),
+        ]
+
+        #expect(hasSameElements(view.constraints, expectedConstraints, view.tags))
         #expect(view.child.constraints.isEmpty)
         #expect(view.friend.constraints.isEmpty)
     }
@@ -54,28 +56,24 @@ struct LayoutableTests {
         #expect(view.root.removeFromSuperviewCallCount == 0)
         #expect(view.child.removeFromSuperviewCallCount == 1)
         #expect(view.root.removeFromSuperviewCallCount == 0)
-        
-        let constraints = view.constraints
-        let expected = Anchors.center.equalToSuper().constraints(
-            item: view.root,
-            toItem: view
-        )
-        #expect(isEqual(view.constraints, view.tags) {
-            TestAnchors(first: view.root, second: view) {
-                Anchors.center.equalToSuper()
-            }
-        })
-        #expect(isEqual(view.root.constraints, view.tags) {
-            TestAnchors(first: view.root) {
-                Anchors.size.equalTo(
-                    width: 50,
-                    height: 50
-                )
-            }
-            TestAnchors(first: view.friend, second: view.root) {
-                Anchors.allSides.equalToSuper()
-            }
-        })
+
+        let expectedViewConstraints = [
+            NSLayoutConstraint(item: view.root, attribute: .centerX, relatedBy: .equal, toItem: view, attribute: .centerX, multiplier: 1.0, constant: 0),
+            NSLayoutConstraint(item: view.root, attribute: .centerY, relatedBy: .equal, toItem: view, attribute: .centerY, multiplier: 1.0, constant: 0),
+        ]
+
+        let expectedRootConstraints = [
+            NSLayoutConstraint(item: view.root, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 50),
+            NSLayoutConstraint(item: view.root, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 50
+                              ),
+            NSLayoutConstraint(item: view.friend, attribute: .leading, relatedBy: .equal, toItem: view.root, attribute: .leading, multiplier: 1.0, constant: 0),
+            NSLayoutConstraint(item: view.friend, attribute: .trailing, relatedBy: .equal, toItem: view.root, attribute: .trailing, multiplier: 1.0, constant: 0),
+            NSLayoutConstraint(item: view.friend, attribute: .top, relatedBy: .equal, toItem: view.root, attribute: .top, multiplier: 1.0, constant: 0),
+            NSLayoutConstraint(item: view.friend, attribute: .bottom, relatedBy: .equal, toItem: view.root, attribute: .bottom, multiplier: 1.0, constant: 0),
+        ]
+
+        #expect(hasSameElements(view.constraints, expectedViewConstraints, view.tags))
+        #expect(hasSameElements(view.root.constraints, expectedRootConstraints, view.tags))
         #expect(view.child.constraints.testDescriptions(view.tags).isEmpty)
         #expect(view.friend.constraints.testDescriptions(view.tags).isEmpty)
     }
@@ -100,22 +98,23 @@ struct LayoutableTests {
         #expect(view.child.removeFromSuperviewCallCount == 1)
         #expect(view.root.removeFromSuperviewCallCount == 0)
         
-        #expect(isEqual(view.constraints, view.tags) {
-            TestAnchors(first: view.root, second: view) {
-                Anchors.center.equalToSuper()
-            }
-        })
-        #expect(isEqual(view.root.constraints, view.tags) {
-            TestAnchors(first: view.root) {
-                Anchors.size.equalTo(
-                    width: 50,
-                    height: 50
-                )
-            }
-            TestAnchors(first: view.friend, second: view.root) {
-                Anchors.allSides.equalToSuper()
-            }
-        })
+        let expectedViewConstraints = [
+            NSLayoutConstraint(item: view.root, attribute: .centerX, relatedBy: .equal, toItem: view, attribute: .centerX, multiplier: 1.0, constant: 0),
+            NSLayoutConstraint(item: view.root, attribute: .centerY, relatedBy: .equal, toItem: view, attribute: .centerY, multiplier: 1.0, constant: 0),
+        ]
+
+        let expectedRootConstraints = [
+            NSLayoutConstraint(item: view.root, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 50),
+            NSLayoutConstraint(item: view.root, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 50
+                              ),
+            NSLayoutConstraint(item: view.friend, attribute: .leading, relatedBy: .equal, toItem: view.root, attribute: .leading, multiplier: 1.0, constant: 0),
+            NSLayoutConstraint(item: view.friend, attribute: .trailing, relatedBy: .equal, toItem: view.root, attribute: .trailing, multiplier: 1.0, constant: 0),
+            NSLayoutConstraint(item: view.friend, attribute: .top, relatedBy: .equal, toItem: view.root, attribute: .top, multiplier: 1.0, constant: 0),
+            NSLayoutConstraint(item: view.friend, attribute: .bottom, relatedBy: .equal, toItem: view.root, attribute: .bottom, multiplier: 1.0, constant: 0),
+        ]
+
+        #expect(hasSameElements(view.constraints, expectedViewConstraints, view.tags))
+        #expect(hasSameElements(view.root.constraints, expectedRootConstraints, view.tags))
         #expect(view.child.constraints.isEmpty)
         #expect(view.friend.constraints.isEmpty)
     }
