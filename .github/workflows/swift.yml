@@ -7,7 +7,7 @@ on:
     branches: [ develop ]
 
 env:
-  DEVELOPER_DIR: /Applications/Xcode_14.0.1.app/Contents/Developer
+  DEVELOPER_DIR: /Applications/Xcode_15.4.app/Contents/Developer
 
 jobs:
   test-ios:
@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Run tests
-      run: xcodebuild test -scheme SwiftLayout-Package -sdk iphonesimulator16.0 -destination 'name=iPhone 14 Pro'
+      run: xcodebuild test -scheme SwiftLayout-Package -sdk iphonesimulator17.5 -destination 'name=iPhone 15 Pro'
   
 # test-macos:
 #
