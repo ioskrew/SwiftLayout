@@ -9,10 +9,6 @@ let package = Package(
         .library(
             name: "SwiftLayout",
             targets: ["SwiftLayout"]
-        ),
-        .library(
-            name: "SwiftLayoutUtil",
-            targets: ["SwiftLayoutUtil"]
         )
     ],
     dependencies: [],
@@ -22,27 +18,12 @@ let package = Package(
             dependencies: [],
             swiftSettings: [.swiftLanguageVersion(.v6)]
         ),
-        .target(
-            name: "SwiftLayoutUtil",
-            dependencies: [
-                "SwiftLayout"
-            ],
-            swiftSettings: [.swiftLanguageVersion(.v5)]
-        ),
         .testTarget(
             name: "SwiftLayoutTests",
             dependencies: [
                 "SwiftLayout"
-            ],
+            ]
             swiftSettings: [.swiftLanguageVersion(.v6)]
-        ),
-//        .testTarget(
-//            name: "SwiftLayoutUtilTests",
-//            dependencies: [
-//                "SwiftLayout",
-//                "SwiftLayoutUtil"
-//            ],
-//            swiftSettings: [.swiftLanguageVersion(.v5)]
-//        )
+        )
     ]
 )
