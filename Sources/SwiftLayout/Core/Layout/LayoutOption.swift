@@ -9,7 +9,7 @@ import Foundation
 
 public struct LayoutOption: OptionSet {
     public var rawValue: Int
-    
+
     public static let none = LayoutOption([])
     public static let isNotArranged = LayoutOption(rawValue: 1 << 0)
 

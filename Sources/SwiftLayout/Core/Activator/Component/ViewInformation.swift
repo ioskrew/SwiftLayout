@@ -8,18 +8,18 @@
 import UIKit
 
 final class ViewInformation: Hashable {
-    
+
     init(superview: UIView?, view: UIView?, option: LayoutOption) {
         self.superview = superview
         self.view = view
         self.option = option
     }
-    
+
     private(set) public weak var superview: UIView?
     private(set) public weak var view: UIView?
     var option: LayoutOption
     var identifier: String? { view?.accessibilityIdentifier }
-    
+
     func addSuperview() {
         guard let view else {
             return
@@ -30,7 +30,7 @@ final class ViewInformation: Hashable {
             stackSuperView.addArrangedSubview(view)
         }
     }
-    
+
     func removeFromSuperview() {
         guard superview == view?.superview else { return }
         view?.removeFromSuperview()
@@ -39,11 +39,11 @@ final class ViewInformation: Hashable {
 
 // MARK: - Hashable
 extension ViewInformation {
-    
+
     static func == (lhs: ViewInformation, rhs: ViewInformation) -> Bool {
         lhs.hashValue == rhs.hashValue
     }
-    
+
     func hash(into hasher: inout Hasher) {
         hasher.combine(superview)
         hasher.combine(view)

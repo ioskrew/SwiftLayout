@@ -101,7 +101,7 @@ private extension Activator {
 
     static func updateConstraints(activation: Activation, constraints: [NSLayoutConstraint]) {
         let news = Set(ofWeakConstraintsFrom: constraints)
-        let olds = activation.constraints.filter { $0.origin != nil}
+        let olds = activation.constraints.filter { $0.origin != nil }
 
         let needToDeactivate = olds.subtracting(news)
         let needToActivate = news.subtracting(olds)

@@ -6,7 +6,7 @@
 //
 
 import UIKit
- 
+
 public protocol AnchorsExpressionOmitable {
     func defaultExpression() -> Anchors
 }

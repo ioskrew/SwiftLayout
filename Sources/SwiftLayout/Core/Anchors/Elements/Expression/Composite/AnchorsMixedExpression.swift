@@ -23,7 +23,7 @@ public struct AnchorsMixedExpression: AnchorsExpressionOmitable {
         relation: NSLayoutConstraint.Relation,
         toItem: AnchorsItem,
         constant: CGFloat
-    ) ->  [AnchorsConstraintProperty] {
+    ) -> [AnchorsConstraintProperty] {
         attributes.map {
             AnchorsConstraintProperty(
                 attribute: $0.attribute,
@@ -39,7 +39,7 @@ public struct AnchorsMixedExpression: AnchorsExpressionOmitable {
         relation: NSLayoutConstraint.Relation,
         toItem: AnchorsItem,
         inwardOffset: CGFloat
-    ) ->  [AnchorsConstraintProperty] {
+    ) -> [AnchorsConstraintProperty] {
         attributes.map {
             AnchorsConstraintProperty(
                 attribute: $0.attribute,

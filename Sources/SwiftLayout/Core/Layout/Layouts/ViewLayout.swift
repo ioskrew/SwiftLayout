@@ -1,25 +1,26 @@
 import UIKit
 
 public struct ViewLayout<V: UIView>: Layout {
-    
+
     private let innerView: V
-    
+
     public private(set) var sublayouts: [any Layout]
-    
+
     public private(set) var anchors: Anchors
 
     public var option: LayoutOption? { LayoutOption.none }
 
     typealias OnActivateBlock = (V) -> Void
+
     private let onActivateBlock: OnActivateBlock?
-    
+
     init(_ view: V, sublayouts: [any Layout] = [], anchors: Anchors = Anchors(), onActivate: OnActivateBlock? = nil) {
         self.innerView = view
         self.sublayouts = sublayouts
         self.anchors = anchors
         self.onActivateBlock = onActivate
     }
-    
+
     public var view: UIView? {
         self.innerView
     }
@@ -30,7 +31,7 @@ public struct ViewLayout<V: UIView>: Layout {
 }
 
 extension ViewLayout {
-    
+
     ///
     /// Add anchors coordinator to this layout
     ///
@@ -60,9 +61,9 @@ extension ViewLayout {
     public func anchors(@AnchorsBuilder _ build: () -> Anchors) -> Self {
         let anchors = self.anchors
         anchors.append(build())
-        return Self.init(innerView, sublayouts: sublayouts, anchors: anchors, onActivate: onActivateBlock)
+        return Self(innerView, sublayouts: sublayouts, anchors: anchors, onActivate: onActivateBlock)
     }
-    
+
     ///
     /// Add sublayout coordinator to this layout
     ///
@@ -82,7 +83,7 @@ extension ViewLayout {
     public func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> Self {
         var sublayouts = self.sublayouts
         sublayouts.append(build())
-        return Self.init(innerView, sublayouts: sublayouts, anchors: anchors, onActivate: onActivateBlock)
+        return Self(innerView, sublayouts: sublayouts, anchors: anchors, onActivate: onActivateBlock)
     }
 
     ///
@@ -104,9 +105,9 @@ extension ViewLayout {
     /// - Returns: The layout itself with onActivate action added
     ///
     public func onActivate(_ perform: @escaping (V) -> Void) -> Self {
-        Self.init(innerView, sublayouts: sublayouts, anchors: anchors, onActivate: perform)
+        Self(innerView, sublayouts: sublayouts, anchors: anchors, onActivate: perform)
     }
-    
+
     ///
     /// Set  **accessibilityIdentifier** of view.
     ///
