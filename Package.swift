@@ -15,15 +15,14 @@ let package = Package(
     targets: [
         .target(
             name: "SwiftLayout",
-            dependencies: [],
-            swiftSettings: [.swiftLanguageVersion(.v6)]
+            dependencies: []
         ),
         .testTarget(
             name: "SwiftLayoutTests",
             dependencies: [
                 "SwiftLayout"
             ]
-            swiftSettings: [.swiftLanguageVersion(.v6)]
         )
-    ]
+    ],
+    swiftLanguageVersions: [.v6]
 )
