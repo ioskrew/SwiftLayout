@@ -2,8 +2,8 @@
 //  Attribute+CaseIterable.swift
 //  
 
-import UIKit
 import SwiftLayout
+import UIKit
 
 extension NSLayoutConstraint.Attribute: CaseIterable {
     public static var allCases: [NSLayoutConstraint.Attribute] {

@@ -17,7 +17,7 @@ public enum AnchorsItem: Hashable {
     case identifier(String)
     case transparent
     case deny
-    
+
     init(_ item: AnchorsItemable?) {
         if let string = item as? String {
             self = .identifier(string)

@@ -32,10 +32,8 @@ public final class Activation: Hashable {
 
     func deactiveViews() {
         let views = viewInfos.compactMap(\.view)
-        for view in views {
-            if views.contains(where: { $0 == view.superview }) {
-                view.removeFromSuperview()
-            }
+        for view in views where views.contains(where: { $0 == view.superview }) {
+            view.removeFromSuperview()
         }
         self.viewInfos = .init()
     }

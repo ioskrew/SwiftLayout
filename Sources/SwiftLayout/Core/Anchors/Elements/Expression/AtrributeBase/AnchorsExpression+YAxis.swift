@@ -10,14 +10,14 @@ extension AnchorsExpression where Attribute == AnchorsYAxisAttribute {
         self.attributes = attributes
     }
 
-    public var centerY: Self { Self.init(from: self, appendedAttribute: .centerY) }
-    public var top: Self { Self.init(from: self, appendedAttribute: .top) }
-    public var bottom: Self { Self.init(from: self, appendedAttribute: .bottom) }
-    public var firstBaseline: Self { Self.init(from: self, appendedAttribute: .firstBaseline) }
-    public var lastBaseline: Self { Self.init(from: self, appendedAttribute: .lastBaseline) }
-    public var centerYWithinMargins: Self { Self.init(from: self, appendedAttribute: .centerYWithinMargins) }
-    public var topMargin: Self { Self.init(from: self, appendedAttribute: .topMargin) }
-    public var bottomMargin: Self { Self.init(from: self, appendedAttribute: .bottomMargin) }
+    public var centerY: Self { Self(from: self, appendedAttribute: .centerY) }
+    public var top: Self { Self(from: self, appendedAttribute: .top) }
+    public var bottom: Self { Self(from: self, appendedAttribute: .bottom) }
+    public var firstBaseline: Self { Self(from: self, appendedAttribute: .firstBaseline) }
+    public var lastBaseline: Self { Self(from: self, appendedAttribute: .lastBaseline) }
+    public var centerYWithinMargins: Self { Self(from: self, appendedAttribute: .centerYWithinMargins) }
+    public var topMargin: Self { Self(from: self, appendedAttribute: .topMargin) }
+    public var bottomMargin: Self { Self(from: self, appendedAttribute: .bottomMargin) }
 
     public func equalTo(_ layoutAnchor: NSLayoutYAxisAnchor, constant: CGFloat = .zero) -> Anchors {
         let tmpConstraint = UIView().topAnchor.constraint(equalTo: layoutAnchor)
