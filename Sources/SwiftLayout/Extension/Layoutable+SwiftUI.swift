@@ -5,8 +5,8 @@
 //  Created by oozoofrog on 2022/04/01.
 //
 
-import UIKit
 import SwiftUI
+import UIKit
 
 public extension LayoutMethodWrapper where Base: Layoutable&UIView {
     var swiftUI: SLViewRepresentable<Base> {
@@ -21,9 +21,9 @@ public extension LayoutMethodWrapper where Base: Layoutable&UIViewController {
 }
 
 public struct SLViewRepresentable<L: Layoutable&UIView>: UIViewRepresentable {
- 
+
     let layoutable: L
-    
+
     init(_ layoutable: L) {
         self.layoutable = layoutable
     }
@@ -37,9 +37,9 @@ public struct SLViewRepresentable<L: Layoutable&UIView>: UIViewRepresentable {
 }
 
 public struct SLViewControllerRepresentable<L: Layoutable&UIViewController>: UIViewControllerRepresentable {
- 
+
     let layoutable: L
-    
+
     init(_ layoutable: L) {
         self.layoutable = layoutable
     }

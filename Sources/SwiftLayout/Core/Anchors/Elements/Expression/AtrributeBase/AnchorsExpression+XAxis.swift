@@ -10,16 +10,16 @@ extension AnchorsExpression where Attribute == AnchorsXAxisAttribute {
         self.attributes = attributes
     }
 
-    public var centerX: Self { Self.init(from: self, appendedAttribute: .centerX) }
-    public var leading: Self { Self.init(from: self, appendedAttribute: .leading) }
-    public var trailing: Self { Self.init(from: self, appendedAttribute: .trailing) }
-    public var left: Self { Self.init(from: self, appendedAttribute: .left) }
-    public var right: Self { Self.init(from: self, appendedAttribute: .right) }
-    public var centerXWithinMargins: Self { Self.init(from: self, appendedAttribute: .centerXWithinMargins) }
-    public var leftMargin: Self { Self.init(from: self, appendedAttribute: .leftMargin) }
-    public var rightMargin: Self { Self.init(from: self, appendedAttribute: .rightMargin) }
-    public var leadingMargin: Self { Self.init(from: self, appendedAttribute: .leadingMargin) }
-    public var trailingMargin: Self { Self.init(from: self, appendedAttribute: .trailingMargin) }
+    public var centerX: Self { Self(from: self, appendedAttribute: .centerX) }
+    public var leading: Self { Self(from: self, appendedAttribute: .leading) }
+    public var trailing: Self { Self(from: self, appendedAttribute: .trailing) }
+    public var left: Self { Self(from: self, appendedAttribute: .left) }
+    public var right: Self { Self(from: self, appendedAttribute: .right) }
+    public var centerXWithinMargins: Self { Self(from: self, appendedAttribute: .centerXWithinMargins) }
+    public var leftMargin: Self { Self(from: self, appendedAttribute: .leftMargin) }
+    public var rightMargin: Self { Self(from: self, appendedAttribute: .rightMargin) }
+    public var leadingMargin: Self { Self(from: self, appendedAttribute: .leadingMargin) }
+    public var trailingMargin: Self { Self(from: self, appendedAttribute: .trailingMargin) }
 
     public func equalTo(_ layoutAnchor: NSLayoutXAxisAnchor, constant: CGFloat = .zero) -> Anchors {
         let tmpConstraint = UIView().leadingAnchor.constraint(equalTo: layoutAnchor)

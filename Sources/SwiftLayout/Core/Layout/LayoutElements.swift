@@ -11,19 +11,19 @@ import UIKit
 struct LayoutElements<L: Layout> {
     let viewInformations: [ViewInformation]
     let viewConstraints: [NSLayoutConstraint]
-    
+
     init(layout: L) {
         let components = LayoutExplorer.components(layout: layout)
-        
+
         viewInformations = components.map { component in
             ViewInformation(superview: component.superView, view: component.view, option: component.option)
         }
-        
+
         let viewDic = Dictionary(
             components.compactMap { $0.keyValueTuple },
-            uniquingKeysWith: { first, _ in first}
+            uniquingKeysWith: { first, _ in first }
         )
-        
+
         viewConstraints = components.flatMap { component in
             component.anchors.constraints(
                 item: component.view,

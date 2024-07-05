@@ -20,7 +20,7 @@ public struct AnchorsCenterExpression: AnchorsExpressionOmitable {
         toItem: AnchorsItem = .transparent,
         xConstant: CGFloat = 0.0,
         yConstant: CGFloat = 0.0
-    ) ->  [AnchorsConstraintProperty] {
+    ) -> [AnchorsConstraintProperty] {
         [
             AnchorsConstraintProperty(
                 attribute: .centerX,
@@ -35,7 +35,7 @@ public struct AnchorsCenterExpression: AnchorsExpressionOmitable {
                 toItem: toItem,
                 toAttribute: .centerY,
                 constant: yConstant
-            ),
+            )
         ]
     }
 

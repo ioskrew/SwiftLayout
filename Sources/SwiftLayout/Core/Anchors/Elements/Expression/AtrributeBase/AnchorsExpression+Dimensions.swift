@@ -10,8 +10,8 @@ extension AnchorsExpression where Attribute == AnchorsDimensionAttribute {
         self.attributes = attributes
     }
 
-    public var height: Self { Self.init(from: self, appendedAttribute: .height) }
-    public var width: Self { Self.init(from: self, appendedAttribute: .width) }
+    public var height: Self { Self(from: self, appendedAttribute: .height) }
+    public var width: Self { Self(from: self, appendedAttribute: .width) }
 
     public func equalTo(constant: CGFloat) -> Anchors {
         let constraintProperties = constraintProperties(relation: .equal, toItem: .deny, toAttribute: nil, constant: constant)
