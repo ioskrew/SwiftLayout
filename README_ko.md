@@ -326,7 +326,7 @@ var layout: some Layout {
 이런 상황에서 `LayoutProperty`를 사용하면 직접 updateLayout을 호출하지 않고 해당 값의 변경에 따라 자동으로 호출하게 됩니다.
 
 ```swift
-@LayoutProeprty var showMiddleName: Bool = false // change value call updateLayout of Layoutable
+@LayoutProperty var showMiddleName: Bool = false // change value call updateLayout of Layoutable
 
 var layout: some Layout {
   self.sl.sublayout {

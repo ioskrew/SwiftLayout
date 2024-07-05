@@ -325,7 +325,7 @@ If `showMiddleName` is false, `middleNameLabel` is not added to the super view, 
 In this case, you can update automatically by using `LayoutProperty`:
 
 ```swift
-@LayoutProeprty var showMiddleName: Bool = false // change value call updateLayout of Layoutable
+@LayoutProperty var showMiddleName: Bool = false // change value call updateLayout of Layoutable
 
 var layout: some Layout {
   self.sl.sublayout {
