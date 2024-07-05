@@ -3,8 +3,8 @@
 //  
 
 import Foundation
-import UIKit
 import Testing
+import UIKit
 
 @MainActor
 func expectView(

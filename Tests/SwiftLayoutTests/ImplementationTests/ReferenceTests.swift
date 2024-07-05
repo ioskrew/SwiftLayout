@@ -5,9 +5,9 @@
 //  Created by oozoofrog on 2022/03/05.
 //
 
+import SwiftLayout
 import Testing
 import UIKit
-import SwiftLayout
 
 @MainActor
 final class ReferenceTests {
@@ -15,7 +15,7 @@ final class ReferenceTests {
     var view: SelfReferenceView?
     weak var weakView: UIView?
 
-    @Test 
+    @Test
     func testReferenceReleasing() async throws {
         @MainActor
         func prepare() async {
@@ -37,7 +37,7 @@ final class ReferenceTests {
         try await Task.sleep(nanoseconds: UInt64(1 * Double(NSEC_PER_SEC)))
         await checkReleaseReference()
     }
-    
+
     class DeinitView: UIView {
         static var deinitCount: Int = 0
 
@@ -47,7 +47,7 @@ final class ReferenceTests {
             }
         }
     }
-    
+
     class SelfReferenceView: UIView, Layoutable {
         var layout: some Layout {
             self.sl.sublayout {
@@ -58,7 +58,7 @@ final class ReferenceTests {
                 }
             }
         }
-        
+
         var activation: Activation?
     }
 }

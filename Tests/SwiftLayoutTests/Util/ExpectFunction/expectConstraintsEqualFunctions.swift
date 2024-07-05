@@ -3,15 +3,15 @@
 //
 
 import Foundation
-import UIKit
-import Testing
 @testable import SwiftLayout
+import Testing
+import UIKit
 
 @MainActor
 func hasSameElements(
     _ constraints1: [NSLayoutConstraint],
     _ constraints2: [NSLayoutConstraint],
-    _ tags: [UIView : String] = [:]
+    _ tags: [UIView: String] = [:]
 ) -> Bool {
     let descriptions1: [String] = constraints1.map(testDescriptionFromConstraint(tags)).sorted()
     let descriptions2: [String] = constraints2.map(testDescriptionFromConstraint(tags)).sorted()
@@ -23,7 +23,7 @@ func hasSameElements(
 func isEqual(
     _ constraints1: [NSLayoutConstraint],
     _ constraints2: [NSLayoutConstraint],
-    _ tags: [UIView : String] = [:]
+    _ tags: [UIView: String] = [:]
 ) -> Bool {
     let descriptions1: [String] = constraints1.map(testDescriptionFromConstraint(tags))
     let descriptions2: [String] = constraints2.map(testDescriptionFromConstraint(tags))
@@ -35,7 +35,7 @@ func isEqual(
 func isNotEqual(
     _ constraints1: [NSLayoutConstraint],
     _ constraints2: [NSLayoutConstraint],
-    _ tags: [UIView : String] = [:]
+    _ tags: [UIView: String] = [:]
 ) -> Bool {
     let descriptions1: [String] = constraints1.map(testDescriptionFromConstraint(tags))
     let descriptions2: [String] = constraints2.map(testDescriptionFromConstraint(tags))

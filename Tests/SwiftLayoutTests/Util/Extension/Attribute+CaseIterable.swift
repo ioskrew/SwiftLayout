@@ -2,9 +2,9 @@
 //  Attribute+CaseIterable.swift
 //  
 
-import UIKit
 import SwiftLayout
 import Testing
+import UIKit
 
 extension NSLayoutConstraint.Attribute: @retroactive CaseIterable {
     public static var allCases: [NSLayoutConstraint.Attribute] {
@@ -14,15 +14,15 @@ extension NSLayoutConstraint.Attribute: @retroactive CaseIterable {
     }
 
     static var allCasesForXAis: [NSLayoutConstraint.Attribute] {
-        return allCases.filter { $0.axisType == .xAxis}
+        return allCases.filter { $0.axisType == .xAxis }
     }
 
     static var allCasesForYAis: [NSLayoutConstraint.Attribute] {
-        return allCases.filter { $0.axisType == .yAxis}
+        return allCases.filter { $0.axisType == .yAxis }
     }
 
     static var allCasesForDimension: [NSLayoutConstraint.Attribute] {
-        return allCases.filter { $0.axisType == .dimension}
+        return allCases.filter { $0.axisType == .dimension }
     }
 
     private var axisType: AxisType {
@@ -88,7 +88,6 @@ extension NSLayoutConstraint.Attribute: @retroactive CustomTestStringConvertible
         }
     }
 }
-
 
 extension AnchorsXAxisAttribute: @retroactive CaseIterable {
     public static var allCases: [AnchorsXAxisAttribute] {

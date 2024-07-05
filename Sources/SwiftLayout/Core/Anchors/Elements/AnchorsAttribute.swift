@@ -67,7 +67,7 @@ public enum AnchorsXAxisAttribute: AnchorsAttribute, Sendable {
     }
 }
 
-public enum AnchorsYAxisAttribute: AnchorsAttribute, Sendable  {
+public enum AnchorsYAxisAttribute: AnchorsAttribute, Sendable {
     case centerY
     case top
     case bottom
@@ -114,7 +114,7 @@ public enum AnchorsYAxisAttribute: AnchorsAttribute, Sendable  {
     }
 }
 
-public enum AnchorsDimensionAttribute: AnchorsAttribute, Sendable  {
+public enum AnchorsDimensionAttribute: AnchorsAttribute, Sendable {
     case height
     case width
 

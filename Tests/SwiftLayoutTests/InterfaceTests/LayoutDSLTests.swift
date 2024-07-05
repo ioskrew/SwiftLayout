@@ -1,9 +1,9 @@
+import SwiftLayout
 import Testing
 import UIKit
-import SwiftLayout
 
 @MainActor
-struct LayoutDSLTest {
+struct LayoutDSLTest { // swiftlint:disable:this type_body_length
 
     @MainActor
     class LayoutDSLTestsBase {
@@ -144,7 +144,6 @@ struct LayoutDSLTest {
             #expect(childView_0.removeFromSuperviewCallCount == 0)
             #expect(childView_1.removeFromSuperviewCallCount == 0)
 
-
             // "update with change
             flag.toggle()
             activation = layout.update(fromActivation: activation!, forceLayout: true)
@@ -170,9 +169,9 @@ struct LayoutDSLTest {
             #expect(childView_1.removeFromSuperviewCallCount == 1)
         }
     }
-    
+
     struct ConditionalSyntaxTests {
-        final class `If`: LayoutDSLTestsBase {
+        final class IfFlag: LayoutDSLTestsBase {
             var flag = true
 
             let trueView = UIView()
@@ -328,7 +327,7 @@ struct LayoutDSLTest {
                     }
                 }
             }
-            
+
             @Test
             func forIn() {
                 activation = layout.active()
@@ -358,9 +357,9 @@ struct LayoutDSLTest {
                     }
                 }
             }
-    
+
             layout.finalActive()
-    
+
             expectView(root, superview: window, subviews: [child])
             expectView(child, superview: root, subviews: [label])
             expectView(label, superview: child, subviews: [])
@@ -368,7 +367,7 @@ struct LayoutDSLTest {
             #expect(label.text == "test onActivate")
             #expect(label.textColor == UIColor.green)
         }
-    
+
         @Test
         func duplicateLayoutBuilder() {
             @LayoutBuilder
@@ -385,9 +384,9 @@ struct LayoutDSLTest {
                     }
                 }
             }
-    
+
             layout.finalActive()
-    
+
             expectView(root, superview: window, subviews: [red])
             expectView(red, superview: root, subviews: [button, label, blue])
             expectView(button, superview: red, subviews: [])
@@ -395,9 +394,9 @@ struct LayoutDSLTest {
             expectView(blue, superview: red, subviews: [image])
             expectView(image, superview: blue, subviews: [])
         }
-    
+
         @Test
-        func SeparatedFromFirstLevel() {
+        func separatedFromFirstLevel() {
             @LayoutBuilder
             var layout: some Layout {
                 root.sl.sublayout {
@@ -405,20 +404,20 @@ struct LayoutDSLTest {
                     red
                     image
                 }
-    
+
                 child.sl.sublayout {
                     button
                     label
                 }
-    
+
                 red.sl.sublayout {
                     blue
                     green
                 }
             }
-    
+
             layout.finalActive()
-    
+
             expectView(root, superview: window, subviews: [child, red, image])
             expectView(child, superview: root, subviews: [button, label])
             expectView(red, superview: root, subviews: [blue, green])
@@ -438,7 +437,7 @@ struct LayoutDSLTest {
             let group1_3 = UIView()
             let group2_1 = UIView()
             let group2_2 = UIView()
-    
+
             @LayoutBuilder
             var layout: some Layout {
                 root.sl.sublayout {
@@ -453,9 +452,9 @@ struct LayoutDSLTest {
                     }
                 }
             }
-    
+
             layout.finalActive()
-    
+
             expectView(root, superview: window, subviews: [group1_1, group1_2, group1_3, group2_1, group2_2])
             expectView(group1_1, superview: root, subviews: [])
             expectView(group1_2, superview: root, subviews: [])
@@ -463,7 +462,7 @@ struct LayoutDSLTest {
             expectView(group2_1, superview: root, subviews: [])
             expectView(group2_2, superview: root, subviews: [])
         }
-    
+
         @Test
         func groupLayoutWithOption() {
             let stackView = UIStackView()
@@ -472,7 +471,7 @@ struct LayoutDSLTest {
             let arrangedView1 = UIView()
             let arrangedView2 = UIView()
             let arrangedView3 = UIView()
-    
+
             @LayoutBuilder
             var layout: some Layout {
                 root.sl.sublayout {
@@ -481,16 +480,16 @@ struct LayoutDSLTest {
                             notArrangedview1
                             notArrangedview2
                         }
-    
+
                         arrangedView1
                         arrangedView2
                         arrangedView3
                     }
                 }
             }
-    
+
             layout.finalActive()
-    
+
             expectView(root, superview: window, subviews: [stackView])
             expectView(stackView, superview: root, subviews: [notArrangedview1, notArrangedview2, arrangedView1, arrangedView2, arrangedView3])
             #expect(stackView.arrangedSubviews == [arrangedView1, arrangedView2, arrangedView3])
@@ -505,25 +504,25 @@ struct LayoutDSLTest {
             let view1 = UIView()
             let view2 = UIView()
             let view3 = UIView()
-    
+
             @LayoutBuilder var layout: some Layout {
                 view1.sl.sublayout {
                     view2
                 }
-    
+
                 view3
             }
         }
-    
+
         @MainActor
         struct Module2: ModularLayout {
             let view1 = UIView()
             let view2 = UIView()
             let view3 = UIView()
-    
+
             @LayoutBuilder var layout: some Layout {
                 view1
-    
+
                 view2.sl.sublayout {
                     view3
                 }
@@ -566,7 +565,7 @@ struct LayoutDSLTest {
             expectView(module2!.view3, superview: module2!.view2, subviews: [])
         }
     }
-    
+
     // TODO: - Not support performance
 //    final class TupleLayoutTests: LayoutDSLTestsBase {
 //        @Test

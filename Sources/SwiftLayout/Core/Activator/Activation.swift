@@ -7,11 +7,10 @@
 
 import UIKit
 
-
 public final class Activation: Hashable {
     var viewInfos: [ViewInformation]
     var constraints: Set<WeakConstraint>
-    
+
     convenience init() {
         self.init(viewInfos: .init(), constraints: .init())
     }
@@ -39,10 +38,8 @@ public final class Activation: Hashable {
 
     @MainActor
     static func deactiveViews(_ views: [UIView]) {
-        for view in views {
-            if views.contains(where: { $0 == view.superview }) {
-                view.removeFromSuperview()
-            }
+        for view in views where views.contains(where: { $0 == view.superview }) {
+            view.removeFromSuperview()
         }
     }
 }
