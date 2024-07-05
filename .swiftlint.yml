@@ -1,0 +1,69 @@
+disabled_rules: # rule identifiers to exclude from running
+  - file_length
+  - unused_setter_value
+  - unneeded_synthesized_initializer
+
+opt_in_rules: # some rules are only opt-in
+  - explicit_init
+  - closure_spacing
+  - overridden_super_call
+  - redundant_nil_coalescing
+  - nimble_operator
+  - operator_usage_whitespace
+  - closure_end_indentation
+  - first_where
+  - sorted_imports
+  - prohibited_super_call
+  - fatal_error_message
+  - vertical_parameter_alignment_on_call
+  - let_var_whitespace
+  - unneeded_parentheses_in_closure_argument
+  - pattern_matching_keywords
+  - array_init
+  - literal_expression_end_indentation
+
+force_try: warning
+
+function_body_length:
+  warning: 100
+  error: 500
+
+shorthand_operator: warning
+
+function_parameter_count:
+  warning: 10
+  error: 12
+
+line_length: 
+  warning: 200
+  error: 500
+  ignores_function_declarations: true
+  ignores_comments: true
+  ignores_interpolated_strings: true
+  ignores_urls: true
+
+cyclomatic_complexity:
+  warning: 20
+  error: 70
+
+type_name:
+  min_length: 3 # only warning
+  max_length: # warning and error
+    warning: 40
+    error: 50
+  allowed_symbols: "_"
+
+nesting:
+  type_level: 3
+
+identifier_name:
+  min_length: # only min_length
+    error: 3 # only error
+  excluded: # excluded via string array
+    - sl
+    - i
+    - to
+    - of
+  allowed_symbols: "_"
+
+reporter: "xcode" # reporter type (xcode, json, csv, checkstyle, junit, html, emoji)

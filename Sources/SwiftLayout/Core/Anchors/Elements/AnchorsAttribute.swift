@@ -1,6 +1,6 @@
 //
 //  AnchorsAttribute.swift
-//  
+//
 //
 //  Created by aiden_h on 2022/03/27.
 //
@@ -9,6 +9,7 @@ import UIKit
 
 public protocol AnchorsAttribute {
     init?(attribute: NSLayoutConstraint.Attribute)
+
     var attribute: NSLayoutConstraint.Attribute { get }
     var inwardDirectionFactor: CGFloat { get }
 }
@@ -24,8 +25,7 @@ public enum AnchorsXAxisAttribute: AnchorsAttribute {
     case rightMargin
     case leadingMargin
     case trailingMargin
-    
-    
+
     public init?(attribute: NSLayoutConstraint.Attribute) {
         switch attribute {
         case .centerX: self = .centerX
@@ -41,7 +41,7 @@ public enum AnchorsXAxisAttribute: AnchorsAttribute {
         default: return nil
         }
     }
-    
+
     public var attribute: NSLayoutConstraint.Attribute {
         switch self {
         case .centerX: return .centerX
@@ -76,8 +76,7 @@ public enum AnchorsYAxisAttribute: AnchorsAttribute {
     case centerYWithinMargins
     case topMargin
     case bottomMargin
-    
-    
+
     public init?(attribute: NSLayoutConstraint.Attribute) {
         switch attribute {
         case .centerY: self = .centerY
@@ -91,7 +90,7 @@ public enum AnchorsYAxisAttribute: AnchorsAttribute {
         default: return nil
         }
     }
-    
+
     public var attribute: NSLayoutConstraint.Attribute {
         switch self {
         case .centerY: return .centerY
@@ -118,7 +117,7 @@ public enum AnchorsYAxisAttribute: AnchorsAttribute {
 public enum AnchorsDimensionAttribute: AnchorsAttribute {
     case height
     case width
-    
+
     public init?(attribute: NSLayoutConstraint.Attribute) {
         switch attribute {
         case .height: self = .height
@@ -126,7 +125,7 @@ public enum AnchorsDimensionAttribute: AnchorsAttribute {
         default: return nil
         }
     }
-    
+
     public var attribute: NSLayoutConstraint.Attribute {
         switch self {
         case .height: return .height

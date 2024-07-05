@@ -10,12 +10,12 @@ import UIKit
 @propertyWrapper
 public final class AnimatableLayoutProperty<Value> {
 
-    private var stored : Value
+    private var stored: Value
     private var duration: TimeInterval
     private var delay: TimeInterval
     private var options: UIView.AnimationOptions
     private var completion: ((Bool) -> Void)?
-    
+
     public init(
         wrappedValue: Value,
         duration: TimeInterval,
@@ -29,7 +29,7 @@ public final class AnimatableLayoutProperty<Value> {
         self.options = options
         self.completion = completion
     }
-    
+
     public static subscript<Instance: Layoutable> (
         _enclosingInstance instance: Instance,
         wrapped wrappedKeyPath: ReferenceWritableKeyPath<Instance, Value>,
@@ -40,7 +40,7 @@ public final class AnimatableLayoutProperty<Value> {
         }
         set {
             instance[keyPath: storageKeyPath].stored = newValue
-            
+
             UIView.animate(
                 withDuration: instance[keyPath: storageKeyPath].duration,
                 delay: instance[keyPath: storageKeyPath].delay,
@@ -52,10 +52,10 @@ public final class AnimatableLayoutProperty<Value> {
             )
         }
     }
-    
+
     @available(*, unavailable, message: "This property wrapper can only be applied to Layoutable")
     public var wrappedValue: Value {
-        get { fatalError() }
-        set { fatalError() }
+        get { fatalError("This property wrapper can only be applied to Layoutable") }
+        set { fatalError("This property wrapper can only be applied to Layoutable") }
     }
 }

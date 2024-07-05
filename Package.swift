@@ -11,16 +11,27 @@ let package = Package(
             targets: ["SwiftLayout"]
         )
     ],
-    dependencies: [],
+    dependencies: [
+        .package(
+            url: "https://github.com/realm/SwiftLint.git",
+            exact: "0.55.1"
+        )
+    ],
     targets: [
         .target(
             name: "SwiftLayout",
-            dependencies: []
+            dependencies: [],
+            plugins: [
+                .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLint")
+            ]
         ),
         .testTarget(
             name: "SwiftLayoutTests",
             dependencies: [
                 "SwiftLayout"
+            ],
+            plugins: [
+                .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLint")
             ]
         )
     ]
