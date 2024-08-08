@@ -21,25 +21,11 @@ public final class Activation: Hashable {
     }
 
     deinit {
-        // TODO: Need a way to properly deactivate when activation is released
         let views = self.viewInfos.compactMap(\.view)
         let constraints = self.constraints
-        Task {
-            await Self.deactiveConstraints(constraints)
-            await Self.deactiveViews(views)
-        }
-    }
 
-    @MainActor
-    static func deactiveConstraints(_ constraints: Set<WeakConstraint>) {
-        let constraints = constraints.compactMap(\.origin).filter(\.isActive)
-        NSLayoutConstraint.deactivate(constraints)
-    }
-
-    @MainActor
-    static func deactiveViews(_ views: [UIView]) {
-        for view in views where views.contains(where: { $0 == view.superview }) {
-            view.removeFromSuperview()
+        Task { @MainActor in
+            Deactivator().deactivate(views: views, constraints: constraints)
         }
     }
 }
@@ -50,8 +36,7 @@ extension Activation {
         let views = self.viewInfos.compactMap(\.view)
         let constraints = self.constraints
 
-        Self.deactiveViews(views)
-        Self.deactiveConstraints(constraints)
+        Deactivator().deactivate(views: views, constraints: constraints)
     }
 
     @MainActor

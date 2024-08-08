@@ -10,7 +10,10 @@ import Testing
 import UIKit
 
 @MainActor
-struct AnchorsImplementationTests {
+class AnchorsImplementationTests {
+    @MainActor
+    init() {}
+
     var superview: UIView = UIView()
     var subview: UIView = UIView()
     var siblingview: UIView = UIView()

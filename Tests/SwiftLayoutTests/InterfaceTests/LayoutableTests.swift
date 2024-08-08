@@ -5,6 +5,9 @@ import UIKit
 @MainActor
 struct LayoutableTests {
 
+    @MainActor
+    init() {}
+
     let view = LayoutableView()
 
     @Test

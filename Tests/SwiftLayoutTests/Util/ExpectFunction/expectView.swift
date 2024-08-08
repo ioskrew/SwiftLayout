@@ -11,10 +11,7 @@ func expectView(
     _ view: @autoclosure () throws -> UIView,
     superview: @autoclosure () throws -> UIView?,
     subviews: @autoclosure () throws -> [UIView]?,
-    _ fileID: String = #fileID,
-    _ filePath: String = #filePath,
-    _ line: Int = #line,
-    _ column: Int = #column
+    _ sourceLocation: Testing.SourceLocation = #_sourceLocation
 ) rethrows {
     let view = try view()
     let superview = try superview()
@@ -23,28 +20,19 @@ func expectView(
         if let superviewForView = view.superview, let superview = superview {
             Issue.record(
                 Comment(rawValue: "view<\(view.testDescription)>.superview(\(superviewForView.testDescription)) is not equal with superview<\(superview.testDescription)>"),
-                fileID: fileID,
-                filePath: filePath,
-                line: line,
-                column: column
+                sourceLocation: sourceLocation
             )
             return
         } else if let superviewForView = view.superview {
             Issue.record(
                 Comment(rawValue: "view<\(view.testDescription)>.superview<\(superviewForView.testDescription)> is not equal with superview<nil>"),
-                fileID: fileID,
-                filePath: filePath,
-                line: line,
-                column: column
+                sourceLocation: sourceLocation
             )
             return
         } else if let superview = superview {
             Issue.record(
                 Comment(rawValue: "view<\(view.testDescription)>.superview<nil> is not equal with superview<\(superview.testDescription)>"),
-                fileID: fileID,
-                filePath: filePath,
-                line: line,
-                column: column
+                sourceLocation: sourceLocation
             )
             return
         }
@@ -54,15 +42,13 @@ func expectView(
     if !subviewsInView.elementsEqual(subviewsForTest) {
         Issue.record(
             Comment(rawValue: "view<\(view.testDescription)>.subviews(\(subviewsInView.count))[\(subviewsInView.joined(separator: ", "))] is not equal with subviews(\(subviewsForTest.count))[\(subviewsForTest.joined(separator: ", "))]"),
-            fileID: fileID,
-            filePath: filePath,
-            line: line,
-            column: column
+            sourceLocation: sourceLocation
         )
     }
 }
 
 private extension UIAccessibilityIdentification {
+    @MainActor
     var testDescription: String {
         if let identifier = accessibilityIdentifier {
             return "\(type(of: self)): \(identifier)"
