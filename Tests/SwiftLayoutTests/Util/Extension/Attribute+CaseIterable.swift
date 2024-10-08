@@ -89,19 +89,19 @@ extension NSLayoutConstraint.Attribute: @retroactive CustomTestStringConvertible
     }
 }
 
-extension AnchorsXAxisAttribute: @retroactive CaseIterable {
+extension AnchorsXAxisAttribute: CaseIterable {
     public static var allCases: [AnchorsXAxisAttribute] {
         NSLayoutConstraint.Attribute.allCases.compactMap { AnchorsXAxisAttribute(attribute: $0) }
     }
 }
 
-extension AnchorsYAxisAttribute: @retroactive CaseIterable {
+extension AnchorsYAxisAttribute: CaseIterable {
     public static var allCases: [AnchorsYAxisAttribute] {
         NSLayoutConstraint.Attribute.allCases.compactMap { AnchorsYAxisAttribute(attribute: $0) }
     }
 }
 
-extension AnchorsDimensionAttribute: @retroactive CaseIterable {
+extension AnchorsDimensionAttribute: CaseIterable {
     public static var allCases: [AnchorsDimensionAttribute] {
         NSLayoutConstraint.Attribute.allCases.compactMap { AnchorsDimensionAttribute(attribute: $0) }
     }
