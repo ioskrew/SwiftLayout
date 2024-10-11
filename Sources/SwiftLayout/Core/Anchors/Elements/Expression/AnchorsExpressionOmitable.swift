@@ -7,6 +7,7 @@
 
 import UIKit
 
+@MainActor
 public protocol AnchorsExpressionOmitable {
     func defaultExpression() -> Anchors
 }

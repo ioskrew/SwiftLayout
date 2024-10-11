@@ -1,29 +1,21 @@
 @testable import SwiftLayout
-import XCTest
+import Testing
+import UIKit
 
 /// test cases for api rules except DSL syntax
-final class ImplementationTests: XCTestCase {
+@MainActor
+struct ImplementationTests {
 
-    var root = UIView().sl.identifying("root")
-    var child = UIView().sl.identifying("child")
-    var friend = UIView().sl.identifying("friend")
+    let root = UIView().sl.identifying("root")
+    let child = UIView().sl.identifying("child")
+    let friend = UIView().sl.identifying("friend")
 
     var activation: Activation?
-
-    override func setUpWithError() throws {
-        continueAfterFailure = false
-        root = UIView().sl.identifying("root")
-        child = UIView().sl.identifying("child")
-        friend = UIView().sl.identifying("friend")
-    }
-
-    override func tearDownWithError() throws {
-        activation = nil
-    }
 }
 
 extension ImplementationTests {
-    func testLayoutTraversal() {
+    @Test
+    func layoutTraversal() {
         let root: UIView = UIView().sl.identifying("root")
         let button: UIButton = UIButton().sl.identifying("button")
         let label: UILabel = UILabel().sl.identifying("label")
@@ -58,10 +50,11 @@ extension ImplementationTests {
             "label, image"
         ]
 
-        XCTAssertEqual(expectedResult, result)
+        #expect(expectedResult == result)
     }
 
-    func testLayoutFlattening() {
+    @Test
+    func layoutFlattening() throws {
         let layout = root.sl.sublayout {
             child.sl.anchors {
                 Anchors.allSides.equalToSuper()
@@ -72,12 +65,13 @@ extension ImplementationTests {
             }
         }
 
-        XCTAssertNotNil(layout)
-        XCTAssertEqual(LayoutElements(layout: layout).viewInformations.map(\.view), [root, child, friend])
+        _ = try #require(layout)
+        #expect(LayoutElements(layout: layout).viewInformations.map(\.view) == [root, child, friend])
     }
 
     // swiftlint:disable identifier_name
-    func testLayoutCompare() {
+    @Test
+    func layoutCompare() {
         let f1 = root.sl.sublayout {
             child
         }
@@ -108,21 +102,23 @@ extension ImplementationTests {
         }
         let e6 = LayoutElements(layout: f6)
 
-        XCTAssertEqual(e1.viewInformations, e2.viewInformations)
-        SLTAssertConstraintsEqual(e1.viewConstraints, e1.viewConstraints)
+        #expect(e1.viewInformations == e2.viewInformations)
+        #expect(isEqual(e1.viewConstraints, e2.viewConstraints))
 
-        XCTAssertEqual(e3.viewInformations, e4.viewInformations)
-        SLTAssertConstraintsEqual(e3.viewConstraints, e4.viewConstraints)
+        #expect(e3.viewInformations == e4.viewInformations)
+        #expect(isEqual(e3.viewConstraints, e4.viewConstraints))
 
-        XCTAssertEqual(e4.viewInformations, e5.viewInformations)
-        SLTAssertConstraintsNotEqual(e4.viewConstraints, e5.viewConstraints)
+        #expect(e4.viewInformations == e5.viewInformations)
+        #expect(isNotEqual(e4.viewConstraints, e5.viewConstraints))
 
-        XCTAssertNotEqual(e5.viewInformations, e6.viewInformations)
-        SLTAssertConstraintsNotEqual(e5.viewConstraints, e6.viewConstraints)
+        #expect(e5.viewInformations != e6.viewInformations)
+        #expect(isNotEqual(e5.viewConstraints, e6.viewConstraints))
     }
+
     // swiftlint:enable identifier_name
 
-    func testDontTouchRootViewByDeactive() {
+    @Test
+    mutating func dontTouchRootViewByDeactive() {
         let root = UIView().sl.identifying("root")
         let red = UIView().sl.identifying("red")
         let old = UIView().sl.identifying("old")
@@ -135,15 +131,16 @@ extension ImplementationTests {
             }
         }.active()
 
-        XCTAssertTrue(root.translatesAutoresizingMaskIntoConstraints)
+        #expect(root.translatesAutoresizingMaskIntoConstraints == true)
 
         activation?.deactive()
         activation = nil
 
-        XCTAssertEqual(root.superview, old)
+        #expect(root.superview == old)
     }
 
-    func testOnActivateBlockCallOnlyOnceWithConstantLayout() {
+    @Test
+    mutating func onActivateBlockCallOnlyOnceWithConstantLayout() {
         let root = UIView()
         let button: UIButton = UIButton()
         let label: UILabel = UILabel()
@@ -165,28 +162,29 @@ extension ImplementationTests {
         }
 
         activation = layout.active()
-        XCTAssertEqual(rootCount, 1)
-        XCTAssertEqual(buttonCount, 1)
-        XCTAssertEqual(labelCount, 1)
+        #expect(rootCount == 1)
+        #expect(buttonCount == 1)
+        #expect(labelCount == 1)
 
         activation = layout.update(fromActivation: activation!)
-        XCTAssertEqual(rootCount, 2)
-        XCTAssertEqual(buttonCount, 2)
-        XCTAssertEqual(labelCount, 2)
+        #expect(rootCount == 2)
+        #expect(buttonCount == 2)
+        #expect(labelCount == 2)
 
         activation = layout.update(fromActivation: activation!)
-        XCTAssertEqual(rootCount, 3)
-        XCTAssertEqual(buttonCount, 3)
-        XCTAssertEqual(labelCount, 3)
+        #expect(rootCount == 3)
+        #expect(buttonCount == 3)
+        #expect(labelCount == 3)
 
         activation?.deactive()
         activation = nil
-        XCTAssertEqual(rootCount, 3)
-        XCTAssertEqual(buttonCount, 3)
-        XCTAssertEqual(labelCount, 3)
+        #expect(rootCount == 3)
+        #expect(buttonCount == 3)
+        #expect(labelCount == 3)
     }
 
-    func testOnActivateBlockCallOnlyOnceWithComputedLayout() {
+    @Test
+    mutating func onActivateBlockCallOnlyOnceWithComputedLayout() {
         let root = UIView()
         let button: UIButton = UIButton()
         let label: UILabel = UILabel()
@@ -210,31 +208,32 @@ extension ImplementationTests {
         }
 
         activation = layout.active()
-        XCTAssertEqual(rootCount, 1)
-        XCTAssertEqual(buttonCount, 1)
-        XCTAssertEqual(labelCount, 1)
+        #expect(rootCount == 1)
+        #expect(buttonCount == 1)
+        #expect(labelCount == 1)
 
         var _ = layout
         activation = layout.update(fromActivation: activation!)
-        XCTAssertEqual(rootCount, 2)
-        XCTAssertEqual(buttonCount, 2)
-        XCTAssertEqual(labelCount, 2)
+        #expect(rootCount == 2)
+        #expect(buttonCount == 2)
+        #expect(labelCount == 2)
 
         activation = layout.update(fromActivation: activation!)
-        XCTAssertEqual(rootCount, 3)
-        XCTAssertEqual(buttonCount, 3)
-        XCTAssertEqual(labelCount, 3)
+        #expect(rootCount == 3)
+        #expect(buttonCount == 3)
+        #expect(labelCount == 3)
 
         activation?.deactive()
         activation = nil
-        XCTAssertEqual(rootCount, 3)
-        XCTAssertEqual(buttonCount, 3)
-        XCTAssertEqual(labelCount, 3)
+        #expect(rootCount == 3)
+        #expect(buttonCount == 3)
+        #expect(labelCount == 3)
     }
 }
 
 extension ImplementationTests {
-    func testIdentifier() {
+    @Test
+    func identifier() throws {
         let activation = root.sl.sublayout {
             UILabel().sl.identifying("label").sl.anchors {
                 Anchors.cap.equalToSuper()
@@ -245,28 +244,28 @@ extension ImplementationTests {
             }
         }.active()
 
-        let label = activation.viewForIdentifier("label")
-        XCTAssertNotNil(label)
-        XCTAssertEqual(label?.accessibilityIdentifier, "label")
+        let label = try #require(activation.viewForIdentifier("label"))
+        #expect(label.accessibilityIdentifier == "label")
 
-        let secondView = activation.viewForIdentifier("secondView")
-        XCTAssertEqual(secondView?.accessibilityIdentifier, "secondView")
+        let secondView = try #require(activation.viewForIdentifier("secondView"))
+        #expect(secondView.accessibilityIdentifier == "secondView")
 
         let currents = activation.constraints
-        let labelConstraints = Set(ofWeakConstraintsFrom: Anchors.cap.equalToSuper().constraints(item: label!, toItem: root))
-        XCTAssertEqual(currents.intersection(labelConstraints), labelConstraints)
+        let labelConstraints = Set(ofWeakConstraintsFrom: Anchors.cap.equalToSuper().constraints(item: label, toItem: root))
+        #expect(currents.intersection(labelConstraints) == labelConstraints)
 
-        let secondViewConstraints = Set(ofWeakConstraintsFrom: Anchors.cap.equalToSuper().constraints(item: label!, toItem: root))
-        XCTAssertEqual(currents.intersection(secondViewConstraints), secondViewConstraints)
+        let secondViewConstraints = Set(ofWeakConstraintsFrom: Anchors.cap.equalToSuper().constraints(item: label, toItem: root))
+        #expect(currents.intersection(secondViewConstraints) == secondViewConstraints)
 
-        let constraintsBetweebViews = Set(ofWeakConstraintsFrom: Anchors.top.equalTo(label!, attribute: .bottom).constraints(item: secondView!, toItem: label))
-        XCTAssertEqual(currents.intersection(constraintsBetweebViews), constraintsBetweebViews)
+        let constraintsBetweebViews = Set(ofWeakConstraintsFrom: Anchors.top.equalTo(label, attribute: .bottom).constraints(item: secondView, toItem: label))
+        #expect(currents.intersection(constraintsBetweebViews) == constraintsBetweebViews)
     }
 }
 
 extension ImplementationTests {
 
-    func testStackViewMaintainOrderingOfArrangedSubviews() {
+    @Test
+    func stackViewMaintainOrderingOfArrangedSubviews() {
         let stack = StackView(frame: .init(x: 0, y: 0, width: 40, height: 80)).sl.identifying("view")
         var aView: UIView {
             stack.aView
@@ -275,22 +274,23 @@ extension ImplementationTests {
             stack.bView
         }
         stack.sl.updateLayout(forceLayout: true)
-        XCTAssertEqual(aView.frame.debugDescription, "(20.0, 0.0, 0.0, 40.0)")
-        XCTAssertEqual(bView.frame.debugDescription, "(20.0, 40.0, 0.0, 40.0)")
+        #expect(aView.frame.debugDescription == "(20.0, 0.0, 0.0, 40.0)")
+        #expect(bView.frame.debugDescription == "(20.0, 40.0, 0.0, 40.0)")
 
         stack.isA = false
         stack.sl.updateLayout(forceLayout: true)
 
-        XCTAssertEqual(bView.frame.debugDescription, "(20.0, 0.0, 0.0, 80.0)")
+        #expect(bView.frame.debugDescription == "(20.0, 0.0, 0.0, 80.0)")
 
         stack.isA = true
         stack.sl.updateLayout(forceLayout: true)
 
-        XCTAssertEqual(stack.stack.arrangedSubviews.compactMap(\.accessibilityIdentifier), [aView, bView].compactMap(\.accessibilityIdentifier))
-        XCTAssertEqual(aView.frame.debugDescription, "(20.0, 0.0, 0.0, 40.0)")
-        XCTAssertEqual(bView.frame.debugDescription, "(20.0, 40.0, 0.0, 40.0)")
+        #expect(stack.stack.arrangedSubviews.compactMap(\.accessibilityIdentifier) == [aView, bView].compactMap(\.accessibilityIdentifier))
+        #expect(aView.frame.debugDescription == "(20.0, 0.0, 0.0, 40.0)")
+        #expect(bView.frame.debugDescription == "(20.0, 40.0, 0.0, 40.0)")
     }
 
+    @MainActor
     final class StackView: UIView, Layoutable {
         var activation: Activation?
         var layout: some Layout {
@@ -321,7 +321,8 @@ extension ImplementationTests {
         var isA: Bool = true
     }
 
-    func testForecDeactivateNSLayoutConstraint() {
+    @Test
+    func forecDeactivateNSLayoutConstraint() async throws {
         let superview = UIView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
         let childs: [UIView] = (0..<10).map({ _ in UIView(frame: CGRect(x: 0, y: 0, width: 100, height: 100)) })
 
@@ -337,24 +338,24 @@ extension ImplementationTests {
 
         var activation: Activation!
 
-        let expectation1 = XCTestExpectation(description: "active layout and force deactivate")
-        DispatchQueue.main.asyncAfter(deadline: .now()) {
+        @MainActor
+        func activeLayoutAndForceDeactivate() async {
             activation = layout.active(forceLayout: true)
 
             NSLayoutConstraint.deactivate(superview.constraints)
             superview.setNeedsLayout()
             superview.layoutIfNeeded()
-
-            expectation1.fulfill()
         }
 
-        let expectation2 = XCTestExpectation(description: "layout update after force deactivate")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+        @MainActor
+        func layoutUpdateAfterForceDeactivate() async {
             activation = layout.update(fromActivation: activation, forceLayout: true)
-
-            expectation2.fulfill()
         }
 
-        wait(for: [expectation1, expectation2], timeout: 3)
+        await activeLayoutAndForceDeactivate()
+        try await Task.sleep(nanoseconds: UInt64(1 * Double(NSEC_PER_SEC)))
+        await layoutUpdateAfterForceDeactivate()
+
+        #expect(true) // If the test runs without crashing, it's OK
     }
 }

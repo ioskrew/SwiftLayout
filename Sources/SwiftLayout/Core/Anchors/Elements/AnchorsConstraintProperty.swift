@@ -7,6 +7,7 @@
 
 import UIKit
 
+@MainActor
 public struct AnchorsConstraintProperty {
     public let attribute: NSLayoutConstraint.Attribute
     public let relation: NSLayoutConstraint.Relation

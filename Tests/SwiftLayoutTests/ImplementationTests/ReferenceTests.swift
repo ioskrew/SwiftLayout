@@ -6,16 +6,19 @@
 //
 
 import SwiftLayout
-import XCTest
+import Testing
+import UIKit
 
-class ReferenceTests: XCTestCase {
+@MainActor
+final class ReferenceTests {
 
     var view: SelfReferenceView?
     weak var weakView: UIView?
 
-    func testReferenceReleasing() {
-        context("prepare") { [weak self] in
-            guard let self else { return }
+    @Test
+    func testReferenceReleasing() async throws {
+        @MainActor
+        func prepare() async {
             DeinitView.deinitCount = 0
             self.view = SelfReferenceView()
             self.weakView = view
@@ -23,20 +26,25 @@ class ReferenceTests: XCTestCase {
             self.view?.sl.updateLayout()
             self.view = nil
         }
-        context("check release reference") {
-            XCTAssertNil(weakView)
-            XCTAssertEqual(DeinitView.deinitCount, 2)
-        }
-    }
 
-    override func setUpWithError() throws {}
-    override func tearDownWithError() throws {}
+        @MainActor
+        func checkReleaseReference() async {
+            #expect(weakView == nil)
+            #expect(DeinitView.deinitCount == 2)
+        }
+
+        await prepare()
+        try await Task.sleep(nanoseconds: UInt64(1 * Double(NSEC_PER_SEC)))
+        await checkReleaseReference()
+    }
 
     class DeinitView: UIView {
         static var deinitCount: Int = 0
 
         deinit {
-            Self.deinitCount += 1
+            Task { @MainActor in
+                DeinitView.deinitCount += 1
+            }
         }
     }
 

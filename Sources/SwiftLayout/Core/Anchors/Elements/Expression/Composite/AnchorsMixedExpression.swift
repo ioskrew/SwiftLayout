@@ -4,6 +4,7 @@
 
 import UIKit
 
+@MainActor
 public struct AnchorsMixedExpression: AnchorsExpressionOmitable {
     private var attributes: [any AnchorsAttribute]
 

@@ -18,8 +18,9 @@ final class ViewInformation: Hashable {
     private(set) public weak var superview: UIView?
     private(set) public weak var view: UIView?
     var option: LayoutOption
-    var identifier: String? { view?.accessibilityIdentifier }
+    @MainActor var identifier: String? { view?.accessibilityIdentifier }
 
+    @MainActor
     func addSuperview() {
         guard let view else {
             return
@@ -31,6 +32,7 @@ final class ViewInformation: Hashable {
         }
     }
 
+    @MainActor
     func removeFromSuperview() {
         guard superview == view?.superview else { return }
         view?.removeFromSuperview()

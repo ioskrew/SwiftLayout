@@ -1,5 +1,6 @@
 import UIKit
 
+@MainActor
 @resultBuilder
 public struct LayoutBuilder {
 

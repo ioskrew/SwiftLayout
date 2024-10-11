@@ -1,3 +1,4 @@
+@MainActor
 public protocol ModularLayout: Layout {
     associatedtype LayoutBody: Layout
 

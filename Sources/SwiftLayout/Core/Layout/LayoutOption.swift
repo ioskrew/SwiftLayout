@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct LayoutOption: OptionSet {
+public struct LayoutOption: OptionSet, Sendable {
     public var rawValue: Int
 
     public static let none = LayoutOption([])

@@ -1,139 +1,163 @@
-import SwiftLayout
-import XCTest
+@testable import SwiftLayout
+import Testing
+import UIKit
 
-/// test cases for constraint DSL syntax
-final class AnchorsDSLTests: XCTestCase {
-    var superview: UIView = UIView()
-    var subview: UIView = UIView()
-    var siblingview: UIView = UIView()
-
-    var activation: Set<Activation> = []
-
-    var tags: [UIView: String] {
-        [superview: "superview", subview: "subview", siblingview: "siblingview"]
-    }
-
-    override func setUp() {
-        superview = UIView()
-        subview = UIView()
-        siblingview = UIView()
-        continueAfterFailure = false
-    }
-
-    override func tearDown() {
-        activation = []
-    }
+extension Tag {
+    @Tag
+    static var deactivation: Self
 }
 
-// MARK: - activation
-extension AnchorsDSLTests {
-    func testActive() {
-        @LayoutBuilder
-        var layout: some Layout {
-            superview.sl.sublayout {
-                subview.sl.anchors {
-                    Anchors.cap.equalToSuper()
-                    Anchors.bottom.equalTo(siblingview, attribute: .top)
-                }
-                siblingview.sl.anchors {
-                    Anchors.width.equalTo(constant: 37)
-                    Anchors.height.equalToSuper().multiplier(0.5)
-                    Anchors.centerX.bottom
-                }
-            }
-        }
+/// test cases for constraint DSL syntax
+struct AnchorsDSLTests { // swiftlint:disable:this type_body_length
 
-        layout.active().store(&activation)
-
-        SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
-            TestAnchors(first: subview, second: superview) {
-                Anchors.cap.equalToSuper()
-            }
-            TestAnchors(first: subview, second: siblingview) {
-                Anchors.bottom.equalTo(siblingview, attribute: .top)
-            }
-            TestAnchors(first: siblingview, second: superview) {
-                Anchors.height.equalToSuper().multiplier(0.5)
-                Anchors.centerX.bottom
-            }
-        }
-        SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
-        SLTAssertConstraintsHasSameElements(siblingview.constraints, tags: tags) {
-            TestAnchors(first: siblingview) {
-                Anchors.width.equalTo(constant: 37.0)
-            }
-        }
-    }
-
-    func testDeactive() {
-        @LayoutBuilder
-        var layout: some Layout {
-            superview.sl.sublayout {
-                subview.sl.anchors {
-                    Anchors.cap.equalToSuper()
-                    Anchors.bottom.equalTo(siblingview, attribute: .top)
-                }
-                siblingview.sl.anchors {
-                    Anchors.width.equalTo(constant: 37)
-                    Anchors.height.equalToSuper().multiplier(0.5)
-                    Anchors.centerX.bottom
-                }
-            }
-        }
-
-        layout.active().store(&activation)
-
-        activation = []
-
-        SLTAssertConstraintsIsEmpty(superview.constraints, tags: tags)
-        SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
-        SLTAssertConstraintsIsEmpty(siblingview.constraints, tags: tags)
-    }
-
-    func testFinalActive() {
-        @LayoutBuilder
-        var layout: some Layout {
-            superview.sl.sublayout {
-                subview.sl.anchors {
-                    Anchors.cap.equalToSuper()
-                    Anchors.bottom.equalTo(siblingview, attribute: .top)
-                }
-                siblingview.sl.anchors {
-                    Anchors.width.equalTo(constant: 37)
-                    Anchors.height.equalToSuper().multiplier(0.5)
-                    Anchors.centerX.bottom
-                }
-            }
-        }
-
-        layout.finalActive()
-
-        SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
-            TestAnchors(first: subview, second: superview) {
-                Anchors.cap.equalToSuper()
-            }
-            TestAnchors(first: subview, second: siblingview) {
-                Anchors.bottom.equalToSuper(attribute: .top)
-            }
-            TestAnchors(first: siblingview, second: superview) {
-                Anchors.height.equalToSuper().multiplier(0.5)
-                Anchors.centerX.bottom
-            }
-        }
-        SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
-        SLTAssertConstraintsHasSameElements(siblingview.constraints, tags: tags) {
-            TestAnchors(first: siblingview) {
-                Anchors.width.equalTo(constant: 37.0)
-            }
-        }
-    }
-
-    func testUpdateLayout() {
-        var flag = true
+    @MainActor
+    class AnchorsDSLTestsBase {
+        var superview: UIView = UIView()
+        var subview: UIView = UIView()
+        var siblingview: UIView = UIView()
 
         var activation: Activation?
 
-        @LayoutBuilder
+        var tags: [UIView: String] {
+            [superview: "superview", subview: "subview", siblingview: "siblingview"]
+        }
+
+        init() {
+            superview = UIView()
+            subview = UIView()
+            siblingview = UIView()
+        }
+    }
+
+    final class ActivationTests: AnchorsDSLTestsBase {
+
+        @Test
+        func active() {
+            @LayoutBuilder
+            var layout: some Layout {
+                superview.sl.sublayout {
+                    subview.sl.anchors {
+                        Anchors.cap.equalToSuper()
+                        Anchors.bottom.equalTo(siblingview, attribute: .top)
+                    }
+                    siblingview.sl.anchors {
+                        Anchors.width.equalTo(constant: 37)
+                        Anchors.height.equalToSuper().multiplier(0.5)
+                        Anchors.centerX.bottom
+                    }
+                }
+            }
+
+            activation = layout.active()
+
+            let expectedSuperViewConstraints = [
+                NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1, constant: 0),
+                NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1, constant: 0),
+                NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1, constant: 0),
+
+                NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: siblingview, attribute: .top, multiplier: 1, constant: 0),
+
+                NSLayoutConstraint(item: siblingview, attribute: .height, relatedBy: .equal, toItem: superview, attribute: .height, multiplier: 0.5, constant: 0),
+                NSLayoutConstraint(item: siblingview, attribute: .centerX, relatedBy: .equal, toItem: superview, attribute: .centerX, multiplier: 1, constant: 0),
+                NSLayoutConstraint(item: siblingview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1, constant: 0)
+            ]
+
+            let expectedSiblingviewConstraints = [
+                NSLayoutConstraint(item: siblingview, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 37)
+            ]
+
+            #expect(hasSameElements(superview.constraints, expectedSuperViewConstraints, tags))
+            #expect(subview.constraints.isEmpty)
+            #expect(hasSameElements(siblingview.constraints, expectedSiblingviewConstraints, tags))
+        }
+
+        @Test(.tags(.deactivation))
+        func deactive() async throws {
+
+            @LayoutBuilder
+            var layout: some Layout {
+                superview.sl.sublayout {
+                    subview.sl.anchors {
+                        Anchors.cap.equalToSuper()
+                        Anchors.bottom.equalTo(siblingview, attribute: .top)
+                    }
+                    siblingview.sl.anchors {
+                        Anchors.width.equalTo(constant: 37)
+                        Anchors.height.equalToSuper().multiplier(0.5)
+                        Anchors.centerX.bottom
+                    }
+                }
+            }
+
+            func activate() async {
+                activation = layout.active()
+            }
+
+            func deactivate() async {
+                activation = nil
+            }
+
+            func expectation() async {
+                #expect(superview.constraints.isEmpty)
+                #expect(subview.constraints.isEmpty)
+                #expect(siblingview.constraints.isEmpty)
+            }
+
+            await activate()
+            await deactivate()
+
+            // TODO: deinit of Activation using Task for removeSubviews and removeConstraints, so check need to be update after Task of deinit
+            // TODO: Replace sleep
+            try await Task.sleep(nanoseconds: 1000)
+            await expectation()
+        }
+
+        @Test
+        func finalActive() async {
+            @LayoutBuilder
+            var layout: some Layout {
+                superview.sl.sublayout {
+                    subview.sl.anchors {
+                        Anchors.cap.equalToSuper()
+                        Anchors.bottom.equalTo(siblingview, attribute: .top)
+                    }
+                    siblingview.sl.anchors {
+                        Anchors.width.equalTo(constant: 37)
+                        Anchors.height.equalToSuper().multiplier(0.5)
+                        Anchors.centerX.bottom
+                    }
+                }
+            }
+
+            layout.finalActive()
+
+            let expectedSuperViewConstraints = [
+                NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1, constant: 0),
+                NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1, constant: 0),
+                NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1, constant: 0),
+
+                NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: siblingview, attribute: .top, multiplier: 1, constant: 0),
+
+                NSLayoutConstraint(item: siblingview, attribute: .height, relatedBy: .equal, toItem: superview, attribute: .height, multiplier: 0.5, constant: 0),
+                NSLayoutConstraint(item: siblingview, attribute: .centerX, relatedBy: .equal, toItem: superview, attribute: .centerX, multiplier: 1, constant: 0),
+                NSLayoutConstraint(item: siblingview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1, constant: 0)
+            ]
+
+            let expectedSiblingviewConstraints = [
+                NSLayoutConstraint(item: siblingview, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 37)
+            ]
+
+            #expect(hasSameElements(superview.constraints, expectedSuperViewConstraints, tags))
+            #expect(subview.constraints.isEmpty)
+            #expect(hasSameElements(siblingview.constraints, expectedSiblingviewConstraints, tags))
+        }
+
+    }
+
+    final class UpdateLayoutTests: AnchorsDSLTestsBase {
+
+        var flag = true
+
         var layout: some Layout {
             superview.sl.sublayout {
                 subview.sl.anchors {
@@ -153,520 +177,580 @@ extension AnchorsDSLTests {
             }
         }
 
-        contextContinuous("active") {
+        @Test
+        func active() {
             activation = layout.active()
 
-            SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
-                TestAnchors(first: subview, second: superview) {
-                    Anchors.cap.equalToSuper()
-                }
-                TestAnchors(first: subview, second: siblingview) {
-                    Anchors.bottom.equalToSuper(attribute: .top)
-                }
-                TestAnchors(first: siblingview, second: superview) {
-                    Anchors.height.equalToSuper().multiplier(0.5)
-                    Anchors.centerX.bottom
-                }
-            }
-            SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
-            SLTAssertConstraintsHasSameElements(siblingview.constraints, tags: tags) {
-                TestAnchors(first: siblingview) {
-                    Anchors.width.equalTo(constant: 37.0)
-                }
-            }
+            let expectedSuperViewConstraints = [
+                NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1, constant: 0),
+                NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1, constant: 0),
+                NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1, constant: 0),
+
+                NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: siblingview, attribute: .top, multiplier: 1, constant: 0),
+
+                NSLayoutConstraint(item: siblingview, attribute: .height, relatedBy: .equal, toItem: superview, attribute: .height, multiplier: 0.5, constant: 0),
+                NSLayoutConstraint(item: siblingview, attribute: .centerX, relatedBy: .equal, toItem: superview, attribute: .centerX, multiplier: 1, constant: 0),
+                NSLayoutConstraint(item: siblingview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1, constant: 0)
+            ]
+
+            let expectedSiblingviewConstraints = [
+                NSLayoutConstraint(item: siblingview, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 37)
+            ]
+
+            #expect(hasSameElements(superview.constraints, expectedSuperViewConstraints, tags))
+            #expect(subview.constraints.isEmpty)
+            #expect(hasSameElements(siblingview.constraints, expectedSiblingviewConstraints, tags))
         }
 
-        contextContinuous("update without change") {
+        @Test
+        func updateWithoutChange() {
+            active()
             activation = layout.update(fromActivation: activation!)
 
-            SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
-                TestAnchors(first: subview, second: superview) {
-                    Anchors.cap.equalToSuper()
-                }
-                TestAnchors(first: subview, second: siblingview) {
-                    Anchors.bottom.equalToSuper(attribute: .top)
-                }
-                TestAnchors(first: siblingview, second: superview) {
-                    Anchors.height.equalToSuper().multiplier(0.5)
-                    Anchors.centerX.bottom
-                }
-            }
-            SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
-            SLTAssertConstraintsHasSameElements(siblingview.constraints, tags: tags) {
-                TestAnchors(first: siblingview) {
-                    Anchors.width.equalTo(constant: 37)
-                }
-            }
-            SLTAssertConstraintsHasSameElements(siblingview.constraints, [
-                NSLayoutConstraint(item: siblingview, attribute: .width, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: 37.0)
-            ], tags: tags)
+            let expectedSuperViewConstraints = [
+                NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1, constant: 0),
+                NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1, constant: 0),
+                NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1, constant: 0),
+
+                NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: siblingview, attribute: .top, multiplier: 1, constant: 0),
+
+                NSLayoutConstraint(item: siblingview, attribute: .height, relatedBy: .equal, toItem: superview, attribute: .height, multiplier: 0.5, constant: 0),
+                NSLayoutConstraint(item: siblingview, attribute: .centerX, relatedBy: .equal, toItem: superview, attribute: .centerX, multiplier: 1, constant: 0),
+                NSLayoutConstraint(item: siblingview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1, constant: 0)
+            ]
+
+            let expectedSiblingviewConstraints = [
+                NSLayoutConstraint(item: siblingview, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 37)
+            ]
+
+            #expect(hasSameElements(superview.constraints, expectedSuperViewConstraints, tags))
+            #expect(subview.constraints.isEmpty)
+            #expect(hasSameElements(siblingview.constraints, expectedSiblingviewConstraints, tags))
         }
 
-        contextContinuous("update with change") {
+        @Test
+        func updateWithChange() {
+            updateWithoutChange()
             flag.toggle()
 
             activation = layout.update(fromActivation: activation!)
 
-            SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
-                TestAnchors(first: subview, second: superview) {
-                    Anchors.top.equalToSuper(constant: 10)
-                }
-                TestAnchors(first: siblingview, second: superview) {
-                    Anchors.height.equalToSuper().multiplier(0.5)
-                    Anchors.centerX.bottom
-                }
-            }
-            SLTAssertConstraintsHasSameElements(subview.constraints, tags: tags) {
-                TestAnchors(first: subview) {
-                    Anchors.size.equalTo(width: 37, height: 19)
-                }
-            }
-            SLTAssertConstraintsHasSameElements(siblingview.constraints, tags: tags) {
-                TestAnchors(first: siblingview) {
-                    Anchors.width.equalTo(constant: 37)
-                }
-            }
+            let expectedSuperViewConstraints = [
+                NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1, constant: 10),
+
+                NSLayoutConstraint(item: siblingview, attribute: .height, relatedBy: .equal, toItem: superview, attribute: .height, multiplier: 0.5, constant: 0),
+                NSLayoutConstraint(item: siblingview, attribute: .centerX, relatedBy: .equal, toItem: superview, attribute: .centerX, multiplier: 1, constant: 0),
+                NSLayoutConstraint(item: siblingview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1, constant: 0)
+            ]
+
+            let expectedSubviewConstraints = [
+                NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 37),
+                NSLayoutConstraint(item: subview, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 19)
+            ]
+
+            let expectedSiblingviewConstraints = [
+                NSLayoutConstraint(item: siblingview, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 37)
+            ]
+
+            #expect(hasSameElements(superview.constraints, expectedSuperViewConstraints, tags))
+            #expect(hasSameElements(subview.constraints, expectedSubviewConstraints, tags))
+            #expect(hasSameElements(siblingview.constraints, expectedSiblingviewConstraints, tags))
         }
 
-        contextContinuous("deactive") {
+        @Test(.tags(.deactivation))
+        func deactive() {
+            updateWithChange()
             activation?.deactive()
             activation = nil
 
-            SLTAssertConstraintsIsEmpty(superview.constraints, tags: tags)
-            SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
-            SLTAssertConstraintsIsEmpty(siblingview.constraints, tags: tags)
+            #expect(superview.constraints.isEmpty)
+            #expect(subview.constraints.isEmpty)
+            #expect(siblingview.constraints.isEmpty)
         }
     }
-}
 
-// MARK: - conditional syntax
-extension AnchorsDSLTests {
-    func testIf() {
-        var flag = true
+    struct ConditionalSyntaxTests {
+        final class IfTests: AnchorsDSLTestsBase {
 
-        @LayoutBuilder
-        var layout: some Layout {
-            superview.sl.sublayout {
-                subview.sl.anchors {
-                    if flag {
-                        Anchors.cap.equalToSuper()
-                    } else {
-                        Anchors.shoe.equalToSuper()
+            var flag = true
+
+            @LayoutBuilder
+            var layout: some Layout {
+                superview.sl.sublayout {
+                    subview.sl.anchors {
+                        if flag {
+                            Anchors.cap.equalToSuper()
+                        } else {
+                            Anchors.shoe.equalToSuper()
+                        }
                     }
                 }
             }
-        }
 
-        context("if true") {
-            flag = true
-            layout.active().store(&activation)
+            @Test
+            func ifTrue() {
+                flag = true
 
-            SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
-                TestAnchors(first: subview, second: superview) {
-                    Anchors.cap.equalToSuper()
-                }
+                activation = layout.active()
+
+                let expectedSuperviewConstraints = [
+                    NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1, constant: 0),
+                    NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1, constant: 0),
+                    NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1, constant: 0)
+                ]
+
+                #expect(hasSameElements(superview.constraints, expectedSuperviewConstraints, tags))
+                #expect(subview.constraints.isEmpty)
             }
-            SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
-        }
 
-        context("if false") {
-            flag = false
-            layout.active().store(&activation)
+            @Test
+            func ifFalse() {
+                flag = false
+                activation = layout.active()
 
-            SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
-                TestAnchors(first: subview, second: superview) {
-                    Anchors.shoe.equalToSuper()
-                }
+                let expectedSuperviewConstraints = [
+                    NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1, constant: 0),
+                    NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1, constant: 0),
+                    NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1, constant: 0)
+                ]
+
+                #expect(hasSameElements(superview.constraints, expectedSuperviewConstraints, tags))
+                #expect(subview.constraints.isEmpty)
             }
-            SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
-        }
-    }
-
-    func testSwitchCase() {
-        enum Test: String, CaseIterable {
-            case first
-            case second
-            case third
         }
 
-        @LayoutBuilder
-        func layout(_ test: Test) -> some Layout {
-            superview.sl.sublayout {
-                subview.sl.anchors {
-                    switch test {
-                    case .first:
-                        Anchors.allSides.equalToSuper()
-                    case .second:
-                        Anchors.center.equalToSuper()
-                        Anchors.size.equalTo(width: 11, height: 37)
-                    case .third:
-                        Anchors.horizontal.equalToSuper()
-                        Anchors.vertical.equalToSuper(inwardOffset: 11)
+        final class SwitchCaseTests: AnchorsDSLTestsBase {
+            enum LayoutCase: Sendable {
+                case allSides
+                case centerAndSize
+                case horizontalAndSize
+            }
+
+            var testCase: LayoutCase = .allSides
+
+            @LayoutBuilder
+            var layout: some Layout {
+                superview.sl.sublayout {
+                    subview.sl.anchors {
+                        switch testCase {
+                        case .allSides:
+                            Anchors.allSides.equalToSuper()
+                        case .centerAndSize:
+                            Anchors.center.equalToSuper()
+                            Anchors.size.equalTo(width: 11, height: 37)
+                        case .horizontalAndSize:
+                            Anchors.horizontal.equalToSuper()
+                            Anchors.vertical.equalToSuper(inwardOffset: 11)
+                        }
                     }
                 }
             }
-        }
 
-        context("enum test first") {
-            layout(.first).active().store(&activation)
+            @Test
+            func caseAllSides() {
+                self.testCase = .allSides
 
-            SLTAssertConstraintsHasSameElements(superview.constraints, [
-                NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1.0, constant: 0.0),
-                NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1.0, constant: 0.0),
-                NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1.0, constant: 0.0),
-                NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1.0, constant: 0.0)
-            ], tags: tags)
-            SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
-        }
+                activation = layout.active()
 
-        context("enum test second") {
-            layout(.second).active().store(&activation)
+                let expectedSuperviewConstraints = [
+                    NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1.0, constant: 0.0),
+                    NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1.0, constant: 0.0),
+                    NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1.0, constant: 0.0),
+                    NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1.0, constant: 0.0)
+                ]
 
-            SLTAssertConstraintsHasSameElements(superview.constraints, [
-                NSLayoutConstraint(item: subview, attribute: .centerX, relatedBy: .equal, toItem: superview, attribute: .centerX, multiplier: 1.0, constant: 0.0),
-                NSLayoutConstraint(item: subview, attribute: .centerY, relatedBy: .equal, toItem: superview, attribute: .centerY, multiplier: 1.0, constant: 0.0)
-            ], tags: tags)
-            SLTAssertConstraintsHasSameElements(subview.constraints, [
-                NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: 11.0),
-                NSLayoutConstraint(item: subview, attribute: .height, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: 37.0)
-            ], tags: tags)
-        }
+                #expect(hasSameElements(superview.constraints, expectedSuperviewConstraints, tags))
+                #expect(subview.constraints.isEmpty)
+            }
 
-        context("enum test third") {
-            layout(.third).active().store(&activation)
+            @Test
+            func caseCenterAndSize() {
+                self.testCase = .centerAndSize
 
-            SLTAssertConstraintsHasSameElements(superview.constraints, [
-                NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1.0, constant: 11.0),
-                NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1.0, constant: 0.0),
-                NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1.0, constant: 0.0),
-                NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1.0, constant: -11.0)
-            ], tags: tags)
-            SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
-        }
-    }
+                activation = layout.active()
 
-    func testOptional() {
-        var optionalAnchors: Anchors?
-        var optionalExpression: AnchorsExpression<AnchorsDimensionAttribute>?
-        var optionalMixedExpression: AnchorsMixedExpression?
+                let expectedSuperviewConstraints = [
+                    NSLayoutConstraint(item: subview, attribute: .centerX, relatedBy: .equal, toItem: superview, attribute: .centerX, multiplier: 1.0, constant: 0.0),
+                    NSLayoutConstraint(item: subview, attribute: .centerY, relatedBy: .equal, toItem: superview, attribute: .centerY, multiplier: 1.0, constant: 0.0)
+                ]
 
-        @LayoutBuilder
-        var layout: some Layout {
-            superview.sl.sublayout {
-                subview.sl.anchors {
-                    optionalAnchors
-                    optionalExpression
-                    optionalMixedExpression
-                }
+                let expectedSubviewConstraints = [
+                    NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: 11.0),
+                    NSLayoutConstraint(item: subview, attribute: .height, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 1.0, constant: 37.0)
+                ]
+
+                #expect(hasSameElements(superview.constraints, expectedSuperviewConstraints, tags))
+                #expect(hasSameElements(subview.constraints, expectedSubviewConstraints, tags))
+            }
+
+            @Test
+            func caseHorizontalAndSize() {
+                self.testCase = .horizontalAndSize
+
+                activation = layout.active()
+
+                let expectedSuperviewConstraints = [
+                    NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1.0, constant: 11.0),
+                    NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1.0, constant: 0.0),
+                    NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1.0, constant: 0.0),
+                    NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1.0, constant: -11.0)
+                ]
+
+                #expect(hasSameElements(superview.constraints, expectedSuperviewConstraints, tags))
+                #expect(subview.constraints.isEmpty)
             }
         }
 
-        context("is nil") {
-            optionalAnchors = nil
-            optionalExpression = nil
-            optionalMixedExpression = nil
+        final class OptionalTests: AnchorsDSLTestsBase {
+            var optionalAnchors: Anchors?
+            var optionalExpression: AnchorsExpression<AnchorsDimensionAttribute>?
+            var optionalMixedExpression: AnchorsMixedExpression?
 
-            layout.active().store(&activation)
-
-            SLTAssertConstraintsIsEmpty(superview.constraints, tags: tags)
-            SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
-        }
-
-        context("is optional") {
-            optionalAnchors = Anchors.center.equalToSuper()
-            optionalExpression = Anchors.width.height
-            optionalMixedExpression = Anchors.leading.top
-
-            layout.active().store(&activation)
-
-            SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
-                TestAnchors(first: subview, second: superview) {
-                    Anchors.center
-                    Anchors.width.height
-                    Anchors.leading
-                    Anchors.top
-                }
-            }
-        }
-    }
-
-    func testForIn() {
-        let xAxis = [
-            Anchors.leading,
-            Anchors.trailing
-        ]
-        let yAxis = [
-            Anchors.top,
-            Anchors.bottom
-        ]
-
-        @LayoutBuilder
-        var layout: some Layout {
-            superview.sl.sublayout {
-                subview.sl.anchors {
-                    for anchors in xAxis {
-                        anchors
-                    }
-                    for anchors in yAxis {
-                        anchors
+            @LayoutBuilder
+            var layout: some Layout {
+                superview.sl.sublayout {
+                    subview.sl.anchors {
+                        optionalAnchors
+                        optionalExpression
+                        optionalMixedExpression
                     }
                 }
             }
+
+            @Test
+            func anchorIsNil() {
+                optionalAnchors = nil
+                optionalExpression = nil
+                optionalMixedExpression = nil
+
+                activation = layout.active()
+
+                #expect(superview.constraints.isEmpty)
+                #expect(subview.constraints.isEmpty)
+            }
+
+            @Test
+            func anchorIsSome() {
+                optionalAnchors = Anchors.center.equalToSuper()
+                optionalExpression = Anchors.width.height
+                optionalMixedExpression = Anchors.leading.top
+
+                activation = layout.active()
+
+                let expectedSubviewConstraints = [
+                    NSLayoutConstraint(item: subview, attribute: .centerX, relatedBy: .equal, toItem: superview, attribute: .centerX, multiplier: 1.0, constant: 0),
+                    NSLayoutConstraint(item: subview, attribute: .centerY, relatedBy: .equal, toItem: superview, attribute: .centerY, multiplier: 1.0, constant: 0),
+
+                    NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: superview, attribute: .width, multiplier: 1.0, constant: 0),
+                    NSLayoutConstraint(item: subview, attribute: .height, relatedBy: .equal, toItem: superview, attribute: .height, multiplier: 1.0, constant: 0),
+
+                    NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1.0, constant: 0),
+                    NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1.0, constant: 0)
+                ]
+
+                #expect(hasSameElements(superview.constraints, expectedSubviewConstraints, tags))
+            }
         }
 
-        layout.active().store(&activation)
-
-        SLTAssertConstraintsHasSameElements(superview.constraints, firstView: subview, secondView: superview, tags: tags) {
-            Anchors.allSides.equalToSuper()
-        }
-        SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
-    }
-}
-
-// MARK: - complex usage
-extension AnchorsDSLTests {
-    func testOmitable() {
-        var layout: some Layout {
-            superview.sl.sublayout {
-                subview.sl.anchors {
-                    Anchors.top
+        final class ForInTest: AnchorsDSLTestsBase {
+            @Test
+            func forIn() {
+                let xAxis = [
+                    Anchors.leading,
+                    Anchors.trailing
+                ]
+                let yAxis = [
+                    Anchors.top,
                     Anchors.bottom
-                    Anchors.horizontal
+                ]
+
+                @LayoutBuilder
+                var layout: some Layout {
+                    superview.sl.sublayout {
+                        subview.sl.anchors {
+                            for anchors in xAxis {
+                                anchors
+                            }
+                            for anchors in yAxis {
+                                anchors
+                            }
+                        }
+                    }
                 }
-                siblingview.sl.anchors {
-                    Anchors.center
-                    Anchors.size
-                    Anchors.allSides
-                }
-            }
-        }
 
-        layout.finalActive()
+                activation = layout.active()
 
-        SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
-            TestAnchors(first: subview, second: superview) {
-                Anchors.top.equalToSuper()
-                Anchors.bottom.equalToSuper()
-                Anchors.horizontal.equalToSuper()
-            }
-            TestAnchors(first: siblingview, second: superview) {
-                Anchors.center.equalToSuper()
-                Anchors.size.equalToSuper()
-                Anchors.allSides.equalToSuper()
-            }
-        }
-        SLTAssertConstraintsIsEmpty(subview.constraints)
-        SLTAssertConstraintsIsEmpty(siblingview.constraints)
-    }
+                let expectedSubviewConstraints = [
+                    NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1.0, constant: 0),
+                    NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1.0, constant: 0),
+                    NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1.0, constant: 0),
+                    NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1.0, constant: 0)
+                ]
 
-    func testWithIdentifier() {
-        let identifyingView = UIView()
-
-        @LayoutBuilder
-        var layout: some Layout {
-            superview.sl.sublayout {
-                subview.sl.anchors {
-                    Anchors.cap.equalToSuper()
-                    Anchors.bottom.equalTo("someIdentifier", attribute: .top)
-                }
-                identifyingView.sl.identifying("someIdentifier").sl.anchors {
-                    Anchors.width.equalTo(constant: 37)
-                    Anchors.height.equalToSuper().multiplier(0.5)
-                    Anchors.centerX
-                    Anchors.bottom
-                }
-            }
-        }
-
-        layout.finalActive()
-
-        SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
-            TestAnchors(first: subview, second: superview) {
-                Anchors.cap.equalToSuper()
-            }
-            TestAnchors(first: subview, second: identifyingView) {
-                Anchors.bottom.equalTo(identifyingView, attribute: .top)
-            }
-            TestAnchors(first: identifyingView, second: superview) {
-                Anchors.height.equalToSuper().multiplier(0.5)
-                Anchors.centerX
-                Anchors.bottom
-            }
-        }
-        SLTAssertConstraintsIsEmpty(subview.constraints)
-        SLTAssertConstraintsHasSameElements(identifyingView.constraints) {
-            TestAnchors(first: identifyingView) {
-                Anchors.width.equalTo(constant: 37)
+                #expect(hasSameElements(superview.constraints, expectedSubviewConstraints, tags))
+                #expect(subview.constraints.isEmpty)
             }
         }
     }
 
-    func testDuplicateAnchorExpression() {
-        @LayoutBuilder
-        var layout: some Layout {
-            superview.sl.sublayout {
-                subview.sl.anchors {
-                    Anchors.cap.equalToSuper()
-                    Anchors.leading.trailing
-                    Anchors.top
-                    Anchors.bottom.equalTo(siblingview, attribute: .top)
-                }
-                siblingview.sl.anchors {
-                    Anchors.width.equalTo(constant: 37)
-                    Anchors.height.equalTo(constant: 37)
-                    Anchors.size.equalTo(width: 37, height: 37)
-                    Anchors.centerX
-                    Anchors.bottom
-                    Anchors.centerX
-                    Anchors.bottom
-                }
-            }
-        }
-
-        layout.finalActive()
-
-        SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
-            TestAnchors(first: subview, second: superview) {
-                Anchors.cap.equalToSuper()
-            }
-            TestAnchors(first: subview, second: siblingview) {
-                Anchors.bottom.equalToSuper(attribute: .top)
-            }
-            TestAnchors(first: siblingview, second: superview) {
-                Anchors.centerX
-                Anchors.bottom
-            }
-        }
-        SLTAssertConstraintsIsEmpty(subview.constraints)
-        SLTAssertConstraintsHasSameElements(siblingview.constraints) {
-            TestAnchors(first: siblingview) {
-                Anchors.size.equalTo(width: 37, height: 37)
-            }
-        }
-    }
-
-    func testDuplicateAnchorsBuilder() {
-        @LayoutBuilder
-        var layout: some Layout {
-            superview.sl.sublayout {
-                subview.sl.anchors {
-                    Anchors.cap.equalToSuper()
-                }.anchors {
-                    Anchors.bottom.equalTo(siblingview, attribute: .top)
-                }
-                siblingview.sl.anchors {
-                    Anchors.width.equalTo(constant: 37)
-                }.anchors {
-                    Anchors.height.equalToSuper().multiplier(0.5)
-                }.anchors {
-                    Anchors.centerX
-                }.anchors {
-                    Anchors.bottom
-                }
-            }
-        }
-
-        layout.finalActive()
-
-        SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
-            TestAnchors(first: subview, second: superview) {
-                Anchors.cap.equalToSuper()
-            }
-            TestAnchors(first: subview, second: siblingview) {
-                Anchors.bottom.equalToSuper(attribute: .top)
-            }
-            TestAnchors(first: siblingview, second: superview) {
-                Anchors.height.equalToSuper().multiplier(0.5)
-                Anchors.centerX
-                Anchors.bottom
-            }
-        }
-        SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
-
-        SLTAssertConstraintsHasSameElements(siblingview.constraints, firstView: siblingview, tags: tags) {
-            Anchors.width.equalTo(constant: 37)
-        }
-    }
-
-    func testMultipleFirstLevelLayouts() {
-        @LayoutBuilder
-        var layout: some Layout {
-            superview.sl.sublayout {
-                subview.sl.anchors {
-                    Anchors.cap.equalToSuper()
-
-                }
-                siblingview.sl.anchors {
-                    Anchors.height.equalToSuper().multiplier(0.5)
-                    Anchors.centerX
-                    Anchors.bottom
+    final class ComplexUsageTests: AnchorsDSLTestsBase {
+        @Test
+        func omitable() {
+            var layout: some Layout {
+                superview.sl.sublayout {
+                    subview.sl.anchors {
+                        Anchors.top
+                        Anchors.bottom
+                        Anchors.horizontal
+                    }
+                    siblingview.sl.anchors {
+                        Anchors.center
+                        Anchors.size
+                        Anchors.allSides
+                    }
                 }
             }
 
-            subview.sl.anchors {
-                Anchors.bottom.equalTo(siblingview, attribute: .top)
-            }
+            layout.finalActive()
 
-            siblingview.sl.anchors {
-                Anchors.width.equalTo(constant: 37)
-            }
+            let expectedConstraints = [
+                NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1.0, constant: 0),
+
+                NSLayoutConstraint(item: siblingview, attribute: .centerX, relatedBy: .equal, toItem: superview, attribute: .centerX, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: siblingview, attribute: .centerY, relatedBy: .equal, toItem: superview, attribute: .centerY, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: siblingview, attribute: .width, relatedBy: .equal, toItem: superview, attribute: .width, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: siblingview, attribute: .height, relatedBy: .equal, toItem: superview, attribute: .height, multiplier: 1.0, constant: 0),
+
+                NSLayoutConstraint(item: siblingview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: siblingview, attribute: .trailing, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: siblingview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: siblingview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1.0, constant: 0)
+            ]
+
+            #expect(hasSameElements(superview.constraints, expectedConstraints, tags))
+            #expect(subview.constraints.isEmpty)
+            #expect(siblingview.constraints.isEmpty)
         }
 
-        layout.finalActive()
+        @Test
+        func identifier() {
+            let identifyingView = UIView()
 
-        SLTAssertConstraintsHasSameElements(superview.constraints, tags: tags) {
-            TestAnchors(first: subview, second: superview) {
-                Anchors.cap.equalToSuper()
-            }
-            TestAnchors(first: subview, second: siblingview) {
-                Anchors.bottom.equalToSuper(attribute: .top)
-            }
-            TestAnchors(first: siblingview, second: superview) {
-                Anchors.height.equalToSuper().multiplier(0.5)
-                Anchors.centerX
-                Anchors.bottom
-            }
-        }
-        SLTAssertConstraintsIsEmpty(subview.constraints, tags: tags)
-        SLTAssertConstraintsHasSameElements(siblingview.constraints, firstView: siblingview) {
-            Anchors.width.equalTo(constant: 37)
-        }
-    }
-}
-
-extension AnchorsDSLTests {
-    func testForceLayoutAndCheckFrame() {
-        let width: CGFloat = 300
-        let height: CGFloat = 300
-        let siblingWidth: CGFloat = 38
-        let siblingHeightMultiplier: CGFloat = 0.5
-
-        let window = UIWindow(frame: .init(x: .zero, y: .zero, width: width, height: height))
-
-        @LayoutBuilder
-        var layout: some Layout {
-            window.sl.sublayout {
+            @LayoutBuilder
+            var layout: some Layout {
                 superview.sl.sublayout {
                     subview.sl.anchors {
                         Anchors.cap.equalToSuper()
-                        Anchors.bottom.equalTo(siblingview, attribute: .top)
+                        Anchors.bottom.equalTo("someIdentifier", attribute: .top)
                     }
-                    siblingview.sl.anchors {
-                        Anchors.width.equalTo(constant: siblingWidth)
-                        Anchors.height.equalToSuper().multiplier(siblingHeightMultiplier)
+                    identifyingView.sl.identifying("someIdentifier").sl.anchors {
+                        Anchors.width.equalTo(constant: 37)
+                        Anchors.height.equalToSuper().multiplier(0.5)
                         Anchors.centerX
                         Anchors.bottom
                     }
-                }.anchors {
-                    Anchors.allSides.equalToSuper()
                 }
             }
+
+            layout.finalActive()
+
+            let expectedSuperViewConstraints = [
+                NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1.0, constant: 0),
+
+                NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: identifyingView, attribute: .top, multiplier: 1.0, constant: 0),
+
+                NSLayoutConstraint(item: identifyingView, attribute: .height, relatedBy: .equal, toItem: superview, attribute: .height, multiplier: 0.5, constant: 0),
+                NSLayoutConstraint(item: identifyingView, attribute: .centerX, relatedBy: .equal, toItem: superview, attribute: .centerX, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: identifyingView, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1.0, constant: 0)
+            ]
+
+            let expectedIdentifyingViewConstraints = [
+                NSLayoutConstraint(item: identifyingView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 37)
+            ]
+
+            #expect(hasSameElements(superview.constraints, expectedSuperViewConstraints, tags))
+            #expect(subview.constraints.isEmpty)
+            #expect(hasSameElements(identifyingView.constraints, expectedIdentifyingViewConstraints, tags))
         }
 
-        layout.finalActive(forceLayout: true)
+        @Test
+        func duplicateAnchorExpression() {
+            @LayoutBuilder
+            var layout: some Layout {
+                superview.sl.sublayout {
+                    subview.sl.anchors {
+                        Anchors.cap.equalToSuper()
+                        Anchors.leading.trailing
+                        Anchors.top
+                        Anchors.bottom.equalTo(siblingview, attribute: .top)
+                    }
+                    siblingview.sl.anchors {
+                        Anchors.width.equalTo(constant: 37)
+                        Anchors.height.equalTo(constant: 37)
+                        Anchors.size.equalTo(width: 37, height: 37)
+                        Anchors.centerX
+                        Anchors.bottom
+                        Anchors.centerX
+                        Anchors.bottom
+                    }
+                }
+            }
 
-        XCTAssertEqual(superview.frame, .init(x: .zero, y: .zero, width: width, height: height))
-        XCTAssertEqual(subview.frame, .init(x: .zero, y: .zero, width: width, height: height * (1 - siblingHeightMultiplier)))
-        XCTAssertEqual(siblingview.frame, .init(x: (width - siblingWidth) / 2, y: height * (1 - siblingHeightMultiplier), width: siblingWidth, height: height * siblingHeightMultiplier))
+            layout.finalActive()
+
+            let expectedSuperViewConstraints = [
+                NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1.0, constant: 0),
+
+                NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: siblingview, attribute: .top, multiplier: 1.0, constant: 0),
+
+                NSLayoutConstraint(item: siblingview, attribute: .centerX, relatedBy: .equal, toItem: superview, attribute: .centerX, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: siblingview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1.0, constant: 0)
+            ]
+
+            let expectedSiblingviewViewConstraints = [
+                NSLayoutConstraint(item: siblingview, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 37),
+                NSLayoutConstraint(item: siblingview, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 37)
+            ]
+
+            #expect(hasSameElements(superview.constraints, expectedSuperViewConstraints, tags))
+            #expect(subview.constraints.isEmpty)
+            #expect(hasSameElements(siblingview.constraints, expectedSiblingviewViewConstraints, tags))
+        }
+
+        @Test
+        func duplicateAnchorsBuilder() {
+            @LayoutBuilder
+            var layout: some Layout {
+                superview.sl.sublayout {
+                    subview.sl.anchors {
+                        Anchors.cap.equalToSuper()
+                    }.anchors {
+                        Anchors.bottom.equalTo(siblingview, attribute: .top)
+                    }
+                    siblingview.sl.anchors {
+                        Anchors.width.equalTo(constant: 37)
+                    }.anchors {
+                        Anchors.height.equalToSuper().multiplier(0.5)
+                    }.anchors {
+                        Anchors.centerX
+                    }.anchors {
+                        Anchors.bottom
+                    }
+                }
+            }
+
+            layout.finalActive()
+
+            let expectedSuperViewConstraints = [
+                NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1.0, constant: 0),
+
+                NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: siblingview, attribute: .top, multiplier: 1.0, constant: 0),
+
+                NSLayoutConstraint(item: siblingview, attribute: .height, relatedBy: .equal, toItem: superview, attribute: .height, multiplier: 0.5, constant: 0),
+                NSLayoutConstraint(item: siblingview, attribute: .centerX, relatedBy: .equal, toItem: superview, attribute: .centerX, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: siblingview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1.0, constant: 0)
+            ]
+
+            let expectedSiblingviewConstraints = [
+                NSLayoutConstraint(item: siblingview, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 37)
+            ]
+
+            #expect(hasSameElements(superview.constraints, expectedSuperViewConstraints, tags))
+            #expect(subview.constraints.isEmpty)
+            #expect(hasSameElements(siblingview.constraints, expectedSiblingviewConstraints, tags))
+        }
+
+        @Test
+        func multipleFirstLevelLayouts() {
+            @LayoutBuilder
+            var layout: some Layout {
+                superview.sl.sublayout {
+                    subview.sl.anchors {
+                        Anchors.cap.equalToSuper()
+
+                    }
+                    siblingview.sl.anchors {
+                        Anchors.height.equalToSuper().multiplier(0.5)
+                        Anchors.centerX
+                        Anchors.bottom
+                    }
+                }
+
+                subview.sl.anchors {
+                    Anchors.bottom.equalTo(siblingview, attribute: .top)
+                }
+
+                siblingview.sl.anchors {
+                    Anchors.width.equalTo(constant: 37)
+                }
+            }
+
+            layout.finalActive()
+
+            let expectedSuperViewConstraints = [
+                NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1.0, constant: 0),
+
+                NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: siblingview, attribute: .top, multiplier: 1.0, constant: 0),
+
+                NSLayoutConstraint(item: siblingview, attribute: .height, relatedBy: .equal, toItem: superview, attribute: .height, multiplier: 0.5, constant: 0),
+                NSLayoutConstraint(item: siblingview, attribute: .centerX, relatedBy: .equal, toItem: superview, attribute: .centerX, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: siblingview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1.0, constant: 0)
+            ]
+
+            let expectedSiblingviewConstraints = [
+                NSLayoutConstraint(item: siblingview, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 37)
+            ]
+
+            #expect(hasSameElements(superview.constraints, expectedSuperViewConstraints, tags))
+            #expect(subview.constraints.isEmpty)
+            #expect(hasSameElements(siblingview.constraints, expectedSiblingviewConstraints, tags))
+        }
+
+        @Test
+        func forceLayoutAndCheckFrame() {
+            let width: CGFloat = 300
+            let height: CGFloat = 300
+            let siblingWidth: CGFloat = 38
+            let siblingHeightMultiplier: CGFloat = 0.5
+
+            let window = UIWindow(frame: .init(x: .zero, y: .zero, width: width, height: height))
+
+            @LayoutBuilder
+            var layout: some Layout {
+                window.sl.sublayout {
+                    superview.sl.sublayout {
+                        subview.sl.anchors {
+                            Anchors.cap.equalToSuper()
+                            Anchors.bottom.equalTo(siblingview, attribute: .top)
+                        }
+                        siblingview.sl.anchors {
+                            Anchors.width.equalTo(constant: siblingWidth)
+                            Anchors.height.equalToSuper().multiplier(siblingHeightMultiplier)
+                            Anchors.centerX
+                            Anchors.bottom
+                        }
+                    }.anchors {
+                        Anchors.allSides.equalToSuper()
+                    }
+                }
+            }
+
+            layout.finalActive(forceLayout: true)
+
+            #expect(superview.frame == .init(x: .zero, y: .zero, width: width, height: height))
+            #expect(subview.frame == .init(x: .zero, y: .zero, width: width, height: height * (1 - siblingHeightMultiplier)))
+            #expect(siblingview.frame == .init(x: (width - siblingWidth) / 2, y: height * (1 - siblingHeightMultiplier), width: siblingWidth, height: height * siblingHeightMultiplier))
+        }
     }
 }

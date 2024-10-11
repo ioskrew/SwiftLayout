@@ -14,7 +14,7 @@ public protocol AnchorsAttribute {
     var inwardDirectionFactor: CGFloat { get }
 }
 
-public enum AnchorsXAxisAttribute: AnchorsAttribute {
+public enum AnchorsXAxisAttribute: AnchorsAttribute, Sendable {
     case centerX
     case leading
     case trailing
@@ -67,7 +67,7 @@ public enum AnchorsXAxisAttribute: AnchorsAttribute {
     }
 }
 
-public enum AnchorsYAxisAttribute: AnchorsAttribute {
+public enum AnchorsYAxisAttribute: AnchorsAttribute, Sendable {
     case centerY
     case top
     case bottom
@@ -114,7 +114,7 @@ public enum AnchorsYAxisAttribute: AnchorsAttribute {
     }
 }
 
-public enum AnchorsDimensionAttribute: AnchorsAttribute {
+public enum AnchorsDimensionAttribute: AnchorsAttribute, Sendable {
     case height
     case width
 

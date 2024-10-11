@@ -7,6 +7,7 @@
 
 import UIKit
 
+@MainActor
 public protocol Layout {
     var view: UIView? { get }
     var anchors: Anchors { get }

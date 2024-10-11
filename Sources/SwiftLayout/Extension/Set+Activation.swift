@@ -8,6 +8,7 @@
 import UIKit
 
 public extension Collection where Element: Activation {
+    @MainActor
     func viewForIdentifier(_ identifier: String) -> UIView? {
         for activation in self {
             guard let view = activation.viewForIdentifier(identifier) else { continue }

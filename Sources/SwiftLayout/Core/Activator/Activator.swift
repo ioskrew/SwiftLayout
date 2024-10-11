@@ -7,6 +7,7 @@
 
 import UIKit
 
+@MainActor
 enum Activator {
 
     static func active<L: Layout>(layout: L, forceLayout: Bool = false) -> Activation {
