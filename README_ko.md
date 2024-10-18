@@ -71,7 +71,7 @@ dependencies: [
 
 # 사용법
 
-> **Warning**
+> [!WARNING]  
 > **Swift6**로 업데이트되면서 **SwiftLayout**의 대부분의 인터페이스는 이제 **@MainActor** 에서 작동하도록 명시적으로 표시되어 있습니다.
 
 ### 용어
