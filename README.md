@@ -75,8 +75,8 @@ dependencies: [
 
 # Usage
 
-> **Warning**
-> With the update to **Swift6**, most of the interfaces in **SwiftLayout** are now explicitly marked to operate under the **@MainActor**. 
+> [!WARNING]  
+> With the update to **Swift6**, most of the interfaces in **SwiftLayout** are now explicitly marked to operate under the **@MainActor**.
 
 ## LayoutBuilder
 
