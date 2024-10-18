@@ -4,6 +4,7 @@
 
 import UIKit
 
+@MainActor
 public struct AnchorsExpression<Attribute: AnchorsAttribute>: AnchorsExpressionOmitable {
     var attributes: [Attribute]
 
@@ -21,7 +22,7 @@ public struct AnchorsExpression<Attribute: AnchorsAttribute>: AnchorsExpressionO
         toItem: AnchorsItem,
         toAttribute: Attribute?,
         constant: CGFloat
-    ) ->  [AnchorsConstraintProperty] {
+    ) -> [AnchorsConstraintProperty] {
         attributes.map {
             AnchorsConstraintProperty(
                 attribute: $0.attribute,
@@ -38,7 +39,7 @@ public struct AnchorsExpression<Attribute: AnchorsAttribute>: AnchorsExpressionO
         toItem: AnchorsItem,
         toAttribute: Attribute?,
         inwardOffset: CGFloat
-    ) ->  [AnchorsConstraintProperty] {
+    ) -> [AnchorsConstraintProperty] {
         attributes.map {
             AnchorsConstraintProperty(
                 attribute: $0.attribute,

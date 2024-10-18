@@ -1,4 +1,4 @@
-// swift-tools-version:5.7
+// swift-tools-version:6.0
 
 import PackageDescription
 
@@ -9,36 +9,35 @@ let package = Package(
         .library(
             name: "SwiftLayout",
             targets: ["SwiftLayout"]
-        ),
-        .library(
-            name: "SwiftLayoutUtil",
-            targets: ["SwiftLayoutUtil"]
         )
     ],
-    dependencies: [],
     targets: [
         .target(
             name: "SwiftLayout",
             dependencies: []
-        ),
-        .target(
-            name: "SwiftLayoutUtil",
-            dependencies: [
-                "SwiftLayout"
-            ]
         ),
         .testTarget(
             name: "SwiftLayoutTests",
             dependencies: [
                 "SwiftLayout"
             ]
-        ),
-        .testTarget(
-            name: "SwiftLayoutUtilTests",
-            dependencies: [
-                "SwiftLayout",
-                "SwiftLayoutUtil"
-            ]
+        )
+    ],
+    swiftLanguageModes: [.v6]
+)
+
+private let useSwiftLint = false
+
+if useSwiftLint {
+    package.dependencies += [
+        .package(
+            url: "https://github.com/realm/SwiftLint.git",
+            exact: "0.55.1"
         )
     ]
-)
+    for target in package.targets {
+        target.plugins = [
+            .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLint")
+        ]
+    }
+}

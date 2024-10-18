@@ -7,7 +7,7 @@ on:
     branches: [ develop ]
 
 env:
-  DEVELOPER_DIR: /Applications/Xcode_14.0.1.app/Contents/Developer
+  DEVELOPER_DIR: /Applications/Xcode_16.0.app/Contents/Developer
 
 jobs:
   test-ios:
@@ -17,8 +17,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Run tests
-      run: xcodebuild test -scheme SwiftLayout-Package -sdk iphonesimulator16.0 -destination 'name=iPhone 14 Pro'
-  
+      run: xcodebuild test -scheme SwiftLayout -sdk iphonesimulator18.0 -destination 'name=iPhone 16 Pro' -skipPackagePluginValidation
+
+
 # test-macos:
 #
 #   runs-on: macos-latest

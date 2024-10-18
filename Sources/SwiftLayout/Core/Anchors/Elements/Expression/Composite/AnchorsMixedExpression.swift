@@ -4,6 +4,7 @@
 
 import UIKit
 
+@MainActor
 public struct AnchorsMixedExpression: AnchorsExpressionOmitable {
     private var attributes: [any AnchorsAttribute]
 
@@ -23,7 +24,7 @@ public struct AnchorsMixedExpression: AnchorsExpressionOmitable {
         relation: NSLayoutConstraint.Relation,
         toItem: AnchorsItem,
         constant: CGFloat
-    ) ->  [AnchorsConstraintProperty] {
+    ) -> [AnchorsConstraintProperty] {
         attributes.map {
             AnchorsConstraintProperty(
                 attribute: $0.attribute,
@@ -39,7 +40,7 @@ public struct AnchorsMixedExpression: AnchorsExpressionOmitable {
         relation: NSLayoutConstraint.Relation,
         toItem: AnchorsItem,
         inwardOffset: CGFloat
-    ) ->  [AnchorsConstraintProperty] {
+    ) -> [AnchorsConstraintProperty] {
         attributes.map {
             AnchorsConstraintProperty(
                 attribute: $0.attribute,

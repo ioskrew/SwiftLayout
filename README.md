@@ -50,9 +50,9 @@
 
   | Swift version  | SwiftLayout version                                          |
   | -------------- | ------------------------------------------------------------ |
-  | **Swift 5.7+** | **2.8.0**                                                    |
+  | **Swift 6.0+** | **4.0.0**                                                    |
+  | Swift 5.7      | [2.8.0](https://github.com/ioskrew/SwiftLayout/releases/tag/2.8.0) |
   | Swift 5.5      | [2.7.0](https://github.com/ioskrew/SwiftLayout/releases/tag/2.7.0) |
-  | Swift 5.4      | [2.5.4](https://github.com/ioskrew/SwiftLayout/releases/tag/2.5.4) |
 
 # Installation
 
@@ -60,7 +60,7 @@
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "3.0.0"),
+  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "4.0.0"),
 ],
 ```
 
@@ -74,6 +74,9 @@ dependencies: [
 - offering varierty features for relations of constraints.
 
 # Usage
+
+> [!WARNING]  
+> With the update to **Swift6**, most of the interfaces in **SwiftLayout** are now explicitly marked to operate under the **@MainActor**.
 
 ## LayoutBuilder
 
@@ -325,7 +328,7 @@ If `showMiddleName` is false, `middleNameLabel` is not added to the super view, 
 In this case, you can update automatically by using `LayoutProperty`:
 
 ```swift
-@LayoutProeprty var showMiddleName: Bool = false // change value call updateLayout of Layoutable
+@LayoutProperty var showMiddleName: Bool = false // change value call updateLayout of Layoutable
 
 var layout: some Layout {
   self.sl.sublayout {
@@ -484,113 +487,6 @@ struct ViewUIView_Previews: PreviewProvider {
   }
 }
 ```
-
-
-
-### SwiftLayoutUtil
-
-#### LayoutPrinter
-
-This can be useful when you want to make sure the current layout is configured the way you want it to.
-
-- prints the tree created by the hierarchy of layouts and anchors.
-  
-  ```swift
-  var layout: some Layout {
-    root.sl.sublayout {
-      child.sl.anchors {
-        Anchors.top
-        Anchors.leading.trailing
-      }
-      friend.sl.anchors {
-        Anchors.top.equalTo(child, attribute: .bottom)
-        Anchors.bottom
-        Anchors.leading.trailing
-      }
-    }
-  }
-  ```
-
-- you can use LayoutPrinter in source or debug console.
-  
-  > (lldb)  po import SwiftLayoutUtil; LayoutPrinter(layout).print()
-  
-  ```
-  ViewLayout - view: root
-  └─ TupleLayout
-     ├─ ViewLayout - view: child
-     └─ ViewLayout - view: friend
-  ```
-
-- if necessary, you can also print Anchors applied to the layout.
-  
-  > (lldb)  po import SwiftLayoutUtil; LayoutPrinter(layout, withAnchors: true).print()
-  
-  ```
-  ViewLayout - view: root
-  └─ TupleLayout
-     ├─ ViewLayout - view: child
-     │        .top == superview.top
-     │        .leading == superview.leading
-     │        .trailing == superview.trailing
-     └─ ViewLayout - view: friend
-              .top == child.bottom
-              .bottom == superview.bottom
-              .leading == superview.leading
-              .trailing == superview.trailing
-  ```
-
-#### ViewPrinter
-
-This can be useful when you want to migrate your current view to SwiftLayout for several reasons.
-
-- printing UIView hierarchy and autolayout constraint relationship to SwiftLayout syntax
-  
-  ```swift
-  let contentView: UIView
-  let firstNameLabel: UILabel
-  contentView.addSubview(firstNameLabel)
-  ```
-
-- you can use ViewPrinter in source or debug console.
-  
-  > (lldb) po import SwiftLayoutUtil; ViewPrinter(contentView).print()
-  
-  ```swift
-  // If there is no separate identification setting, the view is displayed in the form of addressValue:View type.
-  0x01234567890:UIView {
-    0x01234567891:UILabel
-  }
-  ```
-
-- printing labels for view by name of view property is very convenient.
-  
-  ```swift
-  class SomeView {
-    let root: UIView // subview of SomeView
-    let child: UIView // subview of root
-    let friend: UIView // subview of root
-  }
-  let someView = SomeView()
-  ```
-  
-  > (lldb) po import SwiftLayoutUtil; ViewPrinter(someView, tags: [someView: "SomeView"]).updateIdentifiers().print()
-  
-  ```swift
-  SomeView {
-    root.sl.sublayout {
-      child.sl.anchors {
-        Anchors.top
-        Anchors.leading.trailing
-      }
-      friend.sl.anchors {
-        Anchors.top.equalTo(child, attribute: .bottom)
-        Anchors.bottom
-        Anchors.leading.trailing
-      }
-    }
-  }
-  ```
 
 # Credits
 

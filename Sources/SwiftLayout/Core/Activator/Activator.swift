@@ -7,6 +7,7 @@
 
 import UIKit
 
+@MainActor
 enum Activator {
 
     static func active<L: Layout>(layout: L, forceLayout: Bool = false) -> Activation {
@@ -101,7 +102,7 @@ private extension Activator {
 
     static func updateConstraints(activation: Activation, constraints: [NSLayoutConstraint]) {
         let news = Set(ofWeakConstraintsFrom: constraints)
-        let olds = activation.constraints.filter { $0.origin != nil}
+        let olds = activation.constraints.filter { $0.origin != nil }
 
         let needToDeactivate = olds.subtracting(news)
         let needToActivate = news.subtracting(olds)

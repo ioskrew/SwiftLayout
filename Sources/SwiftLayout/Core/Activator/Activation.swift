@@ -21,32 +21,25 @@ public final class Activation: Hashable {
     }
 
     deinit {
-        deactive()
-    }
+        let views = self.viewInfos.compactMap(\.view)
+        let constraints = self.constraints
 
-    func deactiveConstraints() {
-        let constraints = constraints.compactMap(\.origin).filter(\.isActive)
-        NSLayoutConstraint.deactivate(constraints)
-        self.constraints = .init()
-    }
-
-    func deactiveViews() {
-        let views = viewInfos.compactMap(\.view)
-        for view in views {
-            if views.contains(where: { $0 == view.superview }) {
-                view.removeFromSuperview()
-            }
+        Task { @MainActor in
+            Deactivator().deactivate(views: views, constraints: constraints)
         }
-        self.viewInfos = .init()
     }
 }
 
 extension Activation {
+    @MainActor
     public func deactive() {
-        deactiveViews()
-        deactiveConstraints()
+        let views = self.viewInfos.compactMap(\.view)
+        let constraints = self.constraints
+
+        Deactivator().deactivate(views: views, constraints: constraints)
     }
 
+    @MainActor
     public func viewForIdentifier(_ identifier: String) -> UIView? {
         viewInfos.first(where: { $0.identifier == identifier })?.view
     }

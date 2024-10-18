@@ -7,6 +7,7 @@
 
 import UIKit
 
+@MainActor
 public struct AnchorsSizeExpression: AnchorsExpressionOmitable {
     init() {}
 
@@ -19,7 +20,7 @@ public struct AnchorsSizeExpression: AnchorsExpressionOmitable {
         toItem: AnchorsItem = .transparent,
         widthConstant: CGFloat = 0.0,
         heightConstant: CGFloat = 0.0
-    ) ->  [AnchorsConstraintProperty] {
+    ) -> [AnchorsConstraintProperty] {
         [
             AnchorsConstraintProperty(
                 attribute: .width,
@@ -34,7 +35,7 @@ public struct AnchorsSizeExpression: AnchorsExpressionOmitable {
                 toItem: toItem,
                 toAttribute: toItem == .deny ? nil : .height,
                 constant: heightConstant
-            ),
+            )
         ]
     }
 

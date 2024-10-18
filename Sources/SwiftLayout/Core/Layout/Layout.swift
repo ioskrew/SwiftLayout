@@ -7,6 +7,7 @@
 
 import UIKit
 
+@MainActor
 public protocol Layout {
     var view: UIView? { get }
     var anchors: Anchors { get }
@@ -27,7 +28,7 @@ extension Layout {
 }
 
 extension Layout {
-    
+
     ///
     /// Activate this layout.
     ///
@@ -36,7 +37,7 @@ extension Layout {
     public func active(forceLayout: Bool = false) -> Activation {
         Activator.active(layout: self, forceLayout: forceLayout)
     }
-    
+
     ///
     /// Update layout changes from the activation of the previously activated layout.
     ///
@@ -46,23 +47,13 @@ extension Layout {
     public func update(fromActivation activation: Activation, forceLayout: Bool = false) -> Activation {
         Activator.update(layout: self, fromActivation: activation, forceLayout: forceLayout)
     }
-    
+
     ///
     /// Activate this layout permanently.
     /// Until the view is released according to the lifecycle of the app
     ///
     public func finalActive(forceLayout: Bool = false) {
         Activator.finalActive(layout: self, forceLayout: forceLayout)
-    }
-    
-    ///
-    /// Wraps this layout with a type eraser.
-    ///
-    /// - Returns: An ``AnyLayout`` wrapping this layout.
-    ///
-    @available(*, deprecated, renamed: "eraseToAnyLayout()")
-    public var anyLayout: AnyLayout {
-        AnyLayout(self)
     }
 
     ///
