@@ -46,9 +46,9 @@
 
   | Swift version  | SwiftLayout version                                          |
   | -------------- | ------------------------------------------------------------ |
-  | **Swift 5.7+** | **2.8.0**                                                    |
+  | **Swift 6.0+** | **4.0.0**                                                    |
+  | Swift 5.7      | [2.8.0](https://github.com/ioskrew/SwiftLayout/releases/tag/2.8.0) |
   | Swift 5.5      | [2.7.0](https://github.com/ioskrew/SwiftLayout/releases/tag/2.7.0) |
-  | Swift 5.4      | [2.5.4](https://github.com/ioskrew/SwiftLayout/releases/tag/2.5.4) |
 
 # 설치
 
@@ -56,7 +56,7 @@
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "3.0.0"),
+  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "4.0.0"),
 ],
 ```
 
@@ -70,6 +70,9 @@ dependencies: [
 - constraint의 연결을 돕는 다양한 API 제공합니다.
 
 # 사용법
+
+> **Warning**
+> **Swift6**로 업데이트되면서 **SwiftLayout**의 대부분의 인터페이스는 이제 **@MainActor** 에서 작동하도록 명시적으로 표시되어 있습니다.
 
 ### 용어
 

@@ -50,9 +50,9 @@
 
   | Swift version  | SwiftLayout version                                          |
   | -------------- | ------------------------------------------------------------ |
-  | **Swift 5.7+** | **2.8.0**                                                    |
+  | **Swift 6.0+** | **4.0.0**                                                    |
+  | Swift 5.7      | [2.8.0](https://github.com/ioskrew/SwiftLayout/releases/tag/2.8.0) |
   | Swift 5.5      | [2.7.0](https://github.com/ioskrew/SwiftLayout/releases/tag/2.7.0) |
-  | Swift 5.4      | [2.5.4](https://github.com/ioskrew/SwiftLayout/releases/tag/2.5.4) |
 
 # Installation
 
@@ -60,7 +60,7 @@
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "3.0.0"),
+  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "4.0.0"),
 ],
 ```
 
@@ -74,6 +74,9 @@ dependencies: [
 - offering varierty features for relations of constraints.
 
 # Usage
+
+> **Warning**
+> With the update to **Swift6**, most of the interfaces in **SwiftLayout** are now explicitly marked to operate under the **@MainActor**. 
 
 ## LayoutBuilder
 
