@@ -566,6 +566,33 @@ struct LayoutDSLTest { // swiftlint:disable:this type_body_length
         }
     }
 
+    final class AnyLayoutTest: LayoutDSLTestsBase {
+        @Test
+        func withAnyLayout() {
+            @LayoutBuilder
+            var layout: some Layout {
+                root.sl.sublayout {
+                    red.sl.sublayout {
+                        button
+                        label
+                        blue.sl.sublayout {
+                            image
+                        }.eraseToAnyLayout()
+                    }
+                }
+            }
+
+            activation = AnyLayout(layout).active()
+
+            expectView(root, superview: window, subviews: [red])
+            expectView(red, superview: root, subviews: [button, label, blue])
+            expectView(button, superview: red, subviews: [])
+            expectView(label, superview: red, subviews: [])
+            expectView(blue, superview: red, subviews: [image])
+            expectView(image, superview: blue, subviews: [])
+        }
+    }
+
     // TODO: - Not support performance
 //    final class TupleLayoutTests: LayoutDSLTestsBase {
 //        @Test

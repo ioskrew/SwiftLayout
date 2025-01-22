@@ -1,15 +1,23 @@
-public struct GroupLayout<L: Layout>: Layout {
+import UIKit
 
-    private let layout: L
+public struct GroupLayout<Sublayout: Layout>: Layout {
+    private let sublayout: Sublayout
+    private let option: LayoutOption
 
-    public let option: LayoutOption?
-
-    public init(option: LayoutOption = .none, @LayoutBuilder _ handler: () -> L) {
+    public init(option: LayoutOption = .none, @LayoutBuilder _ handler: () -> Sublayout) {
         self.option = option
-        self.layout = handler()
+        self.sublayout = handler()
     }
 
-    public var sublayouts: [any Layout] {
-        [layout]
+    public func layoutComponents(superview: UIView?, option: LayoutOption) -> [LayoutComponent] {
+        return sublayout.layoutComponents(superview: superview, option: self.option)
+    }
+
+    public func layoutWillActivate() {
+        sublayout.layoutWillActivate()
+    }
+
+    public func layoutDidActivate() {
+        sublayout.layoutDidActivate()
     }
 }

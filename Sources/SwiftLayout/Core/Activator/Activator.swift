@@ -60,11 +60,11 @@ extension Activator {
 
 private extension Activator {
     static func willActivate<L: Layout>(layout: L) {
-        LayoutExplorer.traversal(layout: layout) { $0.layoutWillActivate() }
+        layout.layoutWillActivate()
     }
 
     static func didActivate<L: Layout>(layout: L) {
-        LayoutExplorer.traversal(layout: layout) { $0.layoutDidActivate() }
+        layout.layoutDidActivate()
     }
 
     static func updateViews(activation: Activation, viewInfos: [ViewInformation]) {

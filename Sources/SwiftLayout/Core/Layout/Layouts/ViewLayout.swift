@@ -1,35 +1,38 @@
 import UIKit
 
-public struct ViewLayout<V: UIView>: Layout {
-
-    private let innerView: V
-
-    public private(set) var sublayouts: [any Layout]
-
-    public private(set) var anchors: Anchors
-
-    public var option: LayoutOption? { LayoutOption.none }
+public struct ViewLayout<V: UIView, Sublayout: Layout>: Layout {
+    private var view: V
+    private let sublayout: Sublayout
+    private let anchors: Anchors
 
     typealias OnActivateBlock = (V) -> Void
 
     private let onActivateBlock: OnActivateBlock?
 
-    init(_ view: V, sublayouts: [any Layout] = [], anchors: Anchors = Anchors(), onActivate: OnActivateBlock? = nil) {
-        self.innerView = view
-        self.sublayouts = sublayouts
+    init(_ view: V, sublayout: Sublayout, anchors: Anchors = Anchors(), onActivate: OnActivateBlock? = nil) {
+        self.view = view
+        self.sublayout = sublayout
         self.anchors = anchors
         self.onActivateBlock = onActivate
     }
 
-    public var view: UIView? {
-        self.innerView
+    public func layoutComponents(superview: UIView?, option: LayoutOption) -> [LayoutComponent] {
+        let component = LayoutComponent(superview: superview, view: self.view, anchors: anchors, option: option)
+        let sublayoutComponents: [LayoutComponent] = sublayout.layoutComponents(superview: view, option: .none)
+
+        return [component] + sublayoutComponents
     }
 
     public func layoutWillActivate() {
-        self.onActivateBlock?(innerView)
+        onActivateBlock?(view)
+
+        sublayout.layoutWillActivate()
+    }
+
+    public func layoutDidActivate() {
+        sublayout.layoutDidActivate()
     }
 }
-
 extension ViewLayout {
 
     ///
@@ -61,7 +64,7 @@ extension ViewLayout {
     public func anchors(@AnchorsBuilder _ build: () -> Anchors) -> Self {
         let anchors = self.anchors
         anchors.append(build())
-        return Self(innerView, sublayouts: sublayouts, anchors: anchors, onActivate: onActivateBlock)
+        return Self(view, sublayout: sublayout, anchors: anchors, onActivate: onActivateBlock)
     }
 
     ///
@@ -80,10 +83,10 @@ extension ViewLayout {
     /// - Parameter build: A ``LayoutBuilder`` that  create sublayouts of this layout.
     /// - Returns: The layout itself with sublayout coordinator added
     ///
-    public func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> Self {
-        var sublayouts = self.sublayouts
-        sublayouts.append(build())
-        return Self(innerView, sublayouts: sublayouts, anchors: anchors, onActivate: onActivateBlock)
+    public func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<V, TupleLayout<Sublayout, L>> {
+        let sublayout = TupleLayout<Sublayout, L>(layouts: (self.sublayout, build()))
+
+        return ViewLayout<V, TupleLayout<Sublayout, L>>(view, sublayout: sublayout, anchors: anchors, onActivate: onActivateBlock)
     }
 
     ///
@@ -101,11 +104,11 @@ extension ViewLayout {
     /// }
     /// ```
     ///
-    /// - Parameter onActivate: A perform block for this layout.
+    /// - Parameter perform: A perform block for this layout.
     /// - Returns: The layout itself with onActivate action added
     ///
     public func onActivate(_ perform: @escaping (V) -> Void) -> Self {
-        Self(innerView, sublayouts: sublayouts, anchors: anchors, onActivate: perform)
+        Self(view, sublayout: sublayout, anchors: anchors, onActivate: perform)
     }
 
     ///
@@ -115,7 +118,7 @@ extension ViewLayout {
     /// - Returns: The layout itself with the accessibilityIdentifier applied
     ///
     public func identifying(_ accessibilityIdentifier: String) -> Self {
-        innerView.accessibilityIdentifier = accessibilityIdentifier
+        view.accessibilityIdentifier = accessibilityIdentifier
         return self
     }
 }

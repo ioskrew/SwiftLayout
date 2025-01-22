@@ -1,17 +1,21 @@
-public struct OptionalLayout<L: Layout>: Layout {
+import UIKit
 
-    private let layout: L?
+public struct OptionalLayout<Sublayout: Layout>: Layout {
+    var sublayout: Sublayout?
 
-    init(layout: L?) {
-        self.layout = layout
+    init(sublayout: Sublayout?) {
+        self.sublayout = sublayout
     }
 
-    public var sublayouts: [any Layout] {
-        switch layout {
-        case let .some(layout):
-            return [layout]
-        case .none:
-            return []
-        }
+    public func layoutComponents(superview: UIView?, option: LayoutOption) -> [LayoutComponent] {
+        return sublayout?.layoutComponents(superview: superview, option: option) ?? []
+    }
+
+    public func layoutWillActivate() {
+        sublayout?.layoutWillActivate()
+    }
+
+    public func layoutDidActivate() {
+        sublayout?.layoutDidActivate()
     }
 }

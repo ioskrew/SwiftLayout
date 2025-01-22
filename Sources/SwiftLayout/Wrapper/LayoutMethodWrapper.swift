@@ -40,8 +40,8 @@ public extension LayoutMethodWrapper where Base: UIView {
     /// - Parameter build: A ``AnchorsBuilder`` that  create ``Anchors`` to be applied to this layout
     /// - Returns: An ``ViewLayout`` that wraps this view and contains the anchors  coordinator.
     ///
-    func anchors(@AnchorsBuilder _ build: () -> Anchors) -> ViewLayout<Base> {
-        ViewLayout(self.base, anchors: build())
+    func anchors(@AnchorsBuilder _ build: () -> Anchors) -> ViewLayout<Base, EmptyLayout> {
+        ViewLayout(self.base, sublayout: EmptyLayout(), anchors: build())
     }
 
     ///
@@ -60,8 +60,8 @@ public extension LayoutMethodWrapper where Base: UIView {
     /// - Parameter build: A ``LayoutBuilder`` that  create sublayouts of this view.
     /// - Returns: An ``ViewLayout`` that wraps this view and contains sublayouts .
     ///
-    func sublayout<LayoutType: Layout>(@LayoutBuilder _ build: () -> LayoutType) -> ViewLayout<Base> {
-        ViewLayout(self.base, sublayouts: [build()])
+    func sublayout<LayoutType: Layout>(@LayoutBuilder _ build: () -> LayoutType) -> ViewLayout<Base, LayoutType> {
+        ViewLayout(self.base, sublayout: build())
     }
 
     ///
@@ -70,7 +70,7 @@ public extension LayoutMethodWrapper where Base: UIView {
     /// - Returns: An ``AnyLayout`` wrapping this layout.
     ///
     func eraseToAnyLayout() -> AnyLayout {
-        AnyLayout(ViewLayout(self.base))
+        AnyLayout(ViewLayout(self.base, sublayout: EmptyLayout()))
     }
 
     ///
@@ -88,11 +88,11 @@ public extension LayoutMethodWrapper where Base: UIView {
     /// }
     /// ```
     ///
-    /// - Parameter onActivate: A perform block for new layout.
+    /// - Parameter perform: A perform block for new layout.
     /// - Returns:  An ``ViewLayout`` with onActivate action added
     ///
-    func onActivate(_ perform: @escaping (Base) -> Void) -> ViewLayout<Base> {
-        ViewLayout<Base>(self.base, onActivate: perform)
+    func onActivate(_ perform: @escaping (Base) -> Void) -> ViewLayout<Base, EmptyLayout> {
+        ViewLayout(self.base, sublayout: EmptyLayout(), onActivate: perform)
     }
 
     ///

@@ -9,22 +9,10 @@ import UIKit
 
 @MainActor
 public protocol Layout {
-    var view: UIView? { get }
-    var anchors: Anchors { get }
-    var sublayouts: [any Layout] { get }
-    var option: LayoutOption? { get }
+    func layoutComponents(superview: UIView?, option: LayoutOption) -> [LayoutComponent]
 
     func layoutWillActivate()
     func layoutDidActivate()
-}
-
-extension Layout {
-    public var view: UIView? { nil }
-    public var anchors: Anchors { Anchors() }
-    public var option: LayoutOption? { nil }
-
-    public func layoutWillActivate() {}
-    public func layoutDidActivate() {}
 }
 
 extension Layout {
