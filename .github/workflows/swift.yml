@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Run tests
-      run: xcodebuild test -scheme SwiftLayout -sdk iphonesimulator18.2 -destination 'name=iPhone 16 Pro' -skipPackagePluginValidation
+      run: xcodebuild test -scheme SwiftLayout -sdk iphonesimulator18.1 -destination 'name=iPhone 16 Pro' -skipPackagePluginValidation
 
 
 # test-macos:
