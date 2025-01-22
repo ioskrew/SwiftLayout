@@ -1,7 +1,7 @@
 import UIKit
 
 public struct ArrayLayout<Sublayout: Layout>: Layout {
-    var sublayouts: [Sublayout]
+    private var sublayouts: [Sublayout]
 
     init(sublayouts: [Sublayout]) {
         self.sublayouts = sublayouts

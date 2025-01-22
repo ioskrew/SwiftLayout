@@ -6,7 +6,7 @@ public struct ConditionalLayout<TrueLayout: Layout, FalseLayout: Layout>: Layout
         case falseLayout(FalseLayout)
     }
 
-    var sublayout: Sublayout
+    private var sublayout: Sublayout
 
     init(layout: Sublayout) {
         self.sublayout = layout

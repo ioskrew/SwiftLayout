@@ -1,7 +1,7 @@
 import UIKit
 
 public struct TupleLayout<each Sublayout: Layout>: Layout {
-    let sublayouts: (repeat each Sublayout)
+    private let sublayouts: (repeat each Sublayout)
 
     init(layouts: (repeat each Sublayout)) {
         self.sublayouts = layouts

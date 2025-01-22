@@ -5,7 +5,7 @@ public struct AnyLayout: Layout {
         self.sublayout = sublayout
     }
 
-    var sublayout: any Layout
+    private var sublayout: any Layout
 
     public func layoutComponents(superview: UIView?, option: LayoutOption) -> [LayoutComponent] {
         sublayout.layoutComponents(superview: superview, option: option)

@@ -1,7 +1,7 @@
 import UIKit
 
 public struct OptionalLayout<Sublayout: Layout>: Layout {
-    var sublayout: Sublayout?
+    private var sublayout: Sublayout?
 
     init(sublayout: Sublayout?) {
         self.sublayout = sublayout
