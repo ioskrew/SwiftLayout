@@ -20,6 +20,7 @@ extension Layout {
     ///
     /// Activate this layout.
     ///
+    /// - Parameter forceLayout: If `true`, forces immediate layout updates by calling `setNeedsLayout()` and `layoutIfNeeded()` on the root view.
     /// - Returns: A ``Activation`` instance, which you use when you update or deactivate layout. Deallocation of the result will deactivate layout.
     ///
     public func active(forceLayout: Bool = false) -> Activation {
@@ -30,6 +31,7 @@ extension Layout {
     /// Update layout changes from the activation of the previously activated layout.
     ///
     /// - Parameter activation: The activation of the previously activated layout. It is used to identify changes in layout.
+    /// - Parameter forceLayout: If `true`, forces immediate layout updates by calling `setNeedsLayout()` and `layoutIfNeeded()` on the root view.
     /// - Returns: A ``Activation`` instance, which you use when you update or deactivate layout. Deallocation of the result will deactivate layout.
     ///
     public func update(fromActivation activation: Activation, forceLayout: Bool = false) -> Activation {
@@ -39,6 +41,8 @@ extension Layout {
     ///
     /// Activate this layout permanently.
     /// Until the view is released according to the lifecycle of the app
+    ///
+    /// - Parameter forceLayout: If `true`, forces immediate layout updates by calling `setNeedsLayout()` and `layoutIfNeeded()` on the root view.
     ///
     public func finalActive(forceLayout: Bool = false) {
         Activator.finalActive(layout: self, forceLayout: forceLayout)
