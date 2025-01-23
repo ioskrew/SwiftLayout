@@ -13,10 +13,10 @@ struct LayoutElements<L: Layout> {
     let viewConstraints: [NSLayoutConstraint]
 
     init(layout: L) {
-        let components = LayoutExplorer.components(layout: layout)
+        let components = layout.layoutComponents(superview: nil, option: .none)
 
         viewInformations = components.map { component in
-            ViewInformation(superview: component.superView, view: component.view, option: component.option)
+            ViewInformation(superview: component.superview, view: component.view, option: component.option)
         }
 
         let viewDic = Dictionary(
@@ -27,7 +27,7 @@ struct LayoutElements<L: Layout> {
         viewConstraints = components.flatMap { component in
             component.anchors.constraints(
                 item: component.view,
-                toItem: component.superView,
+                toItem: component.superview,
                 viewDic: viewDic
             )
         }

@@ -1,3 +1,5 @@
+import UIKit
+
 @MainActor
 public protocol ModularLayout: Layout {
     associatedtype LayoutBody: Layout
@@ -6,7 +8,15 @@ public protocol ModularLayout: Layout {
 }
 
 extension ModularLayout {
-    public var sublayouts: [any Layout] {
-        [self.layout]
+    public func layoutComponents(superview: UIView?, option: LayoutOption) -> [LayoutComponent] {
+        return layout.layoutComponents(superview: superview, option: option)
+    }
+
+    public func layoutWillActivate() {
+        layout.layoutWillActivate()
+    }
+
+    public func layoutDidActivate() {
+        layout.layoutDidActivate()
     }
 }

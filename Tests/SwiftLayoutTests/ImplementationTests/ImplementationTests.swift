@@ -30,16 +30,10 @@ extension ImplementationTests {
             }
         }
 
-        var result: [String] = []
-        LayoutExplorer.traversal(layout: layout, superview: nil, option: .none) { layout, superview, _ in
-            guard let view = layout.view else {
-                return
-            }
-
-            let superDescription = superview?.accessibilityIdentifier ?? "nil"
-            let currentDescription = view.accessibilityIdentifier ?? "nil"
-            let description = "\(superDescription), \(currentDescription)"
-            result.append(description)
+        let result = layout.layoutComponents(superview: nil, option: .none).map {
+            let superDescription = $0.superview?.accessibilityIdentifier ?? "nil"
+            let currentDescription = $0.view.accessibilityIdentifier ?? "nil"
+            return "\(superDescription), \(currentDescription)"
         }
 
         let expectedResult = [

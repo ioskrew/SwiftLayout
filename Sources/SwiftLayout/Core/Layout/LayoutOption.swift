@@ -1,10 +1,3 @@
-//
-//  LayoutOption.swift
-//  
-//
-//  Created by aiden_h on 2022/08/30.
-//
-
 import Foundation
 
 public struct LayoutOption: OptionSet, Sendable {

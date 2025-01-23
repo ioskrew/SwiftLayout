@@ -1,22 +1,21 @@
-private protocol AnyLayoutBox: Layout {}
-private struct _AnyLayoutBox<L: Layout>: AnyLayoutBox {
-
-    let layout: L
-
-    var sublayouts: [any Layout] {
-        [layout]
-    }
-}
+import UIKit
 
 public struct AnyLayout: Layout {
-
-    private let box: AnyLayoutBox
-
-    init<L: Layout>(_ layout: L) {
-        self.box = _AnyLayoutBox(layout: layout)
+    public init<Sublayout: Layout>(_ sublayout: Sublayout) {
+        self.sublayout = sublayout
     }
 
-    public var sublayouts: [any Layout] {
-        box.sublayouts
+    private var sublayout: any Layout
+
+    public func layoutComponents(superview: UIView?, option: LayoutOption) -> [LayoutComponent] {
+        sublayout.layoutComponents(superview: superview, option: option)
+    }
+
+    public func layoutWillActivate() {
+        sublayout.layoutWillActivate()
+    }
+
+    public func layoutDidActivate() {
+        sublayout.layoutDidActivate()
     }
 }
