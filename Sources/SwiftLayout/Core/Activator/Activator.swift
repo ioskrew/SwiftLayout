@@ -9,12 +9,10 @@ import UIKit
 
 @MainActor
 enum Activator {
-
     static func active<L: Layout>(layout: L, forceLayout: Bool = false) -> Activation {
         return update(layout: layout, fromActivation: Activation(), forceLayout: forceLayout)
     }
 
-    @discardableResult
     static func update<L: Layout>(layout: L, fromActivation activation: Activation, forceLayout: Bool) -> Activation {
         willActivate(layout: layout)
 
@@ -39,7 +37,7 @@ enum Activator {
 }
 
 extension Activator {
-    public static func finalActive<L: Layout>(layout: L, forceLayout: Bool) {
+    static func finalActive<L: Layout>(layout: L, forceLayout: Bool) {
         willActivate(layout: layout)
 
         let elements = LayoutElements(layout: layout)

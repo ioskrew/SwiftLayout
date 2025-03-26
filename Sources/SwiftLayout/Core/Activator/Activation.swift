@@ -19,15 +19,6 @@ public final class Activation: Hashable {
         self.viewInfos = viewInfos
         self.constraints = constraints
     }
-
-    deinit {
-        let views = self.viewInfos.compactMap(\.view)
-        let constraints = self.constraints
-
-        Task { @MainActor in
-            Deactivator().deactivate(views: views, constraints: constraints)
-        }
-    }
 }
 
 extension Activation {

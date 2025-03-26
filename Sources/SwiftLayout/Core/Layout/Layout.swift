@@ -32,7 +32,7 @@ extension Layout {
     ///
     /// Activate this layout.
     ///
-    /// - Returns: A ``Activation`` instance, which you use when you update or deactivate layout. Deallocation of the result will deactivate layout.
+    /// - Returns: A ``Activation`` instance, which you use when you update or deactivate layout. 
     ///
     public func active(forceLayout: Bool = false) -> Activation {
         Activator.active(layout: self, forceLayout: forceLayout)
@@ -42,7 +42,7 @@ extension Layout {
     /// Update layout changes from the activation of the previously activated layout.
     ///
     /// - Parameter activation: The activation of the previously activated layout. It is used to identify changes in layout.
-    /// - Returns: A ``Activation`` instance, which you use when you update or deactivate layout. Deallocation of the result will deactivate layout.
+    /// - Returns: A ``Activation`` instance, which you use when you update or deactivate layout.
     ///
     public func update(fromActivation activation: Activation, forceLayout: Bool = false) -> Activation {
         Activator.update(layout: self, fromActivation: activation, forceLayout: forceLayout)

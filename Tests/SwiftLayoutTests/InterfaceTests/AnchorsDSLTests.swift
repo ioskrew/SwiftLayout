@@ -94,7 +94,7 @@ struct AnchorsDSLTests { // swiftlint:disable:this type_body_length
             }
 
             func deactivate() async {
-                activation = nil
+                activation?.deactive()
             }
 
             func expectation() async {
