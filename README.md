@@ -44,6 +44,10 @@
 
 - [Korean](README_ko.md)
 
+# Migration Guide
+
+- [AutoLayout to SwiftLayout Migration Guide](docs/MIGRATION_GUIDE.md)
+
 # Requirements
 
 - iOS 13+
