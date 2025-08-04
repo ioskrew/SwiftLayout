@@ -18,11 +18,24 @@ public struct LayoutBuilder {
 
     public static func buildExpression<V: UIView>(_ uiView: V?) -> OptionalLayout<ViewLayout<V, EmptyLayout>> {
         var viewLayout: ViewLayout<V, EmptyLayout>?
-        if let view = uiView {
-            viewLayout = ViewLayout(view, sublayout: EmptyLayout())
+        if let uiView {
+            viewLayout = ViewLayout(uiView, sublayout: EmptyLayout())
         }
 
         return OptionalLayout(sublayout: viewLayout)
+    }
+
+    public static func buildExpression<LayoutGuide: UILayoutGuide>(_ layoutGuide: LayoutGuide) -> GuideLayout<LayoutGuide> {
+        GuideLayout(layoutGuide)
+    }
+
+    public static func buildExpression<LayoutGuide: UILayoutGuide>(_ layoutGuide: LayoutGuide?) -> OptionalLayout<GuideLayout<LayoutGuide>> {
+        var guideLayout: GuideLayout<LayoutGuide>?
+        if let layoutGuide {
+            guideLayout = GuideLayout(layoutGuide)
+        }
+
+        return OptionalLayout(sublayout: guideLayout)
     }
 }
 

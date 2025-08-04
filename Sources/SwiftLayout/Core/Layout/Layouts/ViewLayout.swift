@@ -17,7 +17,7 @@ public struct ViewLayout<V: UIView, Sublayout: Layout>: Layout {
     }
 
     public func layoutComponents(superview: UIView?, option: LayoutOption) -> [LayoutComponent] {
-        let component = LayoutComponent(superview: superview, view: self.view, anchors: anchors, option: option)
+        let component = LayoutComponent(superview: superview, node: self.view, anchors: anchors, option: option)
         let sublayoutComponents: [LayoutComponent] = sublayout.layoutComponents(superview: view, option: .none)
 
         return [component] + sublayoutComponents

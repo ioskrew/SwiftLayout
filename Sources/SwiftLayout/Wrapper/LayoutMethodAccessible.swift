@@ -8,3 +8,4 @@ public extension LayoutMethodAccessible {
 }
 
 extension UIView: LayoutMethodAccessible {}
+extension UILayoutGuide: LayoutMethodAccessible {}

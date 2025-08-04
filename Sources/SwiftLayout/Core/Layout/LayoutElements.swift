@@ -9,14 +9,14 @@ import UIKit
 
 @MainActor
 struct LayoutElements<L: Layout> {
-    let viewInformations: [ViewInformation]
+    let hierarchyInfos: [HierarchyInfo]
     let viewConstraints: [NSLayoutConstraint]
 
     init(layout: L) {
         let components = layout.layoutComponents(superview: nil, option: .none)
 
-        viewInformations = components.map { component in
-            ViewInformation(superview: component.superview, view: component.view, option: component.option)
+        hierarchyInfos = components.map { component in
+            HierarchyInfo(superview: component.superview, node: component.node, option: component.option)
         }
 
         let viewDic = Dictionary(
@@ -26,7 +26,7 @@ struct LayoutElements<L: Layout> {
 
         viewConstraints = components.flatMap { component in
             component.anchors.constraints(
-                item: component.view,
+                item: component.node,
                 toItem: component.superview,
                 viewDic: viewDic
             )

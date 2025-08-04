@@ -8,15 +8,15 @@
 import UIKit
 
 public final class Activation: Hashable {
-    var viewInfos: [ViewInformation]
+    var hierarchyInfos: [HierarchyInfo]
     var constraints: Set<WeakConstraint>
 
     convenience init() {
-        self.init(viewInfos: .init(), constraints: .init())
+        self.init(hierarchyInfos: [], constraints: .init())
     }
 
-    init(viewInfos: [ViewInformation], constraints: Set<WeakConstraint>) {
-        self.viewInfos = viewInfos
+    init(hierarchyInfos: [HierarchyInfo], constraints: Set<WeakConstraint>) {
+        self.hierarchyInfos = hierarchyInfos
         self.constraints = constraints
     }
 }
@@ -24,15 +24,20 @@ public final class Activation: Hashable {
 extension Activation {
     @MainActor
     public func deactive() {
-        let views = self.viewInfos.compactMap(\.view)
+        let hierarchyInfos = self.hierarchyInfos
         let constraints = self.constraints
 
-        Deactivator().deactivate(views: views, constraints: constraints)
+        Deactivator().deactivate(hierarchyInfo: hierarchyInfos, constraints: constraints)
     }
 
     @MainActor
     public func viewForIdentifier(_ identifier: String) -> UIView? {
-        viewInfos.first(where: { $0.identifier == identifier })?.view
+        hierarchyInfos.first(where: { $0.identifier == identifier })?.node as? UIView
+    }
+
+    @MainActor
+    public func layoutGuideForIdentifier(_ identifier: String) -> UILayoutGuide? {
+        hierarchyInfos.first(where: { $0.identifier == identifier })?.node as? UILayoutGuide
     }
 
     public func store<C: RangeReplaceableCollection>(_ store: inout C) where C.Element == Activation {
@@ -51,7 +56,7 @@ extension Activation {
     }
 
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(viewInfos)
+        hasher.combine(hierarchyInfos)
         hasher.combine(constraints)
     }
 }
