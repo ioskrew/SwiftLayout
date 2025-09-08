@@ -458,6 +458,38 @@ contentView.sl.sublayout {
 
 - from a debugging point, if you set identifier, the corresponding string is output together in the description of NSLayoutConstraint.
 
+### Working with `UILayoutGuide`
+
+SwiftLayout provides full support for `UILayoutGuide` with the same syntax as UIView, making it easy to create flexible layouts without adding extra views to the hierarchy.
+
+```swift
+@LayoutBuilder var layout: some Layout {
+  containerView.sl.sublayout {
+    // Create and configure a layout guide
+    UILayoutGuide().sl.identifying("centerGuide").sl.anchors {
+      Anchors.centerX.centerY.equalToSuper()
+      Anchors.width.height.equalTo(constant: 200)
+    }
+    
+    // Position views relative to the layout guide
+    titleLabel.sl.anchors {
+      Anchors.centerX.equalTo("centerGuide")
+      Anchors.bottom.equalTo("centerGuide", attribute: .top, constant: -10)
+    }
+    
+    imageView.sl.anchors {
+      Anchors.center.equalTo("centerGuide")
+      Anchors.size.equalTo(width: 100, height: 100)
+    }
+    
+    descriptionLabel.sl.anchors {
+      Anchors.centerX.equalTo("centerGuide")
+      Anchors.top.equalTo("centerGuide", attribute: .bottom, constant: 10)
+    }
+  }
+}
+```
+
 ### Using in `SwiftUI`
 
 implement `Layoutable` on `UIView` or `UIViewController` you can easily using it in `SwiftUI`.

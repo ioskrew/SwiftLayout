@@ -459,6 +459,38 @@ contentView.sl.sublayout {
 
 - 디버깅의 관점에서 보면 identifying을 설정한 경우 NSLayoutConstraint의 description에 해당 문자열이 함께 출력됩니다.
 
+### `UILayoutGuide`와 함께 작업하기
+
+SwiftLayout은 UIView와 동일한 문법으로 `UILayoutGuide`를 완전히 지원하여, 뷰 계층에 추가적인 뷰를 추가하지 않고도 유연한 레이아웃을 쉽게 만들 수 있습니다.
+
+```swift
+@LayoutBuilder var layout: some Layout {
+  containerView.sl.sublayout {
+    // 레이아웃 가이드 생성 및 설정
+    UILayoutGuide().sl.identifying("centerGuide").sl.anchors {
+      Anchors.centerX.centerY.equalToSuper()
+      Anchors.width.height.equalTo(constant: 200)
+    }
+    
+    // 레이아웃 가이드를 기준으로 뷰 위치 설정
+    titleLabel.sl.anchors {
+      Anchors.centerX.equalTo("centerGuide")
+      Anchors.bottom.equalTo("centerGuide", attribute: .top, constant: -10)
+    }
+    
+    imageView.sl.anchors {
+      Anchors.center.equalTo("centerGuide")
+      Anchors.size.equalTo(width: 100, height: 100)
+    }
+    
+    descriptionLabel.sl.anchors {
+      Anchors.centerX.equalTo("centerGuide")
+      Anchors.top.equalTo("centerGuide", attribute: .bottom, constant: 10)
+    }
+  }
+}
+```
+
 ### SwiftUI에서 사용하기
 
 `UIView` 혹은, `UIViewController`에서 `Layoutable`을 구현한 경우 `SwiftUI`에서도 쉽게 사용이 가능합니다.
