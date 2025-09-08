@@ -42,13 +42,17 @@
 
 # 요구조건
 
-- iOS 13+
+- iOS 17+ (SwiftLayout 4.x 기준)
 
   | Swift version  | SwiftLayout version                                          |
   | -------------- | ------------------------------------------------------------ |
-  | **Swift 6.0+** | **4.0.0**                                                    |
+  | **Swift 6.0+** | **4.0.1**                                                    |
   | Swift 5.7      | [2.8.0](https://github.com/ioskrew/SwiftLayout/releases/tag/2.8.0) |
   | Swift 5.5      | [2.7.0](https://github.com/ioskrew/SwiftLayout/releases/tag/2.7.0) |
+
+> 참고
+> - 현재 메인 브랜치는 Package.swift와 동일하게 iOS 17+를 타깃으로 합니다.
+> - iOS 13–16 또는 Swift 5.x를 타깃팅하는 프로젝트는 위 표의 2.x 버전을 사용해주세요.
 
 # 설치
 

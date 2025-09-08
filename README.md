@@ -46,13 +46,17 @@
 
 # Requirements
 
-- iOS 13+
+- iOS 17+ (for SwiftLayout 4.x)
 
   | Swift version  | SwiftLayout version                                          |
   | -------------- | ------------------------------------------------------------ |
-  | **Swift 6.0+** | **4.0.0**                                                    |
+  | **Swift 6.0+** | **4.0.1**                                                    |
   | Swift 5.7      | [2.8.0](https://github.com/ioskrew/SwiftLayout/releases/tag/2.8.0) |
   | Swift 5.5      | [2.7.0](https://github.com/ioskrew/SwiftLayout/releases/tag/2.7.0) |
+
+> Note
+> - The current main branch targets iOS 17+ to align with Package.swift.
+> - For projects targeting iOS 13–16 or Swift 5.x, use the corresponding 2.x releases linked above.
 
 # Installation
 
