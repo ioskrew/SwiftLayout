@@ -42,13 +42,17 @@
 
 # 요구조건
 
-- iOS 13+
+- iOS 17+ (SwiftLayout 4.x 기준)
 
   | Swift version  | SwiftLayout version                                          |
   | -------------- | ------------------------------------------------------------ |
-  | **Swift 6.0+** | **4.0.0**                                                    |
+  | **Swift 6.0+** | **4.0.1**                                                    |
   | Swift 5.7      | [2.8.0](https://github.com/ioskrew/SwiftLayout/releases/tag/2.8.0) |
   | Swift 5.5      | [2.7.0](https://github.com/ioskrew/SwiftLayout/releases/tag/2.7.0) |
+
+> 참고
+> - 현재 메인 브랜치는 Package.swift와 동일하게 iOS 17+를 타깃으로 합니다.
+> - iOS 13–16 또는 Swift 5.x를 타깃팅하는 프로젝트는 위 표의 2.x 버전을 사용해주세요.
 
 # 설치
 
@@ -458,6 +462,38 @@ contentView.sl.sublayout {
 ```
 
 - 디버깅의 관점에서 보면 identifying을 설정한 경우 NSLayoutConstraint의 description에 해당 문자열이 함께 출력됩니다.
+
+### `UILayoutGuide`와 함께 작업하기
+
+SwiftLayout은 UIView와 동일한 문법으로 `UILayoutGuide`를 완전히 지원하여, 뷰 계층에 추가적인 뷰를 추가하지 않고도 유연한 레이아웃을 쉽게 만들 수 있습니다.
+
+```swift
+@LayoutBuilder var layout: some Layout {
+  containerView.sl.sublayout {
+    // 레이아웃 가이드 생성 및 설정
+    UILayoutGuide().sl.identifying("centerGuide").sl.anchors {
+      Anchors.centerX.centerY.equalToSuper()
+      Anchors.width.height.equalTo(constant: 200)
+    }
+    
+    // 레이아웃 가이드를 기준으로 뷰 위치 설정
+    titleLabel.sl.anchors {
+      Anchors.centerX.equalTo("centerGuide")
+      Anchors.bottom.equalTo("centerGuide", attribute: .top, constant: -10)
+    }
+    
+    imageView.sl.anchors {
+      Anchors.center.equalTo("centerGuide")
+      Anchors.size.equalTo(width: 100, height: 100)
+    }
+    
+    descriptionLabel.sl.anchors {
+      Anchors.centerX.equalTo("centerGuide")
+      Anchors.top.equalTo("centerGuide", attribute: .bottom, constant: 10)
+    }
+  }
+}
+```
 
 ### SwiftUI에서 사용하기
 

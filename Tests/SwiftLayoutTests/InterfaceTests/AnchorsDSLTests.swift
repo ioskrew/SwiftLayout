@@ -15,6 +15,7 @@ struct AnchorsDSLTests { // swiftlint:disable:this type_body_length
         var superview: UIView = UIView()
         var subview: UIView = UIView()
         var siblingview: UIView = UIView()
+        var layoutGuied: UILayoutGuide = UILayoutGuide()
 
         var activation: Activation?
 
@@ -576,6 +577,53 @@ struct AnchorsDSLTests { // swiftlint:disable:this type_body_length
             #expect(hasSameElements(superview.constraints, expectedSuperViewConstraints, tags))
             #expect(subview.constraints.isEmpty)
             #expect(hasSameElements(identifyingView.constraints, expectedIdentifyingViewConstraints, tags))
+        }
+
+        @Test
+        func layoutGuide() {
+            @LayoutBuilder
+            var layout: some Layout {
+                superview.sl.sublayout {
+
+                    subview.sl.anchors {
+                        Anchors.cap.equalToSuper()
+                        Anchors.bottom.equalTo(layoutGuied, attribute: .top)
+                    }
+
+                    layoutGuied.sl.anchors {
+                        Anchors.width.equalTo(constant: 37)
+                        Anchors.height.equalToSuper().multiplier(0.5)
+                        Anchors.centerX.bottom
+                    }
+
+                    siblingview.sl.anchors {
+                        Anchors.allSides.equalTo(layoutGuied)
+                    }
+                }
+            }
+
+            activation = layout.active()
+
+            let expectedSuperViewConstraints = [
+                NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1, constant: 0),
+                NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1, constant: 0),
+                NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1, constant: 0),
+
+                NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: layoutGuied, attribute: .top, multiplier: 1, constant: 0),
+
+                NSLayoutConstraint(item: layoutGuied, attribute: .height, relatedBy: .equal, toItem: superview, attribute: .height, multiplier: 0.5, constant: 0),
+                NSLayoutConstraint(item: layoutGuied, attribute: .centerX, relatedBy: .equal, toItem: superview, attribute: .centerX, multiplier: 1, constant: 0),
+                NSLayoutConstraint(item: layoutGuied, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1, constant: 0),
+                NSLayoutConstraint(item: layoutGuied, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 37),
+
+                NSLayoutConstraint(item: siblingview, attribute: .leading, relatedBy: .equal, toItem: layoutGuied, attribute: .leading, multiplier: 1, constant: 0),
+                NSLayoutConstraint(item: siblingview, attribute: .top, relatedBy: .equal, toItem: layoutGuied, attribute: .top, multiplier: 1, constant: 0),
+                NSLayoutConstraint(item: siblingview, attribute: .trailing, relatedBy: .equal, toItem: layoutGuied, attribute: .trailing, multiplier: 1, constant: 0),
+                NSLayoutConstraint(item: siblingview, attribute: .bottom, relatedBy: .equal, toItem: layoutGuied, attribute: .bottom, multiplier: 1, constant: 0),
+            ]
+
+            #expect(hasSameElements(superview.constraints, expectedSuperViewConstraints, tags))
+            #expect(subview.constraints.isEmpty)
         }
 
         @Test

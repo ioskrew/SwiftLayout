@@ -566,6 +566,59 @@ struct LayoutDSLTest { // swiftlint:disable:this type_body_length
         }
     }
 
+    final class GuideLayoutTest: LayoutDSLTestsBase {
+        @Test
+        func guideLayout() {
+            let layoutGuide = UILayoutGuide().sl.identifying("layoutGuide")
+
+            @LayoutBuilder
+            var layout: some Layout {
+                root.sl.sublayout {
+                    layoutGuide
+
+                    red
+                }
+            }
+
+            activation = layout.active()
+
+            expectView(root, superview: window, subviews: [red])
+            expectView(red, superview: root, subviews: [])
+            expectLayoutGuides(root, layoutGuides: [layoutGuide])
+            expectOwnerView(layoutGuide, ownerView: root)
+        }
+
+        @Test
+        func optionalGuideLayout() {
+            var optionalLayoutGuide: UILayoutGuide? = nil
+            
+            @LayoutBuilder
+            var layout: some Layout {
+                root.sl.sublayout {
+                    optionalLayoutGuide
+                    
+                    red
+                }
+            }
+            
+            activation = layout.active()
+            
+            expectView(root, superview: window, subviews: [red])
+            expectView(red, superview: root, subviews: [])
+            expectLayoutGuides(root, layoutGuides: [])
+            
+            let layoutGuide = UILayoutGuide().sl.identifying("layoutGuide")
+            optionalLayoutGuide = layoutGuide
+            
+            activation = layout.update(fromActivation: activation!)
+            
+            expectView(root, superview: window, subviews: [red])
+            expectView(red, superview: root, subviews: [])
+            expectLayoutGuides(root, layoutGuides: [layoutGuide])
+            expectOwnerView(layoutGuide, ownerView: root)
+        }
+    }
+
     final class AnyLayoutTest: LayoutDSLTestsBase {
         @Test
         func withAnyLayout() {

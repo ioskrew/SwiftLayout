@@ -32,7 +32,7 @@ extension ImplementationTests {
 
         let result = layout.layoutComponents(superview: nil, option: .none).map {
             let superDescription = $0.superview?.accessibilityIdentifier ?? "nil"
-            let currentDescription = $0.view.accessibilityIdentifier ?? "nil"
+            let currentDescription = $0.node.nodeIdentifier ?? "nil"
             return "\(superDescription), \(currentDescription)"
         }
 
@@ -60,7 +60,8 @@ extension ImplementationTests {
         }
 
         _ = try #require(layout)
-        #expect(LayoutElements(layout: layout).viewInformations.map(\.view) == [root, child, friend])
+        let currentViews = LayoutElements(layout: layout).hierarchyInfos.compactMap { $0.node as? UIView }
+        #expect(currentViews == [root, child, friend])
     }
 
     // swiftlint:disable identifier_name
@@ -96,16 +97,16 @@ extension ImplementationTests {
         }
         let e6 = LayoutElements(layout: f6)
 
-        #expect(e1.viewInformations == e2.viewInformations)
+        #expect(e1.hierarchyInfos == e2.hierarchyInfos)
         #expect(isEqual(e1.viewConstraints, e2.viewConstraints))
 
-        #expect(e3.viewInformations == e4.viewInformations)
+        #expect(e3.hierarchyInfos == e4.hierarchyInfos)
         #expect(isEqual(e3.viewConstraints, e4.viewConstraints))
 
-        #expect(e4.viewInformations == e5.viewInformations)
+        #expect(e4.hierarchyInfos == e5.hierarchyInfos)
         #expect(isNotEqual(e4.viewConstraints, e5.viewConstraints))
 
-        #expect(e5.viewInformations != e6.viewInformations)
+        #expect(e5.hierarchyInfos != e6.hierarchyInfos)
         #expect(isNotEqual(e5.viewConstraints, e6.viewConstraints))
     }
 
@@ -236,6 +237,7 @@ extension ImplementationTests {
                 Anchors.top.equalTo("label", attribute: .bottom)
                 Anchors.shoe.equalToSuper()
             }
+            UILayoutGuide().sl.identifying("layoutGuide")
         }.active()
 
         let label = try #require(activation.viewForIdentifier("label"))
@@ -243,6 +245,10 @@ extension ImplementationTests {
 
         let secondView = try #require(activation.viewForIdentifier("secondView"))
         #expect(secondView.accessibilityIdentifier == "secondView")
+
+        #expect(activation.viewForIdentifier("layoutGuide") == nil)
+        let layoutGuide = try #require(activation.layoutGuideForIdentifier("layoutGuide"))
+        #expect(layoutGuide.identifier == "layoutGuide")
 
         let currents = activation.constraints
         let labelConstraints = Set(ofWeakConstraintsFrom: Anchors.cap.equalToSuper().constraints(item: label, toItem: root))

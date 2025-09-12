@@ -106,3 +106,56 @@ public extension LayoutMethodWrapper where Base: UIView {
         return self.base
     }
 }
+
+public extension LayoutMethodWrapper where Base: UILayoutGuide {
+
+    ///
+    /// Create a ``GuideLayout`` containing this layoutGuide and add anchors coordinator to this layout
+    ///
+    /// ``Anchors`` express **NSLayoutConstraint** and can be applied through this method.
+    /// ```swift
+    /// // The constraint of the view can be expressed as follows.
+    ///
+    /// subView.sl.anchors {
+    ///     Anchors(.top).equalTo(rootView, constant: 10)
+    ///     Anchors(.centerX).equalTo(rootView)
+    ///     Anchors(.width, .height).equalTo(rootView).setMultiplier(0.5)
+    /// }
+    ///
+    /// // The following code performs the same role as the code above.
+    ///
+    /// NSLayoutConstraint.activate([
+    ///     subView.topAnchor.constraint(equalTo: rootView.topAnchor, constant: 10),
+    ///     subView.centerXAnchor.constraint(equalTo: rootView.centerXAnchor),
+    ///     subView.widthAnchor.constraint(equalTo: rootView.widthAnchor, multiplier: 0.5),
+    ///     subView.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.5)
+    /// ])
+    /// ```
+    ///
+    /// - Parameter build: A ``AnchorsBuilder`` that  create ``Anchors`` to be applied to this layout
+    /// - Returns: An ``ViewLayout`` that wraps this view and contains the anchors  coordinator.
+    ///
+    func anchors(@AnchorsBuilder _ build: () -> Anchors) -> GuideLayout<Base> {
+        GuideLayout(self.base, anchors: build())
+    }
+
+    ///
+    /// Wraps this view with a layout type eraser.
+    ///
+    /// - Returns: An ``AnyLayout`` wrapping this layout.
+    ///
+    func eraseToAnyLayout() -> AnyLayout {
+        AnyLayout(GuideLayout(self.base))
+    }
+
+    ///
+    /// Set the **identifier** of the layout guide.
+    ///
+    /// - Parameter identifier: A string that uniquely identifies the layout guide.
+    /// - Returns: The layout itself with the identifier applied.
+    ///
+    func identifying(_ identifier: String) -> Base {
+        self.base.identifier = identifier
+        return self.base
+    }
+}

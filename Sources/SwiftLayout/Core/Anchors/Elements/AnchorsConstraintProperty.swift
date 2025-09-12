@@ -21,8 +21,9 @@ public struct AnchorsConstraintProperty {
         attribute == .height || attribute == .width
     }
 
-    func nsLayoutConstraint(item fromItem: NSObject, toItem: NSObject?, viewDic: [String: UIView]) -> NSLayoutConstraint {
+    func nsLayoutConstraint(item fromItem: NSObject, toItem: NSObject?, viewDic: [String: any HierarchyNode]) -> NSLayoutConstraint {
         let to = self.toItem(toItem, viewDic: viewDic)
+        assert(fromItem is UIView || fromItem is UILayoutGuide, "from: \(fromItem.debugDescription) is not item")
         assert(to is UIView || to is UILayoutGuide || to == nil, "to: \(to.debugDescription) is not item")
 
         let constrint = NSLayoutConstraint(
@@ -39,7 +40,7 @@ public struct AnchorsConstraintProperty {
         return constrint
     }
 
-    private func toItem(_ toItem: NSObject?, viewDic: [String: UIView]) -> NSObject? {
+    private func toItem(_ toItem: NSObject?, viewDic: [String: any HierarchyNode]) -> NSObject? {
         switch self.toItem {
         case let .object(object):
             return object

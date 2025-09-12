@@ -16,18 +16,18 @@ enum Activator {
     static func update<L: Layout>(layout: L, fromActivation activation: Activation, forceLayout: Bool) -> Activation {
         willActivate(layout: layout)
 
-        let prevInfoHashValues = Set(activation.viewInfos.map(\.hashValue))
+        let prevInfoHashValues = Set(activation.hierarchyInfos.map(\.hashValue))
 
         let elements = LayoutElements(layout: layout)
 
-        let viewInfos = elements.viewInformations
-        updateViews(activation: activation, viewInfos: viewInfos)
+        let hierarchyInfos = elements.hierarchyInfos
+        updateViews(activation: activation, hierarchyInfos: hierarchyInfos)
 
         let constraints = elements.viewConstraints
         updateConstraints(activation: activation, constraints: constraints)
 
         if forceLayout {
-            layoutIfNeeded(viewInfos, prevInfoHashValues)
+            layoutIfNeeded(hierarchyInfos, prevInfoHashValues)
         }
 
         didActivate(layout: layout)
@@ -42,14 +42,14 @@ extension Activator {
 
         let elements = LayoutElements(layout: layout)
 
-        let viewInfos = elements.viewInformations
-        updateViews(viewInfos: viewInfos)
+        let hierarchyInfos = elements.hierarchyInfos
+        updateViews(hierarchyInfos: hierarchyInfos)
 
         let constraints = elements.viewConstraints
         updateConstraints(constraints: constraints)
 
         if forceLayout {
-            layoutIfNeeded(viewInfos)
+            layoutIfNeeded(hierarchyInfos)
         }
 
         didActivate(layout: layout)
@@ -65,36 +65,32 @@ private extension Activator {
         layout.layoutDidActivate()
     }
 
-    static func updateViews(activation: Activation, viewInfos: [ViewInformation]) {
-        let newInfos = viewInfos
-        let newInfosSet = Set(newInfos)
-        let oldInfos = activation.viewInfos
+    static func updateViews(activation: Activation, hierarchyInfos: [HierarchyInfo]) {
+        let newInfos = hierarchyInfos
+        let newInfosSet = Set(hierarchyInfos)
+        let oldInfos = activation.hierarchyInfos
 
         // remove old views
-        for viewInfo in oldInfos where !newInfosSet.contains(viewInfo) {
-            viewInfo.removeFromSuperview()
+        for hierarchyInfo in oldInfos where !newInfosSet.contains(hierarchyInfo) {
+            hierarchyInfo.removeFromSuperview()
         }
 
         // add new views
-        for viewInfo in newInfos {
-            if viewInfo.superview != nil {
-                viewInfo.view?.translatesAutoresizingMaskIntoConstraints = false
-            }
-            viewInfo.addSuperview()
+        for hierarchyInfo in newInfos {
+            hierarchyInfo.updateTranslatesAutoresizingMaskIntoConstraints()
+            hierarchyInfo.addToSuperview()
         }
 
-        activation.viewInfos = viewInfos
+        activation.hierarchyInfos = hierarchyInfos
     }
 
-    static func updateViews(viewInfos: [ViewInformation]) {
-        let newInfos = viewInfos
+    static func updateViews(hierarchyInfos: [HierarchyInfo]) {
+        let newInfos = hierarchyInfos
 
         // add new views
-        for viewInfo in newInfos {
-            if viewInfo.superview != nil {
-                viewInfo.view?.translatesAutoresizingMaskIntoConstraints = false
-            }
-            viewInfo.addSuperview()
+        for hierarchyInfo in newInfos {
+            hierarchyInfo.updateTranslatesAutoresizingMaskIntoConstraints()
+            hierarchyInfo.addToSuperview()
         }
     }
 
@@ -116,17 +112,9 @@ private extension Activator {
         NSLayoutConstraint.activate(news.compactMap(\.origin))
     }
 
-    static func layoutIfNeeded(_ viewInfos: [ViewInformation], _ prevInfoHashValues: Set<Int> = []) {
-        for viewInfo in viewInfos {
-            if viewInfo.superview == nil, let view = viewInfo.view {
-                view.setNeedsLayout()
-                view.layoutIfNeeded()
-            }
-            if !prevInfoHashValues.contains(viewInfo.hashValue) {
-                // for newly add to superview
-                viewInfo.view?.layer.removeAnimation(forKey: "bounds.size")
-                viewInfo.view?.layer.removeAnimation(forKey: "position")
-            }
+    static func layoutIfNeeded(_ hierarchyInfos: [HierarchyInfo], _ prevInfoHashValues: Set<Int> = []) {
+        for hierarchyInfo in hierarchyInfos {
+            hierarchyInfo.forceLayoutIfNeeded(prevInfoHashValues)
         }
     }
 }
