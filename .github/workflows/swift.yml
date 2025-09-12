@@ -6,25 +6,28 @@ on:
   pull_request:
     branches: [ develop ]
 
-env:
-  DEVELOPER_DIR: /Applications/Xcode_16.1.app/Contents/Developer
-
 jobs:
   test-ios:
-
     runs-on: macos-latest
-
     steps:
-    - uses: actions/checkout@v2
-    - name: Run tests
-      run: xcodebuild test -scheme SwiftLayout -sdk iphonesimulator18.1 -destination 'name=iPhone 16 Pro' -skipPackagePluginValidation
+      - uses: actions/checkout@v4
 
-
-# test-macos:
-#
-#   runs-on: macos-latest
-#
-#   steps:
-#   - uses: actions/checkout@v2
-#   - name: Run tests
-#     run: xcodebuild test -scheme SwiftLayout -sdk macosx -destination 'platform=macOS,arch=x86_64,id=4203018E-580F-C1B5-9525-B745CECA79EB'
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - id: sim
+        uses: futureware-tech/simulator-action@v4
+        with:
+          os: iOS
+          model: 'iPhone 14'
+          os_version: '>=17.0'
+          wait_for_boot: true
+          shutdown_after_job: true
+          
+      - name: Build & Test
+        run: |
+          xcodebuild \
+            -scheme SwiftLayout \
+            -destination "id=${{ steps.sim.outputs.udid }}" \
+            -skipPackagePluginValidation \
+            test
