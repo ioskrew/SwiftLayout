@@ -14,21 +14,13 @@ jobs:
 
       - uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: latest-stable
-      - id: sim
-        uses: futureware-tech/simulator-action@v4
-        with:
-          os: iOS
-          model: 'iPhone 16'
-          os_version: '>=17.0'
-          wait_for_boot: true
-          shutdown_after_job: true
-          
+          xcode-version: "26.1"
+
       - name: Build & Test
         run: |
           xcodebuild \
             -scheme SwiftLayout \
             -sdk iphonesimulator \
-            -destination "platform=iOS Simulator,id=${{ steps.sim.outputs.udid }}" \
+            -destination "platform=iOS Simulator,name=iPhone 16,OS=18.4" \
             -skipPackagePluginValidation \
             test
