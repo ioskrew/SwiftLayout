@@ -19,7 +19,7 @@ jobs:
         uses: futureware-tech/simulator-action@v4
         with:
           os: iOS
-          model: 'iPhone 16'
+          model: 'iPhone'
           os_version: '>=17.0'
           wait_for_boot: true
           shutdown_after_job: true
