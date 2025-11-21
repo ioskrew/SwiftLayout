@@ -8,7 +8,7 @@ on:
 
 jobs:
   test-ios:
-    runs-on: macos-latest
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
 
@@ -19,7 +19,7 @@ jobs:
         uses: futureware-tech/simulator-action@v4
         with:
           os: iOS
-          model: 'iPhone'
+          model: 'iPhone 16'
           os_version: '>=17.0'
           wait_for_boot: true
           shutdown_after_job: true
@@ -28,6 +28,7 @@ jobs:
         run: |
           xcodebuild \
             -scheme SwiftLayout \
-            -destination "id=${{ steps.sim.outputs.udid }}" \
+            -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,id=${{ steps.sim.outputs.udid }}" \
             -skipPackagePluginValidation \
             test
