@@ -16,6 +16,7 @@ public struct AnchorsConstraintProperty {
     public let constant: CGFloat
     public internal(set) var multiplier: CGFloat = 1.0
     public internal(set) var priority: UILayoutPriority = .required
+    public internal(set) var identifier: String? = nil
 
     public var isDimension: Bool {
         attribute == .height || attribute == .width
@@ -36,6 +37,7 @@ public struct AnchorsConstraintProperty {
             constant: constant
         )
         constrint.priority = priority
+        constrint.identifier = identifier ?? constrint.identifier
 
         return constrint
     }

@@ -39,6 +39,13 @@ public final class Anchors {
         }
         return self
     }
+
+    public func identifier(_ identifier: String) -> Self {
+        for i in 0..<constraints.count {
+            constraints[i].identifier = identifier
+        }
+        return self
+    }
 }
 
 // MARK: - Expressions

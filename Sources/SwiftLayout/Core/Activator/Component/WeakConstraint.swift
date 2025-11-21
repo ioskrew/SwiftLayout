@@ -24,6 +24,7 @@ struct WeakConstraint {
         hasher.combine(origin?.constant)
         hasher.combine(origin?.multiplier)
         hasher.combine(origin?.priority)
+        hasher.combine(origin?.identifier)
         self.customHashValue = hasher.finalize()
     }
 }

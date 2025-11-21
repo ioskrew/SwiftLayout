@@ -231,11 +231,11 @@ extension ImplementationTests {
     func identifier() throws {
         let activation = root.sl.sublayout {
             UILabel().sl.identifying("label").sl.anchors {
-                Anchors.cap.equalToSuper()
+                Anchors.cap.equalToSuper().identifier("label-anchors")
             }
             UIView().sl.identifying("secondView").sl.anchors {
-                Anchors.top.equalTo("label", attribute: .bottom)
-                Anchors.shoe.equalToSuper()
+                Anchors.top.equalTo("label", attribute: .bottom).identifier("between-anchors")
+                Anchors.shoe.equalToSuper().identifier("secondView-anchors")
             }
             UILayoutGuide().sl.identifying("layoutGuide")
         }.active()
@@ -250,15 +250,17 @@ extension ImplementationTests {
         let layoutGuide = try #require(activation.layoutGuideForIdentifier("layoutGuide"))
         #expect(layoutGuide.identifier == "layoutGuide")
 
-        let currents = activation.constraints
-        let labelConstraints = Set(ofWeakConstraintsFrom: Anchors.cap.equalToSuper().constraints(item: label, toItem: root))
-        #expect(currents.intersection(labelConstraints) == labelConstraints)
+        let currentLabelConstraints = activation.constraints.filter { $0.origin?.identifier == "label-anchors" }
+        let labelConstraints = Set(ofWeakConstraintsFrom: Anchors.cap.equalToSuper().identifier("label-anchors").constraints(item: label, toItem: root))
+        #expect(currentLabelConstraints == labelConstraints)
 
-        let secondViewConstraints = Set(ofWeakConstraintsFrom: Anchors.cap.equalToSuper().constraints(item: label, toItem: root))
-        #expect(currents.intersection(secondViewConstraints) == secondViewConstraints)
+        let currentBetweenConstraints = activation.constraints.filter { $0.origin?.identifier == "between-anchors" }
+        let betweenConstraints = Set(ofWeakConstraintsFrom: Anchors.top.equalTo(label, attribute: .bottom).identifier("between-anchors").constraints(item: secondView, toItem: label))
+        #expect(currentBetweenConstraints == betweenConstraints)
 
-        let constraintsBetweebViews = Set(ofWeakConstraintsFrom: Anchors.top.equalTo(label, attribute: .bottom).constraints(item: secondView, toItem: label))
-        #expect(currents.intersection(constraintsBetweebViews) == constraintsBetweebViews)
+        let currentSeconeViewConstraints = activation.constraints.filter { $0.origin?.identifier == "secondView-anchors" }
+        let seconeViewConstraints = Set(ofWeakConstraintsFrom: Anchors.shoe.equalToSuper().identifier("secondView-anchors").constraints(item: secondView, toItem: root))
+        #expect(currentSeconeViewConstraints == seconeViewConstraints)
     }
 }
 
@@ -357,5 +359,64 @@ extension ImplementationTests {
         await layoutUpdateAfterForceDeactivate()
 
         #expect(true) // If the test runs without crashing, it's OK
+    }
+}
+
+extension ImplementationTests {
+
+    @Test
+    mutating func constraintUpdaterUpdatesConstantAndPriority() throws {
+        let layout = root.sl.sublayout {
+            child.sl.anchors {
+                Anchors.bottom.equalToSuper().identifier("bottom-id")
+            }
+        }
+
+        activation = layout.active()
+
+        let initialConstraints = try #require(activation?.constraints).compactMap(\.origin)
+        let bottom = try #require(initialConstraints.first { $0.identifier == "bottom-id" })
+        #expect(bottom.constant == 0)
+        #expect(bottom.priority == .required)
+
+        activation?.anchors("bottom-id", attribute: .bottom).update(constant: -12, priority: .defaultHigh)
+
+        let updatedConstraints = try #require(activation?.constraints).compactMap(\.origin)
+        let updated = try #require(updatedConstraints.first { $0.identifier == "bottom-id" })
+        #expect(updated.constant == -12)
+        #expect(updated.priority == .defaultHigh)
+
+        activation?.deactive()
+        activation = nil
+    }
+
+    @Test
+    mutating func constraintUpdaterFiltersByAttribute() throws {
+        let layout = root.sl.sublayout {
+            child.sl.anchors {
+                Anchors.top.equalToSuper().identifier("edge-id")
+                Anchors.bottom.equalToSuper().identifier("edge-id")
+            }
+        }
+
+        activation = layout.active()
+
+        let constraints = try #require(activation?.constraints).compactMap(\.origin)
+        let top = try #require(constraints.first { $0.firstAttribute == .top && $0.identifier == "edge-id" })
+        let bottom = try #require(constraints.first { $0.firstAttribute == .bottom && $0.identifier == "edge-id" })
+        #expect(top.constant == 0)
+        #expect(bottom.constant == 0)
+
+        activation?.anchors("edge-id", attribute: .bottom).update(constant: -4, priority: nil)
+
+        let refreshedConstraints = try #require(activation?.constraints).compactMap(\.origin)
+        let refreshedTop = try #require(refreshedConstraints.first { $0.firstAttribute == .top && $0.identifier == "edge-id" })
+        let refreshedBottom = try #require(refreshedConstraints.first { $0.firstAttribute == .bottom && $0.identifier == "edge-id" })
+
+        #expect(refreshedTop.constant == 0)
+        #expect(refreshedBottom.constant == -4)
+
+        activation?.deactive()
+        activation = nil
     }
 }

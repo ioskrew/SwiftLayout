@@ -40,6 +40,31 @@ extension Activation {
         hierarchyInfos.first(where: { $0.identifier == identifier })?.node as? UILayoutGuide
     }
 
+    /// Returns an updater scoped to constraints carrying the given identifier.
+    ///
+    /// The returned instance retains this activation and re-evaluates the predicate
+    /// on every call, so it is safe to store the updater for later use.
+    ///
+    /// ```swift
+    /// let updater = activation.anchors("flag-anchor", attribute: .bottom)
+    /// updater.update(constant: -5, priority: .defaultHigh)
+    /// ```
+    @MainActor
+    public func anchors(
+        _ identifier: String,
+        predicate: ConstraintUpdater.Predicate? = nil
+    ) -> ConstraintUpdater {
+        ConstraintUpdater(activation: self, identifier: identifier, predicate: predicate)
+    }
+
+    @MainActor
+    public func anchors(
+        _ identifier: String,
+        attribute: NSLayoutConstraint.Attribute
+    ) -> ConstraintUpdater {
+        anchors(identifier, predicate: { $0.attribute == attribute })
+    }
+
     public func store<C: RangeReplaceableCollection>(_ store: inout C) where C.Element == Activation {
         store.append(self)
     }
