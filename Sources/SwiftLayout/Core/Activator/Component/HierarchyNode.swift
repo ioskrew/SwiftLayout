@@ -30,15 +30,21 @@ extension UIView: HierarchyNode {
     }
 
     func addToSuperview(_ superview: UIView?, option: LayoutOption) {
-        superview?.addSubview(self)
-
-        if let stackSuperView = superview as? UIStackView, option.contains(.isNotArranged) == false {
-            stackSuperView.addArrangedSubview(self)
+        if let stackView = superview as? UIStackView, !option.contains(.isNotArranged) {
+            stackView.addArrangedSubview(self)
+        } else if let visualEffectView = superview as? UIVisualEffectView {
+            visualEffectView.contentView.addSubview(self)
+        } else {
+            superview?.addSubview(self)
         }
     }
 
     func removeFromSuperview(_ superview: UIView?) {
-        guard superview == self.superview else { return }
+        if let visualEffectView = superview as? UIVisualEffectView {
+            guard visualEffectView.contentView == self.superview else { return }
+        } else {
+            guard superview == self.superview else { return }
+        }
         self.removeFromSuperview()
     }
 
@@ -61,15 +67,21 @@ extension UILayoutGuide: HierarchyNode {
     }
 
     func addToSuperview(_ superview: UIView?, option: LayoutOption) {
-        superview?.addLayoutGuide(self)
+        if let visualEffectView = superview as? UIVisualEffectView {
+            visualEffectView.contentView.addLayoutGuide(self)
+        } else {
+            superview?.addLayoutGuide(self)
+        }
     }
 
     func removeFromSuperview(_ superview: UIView?) {
-        guard superview == self.owningView else {
-            return
+        if let visualEffectView = superview as? UIVisualEffectView {
+            guard visualEffectView.contentView == self.owningView else { return }
+            visualEffectView.contentView.removeLayoutGuide(self)
+        } else {
+            guard superview == self.owningView else { return }
+            superview?.removeLayoutGuide(self)
         }
-
-        superview?.removeLayoutGuide(self)
     }
 
     func forceLayout() {
