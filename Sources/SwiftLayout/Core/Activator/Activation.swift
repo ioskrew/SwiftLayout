@@ -32,12 +32,12 @@ extension Activation {
 
     @MainActor
     public func viewForIdentifier(_ identifier: String) -> UIView? {
-        hierarchyInfos.first(where: { $0.identifier == identifier })?.node as? UIView
+        hierarchyInfos.first(where: { $0.identifier == identifier })?.node.baseObject as? UIView
     }
 
     @MainActor
     public func layoutGuideForIdentifier(_ identifier: String) -> UILayoutGuide? {
-        hierarchyInfos.first(where: { $0.identifier == identifier })?.node as? UILayoutGuide
+        hierarchyInfos.first(where: { $0.identifier == identifier })?.node.baseObject as? UILayoutGuide
     }
 
     /// Returns an updater scoped to constraints carrying the given identifier.

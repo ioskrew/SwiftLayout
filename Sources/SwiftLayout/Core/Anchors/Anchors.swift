@@ -20,7 +20,7 @@ public final class Anchors {
         self.constraints.append(contentsOf: container.constraints)
     }
 
-    func constraints(item fromItem: NSObject, toItem: NSObject?, viewDic: [String: any HierarchyNode] = [:]) -> [NSLayoutConstraint] {
+    func constraints(item fromItem: NSObject, toItem: NSObject?, viewDic: [String: any HierarchyNodable] = [:]) -> [NSLayoutConstraint] {
         constraints.map {
             $0.nsLayoutConstraint(item: fromItem, toItem: toItem, viewDic: viewDic)
         }

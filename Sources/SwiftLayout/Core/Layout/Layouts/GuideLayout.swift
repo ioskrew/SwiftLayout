@@ -10,7 +10,7 @@ public struct GuideLayout<LayoutGuide: UILayoutGuide>: Layout {
     }
 
     public func layoutComponents(superview: UIView?, option: LayoutOption) -> [LayoutComponent] {
-        let component = LayoutComponent(superview: superview, node: self.guide, anchors: anchors, option: option)
+        let component = LayoutComponent(superview: superview, node: GuideNode(guide), anchors: anchors, option: option)
 
         return [component]
     }
