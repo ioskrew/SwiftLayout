@@ -76,16 +76,24 @@ public extension LayoutMethodWrapper where Base: UIView {
         ViewLayout(self.base, sublayout: EmptyLayout(), onActivate: perform)
     }
 
-    /// Sets the view's `accessibilityIdentifier`.
+    /// Sets the view's `accessibilityIdentifier` and returns a layout for method chaining.
     ///
     /// ```swift
-    /// let label = UILabel().sl.identifying("myLabel")
+    /// // Can be used in sublayout builders
+    /// root.sl.sublayout {
+    ///     child.sl.identifying("child")
+    /// }
+    ///
+    /// // Supports method chaining
+    /// view.sl.identifying("myView").anchors {
+    ///     Anchors.allSides.equalToSuper()
+    /// }
     /// ```
     ///
     /// - Parameter accessibilityIdentifier: A string containing the identifier of the element.
-    /// - Returns: The view itself with the accessibilityIdentifier applied.
-    func identifying(_ accessibilityIdentifier: String) -> Base {
+    /// - Returns: A ``ViewLayout`` for method chaining and use in layout builders.
+    func identifying(_ accessibilityIdentifier: String) -> ViewLayout<Base, EmptyLayout> {
         self.base.accessibilityIdentifier = accessibilityIdentifier
-        return self.base
+        return ViewLayout(self.base, sublayout: EmptyLayout())
     }
 }

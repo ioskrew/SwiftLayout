@@ -7,16 +7,16 @@ struct LayoutDSLTest { // swiftlint:disable:this type_body_length
 
     @MainActor
     class LayoutDSLTestsBase {
-        let window = UIView(frame: .init(x: 0, y: 0, width: 150, height: 150)).sl.identifying("window")
+        let window = UIView(frame: .init(x: 0, y: 0, width: 150, height: 150)).withIdentifier("window")
 
-        let root = UIView().sl.identifying("root")
-        let child = UIView().sl.identifying("child")
-        let button = UIButton().sl.identifying("button")
-        let label = UILabel().sl.identifying("label")
-        let red = UIView().sl.identifying("red")
-        let blue = UIView().sl.identifying("blue")
-        let green = UIView().sl.identifying("green")
-        let image = UIImageView().sl.identifying("image")
+        let root = UIView().withIdentifier("root")
+        let child = UIView().withIdentifier("child")
+        let button = UIButton().withIdentifier("button")
+        let label = UILabel().withIdentifier("label")
+        let red = UIView().withIdentifier("red")
+        let blue = UIView().withIdentifier("blue")
+        let green = UIView().withIdentifier("green")
+        let image = UIImageView().withIdentifier("image")
 
         var activation: Activation?
 
@@ -569,7 +569,7 @@ struct LayoutDSLTest { // swiftlint:disable:this type_body_length
     final class GuideLayoutTest: LayoutDSLTestsBase {
         @Test
         func guideLayout() {
-            let layoutGuide = UILayoutGuide().sl.identifying("layoutGuide")
+            let layoutGuide = UILayoutGuide().withIdentifier("layoutGuide")
 
             @LayoutBuilder
             var layout: some Layout {
@@ -607,7 +607,7 @@ struct LayoutDSLTest { // swiftlint:disable:this type_body_length
             expectView(red, superview: root, subviews: [])
             expectLayoutGuides(root, layoutGuides: [])
             
-            let layoutGuide = UILayoutGuide().sl.identifying("layoutGuide")
+            let layoutGuide = UILayoutGuide().withIdentifier("layoutGuide")
             optionalLayoutGuide = layoutGuide
             
             activation = layout.update(fromActivation: activation!)
@@ -650,7 +650,7 @@ struct LayoutDSLTest { // swiftlint:disable:this type_body_length
         @Test
         func sublayoutShouldBeAddedToContentView() {
             let visualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .regular))
-            let childView = UIView().sl.identifying("child")
+            let childView = UIView().withIdentifier("child")
 
             @LayoutBuilder
             var layout: some Layout {
@@ -671,9 +671,9 @@ struct LayoutDSLTest { // swiftlint:disable:this type_body_length
         @Test
         func nestedSublayoutShouldBeAddedToContentView() {
             let visualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .regular))
-            let childView1 = UIView().sl.identifying("child1")
-            let childView2 = UIView().sl.identifying("child2")
-            let nestedView = UIView().sl.identifying("nested")
+            let childView1 = UIView().withIdentifier("child1")
+            let childView2 = UIView().withIdentifier("child2")
+            let nestedView = UIView().withIdentifier("nested")
 
             @LayoutBuilder
             var layout: some Layout {
@@ -699,7 +699,7 @@ struct LayoutDSLTest { // swiftlint:disable:this type_body_length
         @Test
         func deactiveShouldRemoveFromContentView() {
             let visualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .regular))
-            let childView = UIView().sl.identifying("child")
+            let childView = UIView().withIdentifier("child")
 
             @LayoutBuilder
             var layout: some Layout {
@@ -722,8 +722,8 @@ struct LayoutDSLTest { // swiftlint:disable:this type_body_length
         @Test
         func updateLayoutShouldWorkWithContentView() {
             let visualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .regular))
-            let childView1 = UIView().sl.identifying("child1")
-            let childView2 = UIView().sl.identifying("child2")
+            let childView1 = UIView().withIdentifier("child1")
+            let childView2 = UIView().withIdentifier("child2")
             var showFirst = true
 
             @LayoutBuilder
@@ -752,7 +752,7 @@ struct LayoutDSLTest { // swiftlint:disable:this type_body_length
         @Test
         func layoutGuideShouldBeAddedToContentView() {
             let visualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .regular))
-            let layoutGuide = UILayoutGuide().sl.identifying("guide")
+            let layoutGuide = UILayoutGuide().withIdentifier("guide")
 
             @LayoutBuilder
             var layout: some Layout {

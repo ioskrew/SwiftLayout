@@ -6,9 +6,9 @@ import UIKit
 @MainActor
 struct ImplementationTests {
 
-    let root = UIView().sl.identifying("root")
-    let child = UIView().sl.identifying("child")
-    let friend = UIView().sl.identifying("friend")
+    let root = UIView().withIdentifier("root")
+    let child = UIView().withIdentifier("child")
+    let friend = UIView().withIdentifier("friend")
 
     var activation: Activation?
 }
@@ -16,11 +16,11 @@ struct ImplementationTests {
 extension ImplementationTests {
     @Test
     func layoutTraversal() {
-        let root: UIView = UIView().sl.identifying("root")
-        let button: UIButton = UIButton().sl.identifying("button")
-        let label: UILabel = UILabel().sl.identifying("label")
-        let redView: UIView = UIView().sl.identifying("redView")
-        let image: UIImageView = UIImageView().sl.identifying("image")
+        let root = UIView().withIdentifier("root")
+        let button = UIButton().withIdentifier("button")
+        let label = UILabel().withIdentifier("label")
+        let redView = UIView().withIdentifier("redView")
+        let image = UIImageView().withIdentifier("image")
 
         let layout = root.sl.sublayout {
             redView
@@ -114,9 +114,9 @@ extension ImplementationTests {
 
     @Test
     mutating func dontTouchRootViewByDeactive() {
-        let root = UIView().sl.identifying("root")
-        let red = UIView().sl.identifying("red")
-        let old = UIView().sl.identifying("old")
+        let root = UIView().withIdentifier("root")
+        let red = UIView().withIdentifier("red")
+        let old = UIView().withIdentifier("old")
         old.addSubview(root)
         root.translatesAutoresizingMaskIntoConstraints = true
 
@@ -230,10 +230,10 @@ extension ImplementationTests {
     @Test
     func identifier() throws {
         let activation = root.sl.sublayout {
-            UILabel().sl.identifying("label").sl.anchors {
+            UILabel().sl.identifying("label").anchors {
                 Anchors.cap.equalToSuper().identifier("label-anchors")
             }
-            UIView().sl.identifying("secondView").sl.anchors {
+            UIView().sl.identifying("secondView").anchors {
                 Anchors.top.equalTo("label", attribute: .bottom).identifier("between-anchors")
                 Anchors.shoe.equalToSuper().identifier("secondView-anchors")
             }
@@ -268,7 +268,7 @@ extension ImplementationTests {
 
     @Test
     func stackViewMaintainOrderingOfArrangedSubviews() {
-        let stack = StackView(frame: .init(x: 0, y: 0, width: 40, height: 80)).sl.identifying("view")
+        let stack = StackView(frame: .init(x: 0, y: 0, width: 40, height: 80)).withIdentifier("view")
         var aView: UIView {
             stack.aView
         }
@@ -314,11 +314,12 @@ extension ImplementationTests {
             stack.distribution = .fillEqually
             stack.alignment = .center
             stack.spacing = 0.0
+            stack.accessibilityIdentifier = "stack"
             return stack
-        }().sl.identifying("stack")
+        }()
 
-        let aView = UIView().sl.identifying("a")
-        let bView = UIView().sl.identifying("b")
+        let aView = UIView().withIdentifier("a")
+        let bView = UIView().withIdentifier("b")
 
         var isA: Bool = true
     }

@@ -694,7 +694,7 @@ struct AnchorsDSLTests { // swiftlint:disable:this type_body_length
                         Anchors.cap.equalToSuper()
                         Anchors.bottom.equalTo("someIdentifier", attribute: .top)
                     }
-                    identifyingView.sl.identifying("someIdentifier").sl.anchors {
+                    identifyingView.sl.identifying("someIdentifier").anchors {
                         Anchors.width.equalTo(constant: 37)
                         Anchors.height.equalToSuper().multiplier(0.5)
                         Anchors.centerX
