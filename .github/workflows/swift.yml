@@ -5,6 +5,7 @@ on:
     branches: [ develop ]
   pull_request:
     branches: [ develop ]
+  workflow_dispatch:
 
 env:
   DEVELOPER_DIR: /Applications/Xcode_16.0.app/Contents/Developer
