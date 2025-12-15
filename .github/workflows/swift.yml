@@ -2,25 +2,140 @@ name: SwiftLayout
 
 on:
   push:
-    branches: [ develop ]
+    branches: [ main, develop ]
   pull_request:
-    branches: [ develop ]
+    branches: [ main, develop ]
+  workflow_dispatch:
 
 jobs:
+  # iOS Tests - min & latest
   test-ios:
-    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # iOS 15 (min supported)
+          - os: macos-13
+            xcode: "14.3.1"
+            destination: "platform=iOS Simulator,name=iPhone 14,OS=16.4"
+            version: "15 (min)"
+          # iOS 18 (latest)
+          - os: macos-15
+            xcode: "16.1"
+            destination: "platform=iOS Simulator,name=iPhone 16,OS=18.1"
+            version: "18 (latest)"
+
+    runs-on: ${{ matrix.os }}
+    name: iOS ${{ matrix.version }}
     steps:
       - uses: actions/checkout@v4
 
       - uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: "26.0.1"
+          xcode-version: ${{ matrix.xcode }}
 
       - name: Build & Test
         run: |
           xcodebuild \
             -scheme SwiftLayout \
             -sdk iphonesimulator \
-            -destination "platform=iOS Simulator,name=iPhone 17,OS=26.0.1" \
+            -destination "${{ matrix.destination }}" \
+            -skipPackagePluginValidation \
+            test
+
+  # macOS Tests - min & latest
+  test-macos:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # macOS 12 (min supported)
+          - os: macos-13
+            xcode: "14.3.1"
+            version: "12 (min)"
+          # macOS 15 (latest)
+          - os: macos-15
+            xcode: "16.1"
+            version: "15 (latest)"
+
+    runs-on: ${{ matrix.os }}
+    name: macOS ${{ matrix.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ matrix.xcode }}
+
+      - name: Build & Test
+        run: swift test
+
+  # tvOS Tests - min & latest
+  test-tvos:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # tvOS 15 (min supported)
+          - os: macos-13
+            xcode: "14.3.1"
+            destination: "platform=tvOS Simulator,name=Apple TV"
+            version: "15 (min)"
+          # tvOS 18 (latest)
+          - os: macos-15
+            xcode: "16.1"
+            destination: "platform=tvOS Simulator,name=Apple TV"
+            version: "18 (latest)"
+
+    runs-on: ${{ matrix.os }}
+    name: tvOS ${{ matrix.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ matrix.xcode }}
+
+      - name: Build & Test
+        run: |
+          xcodebuild \
+            -scheme SwiftLayout \
+            -sdk appletvsimulator \
+            -destination "${{ matrix.destination }}" \
+            -skipPackagePluginValidation \
+            test
+
+  # visionOS Tests - min & latest
+  test-visionos:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # visionOS 1 (min supported)
+          - os: macos-14
+            xcode: "15.4"
+            destination: "platform=visionOS Simulator,name=Apple Vision Pro"
+            version: "1 (min)"
+          # visionOS 2 (latest)
+          - os: macos-15
+            xcode: "16.1"
+            destination: "platform=visionOS Simulator,name=Apple Vision Pro"
+            version: "2 (latest)"
+
+    runs-on: ${{ matrix.os }}
+    name: visionOS ${{ matrix.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ matrix.xcode }}
+
+      - name: Build & Test
+        run: |
+          xcodebuild \
+            -scheme SwiftLayout \
+            -sdk xrsimulator \
+            -destination "${{ matrix.destination }}" \
             -skipPackagePluginValidation \
             test

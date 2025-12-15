@@ -1,5 +1,6 @@
 import SwiftLayoutPlatform
 
+@available(iOS 17, macOS 14, tvOS 17, visionOS 1, *)
 public struct TupleLayout<each Sublayout: Layout>: Layout {
     private let sublayouts: (repeat each Sublayout)
 

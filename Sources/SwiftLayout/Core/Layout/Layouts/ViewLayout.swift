@@ -83,10 +83,9 @@ extension ViewLayout {
     /// - Parameter build: A ``LayoutBuilder`` that  create sublayouts of this layout.
     /// - Returns: The layout itself with sublayout coordinator added
     ///
-    public func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<V, TupleLayout<Sublayout, L>> {
-        let sublayout = TupleLayout<Sublayout, L>(layouts: (self.sublayout, build()))
-
-        return ViewLayout<V, TupleLayout<Sublayout, L>>(view, sublayout: sublayout, anchors: anchors, onActivate: onActivateBlock)
+    public func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<V, TupleLayout2<Sublayout, L>> {
+        let sublayout = TupleLayout2(self.sublayout, build())
+        return ViewLayout<V, TupleLayout2<Sublayout, L>>(view, sublayout: sublayout, anchors: anchors, onActivate: onActivateBlock)
     }
 
     ///

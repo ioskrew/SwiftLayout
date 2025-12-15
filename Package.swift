@@ -4,7 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "SwiftLayout",
-    platforms: [.iOS(.v17), .macOS(.v14)],
+    platforms: [.iOS(.v15), .macOS(.v12), .tvOS(.v15), .visionOS(.v1)],
     products: [
         .library(
             name: "SwiftLayout",
