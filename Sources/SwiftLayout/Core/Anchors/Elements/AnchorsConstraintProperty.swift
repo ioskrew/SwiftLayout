@@ -5,7 +5,7 @@
 //  Created by aiden_h on 2022/03/31.
 //
 
-import UIKit
+import SwiftLayoutPlatform
 
 @MainActor
 public struct AnchorsConstraintProperty {
@@ -15,7 +15,7 @@ public struct AnchorsConstraintProperty {
     public let toAttribute: NSLayoutConstraint.Attribute?
     public let constant: CGFloat
     public internal(set) var multiplier: CGFloat = 1.0
-    public internal(set) var priority: UILayoutPriority = .required
+    public internal(set) var priority: SLLayoutPriority = .required
     public internal(set) var identifier: String? = nil
 
     public var isDimension: Bool {
@@ -24,8 +24,8 @@ public struct AnchorsConstraintProperty {
 
     func nsLayoutConstraint(item fromItem: NSObject, toItem: NSObject?, viewDic: [String: any HierarchyNodable]) -> NSLayoutConstraint {
         let to = self.toItem(toItem, viewDic: viewDic)
-        assert(fromItem is UIView || fromItem is UILayoutGuide, "from: \(fromItem.debugDescription) is not item")
-        assert(to is UIView || to is UILayoutGuide || to == nil, "to: \(to.debugDescription) is not item")
+        assert(fromItem is SLView || fromItem is SLLayoutGuide, "from: \(fromItem.debugDescription) is not item")
+        assert(to is SLView || to is SLLayoutGuide || to == nil, "to: \(to.debugDescription) is not item")
 
         let constrint = NSLayoutConstraint(
             item: fromItem,

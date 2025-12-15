@@ -5,7 +5,7 @@
 //  Created by aiden_h on 8/8/24.
 //
 
-import UIKit
+import SwiftLayoutPlatform
 
 @MainActor
 struct Deactivator {

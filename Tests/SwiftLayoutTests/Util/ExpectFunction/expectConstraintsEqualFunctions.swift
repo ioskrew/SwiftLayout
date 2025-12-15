@@ -5,13 +5,13 @@
 import Foundation
 @testable import SwiftLayout
 import Testing
-import UIKit
+import SwiftLayoutPlatform
 
 @MainActor
 func hasSameElements(
     _ constraints1: [NSLayoutConstraint],
     _ constraints2: [NSLayoutConstraint],
-    _ tags: [UIView: String] = [:]
+    _ tags: [SLView: String] = [:]
 ) -> Bool {
     let descriptions1: [String] = constraints1.map(testDescriptionFromConstraint(tags)).sorted()
     let descriptions2: [String] = constraints2.map(testDescriptionFromConstraint(tags)).sorted()
@@ -23,7 +23,7 @@ func hasSameElements(
 func isEqual(
     _ constraints1: [NSLayoutConstraint],
     _ constraints2: [NSLayoutConstraint],
-    _ tags: [UIView: String] = [:]
+    _ tags: [SLView: String] = [:]
 ) -> Bool {
     let descriptions1: [String] = constraints1.map(testDescriptionFromConstraint(tags))
     let descriptions2: [String] = constraints2.map(testDescriptionFromConstraint(tags))
@@ -35,7 +35,7 @@ func isEqual(
 func isNotEqual(
     _ constraints1: [NSLayoutConstraint],
     _ constraints2: [NSLayoutConstraint],
-    _ tags: [UIView: String] = [:]
+    _ tags: [SLView: String] = [:]
 ) -> Bool {
     let descriptions1: [String] = constraints1.map(testDescriptionFromConstraint(tags))
     let descriptions2: [String] = constraints2.map(testDescriptionFromConstraint(tags))
@@ -44,7 +44,7 @@ func isNotEqual(
 }
 
 @MainActor
-private func testDescriptionFromConstraint(_ tags: [UIView: String] = [:]) -> (_ constraint: NSLayoutConstraint) -> String {
+private func testDescriptionFromConstraint(_ tags: [SLView: String] = [:]) -> (_ constraint: NSLayoutConstraint) -> String {
     { constraint in
         var description = constraint.debugDescription
         for tag in tags {
@@ -59,7 +59,7 @@ private func testDescriptionFromConstraint(_ tags: [UIView: String] = [:]) -> (_
 }
 
 @MainActor
-private func typeAndAddressFromView(_ view: UIView) -> String {
+private func typeAndAddressFromView(_ view: SLView) -> String {
     view.debugDescription.dropFirst().description.replacingRegex(of: ";[:print:]+").replacingOccurrences(of: " ", with: "")
 }
 
@@ -72,7 +72,7 @@ private extension String {
 
 extension Sequence where Element == NSLayoutConstraint {
     @MainActor
-    func testDescriptions(_ tags: [UIView: String]) -> [String] {
+    func testDescriptions(_ tags: [SLView: String]) -> [String] {
         map(testDescriptionFromConstraint(tags))
     }
 }

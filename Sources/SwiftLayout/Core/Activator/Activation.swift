@@ -5,7 +5,7 @@
 //  Created by aiden_h on 2022/02/16.
 //
 
-import UIKit
+import SwiftLayoutPlatform
 
 public final class Activation: Hashable {
     var hierarchyInfos: [HierarchyInfo]
@@ -31,13 +31,13 @@ extension Activation {
     }
 
     @MainActor
-    public func viewForIdentifier(_ identifier: String) -> UIView? {
-        hierarchyInfos.first(where: { $0.identifier == identifier })?.node.baseObject as? UIView
+    public func viewForIdentifier(_ identifier: String) -> SLView? {
+        hierarchyInfos.first(where: { $0.identifier == identifier })?.node.baseObject as? SLView
     }
 
     @MainActor
-    public func layoutGuideForIdentifier(_ identifier: String) -> UILayoutGuide? {
-        hierarchyInfos.first(where: { $0.identifier == identifier })?.node.baseObject as? UILayoutGuide
+    public func layoutGuideForIdentifier(_ identifier: String) -> SLLayoutGuide? {
+        hierarchyInfos.first(where: { $0.identifier == identifier })?.node.baseObject as? SLLayoutGuide
     }
 
     /// Returns an updater scoped to constraints carrying the given identifier.

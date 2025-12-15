@@ -5,10 +5,10 @@
 //  Created by oozoofrog on 2022/03/13.
 //
 
-import UIKit
+import SwiftLayoutPlatform
 
-// MARK: - Public UIView API
-public extension LayoutMethodWrapper where Base: UIView {
+// MARK: - Public SLView API
+public extension LayoutMethodWrapper where Base: SLView {
 
     /// Creates a ``ViewLayout`` containing this view with the specified anchors.
     ///
@@ -93,7 +93,7 @@ public extension LayoutMethodWrapper where Base: UIView {
     /// - Parameter accessibilityIdentifier: A string containing the identifier of the element.
     /// - Returns: A ``ViewLayout`` for method chaining and use in layout builders.
     func identifying(_ accessibilityIdentifier: String) -> ViewLayout<Base, EmptyLayout> {
-        self.base.accessibilityIdentifier = accessibilityIdentifier
+        SwiftLayoutPlatformHelper.setViewIdentifier(self.base, accessibilityIdentifier)
         return ViewLayout(self.base, sublayout: EmptyLayout())
     }
 }

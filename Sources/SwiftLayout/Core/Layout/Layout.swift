@@ -5,11 +5,11 @@
 //  Created by oozoofrog on 2022/01/26.
 //
 
-import UIKit
+import SwiftLayoutPlatform
 
 @MainActor
 public protocol Layout {
-    func layoutComponents(superview: UIView?, option: LayoutOption) -> [LayoutComponent]
+    func layoutComponents(superview: SLView?, option: LayoutOption) -> [LayoutComponent]
 
     func layoutWillActivate()
     func layoutDidActivate()

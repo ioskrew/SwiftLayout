@@ -5,7 +5,7 @@
 //  Created by oozoofrog on 2022/02/12.
 //
 
-import UIKit
+import SwiftLayoutPlatform
 
 struct WeakConstraint {
     private(set) weak var origin: NSLayoutConstraint?

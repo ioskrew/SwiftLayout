@@ -2,7 +2,7 @@
 //  AnchorsMixedExpression.swift
 //  
 
-import UIKit
+import SwiftLayoutPlatform
 
 @MainActor
 public struct AnchorsMixedExpression: AnchorsExpressionOmitable {
@@ -59,20 +59,24 @@ extension AnchorsMixedExpression {
     public var trailing: AnchorsMixedExpression { AnchorsMixedExpression(from: self, appendedAttribute: AnchorsXAxisAttribute.trailing) }
     public var left: AnchorsMixedExpression { AnchorsMixedExpression(from: self, appendedAttribute: AnchorsXAxisAttribute.left) }
     public var right: AnchorsMixedExpression { AnchorsMixedExpression(from: self, appendedAttribute: AnchorsXAxisAttribute.right) }
+    #if canImport(UIKit)
     public var centerXWithinMargins: AnchorsMixedExpression { AnchorsMixedExpression(from: self, appendedAttribute: AnchorsXAxisAttribute.centerXWithinMargins) }
     public var leftMargin: AnchorsMixedExpression { AnchorsMixedExpression(from: self, appendedAttribute: AnchorsXAxisAttribute.leftMargin) }
     public var rightMargin: AnchorsMixedExpression { AnchorsMixedExpression(from: self, appendedAttribute: AnchorsXAxisAttribute.rightMargin) }
     public var leadingMargin: AnchorsMixedExpression { AnchorsMixedExpression(from: self, appendedAttribute: AnchorsXAxisAttribute.leadingMargin) }
     public var trailingMargin: AnchorsMixedExpression { AnchorsMixedExpression(from: self, appendedAttribute: AnchorsXAxisAttribute.trailingMargin) }
+    #endif
 
     public var centerY: AnchorsMixedExpression { AnchorsMixedExpression(from: self, appendedAttribute: AnchorsYAxisAttribute.centerY) }
     public var top: AnchorsMixedExpression { AnchorsMixedExpression(from: self, appendedAttribute: AnchorsYAxisAttribute.top) }
     public var bottom: AnchorsMixedExpression { AnchorsMixedExpression(from: self, appendedAttribute: AnchorsYAxisAttribute.bottom) }
     public var firstBaseline: AnchorsMixedExpression { AnchorsMixedExpression(from: self, appendedAttribute: AnchorsYAxisAttribute.firstBaseline) }
     public var lastBaseline: AnchorsMixedExpression { AnchorsMixedExpression(from: self, appendedAttribute: AnchorsYAxisAttribute.lastBaseline) }
+    #if canImport(UIKit)
     public var centerYWithinMargins: AnchorsMixedExpression { AnchorsMixedExpression(from: self, appendedAttribute: AnchorsYAxisAttribute.centerYWithinMargins) }
     public var topMargin: AnchorsMixedExpression { AnchorsMixedExpression(from: self, appendedAttribute: AnchorsYAxisAttribute.topMargin) }
     public var bottomMargin: AnchorsMixedExpression { AnchorsMixedExpression(from: self, appendedAttribute: AnchorsYAxisAttribute.bottomMargin) }
+    #endif
 
     public var height: AnchorsMixedExpression { AnchorsMixedExpression(from: self, appendedAttribute: AnchorsDimensionAttribute.height) }
     public var width: AnchorsMixedExpression { AnchorsMixedExpression(from: self, appendedAttribute: AnchorsDimensionAttribute.width) }

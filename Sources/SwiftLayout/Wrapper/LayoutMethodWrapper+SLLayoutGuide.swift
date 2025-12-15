@@ -5,10 +5,10 @@
 //  Created by oozoofrog on 2022/03/13.
 //
 
-import UIKit
+import SwiftLayoutPlatform
 
-// MARK: - Public UILayoutGuide API
-public extension LayoutMethodWrapper where Base: UILayoutGuide {
+// MARK: - Public SLLayoutGuide API
+public extension LayoutMethodWrapper where Base: SLLayoutGuide {
 
     /// Creates a ``GuideLayout`` containing this layout guide with the specified anchors.
     ///
@@ -51,7 +51,7 @@ public extension LayoutMethodWrapper where Base: UILayoutGuide {
     /// - Parameter identifier: A string that uniquely identifies the layout guide.
     /// - Returns: A ``GuideLayout`` for method chaining and use in layout builders.
     func identifying(_ identifier: String) -> GuideLayout<Base> {
-        self.base.identifier = identifier
+        SwiftLayoutPlatformHelper.setGuideIdentifier(self.base, identifier)
         return GuideLayout(self.base)
     }
 }

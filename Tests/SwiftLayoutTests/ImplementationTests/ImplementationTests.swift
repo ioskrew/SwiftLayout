@@ -1,14 +1,14 @@
 @testable import SwiftLayout
 import Testing
-import UIKit
+import SwiftLayoutPlatform
 
 /// test cases for api rules except DSL syntax
 @MainActor
 struct ImplementationTests {
 
-    let root = UIView().withIdentifier("root")
-    let child = UIView().withIdentifier("child")
-    let friend = UIView().withIdentifier("friend")
+    let root = SLView().withIdentifier("root")
+    let child = SLView().withIdentifier("child")
+    let friend = SLView().withIdentifier("friend")
 
     var activation: Activation?
 }
@@ -16,11 +16,11 @@ struct ImplementationTests {
 extension ImplementationTests {
     @Test
     func layoutTraversal() {
-        let root = UIView().withIdentifier("root")
-        let button = UIButton().withIdentifier("button")
-        let label = UILabel().withIdentifier("label")
-        let redView = UIView().withIdentifier("redView")
-        let image = UIImageView().withIdentifier("image")
+        let root = SLView().withIdentifier("root")
+        let button = SLView().withIdentifier("button")
+        let label = SLView().withIdentifier("label")
+        let redView = SLView().withIdentifier("redView")
+        let image = SLView().withIdentifier("image")
 
         let layout = root.sl.sublayout {
             redView
@@ -31,7 +31,7 @@ extension ImplementationTests {
         }
 
         let result = layout.layoutComponents(superview: nil, option: .none).map {
-            let superDescription = $0.superview?.accessibilityIdentifier ?? "nil"
+            let superDescription = $0.superview?.testIdentifier ?? "nil"
             let currentDescription = $0.node.nodeIdentifier ?? "nil"
             return "\(superDescription), \(currentDescription)"
         }
@@ -60,7 +60,7 @@ extension ImplementationTests {
         }
 
         _ = try #require(layout)
-        let currentViews = LayoutElements(layout: layout).hierarchyInfos.compactMap { $0.node.baseObject as? UIView }
+        let currentViews = LayoutElements(layout: layout).hierarchyInfos.compactMap { $0.node.baseObject as? SLView }
         #expect(currentViews == [root, child, friend])
     }
 
@@ -114,9 +114,9 @@ extension ImplementationTests {
 
     @Test
     mutating func dontTouchRootViewByDeactive() {
-        let root = UIView().withIdentifier("root")
-        let red = UIView().withIdentifier("red")
-        let old = UIView().withIdentifier("old")
+        let root = SLView().withIdentifier("root")
+        let red = SLView().withIdentifier("red")
+        let old = SLView().withIdentifier("old")
         old.addSubview(root)
         root.translatesAutoresizingMaskIntoConstraints = true
 
@@ -136,9 +136,9 @@ extension ImplementationTests {
 
     @Test
     mutating func onActivateBlockCallOnlyOnceWithConstantLayout() {
-        let root = UIView()
-        let button: UIButton = UIButton()
-        let label: UILabel = UILabel()
+        let root = SLView()
+        let button = SLView()
+        let label = SLView()
 
         var rootCount: Int = 0
         var buttonCount: Int = 0
@@ -180,9 +180,9 @@ extension ImplementationTests {
 
     @Test
     mutating func onActivateBlockCallOnlyOnceWithComputedLayout() {
-        let root = UIView()
-        let button: UIButton = UIButton()
-        let label: UILabel = UILabel()
+        let root = SLView()
+        let button = SLView()
+        let label = SLView()
 
         var rootCount: Int = 0
         var buttonCount: Int = 0
@@ -230,25 +230,25 @@ extension ImplementationTests {
     @Test
     func identifier() throws {
         let activation = root.sl.sublayout {
-            UILabel().sl.identifying("label").anchors {
+            SLView().sl.identifying("label").anchors {
                 Anchors.cap.equalToSuper().identifier("label-anchors")
             }
-            UIView().sl.identifying("secondView").anchors {
+            SLView().sl.identifying("secondView").anchors {
                 Anchors.top.equalTo("label", attribute: .bottom).identifier("between-anchors")
                 Anchors.shoe.equalToSuper().identifier("secondView-anchors")
             }
-            UILayoutGuide().sl.identifying("layoutGuide")
+            SLLayoutGuide().sl.identifying("layoutGuide")
         }.active()
 
         let label = try #require(activation.viewForIdentifier("label"))
-        #expect(label.accessibilityIdentifier == "label")
+        #expect(label.testIdentifier == "label")
 
         let secondView = try #require(activation.viewForIdentifier("secondView"))
-        #expect(secondView.accessibilityIdentifier == "secondView")
+        #expect(secondView.testIdentifier == "secondView")
 
         #expect(activation.viewForIdentifier("layoutGuide") == nil)
         let layoutGuide = try #require(activation.layoutGuideForIdentifier("layoutGuide"))
-        #expect(layoutGuide.identifier == "layoutGuide")
+        #expect(layoutGuide.testIdentifier == "layoutGuide")
 
         let currentLabelConstraints = activation.constraints.filter { $0.origin?.identifier == "label-anchors" }
         let labelConstraints = Set(ofWeakConstraintsFrom: Anchors.cap.equalToSuper().identifier("label-anchors").constraints(item: label, toItem: root))
@@ -269,31 +269,38 @@ extension ImplementationTests {
     @Test
     func stackViewMaintainOrderingOfArrangedSubviews() {
         let stack = StackView(frame: .init(x: 0, y: 0, width: 40, height: 80)).withIdentifier("view")
-        var aView: UIView {
+        var aView: SLView {
             stack.aView
         }
-        var bView: UIView {
+        var bView: SLView {
             stack.bView
         }
         stack.sl.updateLayout(forceLayout: true)
+        #if canImport(UIKit)
+        // Frame expectations are iOS-specific due to UIStackView behavior
         #expect(aView.frame.debugDescription == "(20.0, 0.0, 0.0, 40.0)")
         #expect(bView.frame.debugDescription == "(20.0, 40.0, 0.0, 40.0)")
+        #endif
 
         stack.isA = false
         stack.sl.updateLayout(forceLayout: true)
 
+        #if canImport(UIKit)
         #expect(bView.frame.debugDescription == "(20.0, 0.0, 0.0, 80.0)")
+        #endif
 
         stack.isA = true
         stack.sl.updateLayout(forceLayout: true)
 
-        #expect(stack.stack.arrangedSubviews.compactMap(\.accessibilityIdentifier) == [aView, bView].compactMap(\.accessibilityIdentifier))
+        #expect(stack.stack.arrangedSubviews.compactMap(\.testIdentifier) == [aView, bView].compactMap(\.testIdentifier))
+        #if canImport(UIKit)
         #expect(aView.frame.debugDescription == "(20.0, 0.0, 0.0, 40.0)")
         #expect(bView.frame.debugDescription == "(20.0, 40.0, 0.0, 40.0)")
+        #endif
     }
 
     @MainActor
-    final class StackView: UIView, Layoutable {
+    final class StackView: SLView, Layoutable {
         var activation: Activation?
         var layout: some Layout {
             self.sl.sublayout {
@@ -308,26 +315,33 @@ extension ImplementationTests {
             }
         }
 
-        let stack: UIStackView = {
-            let stack = UIStackView()
+        let stack: SLStackView = {
+            let stack = SLStackView()
+            #if canImport(UIKit)
             stack.axis = .vertical
             stack.distribution = .fillEqually
             stack.alignment = .center
-            stack.spacing = 0.0
             stack.accessibilityIdentifier = "stack"
+            #else
+            stack.orientation = .vertical
+            stack.distribution = .fillEqually
+            stack.alignment = .centerX
+            stack.setAccessibilityIdentifier("stack")
+            #endif
+            stack.spacing = 0.0
             return stack
         }()
 
-        let aView = UIView().withIdentifier("a")
-        let bView = UIView().withIdentifier("b")
+        let aView = SLView().withIdentifier("a")
+        let bView = SLView().withIdentifier("b")
 
         var isA: Bool = true
     }
 
     @Test
     func forecDeactivateNSLayoutConstraint() async throws {
-        let superview = UIView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
-        let childs: [UIView] = (0..<10).map({ _ in UIView(frame: CGRect(x: 0, y: 0, width: 100, height: 100)) })
+        let superview = SLView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+        let childs: [SLView] = (0..<10).map({ _ in SLView(frame: CGRect(x: 0, y: 0, width: 100, height: 100)) })
 
         var layout: some Layout {
             superview.sl.sublayout {
@@ -346,8 +360,8 @@ extension ImplementationTests {
             activation = layout.active(forceLayout: true)
 
             NSLayoutConstraint.deactivate(superview.constraints)
-            superview.setNeedsLayout()
-            superview.layoutIfNeeded()
+            superview.slSetNeedsLayout()
+            superview.slLayoutIfNeeded()
         }
 
         @MainActor

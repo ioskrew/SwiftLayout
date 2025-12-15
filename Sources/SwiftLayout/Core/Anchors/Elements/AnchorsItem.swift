@@ -5,11 +5,11 @@
 //  Created by aiden_h on 2022/03/30.
 //
 
-import UIKit
+import SwiftLayoutPlatform
 
 public protocol AnchorsItemable {}
-extension UIView: AnchorsItemable {}
-extension UILayoutGuide: AnchorsItemable {}
+extension SLView: AnchorsItemable {}
+extension SLLayoutGuide: AnchorsItemable {}
 extension String: AnchorsItemable {}
 
 public enum AnchorsItem: Hashable {

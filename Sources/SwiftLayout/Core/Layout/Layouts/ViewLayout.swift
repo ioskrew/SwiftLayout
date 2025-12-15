@@ -1,6 +1,6 @@
-import UIKit
+import SwiftLayoutPlatform
 
-public struct ViewLayout<V: UIView, Sublayout: Layout>: Layout {
+public struct ViewLayout<V: SLView, Sublayout: Layout>: Layout {
     private var view: V
     private let sublayout: Sublayout
     private let anchors: Anchors
@@ -16,7 +16,7 @@ public struct ViewLayout<V: UIView, Sublayout: Layout>: Layout {
         self.onActivateBlock = onActivate
     }
 
-    public func layoutComponents(superview: UIView?, option: LayoutOption) -> [LayoutComponent] {
+    public func layoutComponents(superview: SLView?, option: LayoutOption) -> [LayoutComponent] {
         let component = LayoutComponent(superview: superview, node: ViewNode(view), anchors: anchors, option: option)
         let sublayoutComponents: [LayoutComponent] = sublayout.layoutComponents(superview: view, option: .none)
 
@@ -118,7 +118,7 @@ extension ViewLayout {
     /// - Returns: The layout itself with the accessibilityIdentifier applied
     ///
     public func identifying(_ accessibilityIdentifier: String) -> Self {
-        view.accessibilityIdentifier = accessibilityIdentifier
+        SwiftLayoutPlatformHelper.setViewIdentifier(view, accessibilityIdentifier)
         return self
     }
 }

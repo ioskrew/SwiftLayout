@@ -2,7 +2,7 @@
 //  ConstraintUpdater.swift
 //
 
-import UIKit
+import SwiftLayoutPlatform
 
 /// Provides identifier-scoped updates over constraints owned by an activation.
 ///
@@ -29,7 +29,7 @@ public struct ConstraintUpdater {
     ///   - priority: Replacement priority. Pass `nil` to keep the current value.
     public func update(
         constant: CGFloat? = nil,
-        priority: UILayoutPriority? = nil
+        priority: SLLayoutPriority? = nil
     ) {
         guard let activation else { return }
 
@@ -77,7 +77,7 @@ extension ConstraintUpdater {
         public var firstItem: AnyObject? { constraint.firstItem as AnyObject? }
         public var secondItem: AnyObject? { constraint.secondItem as AnyObject? }
         public var constant: CGFloat { constraint.constant }
-        public var priority: UILayoutPriority { constraint.priority }
+        public var priority: SLLayoutPriority { constraint.priority }
         public var identifier: String? { constraint.identifier }
     }
 }

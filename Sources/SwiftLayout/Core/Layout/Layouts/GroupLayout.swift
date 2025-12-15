@@ -1,4 +1,4 @@
-import UIKit
+import SwiftLayoutPlatform
 
 public struct GroupLayout<Sublayout: Layout>: Layout {
     private let sublayout: Sublayout
@@ -9,7 +9,7 @@ public struct GroupLayout<Sublayout: Layout>: Layout {
         self.sublayout = handler()
     }
 
-    public func layoutComponents(superview: UIView?, option: LayoutOption) -> [LayoutComponent] {
+    public func layoutComponents(superview: SLView?, option: LayoutOption) -> [LayoutComponent] {
         return sublayout.layoutComponents(superview: superview, option: self.option)
     }
 

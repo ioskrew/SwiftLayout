@@ -1,4 +1,4 @@
-import UIKit
+import SwiftLayoutPlatform
 
 @MainActor
 @resultBuilder
@@ -12,24 +12,24 @@ public struct LayoutBuilder {
         OptionalLayout(sublayout: layout)
     }
 
-    public static func buildExpression<V: UIView>(_ uiView: V) -> ViewLayout<V, EmptyLayout> {
-        ViewLayout(uiView, sublayout: EmptyLayout())
+    public static func buildExpression<V: SLView>(_ view: V) -> ViewLayout<V, EmptyLayout> {
+        ViewLayout(view, sublayout: EmptyLayout())
     }
 
-    public static func buildExpression<V: UIView>(_ uiView: V?) -> OptionalLayout<ViewLayout<V, EmptyLayout>> {
+    public static func buildExpression<V: SLView>(_ view: V?) -> OptionalLayout<ViewLayout<V, EmptyLayout>> {
         var viewLayout: ViewLayout<V, EmptyLayout>?
-        if let uiView {
-            viewLayout = ViewLayout(uiView, sublayout: EmptyLayout())
+        if let view {
+            viewLayout = ViewLayout(view, sublayout: EmptyLayout())
         }
 
         return OptionalLayout(sublayout: viewLayout)
     }
 
-    public static func buildExpression<LayoutGuide: UILayoutGuide>(_ layoutGuide: LayoutGuide) -> GuideLayout<LayoutGuide> {
+    public static func buildExpression<LayoutGuide: SLLayoutGuide>(_ layoutGuide: LayoutGuide) -> GuideLayout<LayoutGuide> {
         GuideLayout(layoutGuide)
     }
 
-    public static func buildExpression<LayoutGuide: UILayoutGuide>(_ layoutGuide: LayoutGuide?) -> OptionalLayout<GuideLayout<LayoutGuide>> {
+    public static func buildExpression<LayoutGuide: SLLayoutGuide>(_ layoutGuide: LayoutGuide?) -> OptionalLayout<GuideLayout<LayoutGuide>> {
         var guideLayout: GuideLayout<LayoutGuide>?
         if let layoutGuide {
             guideLayout = GuideLayout(layoutGuide)

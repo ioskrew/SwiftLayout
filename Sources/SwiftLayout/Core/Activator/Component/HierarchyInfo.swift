@@ -5,16 +5,16 @@
 //  Created by oozoofrog on 2022/02/14.
 //
 
-import UIKit
+import SwiftLayoutPlatform
 
 final class HierarchyInfo: Hashable {
-    init(superview: UIView?, node: any HierarchyNodable, option: LayoutOption) {
+    init(superview: SLView?, node: any HierarchyNodable, option: LayoutOption) {
         self.superview = superview
         self.node = node
         self.option = option
     }
 
-    private(set) public weak var superview: UIView?
+    private(set) public weak var superview: SLView?
     private(set) public var node: any HierarchyNodable
     var option: LayoutOption
 

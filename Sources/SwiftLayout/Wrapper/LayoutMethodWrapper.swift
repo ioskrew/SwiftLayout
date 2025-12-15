@@ -5,9 +5,9 @@
 //  Created by oozoofrog on 2022/03/13.
 //
 
-import UIKit
+import SwiftLayoutPlatform
 
-/// A wrapper type that provides SwiftLayout extensions for UIView and UILayoutGuide.
+/// A wrapper type that provides SwiftLayout extensions for SLView and SLLayoutGuide.
 ///
 /// Access through the `.sl` property on compatible types:
 /// ```swift
