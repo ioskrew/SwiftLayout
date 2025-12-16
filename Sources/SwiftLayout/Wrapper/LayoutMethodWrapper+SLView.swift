@@ -1,5 +1,5 @@
 //
-//  LayoutMethodWrapper+UIView.swift
+//  LayoutMethodWrapper+SLView.swift
 //
 //
 //  Created by oozoofrog on 2022/03/13.
@@ -63,7 +63,7 @@ public extension LayoutMethodWrapper where Base: SLView {
     ///
     /// ```swift
     /// var layout: some Layout {
-    ///     UILabel().sl.onActivate { label in
+    ///     label.sl.onActivate { label in
     ///         label.backgroundColor = .blue
     ///         label.text = "hello"
     ///     }

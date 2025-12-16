@@ -16,7 +16,7 @@ import SwiftLayoutPlatform
 /// layoutGuide.sl.anchors { ... }
 /// ```
 ///
-/// - Note: Public API is defined in `LayoutMethodWrapper+UIView.swift` and `LayoutMethodWrapper+UILayoutGuide.swift`.
+/// - Note: Public API is defined in `LayoutMethodWrapper+SLView.swift` and `LayoutMethodWrapper+SLLayoutGuide.swift`.
 @MainActor
 public struct LayoutMethodWrapper<Base: LayoutMethodAccessible> {
     let base: Base

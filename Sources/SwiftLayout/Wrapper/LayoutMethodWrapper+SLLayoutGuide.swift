@@ -1,5 +1,5 @@
 //
-//  LayoutMethodWrapper+UILayoutGuide.swift
+//  LayoutMethodWrapper+SLLayoutGuide.swift
 //
 //
 //  Created by oozoofrog on 2022/03/13.

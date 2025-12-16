@@ -2,7 +2,7 @@
 
 *Yesterday never dies*
 
-**A swifty way to use UIKit**
+**A swifty way to use UIKit & AppKit**
 
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fioskrew%2FSwiftLayout%2Fbadge%3Ftype%3Dswift-versions)](https://github.com/ioskrew/SwiftLayout)
 
@@ -42,17 +42,23 @@
 
 # 요구조건
 
-- iOS 17+ (SwiftLayout 4.x 기준)
+**SwiftLayout 4.x**는 다양한 Apple 플랫폼을 지원합니다:
 
-  | Swift version  | SwiftLayout version                                          |
-  | -------------- | ------------------------------------------------------------ |
-  | **Swift 6.0+** | **4.0.1**                                                    |
-  | Swift 5.7      | [2.8.0](https://github.com/ioskrew/SwiftLayout/releases/tag/2.8.0) |
-  | Swift 5.5      | [2.7.0](https://github.com/ioskrew/SwiftLayout/releases/tag/2.7.0) |
+| 플랫폼   | 최소 버전 |
+| -------- | --------- |
+| iOS      | 15.0+     |
+| macOS    | 12.0+     |
+| tvOS     | 15.0+     |
+| visionOS | 1.0+      |
+
+| Swift version  | SwiftLayout version                                          |
+| -------------- | ------------------------------------------------------------ |
+| **Swift 6.0+** | **4.x** (현재)                                               |
+| Swift 5.7      | [2.8.0](https://github.com/ioskrew/SwiftLayout/releases/tag/2.8.0) |
+| Swift 5.5      | [2.7.0](https://github.com/ioskrew/SwiftLayout/releases/tag/2.7.0) |
 
 > 참고
-> - 현재 메인 브랜치는 Package.swift와 동일하게 iOS 17+를 타깃으로 합니다.
-> - iOS 13–16 또는 Swift 5.x를 타깃팅하는 프로젝트는 위 표의 2.x 버전을 사용해주세요.
+> - iOS 13–14 또는 Swift 5.x를 타깃팅하는 프로젝트는 위 표의 2.x 버전을 사용해주세요.
 
 # 설치
 
@@ -66,12 +72,13 @@ dependencies: [
 
 # 주요기능
 
-- `addSubview` 와 `removeFromSuperview`를 대체하는 DSL이 제공됩니다
-- `NSLayoutConstraint`, `NSLayoutAnchor` 를 대체하는 DSL이 제공됩니다.
-- view와 constraint에 대한 선택적 갱신이 가능합니다.
-- `if else`, `swift case`, `for` 등 조건문, 반복문을 통한 view, constraint 설정이 가능합니다.
-- 값의 변경을 통한 layout 갱신을 자동으로 할 수 있게 도와주는 propertyWrapper를 제공합니다.
-- constraint의 연결을 돕는 다양한 API 제공합니다.
+- **멀티 플랫폼 지원**: UIKit (iOS, tvOS, visionOS) 및 AppKit (macOS) 지원
+- `addSubview` 와 `removeFromSuperview`를 대체하는 DSL 제공
+- `NSLayoutConstraint`, `NSLayoutAnchor` 를 대체하는 DSL 제공
+- view와 constraint에 대한 선택적 갱신 가능
+- `if else`, `switch case`, `for` 등 조건문, 반복문을 통한 view, constraint 설정 가능
+- layout 갱신을 자동으로 처리하는 PropertyWrapper 제공
+- constraint 연결을 위한 다양한 API 제공
 
 # 사용법
 
@@ -497,140 +504,39 @@ SwiftLayout은 UIView와 동일한 문법으로 `UILayoutGuide`를 완전히 지
 
 ### SwiftUI에서 사용하기
 
-`UIView` 혹은, `UIViewController`에서 `Layoutable`을 구현한 경우 `SwiftUI`에서도 쉽게 사용이 가능합니다.
+뷰 또는 뷰 컨트롤러에서 `Layoutable`을 구현하면 SwiftUI에서 쉽게 사용할 수 있습니다.
 
+**iOS/tvOS/visionOS (UIKit)**:
 ```swift
-class ViewUIView: UIView, Layoutable {
-  var layout: some Layout { 
-    ...
+class MyUIView: UIView, Layoutable {
+  var activation: Activation?
+  var layout: some Layout {
+    self.sl.sublayout { ... }
   }
 }
 
-...
-
-struct SomeView: View {
+struct ContentView: View {
   var body: some View {
-    VStack {
-      ...
-	    ViewUIView().sl.swiftUI
-      ...
-    }
-  }
-}
-
-struct ViewUIView_Previews: PreviewProvider {
-  static var previews: some Previews {
-    ViewUIView().sl.swiftUI
+    MyUIView().sl.swiftUI
   }
 }
 ```
 
-
-
-### SwiftLayoutUtil
-
-#### LayoutPrinter
-
-개발하는 과정에서 조건문이나 반복문 등의 사용으로 LayoutBuilder로 구성된 Layout이 원하는 바와 같은지 확인할 필요 때 유용하게 사용할 수 있는 유틸리티 객체입니다.
-
-- Layout의 계층과 anchors로 작성된 트리를 출력해줍니다.
-  
-  ```swift
+**macOS (AppKit)**:
+```swift
+class MyNSView: NSView, Layoutable {
+  var activation: Activation?
   var layout: some Layout {
-    root.sl.sublayout {
-      child.sl.anchors {
-        Anchors.top
-        Anchors.leading.trailing
-      }
-      friend.sl.anchors {
-        Anchors.top.equalTo(child, attribute: .bottom)
-        Anchors.bottom
-        Anchors.leading.trailing
-      }
-    }
+    self.sl.sublayout { ... }
   }
-  ```
+}
 
-- LayoutPrinter는 소스 안에서는 물론 디버그 콘솔에서 사용할 수 있습니다.
-  
-  > (lldb)  po import SwiftLayoutUtil; LayoutPrinter(layout).print()
-  
-  ```
-  ViewLayout - view: root
-  └─ TupleLayout
-     ├─ ViewLayout - view: child
-     └─ ViewLayout - view: friend
-  ```
-
-- 필요하다면 layout에 적용된 Anchors도 함께 출력할 수 있습니다.
-  
-  > (lldb)  po import SwiftLayoutUtil; LayoutPrinter(layout, withAnchors: true).print()
-  
-  ```
-  ViewLayout - view: root
-  └─ TupleLayout
-     ├─ ViewLayout - view: child
-     │        .top == superview.top
-     │        .leading == superview.leading
-     │        .trailing == superview.trailing
-     └─ ViewLayout - view: friend
-              .top == child.bottom
-              .bottom == superview.bottom
-              .leading == superview.leading
-              .trailing == superview.trailing
-  ```
-
-#### ViewPrinter
-
-xib혹은 UIKit으로 직접 구현되어 있는 뷰를 SwiftLayout으로 마이그레이션 할 때 유용하게 사용할 수 있는 유틸리티 객체입니다.
-
-- UIView의 계층과 오토레이아웃 관계를 SwiftLayout의 문법으로 출력해줍니다.
-  
-  ```swift
-  let contentView: UIView
-  let firstNameLabel: UILabel
-  contentView.addSubview(firstNameLabel)
-  ```
-
-- ViewPrinter는 소스 안에서는 물론 디버그 콘솔에서 사용할 수 있습니다.
-  
-  > (lldb) po import SwiftLayoutUtil; ViewPrinter(contentView).print()
-  
-  ```swift
-  // 별도의 identifiying 설정이 없는 경우 주소값:View타입의 형태로 뷰를 표시합니다.
-  0x01234567890:UIView { // contentView
-    0x01234567891:UILabel // firstNameLabel
+struct ContentView: View {
+  var body: some View {
+    MyNSView().sl.swiftUI
   }
-  ```
-
-- 다음과 같은 매개변수 설정을 통해 view의 label를 쉽게 출력할 수 있습니다.
-  
-  ```swift
-  class SomeView {
-    let root: UIView // subview of SomeView
-    let child: UIView // subview of root
-    let friend: UIView // subview of root
-  }
-  let someView = SomeView()
-  ```
-  
-  > (lldb) po import SwiftLayoutUtil; ViewPrinter(someView, tags: [someView: "SomeView"]).updateIdentifiers().print()
-  
-  ```swift
-  SomeView {
-    root.sl.sublayout {
-      child.sl.anchors {
-        Anchors.top
-        Anchors.leading.trailing
-      }
-      friend.sl.anchors {
-        Anchors.top.equalTo(child, attribute: .bottom)
-        Anchors.bottom
-        Anchors.leading.trailing
-      }
-    }
-  }
-  ```
+}
+```
 
 # Credits
 
