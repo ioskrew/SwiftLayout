@@ -60,7 +60,7 @@ extension ImplementationTests {
         }
 
         _ = try #require(layout)
-        let currentViews = LayoutElements(layout: layout).hierarchyInfos.compactMap { $0.node as? UIView }
+        let currentViews = LayoutElements(layout: layout).hierarchyInfos.compactMap { $0.node.baseObject as? UIView }
         #expect(currentViews == [root, child, friend])
     }
 

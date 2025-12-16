@@ -8,42 +8,42 @@
 import UIKit
 
 final class HierarchyInfo: Hashable {
-    init(superview: UIView?, node: (any HierarchyNode)?, option: LayoutOption) {
+    init(superview: UIView?, node: any HierarchyNodable, option: LayoutOption) {
         self.superview = superview
         self.node = node
         self.option = option
     }
 
     private(set) public weak var superview: UIView?
-    private(set) public weak var node: (any HierarchyNode)?
+    private(set) public var node: any HierarchyNodable
     var option: LayoutOption
 
-    @MainActor var identifier: String? { node?.nodeIdentifier }
+    @MainActor var identifier: String? { node.nodeIdentifier }
 
     @MainActor
     func updateTranslatesAutoresizingMaskIntoConstraints() {
         if superview != nil {
-            node?.updateTranslatesAutoresizingMaskIntoConstraints()
+            node.updateTranslatesAutoresizingMaskIntoConstraints()
         }
     }
 
     @MainActor
     func addToSuperview() {
-        node?.addToSuperview(superview, option: option)
+        node.addToSuperview(superview, option: option)
     }
 
     @MainActor
     func removeFromSuperview() {
-        node?.removeFromSuperview(superview)
+        node.removeFromSuperview(superview)
     }
 
     @MainActor
     func forceLayoutIfNeeded( _ prevInfoHashValues: Set<Int>) {
         if superview == nil {
-            node?.forceLayout()
+            node.forceLayout()
         }
         if !prevInfoHashValues.contains(hashValue) {
-            node?.removeSizeAndPositionAnimation()
+            node.removeSizeAndPositionAnimation()
         }
     }
 }
@@ -57,8 +57,6 @@ extension HierarchyInfo {
 
     func hash(into hasher: inout Hasher) {
         hasher.combine(superview)
-        if let node {
-            hasher.combine(node)
-        }
+        hasher.combine(node.baseObjectIdentifier)
     }
 }

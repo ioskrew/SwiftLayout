@@ -24,9 +24,10 @@ struct LayoutElements<L: Layout> {
             uniquingKeysWith: { first, _ in first }
         )
 
-        viewConstraints = components.flatMap { component in
-            component.anchors.constraints(
-                item: component.node,
+        viewConstraints = components.flatMap { component -> [NSLayoutConstraint] in
+            guard let baseObject = component.node.baseObject else { return [] }
+            return component.anchors.constraints(
+                item: baseObject,
                 toItem: component.superview,
                 viewDic: viewDic
             )
