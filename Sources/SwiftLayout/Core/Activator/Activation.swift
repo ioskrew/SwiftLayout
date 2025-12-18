@@ -11,6 +11,9 @@ public final class Activation: Hashable {
     var hierarchyInfos: [HierarchyInfo]
     var constraints: Set<WeakConstraint>
 
+    @MainActor
+    var needsUpdateLayout: Bool = false
+
     convenience init() {
         self.init(hierarchyInfos: [], constraints: .init())
     }

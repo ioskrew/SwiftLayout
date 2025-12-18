@@ -13,9 +13,13 @@
  ``LayoutProperty`` can hide calling it directly:
  
  ```swift
- class FlagView: UIView, Layoutable {
-     @LayoutProperty var showName = true // changing value do updates layout
-     
+ class FlagView: SLView, Layoutable {
+     var activation: Activation?
+     @LayoutProperty var showName = true // changing value updates layout with .deferred mode
+
+     // Custom update mode
+     @LayoutProperty(mode: .immediate) var otherFlag = false
+
      var layout: some Layout {
          self {
              if showName {
@@ -33,9 +37,11 @@
 public final class LayoutProperty<Value> {
 
     private var stored: Value
+    private let mode: LayoutUpdateMode
 
-    public init(wrappedValue: Value) {
-        stored = wrappedValue
+    public init(wrappedValue: Value, mode: LayoutUpdateMode = .deferred) {
+        self.stored = wrappedValue
+        self.mode = mode
     }
 
     public static subscript<Instance: Layoutable> (
@@ -48,7 +54,7 @@ public final class LayoutProperty<Value> {
         }
         set {
             instance[keyPath: storageKeyPath].stored = newValue
-            instance.sl.updateLayout()
+            instance.sl.updateLayout(instance[keyPath: storageKeyPath].mode)
         }
     }
 

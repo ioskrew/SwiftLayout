@@ -1,6 +1,6 @@
 //
 //  Layout.swift
-//  
+//
 //
 //  Created by oozoofrog on 2022/01/26.
 //
@@ -20,32 +20,35 @@ extension Layout {
     ///
     /// Activate this layout.
     ///
-    /// - Parameter forceLayout: If `true`, forces immediate layout updates by calling `setNeedsLayout()` and `layoutIfNeeded()` on the root view.
+    /// - Parameter mode: The activation mode. Use `.normal` (default) for view hierarchy and constraints only,
+    ///   or `.forced` to also trigger layout pass.
     /// - Returns: A ``Activation`` instance, which you use when you update or deactivate layout.
     ///
-    public func active(forceLayout: Bool = false) -> Activation {
-        Activator.active(layout: self, forceLayout: forceLayout)
+    public func active(mode: ActivateMode = .normal) -> Activation {
+        Activator.active(layout: self, mode: mode)
     }
 
     ///
     /// Update layout changes from the activation of the previously activated layout.
     ///
     /// - Parameter activation: The activation of the previously activated layout. It is used to identify changes in layout.
-    /// - Parameter forceLayout: If `true`, forces immediate layout updates by calling `setNeedsLayout()` and `layoutIfNeeded()` on the root view.
+    /// - Parameter mode: The activation mode. Use `.normal` (default) for view hierarchy and constraints only,
+    ///   or `.forced` to also trigger layout pass.
     /// - Returns: A ``Activation`` instance, which you use when you update or deactivate layout.
     ///
-    public func update(fromActivation activation: Activation, forceLayout: Bool = false) -> Activation {
-        Activator.update(layout: self, fromActivation: activation, forceLayout: forceLayout)
+    public func update(fromActivation activation: Activation, mode: ActivateMode = .normal) -> Activation {
+        Activator.update(layout: self, fromActivation: activation, mode: mode)
     }
 
     ///
     /// Activate this layout permanently.
     /// Until the view is released according to the lifecycle of the app
     ///
-    /// - Parameter forceLayout: If `true`, forces immediate layout updates by calling `setNeedsLayout()` and `layoutIfNeeded()` on the root view.
+    /// - Parameter mode: The activation mode. Use `.normal` (default) for view hierarchy and constraints only,
+    ///   or `.forced` to also trigger layout pass.
     ///
-    public func finalActive(forceLayout: Bool = false) {
-        Activator.finalActive(layout: self, forceLayout: forceLayout)
+    public func finalActive(mode: ActivateMode = .normal) {
+        Activator.finalActive(layout: self, mode: mode)
     }
 
     ///
