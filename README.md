@@ -46,7 +46,7 @@
 
 # Requirements
 
-**SwiftLayout 4.x** supports multiple Apple platforms:
+**SwiftLayout 5.x** supports multiple Apple platforms:
 
 | Platform | Minimum Version |
 | -------- | --------------- |
@@ -57,7 +57,7 @@
 
 | Swift version  | SwiftLayout version                                          |
 | -------------- | ------------------------------------------------------------ |
-| **Swift 6.0+** | **4.x** (current)                                            |
+| **Swift 6.0+** | **5.x** (current)                                            |
 | Swift 5.7      | [2.8.0](https://github.com/ioskrew/SwiftLayout/releases/tag/2.8.0) |
 | Swift 5.5      | [2.7.0](https://github.com/ioskrew/SwiftLayout/releases/tag/2.7.0) |
 
@@ -70,7 +70,7 @@
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "4.0.0"),
+  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "5.0.0"),
 ],
 ```
 

@@ -42,7 +42,7 @@
 
 # 요구조건
 
-**SwiftLayout 4.x**는 다양한 Apple 플랫폼을 지원합니다:
+**SwiftLayout 5.x**는 다양한 Apple 플랫폼을 지원합니다:
 
 | 플랫폼   | 최소 버전 |
 | -------- | --------- |
@@ -53,7 +53,7 @@
 
 | Swift version  | SwiftLayout version                                          |
 | -------------- | ------------------------------------------------------------ |
-| **Swift 6.0+** | **4.x** (현재)                                               |
+| **Swift 6.0+** | **5.x** (현재)                                               |
 | Swift 5.7      | [2.8.0](https://github.com/ioskrew/SwiftLayout/releases/tag/2.8.0) |
 | Swift 5.5      | [2.7.0](https://github.com/ioskrew/SwiftLayout/releases/tag/2.7.0) |
 
@@ -66,7 +66,7 @@
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "4.0.0"),
+  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "5.0.0"),
 ],
 ```
 
