@@ -5,7 +5,7 @@
 //  Created by oozoofrog on 2022/02/12.
 //
 
-import UIKit
+import SwiftLayoutPlatform
 
 struct WeakConstraint {
     private(set) weak var origin: NSLayoutConstraint?
@@ -24,6 +24,7 @@ struct WeakConstraint {
         hasher.combine(origin?.constant)
         hasher.combine(origin?.multiplier)
         hasher.combine(origin?.priority)
+        hasher.combine(origin?.identifier)
         self.customHashValue = hasher.finalize()
     }
 }

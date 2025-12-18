@@ -2,7 +2,7 @@
 //  AnchorsExpression.swift
 //
 
-import UIKit
+import SwiftLayoutPlatform
 
 @MainActor
 public struct AnchorsExpression<Attribute: AnchorsAttribute>: AnchorsExpressionOmitable {

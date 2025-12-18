@@ -1,6 +1,6 @@
 @testable import SwiftLayout
 import Testing
-import UIKit
+import SwiftLayoutPlatform
 
 @MainActor
 struct LayoutableTests {
@@ -13,7 +13,7 @@ struct LayoutableTests {
     @Test
     func ifTrue() {
         view.frame = .init(x: 0, y: 0, width: 90, height: 90)
-        view.layoutIfNeeded()
+        view.slLayoutIfNeeded()
 
         #expect(view.root.frame == CGRect(x: .zero, y: .zero, width: 90, height: 90))
         #expect(view.child.frame == CGRect(x: .zero, y: .zero, width: 90, height: 90))
@@ -44,7 +44,7 @@ struct LayoutableTests {
     @Test
     func ifFalse() {
         view.frame = .init(x: 0, y: 0, width: 90, height: 90)
-        view.layoutIfNeeded()
+        view.slLayoutIfNeeded()
         view.flag = false
 
         #expect(view.root.frame == CGRect(x: .zero, y: .zero, width: 90, height: 90))
@@ -84,9 +84,9 @@ struct LayoutableTests {
     @Test
     func ifFalseAndForceLayout() {
         view.frame = .init(x: 0, y: 0, width: 90, height: 90)
-        view.layoutIfNeeded()
+        view.slLayoutIfNeeded()
         view.flag = false
-        view.sl.updateLayout(forceLayout: true)
+        view.sl.updateLayout(.forced)
 
         #expect(view.root.frame == CGRect(x: 20, y: 20, width: 50, height: 50))
         #expect(view.friend.frame == CGRect(x: .zero, y: .zero, width: 50, height: 50))
@@ -122,8 +122,8 @@ struct LayoutableTests {
         #expect(view.friend.constraints.isEmpty)
     }
 
-    final class LayoutableView: UIView, Layoutable {
-        @LayoutProperty var flag = true
+    final class LayoutableView: SLView, Layoutable {
+        @LayoutProperty(mode: .immediate) var flag = true
 
         let root = CallCountView()
         let child = CallCountView()
@@ -154,7 +154,7 @@ struct LayoutableTests {
             }
         }
 
-        var tags: [UIView: String] {
+        var tags: [SLView: String] {
             [self: "layoutableView", root: "layoutableView.root"]
         }
 

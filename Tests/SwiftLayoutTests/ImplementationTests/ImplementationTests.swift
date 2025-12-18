@@ -1,14 +1,14 @@
 @testable import SwiftLayout
 import Testing
-import UIKit
+import SwiftLayoutPlatform
 
 /// test cases for api rules except DSL syntax
 @MainActor
 struct ImplementationTests {
 
-    let root = UIView().sl.identifying("root")
-    let child = UIView().sl.identifying("child")
-    let friend = UIView().sl.identifying("friend")
+    let root = SLView().withIdentifier("root")
+    let child = SLView().withIdentifier("child")
+    let friend = SLView().withIdentifier("friend")
 
     var activation: Activation?
 }
@@ -16,11 +16,11 @@ struct ImplementationTests {
 extension ImplementationTests {
     @Test
     func layoutTraversal() {
-        let root: UIView = UIView().sl.identifying("root")
-        let button: UIButton = UIButton().sl.identifying("button")
-        let label: UILabel = UILabel().sl.identifying("label")
-        let redView: UIView = UIView().sl.identifying("redView")
-        let image: UIImageView = UIImageView().sl.identifying("image")
+        let root = SLView().withIdentifier("root")
+        let button = SLView().withIdentifier("button")
+        let label = SLView().withIdentifier("label")
+        let redView = SLView().withIdentifier("redView")
+        let image = SLView().withIdentifier("image")
 
         let layout = root.sl.sublayout {
             redView
@@ -30,16 +30,10 @@ extension ImplementationTests {
             }
         }
 
-        var result: [String] = []
-        LayoutExplorer.traversal(layout: layout, superview: nil, option: .none) { layout, superview, _ in
-            guard let view = layout.view else {
-                return
-            }
-
-            let superDescription = superview?.accessibilityIdentifier ?? "nil"
-            let currentDescription = view.accessibilityIdentifier ?? "nil"
-            let description = "\(superDescription), \(currentDescription)"
-            result.append(description)
+        let result = layout.layoutComponents(superview: nil, option: .none).map {
+            let superDescription = $0.superview?.testIdentifier ?? "nil"
+            let currentDescription = $0.node.nodeIdentifier ?? "nil"
+            return "\(superDescription), \(currentDescription)"
         }
 
         let expectedResult = [
@@ -66,7 +60,8 @@ extension ImplementationTests {
         }
 
         _ = try #require(layout)
-        #expect(LayoutElements(layout: layout).viewInformations.map(\.view) == [root, child, friend])
+        let currentViews = LayoutElements(layout: layout).hierarchyInfos.compactMap { $0.node.baseObject as? SLView }
+        #expect(currentViews == [root, child, friend])
     }
 
     // swiftlint:disable identifier_name
@@ -102,16 +97,16 @@ extension ImplementationTests {
         }
         let e6 = LayoutElements(layout: f6)
 
-        #expect(e1.viewInformations == e2.viewInformations)
+        #expect(e1.hierarchyInfos == e2.hierarchyInfos)
         #expect(isEqual(e1.viewConstraints, e2.viewConstraints))
 
-        #expect(e3.viewInformations == e4.viewInformations)
+        #expect(e3.hierarchyInfos == e4.hierarchyInfos)
         #expect(isEqual(e3.viewConstraints, e4.viewConstraints))
 
-        #expect(e4.viewInformations == e5.viewInformations)
+        #expect(e4.hierarchyInfos == e5.hierarchyInfos)
         #expect(isNotEqual(e4.viewConstraints, e5.viewConstraints))
 
-        #expect(e5.viewInformations != e6.viewInformations)
+        #expect(e5.hierarchyInfos != e6.hierarchyInfos)
         #expect(isNotEqual(e5.viewConstraints, e6.viewConstraints))
     }
 
@@ -119,9 +114,9 @@ extension ImplementationTests {
 
     @Test
     mutating func dontTouchRootViewByDeactive() {
-        let root = UIView().sl.identifying("root")
-        let red = UIView().sl.identifying("red")
-        let old = UIView().sl.identifying("old")
+        let root = SLView().withIdentifier("root")
+        let red = SLView().withIdentifier("red")
+        let old = SLView().withIdentifier("old")
         old.addSubview(root)
         root.translatesAutoresizingMaskIntoConstraints = true
 
@@ -141,9 +136,9 @@ extension ImplementationTests {
 
     @Test
     mutating func onActivateBlockCallOnlyOnceWithConstantLayout() {
-        let root = UIView()
-        let button: UIButton = UIButton()
-        let label: UILabel = UILabel()
+        let root = SLView()
+        let button = SLView()
+        let label = SLView()
 
         var rootCount: Int = 0
         var buttonCount: Int = 0
@@ -185,9 +180,9 @@ extension ImplementationTests {
 
     @Test
     mutating func onActivateBlockCallOnlyOnceWithComputedLayout() {
-        let root = UIView()
-        let button: UIButton = UIButton()
-        let label: UILabel = UILabel()
+        let root = SLView()
+        let button = SLView()
+        let label = SLView()
 
         var rootCount: Int = 0
         var buttonCount: Int = 0
@@ -235,30 +230,37 @@ extension ImplementationTests {
     @Test
     func identifier() throws {
         let activation = root.sl.sublayout {
-            UILabel().sl.identifying("label").sl.anchors {
-                Anchors.cap.equalToSuper()
+            SLView().sl.identifying("label").anchors {
+                Anchors.cap.equalToSuper().identifier("label-anchors")
             }
-            UIView().sl.identifying("secondView").sl.anchors {
-                Anchors.top.equalTo("label", attribute: .bottom)
-                Anchors.shoe.equalToSuper()
+            SLView().sl.identifying("secondView").anchors {
+                Anchors.top.equalTo("label", attribute: .bottom).identifier("between-anchors")
+                Anchors.shoe.equalToSuper().identifier("secondView-anchors")
             }
+            SLLayoutGuide().sl.identifying("layoutGuide")
         }.active()
 
         let label = try #require(activation.viewForIdentifier("label"))
-        #expect(label.accessibilityIdentifier == "label")
+        #expect(label.testIdentifier == "label")
 
         let secondView = try #require(activation.viewForIdentifier("secondView"))
-        #expect(secondView.accessibilityIdentifier == "secondView")
+        #expect(secondView.testIdentifier == "secondView")
 
-        let currents = activation.constraints
-        let labelConstraints = Set(ofWeakConstraintsFrom: Anchors.cap.equalToSuper().constraints(item: label, toItem: root))
-        #expect(currents.intersection(labelConstraints) == labelConstraints)
+        #expect(activation.viewForIdentifier("layoutGuide") == nil)
+        let layoutGuide = try #require(activation.layoutGuideForIdentifier("layoutGuide"))
+        #expect(layoutGuide.testIdentifier == "layoutGuide")
 
-        let secondViewConstraints = Set(ofWeakConstraintsFrom: Anchors.cap.equalToSuper().constraints(item: label, toItem: root))
-        #expect(currents.intersection(secondViewConstraints) == secondViewConstraints)
+        let currentLabelConstraints = activation.constraints.filter { $0.origin?.identifier == "label-anchors" }
+        let labelConstraints = Set(ofWeakConstraintsFrom: Anchors.cap.equalToSuper().identifier("label-anchors").constraints(item: label, toItem: root))
+        #expect(currentLabelConstraints == labelConstraints)
 
-        let constraintsBetweebViews = Set(ofWeakConstraintsFrom: Anchors.top.equalTo(label, attribute: .bottom).constraints(item: secondView, toItem: label))
-        #expect(currents.intersection(constraintsBetweebViews) == constraintsBetweebViews)
+        let currentBetweenConstraints = activation.constraints.filter { $0.origin?.identifier == "between-anchors" }
+        let betweenConstraints = Set(ofWeakConstraintsFrom: Anchors.top.equalTo(label, attribute: .bottom).identifier("between-anchors").constraints(item: secondView, toItem: label))
+        #expect(currentBetweenConstraints == betweenConstraints)
+
+        let currentSeconeViewConstraints = activation.constraints.filter { $0.origin?.identifier == "secondView-anchors" }
+        let seconeViewConstraints = Set(ofWeakConstraintsFrom: Anchors.shoe.equalToSuper().identifier("secondView-anchors").constraints(item: secondView, toItem: root))
+        #expect(currentSeconeViewConstraints == seconeViewConstraints)
     }
 }
 
@@ -266,32 +268,39 @@ extension ImplementationTests {
 
     @Test
     func stackViewMaintainOrderingOfArrangedSubviews() {
-        let stack = StackView(frame: .init(x: 0, y: 0, width: 40, height: 80)).sl.identifying("view")
-        var aView: UIView {
+        let stack = StackView(frame: .init(x: 0, y: 0, width: 40, height: 80)).withIdentifier("view")
+        var aView: SLView {
             stack.aView
         }
-        var bView: UIView {
+        var bView: SLView {
             stack.bView
         }
-        stack.sl.updateLayout(forceLayout: true)
+        stack.sl.updateLayout(.forced)
+        #if canImport(UIKit)
+        // Frame expectations are iOS-specific due to UIStackView behavior
         #expect(aView.frame.debugDescription == "(20.0, 0.0, 0.0, 40.0)")
         #expect(bView.frame.debugDescription == "(20.0, 40.0, 0.0, 40.0)")
+        #endif
 
         stack.isA = false
-        stack.sl.updateLayout(forceLayout: true)
+        stack.sl.updateLayout(.forced)
 
+        #if canImport(UIKit)
         #expect(bView.frame.debugDescription == "(20.0, 0.0, 0.0, 80.0)")
+        #endif
 
         stack.isA = true
-        stack.sl.updateLayout(forceLayout: true)
+        stack.sl.updateLayout(.forced)
 
-        #expect(stack.stack.arrangedSubviews.compactMap(\.accessibilityIdentifier) == [aView, bView].compactMap(\.accessibilityIdentifier))
+        #expect(stack.stack.arrangedSubviews.compactMap(\.testIdentifier) == [aView, bView].compactMap(\.testIdentifier))
+        #if canImport(UIKit)
         #expect(aView.frame.debugDescription == "(20.0, 0.0, 0.0, 40.0)")
         #expect(bView.frame.debugDescription == "(20.0, 40.0, 0.0, 40.0)")
+        #endif
     }
 
     @MainActor
-    final class StackView: UIView, Layoutable {
+    final class StackView: SLView, Layoutable {
         var activation: Activation?
         var layout: some Layout {
             self.sl.sublayout {
@@ -306,25 +315,33 @@ extension ImplementationTests {
             }
         }
 
-        let stack: UIStackView = {
-            let stack = UIStackView()
+        let stack: SLStackView = {
+            let stack = SLStackView()
+            #if canImport(UIKit)
             stack.axis = .vertical
             stack.distribution = .fillEqually
             stack.alignment = .center
+            stack.accessibilityIdentifier = "stack"
+            #else
+            stack.orientation = .vertical
+            stack.distribution = .fillEqually
+            stack.alignment = .centerX
+            stack.setAccessibilityIdentifier("stack")
+            #endif
             stack.spacing = 0.0
             return stack
-        }().sl.identifying("stack")
+        }()
 
-        let aView = UIView().sl.identifying("a")
-        let bView = UIView().sl.identifying("b")
+        let aView = SLView().withIdentifier("a")
+        let bView = SLView().withIdentifier("b")
 
         var isA: Bool = true
     }
 
     @Test
     func forecDeactivateNSLayoutConstraint() async throws {
-        let superview = UIView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
-        let childs: [UIView] = (0..<10).map({ _ in UIView(frame: CGRect(x: 0, y: 0, width: 100, height: 100)) })
+        let superview = SLView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+        let childs: [SLView] = (0..<10).map({ _ in SLView(frame: CGRect(x: 0, y: 0, width: 100, height: 100)) })
 
         var layout: some Layout {
             superview.sl.sublayout {
@@ -340,16 +357,16 @@ extension ImplementationTests {
 
         @MainActor
         func activeLayoutAndForceDeactivate() async {
-            activation = layout.active(forceLayout: true)
+            activation = layout.active(mode: .forced)
 
             NSLayoutConstraint.deactivate(superview.constraints)
-            superview.setNeedsLayout()
-            superview.layoutIfNeeded()
+            superview.slSetNeedsLayout()
+            superview.slLayoutIfNeeded()
         }
 
         @MainActor
         func layoutUpdateAfterForceDeactivate() async {
-            activation = layout.update(fromActivation: activation, forceLayout: true)
+            activation = layout.update(fromActivation: activation, mode: .forced)
         }
 
         await activeLayoutAndForceDeactivate()
@@ -357,5 +374,64 @@ extension ImplementationTests {
         await layoutUpdateAfterForceDeactivate()
 
         #expect(true) // If the test runs without crashing, it's OK
+    }
+}
+
+extension ImplementationTests {
+
+    @Test
+    mutating func constraintUpdaterUpdatesConstantAndPriority() throws {
+        let layout = root.sl.sublayout {
+            child.sl.anchors {
+                Anchors.bottom.equalToSuper().identifier("bottom-id")
+            }
+        }
+
+        activation = layout.active()
+
+        let initialConstraints = try #require(activation?.constraints).compactMap(\.origin)
+        let bottom = try #require(initialConstraints.first { $0.identifier == "bottom-id" })
+        #expect(bottom.constant == 0)
+        #expect(bottom.priority == .required)
+
+        activation?.anchors("bottom-id", attribute: .bottom).update(constant: -12, priority: .defaultHigh)
+
+        let updatedConstraints = try #require(activation?.constraints).compactMap(\.origin)
+        let updated = try #require(updatedConstraints.first { $0.identifier == "bottom-id" })
+        #expect(updated.constant == -12)
+        #expect(updated.priority == .defaultHigh)
+
+        activation?.deactive()
+        activation = nil
+    }
+
+    @Test
+    mutating func constraintUpdaterFiltersByAttribute() throws {
+        let layout = root.sl.sublayout {
+            child.sl.anchors {
+                Anchors.top.equalToSuper().identifier("edge-id")
+                Anchors.bottom.equalToSuper().identifier("edge-id")
+            }
+        }
+
+        activation = layout.active()
+
+        let constraints = try #require(activation?.constraints).compactMap(\.origin)
+        let top = try #require(constraints.first { $0.firstAttribute == .top && $0.identifier == "edge-id" })
+        let bottom = try #require(constraints.first { $0.firstAttribute == .bottom && $0.identifier == "edge-id" })
+        #expect(top.constant == 0)
+        #expect(bottom.constant == 0)
+
+        activation?.anchors("edge-id", attribute: .bottom).update(constant: -4, priority: nil)
+
+        let refreshedConstraints = try #require(activation?.constraints).compactMap(\.origin)
+        let refreshedTop = try #require(refreshedConstraints.first { $0.firstAttribute == .top && $0.identifier == "edge-id" })
+        let refreshedBottom = try #require(refreshedConstraints.first { $0.firstAttribute == .bottom && $0.identifier == "edge-id" })
+
+        #expect(refreshedTop.constant == 0)
+        #expect(refreshedBottom.constant == -4)
+
+        activation?.deactive()
+        activation = nil
     }
 }

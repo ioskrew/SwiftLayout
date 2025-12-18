@@ -7,18 +7,18 @@
 
 @testable import SwiftLayout
 import Testing
-import UIKit
+import SwiftLayoutPlatform
 
 @MainActor
 class AnchorsImplementationTests {
     @MainActor
     init() {}
 
-    var superview: UIView = UIView()
-    var subview: UIView = UIView()
-    var siblingview: UIView = UIView()
+    var superview: SLView = SLView()
+    var subview: SLView = SLView()
+    var siblingview: SLView = SLView()
 
-    var tags: [UIView: String] {
+    var tags: [SLView: String] {
         [
             superview: "superview",
             subview: "subview",
@@ -71,12 +71,18 @@ extension AnchorsImplementationTests {
     @Test("epression x axis constraints", arguments: AnchorsXAxisAttribute.allCases)
     func epressionXAxisConstraints(_ attribute: AnchorsXAxisAttribute) {
         let constant: CGFloat = 11.0
-        let toAttribute = switch attribute {
-        case .left, .right, .leftMargin, .rightMargin:
-            AnchorsXAxisAttribute.left
-        default:
-            AnchorsXAxisAttribute.leading
-        }
+        let toAttribute: AnchorsXAxisAttribute = {
+            switch attribute {
+            case .left, .right:
+                return .left
+            #if canImport(UIKit)
+            case .leftMargin, .rightMargin:
+                return .left
+            #endif
+            default:
+                return .leading
+            }
+        }()
 
         @AnchorsBuilder
         var anchors: Anchors {
@@ -113,8 +119,12 @@ extension AnchorsImplementationTests {
             AnchorsExpression(xAxis: attribute).lessThanOrEqualTo(siblingview, attribute: toAttribute, inwardOffset: constant)
 
             switch attribute {
-            case .left, .right, .leftMargin, .rightMargin:
+            case .left, .right:
                 AnchorsExpression(xAxis: attribute)
+            #if canImport(UIKit)
+            case .leftMargin, .rightMargin:
+                AnchorsExpression(xAxis: attribute)
+            #endif
             default:
                 AnchorsExpression(xAxis: attribute).equalTo(siblingview.leadingAnchor)
                 AnchorsExpression(xAxis: attribute).equalTo(siblingview.leadingAnchor, constant: constant)
@@ -168,10 +178,16 @@ extension AnchorsImplementationTests {
         ]
 
         switch attribute {
-        case .left, .right, .leftMargin, .rightMargin:
+        case .left, .right:
             expected += [
                 NSLayoutConstraint(item: subview, attribute: nsAttribute, relatedBy: .equal, toItem: superview, attribute: nsAttribute, multiplier: 1.0, constant: 0.0)
             ]
+        #if canImport(UIKit)
+        case .leftMargin, .rightMargin:
+            expected += [
+                NSLayoutConstraint(item: subview, attribute: nsAttribute, relatedBy: .equal, toItem: superview, attribute: nsAttribute, multiplier: 1.0, constant: 0.0)
+            ]
+        #endif
         default:
             expected += [
                 NSLayoutConstraint(item: subview, attribute: nsAttribute, relatedBy: .equal, toItem: siblingview, attribute: .leading, multiplier: 1.0, constant: 0.0),
@@ -429,7 +445,7 @@ extension AnchorsImplementationTests {
     @Test
     func expressionConstantAndPriority() {
         let constant: CGFloat = 11.0
-        let priority: UILayoutPriority = .defaultLow
+        let priority: SLLayoutPriority = .defaultLow
 
         @AnchorsBuilder
         var anchors: Anchors {
@@ -480,7 +496,7 @@ extension AnchorsImplementationTests {
     func expressionChainingXAxis() {
         @AnchorsBuilder
         var anchors: Anchors {
-            AnchorsExpression<AnchorsXAxisAttribute>().centerX.leading.trailing.left.right.centerXWithinMargins.leftMargin.rightMargin.leadingMargin.trailingMargin
+            AnchorsExpression<AnchorsXAxisAttribute>().centerX.leading.trailing.left.right
         }
         let constraints = anchors.constraints(item: subview, toItem: superview)
         let expected = [
@@ -488,7 +504,21 @@ extension AnchorsImplementationTests {
             NSLayoutConstraint(item: subview, attribute: .leading, relatedBy: .equal, toItem: superview, attribute: .leading, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .left, relatedBy: .equal, toItem: superview, attribute: .left, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .right, relatedBy: .equal, toItem: superview, attribute: .right, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .right, relatedBy: .equal, toItem: superview, attribute: .right, multiplier: 1.0, constant: 0.0)
+        ]
+
+        #expect(isEqual(constraints, expected, tags))
+    }
+
+    #if canImport(UIKit)
+    @Test
+    func expressionChainingXAxisMargins() {
+        @AnchorsBuilder
+        var anchors: Anchors {
+            AnchorsExpression<AnchorsXAxisAttribute>().centerXWithinMargins.leftMargin.rightMargin.leadingMargin.trailingMargin
+        }
+        let constraints = anchors.constraints(item: subview, toItem: superview)
+        let expected = [
             NSLayoutConstraint(item: subview, attribute: .centerXWithinMargins, relatedBy: .equal, toItem: superview, attribute: .centerXWithinMargins, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .leftMargin, relatedBy: .equal, toItem: superview, attribute: .leftMargin, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .rightMargin, relatedBy: .equal, toItem: superview, attribute: .rightMargin, multiplier: 1.0, constant: 0.0),
@@ -498,13 +528,13 @@ extension AnchorsImplementationTests {
 
         #expect(isEqual(constraints, expected, tags))
     }
+    #endif
 
     @Test
     func expressionChainingYAxis() {
-            @AnchorsBuilder
+        @AnchorsBuilder
         var anchors: Anchors {
-            AnchorsExpression<AnchorsYAxisAttribute>().centerY.top.bottom.firstBaseline.lastBaseline.centerYWithinMargins.topMargin.bottomMargin
-
+            AnchorsExpression<AnchorsYAxisAttribute>().centerY.top.bottom.firstBaseline.lastBaseline
         }
         let constraints = anchors.constraints(item: subview, toItem: superview)
         let expected = [
@@ -512,7 +542,21 @@ extension AnchorsImplementationTests {
             NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .firstBaseline, relatedBy: .equal, toItem: superview, attribute: .firstBaseline, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .lastBaseline, relatedBy: .equal, toItem: superview, attribute: .lastBaseline, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .lastBaseline, relatedBy: .equal, toItem: superview, attribute: .lastBaseline, multiplier: 1.0, constant: 0.0)
+        ]
+
+        #expect(isEqual(constraints, expected, tags))
+    }
+
+    #if canImport(UIKit)
+    @Test
+    func expressionChainingYAxisMargins() {
+        @AnchorsBuilder
+        var anchors: Anchors {
+            AnchorsExpression<AnchorsYAxisAttribute>().centerYWithinMargins.topMargin.bottomMargin
+        }
+        let constraints = anchors.constraints(item: subview, toItem: superview)
+        let expected = [
             NSLayoutConstraint(item: subview, attribute: .centerYWithinMargins, relatedBy: .equal, toItem: superview, attribute: .centerYWithinMargins, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .topMargin, relatedBy: .equal, toItem: superview, attribute: .topMargin, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .bottomMargin, relatedBy: .equal, toItem: superview, attribute: .bottomMargin, multiplier: 1.0, constant: 0.0)
@@ -520,6 +564,7 @@ extension AnchorsImplementationTests {
 
         #expect(isEqual(constraints, expected, tags))
     }
+    #endif
 
     @Test
     func expressionChainingDimensionAxis() {
@@ -546,9 +591,6 @@ extension AnchorsImplementationTests {
             AnchorsExpression<AnchorsXAxisAttribute>().bottom
             AnchorsExpression<AnchorsXAxisAttribute>().firstBaseline
             AnchorsExpression<AnchorsXAxisAttribute>().lastBaseline
-            AnchorsExpression<AnchorsXAxisAttribute>().centerYWithinMargins
-            AnchorsExpression<AnchorsXAxisAttribute>().topMargin
-            AnchorsExpression<AnchorsXAxisAttribute>().bottomMargin
             AnchorsExpression<AnchorsXAxisAttribute>().height
             AnchorsExpression<AnchorsXAxisAttribute>().width
         }
@@ -559,15 +601,32 @@ extension AnchorsImplementationTests {
             NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .firstBaseline, relatedBy: .equal, toItem: superview, attribute: .firstBaseline, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .lastBaseline, relatedBy: .equal, toItem: superview, attribute: .lastBaseline, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .centerYWithinMargins, relatedBy: .equal, toItem: superview, attribute: .centerYWithinMargins, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .topMargin, relatedBy: .equal, toItem: superview, attribute: .topMargin, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .bottomMargin, relatedBy: .equal, toItem: superview, attribute: .bottomMargin, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .height, relatedBy: .equal, toItem: superview, attribute: .height, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: superview, attribute: .width, multiplier: 1.0, constant: 0.0)
         ]
 
         #expect(isEqual(constraints, expected, tags))
     }
+
+    #if canImport(UIKit)
+    @Test
+    func mixedExpressionFromAnchorsExpressionXAxisMargins() {
+        @AnchorsBuilder
+        var anchors: Anchors {
+            AnchorsExpression<AnchorsXAxisAttribute>().centerYWithinMargins
+            AnchorsExpression<AnchorsXAxisAttribute>().topMargin
+            AnchorsExpression<AnchorsXAxisAttribute>().bottomMargin
+        }
+        let constraints = anchors.constraints(item: subview, toItem: superview)
+        let expected = [
+            NSLayoutConstraint(item: subview, attribute: .centerYWithinMargins, relatedBy: .equal, toItem: superview, attribute: .centerYWithinMargins, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .topMargin, relatedBy: .equal, toItem: superview, attribute: .topMargin, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .bottomMargin, relatedBy: .equal, toItem: superview, attribute: .bottomMargin, multiplier: 1.0, constant: 0.0)
+        ]
+
+        #expect(isEqual(constraints, expected, tags))
+    }
+    #endif
 
     @Test
     func mixedExpressionFromAnchorsExpressionYAxis() {
@@ -578,11 +637,6 @@ extension AnchorsImplementationTests {
             AnchorsExpression<AnchorsYAxisAttribute>().trailing
             AnchorsExpression<AnchorsYAxisAttribute>().left
             AnchorsExpression<AnchorsYAxisAttribute>().right
-            AnchorsExpression<AnchorsYAxisAttribute>().centerXWithinMargins
-            AnchorsExpression<AnchorsYAxisAttribute>().leftMargin
-            AnchorsExpression<AnchorsYAxisAttribute>().rightMargin
-            AnchorsExpression<AnchorsYAxisAttribute>().leadingMargin
-            AnchorsExpression<AnchorsYAxisAttribute>().trailingMargin
             AnchorsExpression<AnchorsYAxisAttribute>().height
             AnchorsExpression<AnchorsYAxisAttribute>().width
         }
@@ -593,17 +647,36 @@ extension AnchorsImplementationTests {
             NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .left, relatedBy: .equal, toItem: superview, attribute: .left, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .right, relatedBy: .equal, toItem: superview, attribute: .right, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .centerXWithinMargins, relatedBy: .equal, toItem: superview, attribute: .centerXWithinMargins, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .leftMargin, relatedBy: .equal, toItem: superview, attribute: .leftMargin, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .rightMargin, relatedBy: .equal, toItem: superview, attribute: .rightMargin, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .leadingMargin, relatedBy: .equal, toItem: superview, attribute: .leadingMargin, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .trailingMargin, relatedBy: .equal, toItem: superview, attribute: .trailingMargin, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .height, relatedBy: .equal, toItem: superview, attribute: .height, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: superview, attribute: .width, multiplier: 1.0, constant: 0.0)
         ]
 
         #expect(isEqual(constraints, expected, tags))
     }
+
+    #if canImport(UIKit)
+    @Test
+    func mixedExpressionFromAnchorsExpressionYAxisMargins() {
+        @AnchorsBuilder
+        var anchors: Anchors {
+            AnchorsExpression<AnchorsYAxisAttribute>().centerXWithinMargins
+            AnchorsExpression<AnchorsYAxisAttribute>().leftMargin
+            AnchorsExpression<AnchorsYAxisAttribute>().rightMargin
+            AnchorsExpression<AnchorsYAxisAttribute>().leadingMargin
+            AnchorsExpression<AnchorsYAxisAttribute>().trailingMargin
+        }
+        let constraints = anchors.constraints(item: subview, toItem: superview)
+        let expected = [
+            NSLayoutConstraint(item: subview, attribute: .centerXWithinMargins, relatedBy: .equal, toItem: superview, attribute: .centerXWithinMargins, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .leftMargin, relatedBy: .equal, toItem: superview, attribute: .leftMargin, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .rightMargin, relatedBy: .equal, toItem: superview, attribute: .rightMargin, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .leadingMargin, relatedBy: .equal, toItem: superview, attribute: .leadingMargin, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .trailingMargin, relatedBy: .equal, toItem: superview, attribute: .trailingMargin, multiplier: 1.0, constant: 0.0)
+        ]
+
+        #expect(isEqual(constraints, expected, tags))
+    }
+    #endif
 
     @Test
     func mixedExpressionFromAnchorsExpressionDimensionAxis() {
@@ -614,19 +687,11 @@ extension AnchorsImplementationTests {
             AnchorsExpression<AnchorsDimensionAttribute>().trailing
             AnchorsExpression<AnchorsDimensionAttribute>().left
             AnchorsExpression<AnchorsDimensionAttribute>().right
-            AnchorsExpression<AnchorsDimensionAttribute>().centerXWithinMargins
-            AnchorsExpression<AnchorsDimensionAttribute>().leftMargin
-            AnchorsExpression<AnchorsDimensionAttribute>().rightMargin
-            AnchorsExpression<AnchorsDimensionAttribute>().leadingMargin
-            AnchorsExpression<AnchorsDimensionAttribute>().trailingMargin
             AnchorsExpression<AnchorsDimensionAttribute>().centerY
             AnchorsExpression<AnchorsDimensionAttribute>().top
             AnchorsExpression<AnchorsDimensionAttribute>().bottom
             AnchorsExpression<AnchorsDimensionAttribute>().firstBaseline
             AnchorsExpression<AnchorsDimensionAttribute>().lastBaseline
-            AnchorsExpression<AnchorsDimensionAttribute>().centerYWithinMargins
-            AnchorsExpression<AnchorsDimensionAttribute>().topMargin
-            AnchorsExpression<AnchorsDimensionAttribute>().bottomMargin
         }
         let constraints = anchors.constraints(item: subview, toItem: superview)
         let expected = [
@@ -635,16 +700,37 @@ extension AnchorsImplementationTests {
             NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .left, relatedBy: .equal, toItem: superview, attribute: .left, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .right, relatedBy: .equal, toItem: superview, attribute: .right, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .centerY, relatedBy: .equal, toItem: superview, attribute: .centerY, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .firstBaseline, relatedBy: .equal, toItem: superview, attribute: .firstBaseline, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .lastBaseline, relatedBy: .equal, toItem: superview, attribute: .lastBaseline, multiplier: 1.0, constant: 0.0)
+        ]
+
+        #expect(isEqual(constraints, expected, tags))
+    }
+
+    #if canImport(UIKit)
+    @Test
+    func mixedExpressionFromAnchorsExpressionDimensionAxisMargins() {
+        @AnchorsBuilder
+        var anchors: Anchors {
+            AnchorsExpression<AnchorsDimensionAttribute>().centerXWithinMargins
+            AnchorsExpression<AnchorsDimensionAttribute>().leftMargin
+            AnchorsExpression<AnchorsDimensionAttribute>().rightMargin
+            AnchorsExpression<AnchorsDimensionAttribute>().leadingMargin
+            AnchorsExpression<AnchorsDimensionAttribute>().trailingMargin
+            AnchorsExpression<AnchorsDimensionAttribute>().centerYWithinMargins
+            AnchorsExpression<AnchorsDimensionAttribute>().topMargin
+            AnchorsExpression<AnchorsDimensionAttribute>().bottomMargin
+        }
+        let constraints = anchors.constraints(item: subview, toItem: superview)
+        let expected = [
             NSLayoutConstraint(item: subview, attribute: .centerXWithinMargins, relatedBy: .equal, toItem: superview, attribute: .centerXWithinMargins, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .leftMargin, relatedBy: .equal, toItem: superview, attribute: .leftMargin, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .rightMargin, relatedBy: .equal, toItem: superview, attribute: .rightMargin, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .leadingMargin, relatedBy: .equal, toItem: superview, attribute: .leadingMargin, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .trailingMargin, relatedBy: .equal, toItem: superview, attribute: .trailingMargin, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .centerY, relatedBy: .equal, toItem: superview, attribute: .centerY, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .firstBaseline, relatedBy: .equal, toItem: superview, attribute: .firstBaseline, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .lastBaseline, relatedBy: .equal, toItem: superview, attribute: .lastBaseline, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .centerYWithinMargins, relatedBy: .equal, toItem: superview, attribute: .centerYWithinMargins, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .topMargin, relatedBy: .equal, toItem: superview, attribute: .topMargin, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .bottomMargin, relatedBy: .equal, toItem: superview, attribute: .bottomMargin, multiplier: 1.0, constant: 0.0)
@@ -652,6 +738,7 @@ extension AnchorsImplementationTests {
 
         #expect(isEqual(constraints, expected, tags))
     }
+    #endif
 
     @Test
     func mixedExpressionConstraints() {
@@ -662,19 +749,11 @@ extension AnchorsImplementationTests {
             AnchorsXAxisAttribute.trailing,
             AnchorsXAxisAttribute.left,
             AnchorsXAxisAttribute.right,
-            AnchorsXAxisAttribute.centerXWithinMargins,
-            AnchorsXAxisAttribute.leftMargin,
-            AnchorsXAxisAttribute.rightMargin,
-            AnchorsXAxisAttribute.leadingMargin,
-            AnchorsXAxisAttribute.trailingMargin,
             AnchorsYAxisAttribute.centerY,
             AnchorsYAxisAttribute.top,
             AnchorsYAxisAttribute.bottom,
             AnchorsYAxisAttribute.firstBaseline,
             AnchorsYAxisAttribute.lastBaseline,
-            AnchorsYAxisAttribute.centerYWithinMargins,
-            AnchorsYAxisAttribute.topMargin,
-            AnchorsYAxisAttribute.bottomMargin,
             AnchorsDimensionAttribute.height,
             AnchorsDimensionAttribute.width
         ]
@@ -743,6 +822,86 @@ extension AnchorsImplementationTests {
         }
     }
 
+    #if canImport(UIKit)
+    @Test
+    func mixedExpressionConstraintsMargins() {
+        let constant: CGFloat = 11.0
+        let attributes: [any AnchorsAttribute] = [
+            AnchorsXAxisAttribute.centerXWithinMargins,
+            AnchorsXAxisAttribute.leftMargin,
+            AnchorsXAxisAttribute.rightMargin,
+            AnchorsXAxisAttribute.leadingMargin,
+            AnchorsXAxisAttribute.trailingMargin,
+            AnchorsYAxisAttribute.centerYWithinMargins,
+            AnchorsYAxisAttribute.topMargin,
+            AnchorsYAxisAttribute.bottomMargin
+        ]
+
+        for attribute in attributes {
+            let mixedExpression: AnchorsMixedExpression = AnchorsMixedExpression(from: AnchorsExpression<AnchorsXAxisAttribute>(), appendedAttribute: attribute)
+
+            @AnchorsBuilder
+            var anchors: Anchors {
+                mixedExpression.equalToSuper()
+                mixedExpression.equalToSuper(constant: constant)
+                mixedExpression.equalToSuper(inwardOffset: constant)
+
+                mixedExpression.greaterThanOrEqualToSuper()
+                mixedExpression.greaterThanOrEqualToSuper(constant: constant)
+                mixedExpression.greaterThanOrEqualToSuper(inwardOffset: constant)
+
+                mixedExpression.lessThanOrEqualToSuper()
+                mixedExpression.lessThanOrEqualToSuper(constant: constant)
+                mixedExpression.lessThanOrEqualToSuper(inwardOffset: constant)
+
+                mixedExpression.equalTo(siblingview)
+                mixedExpression.equalTo(siblingview, constant: constant)
+                mixedExpression.equalTo(siblingview, inwardOffset: constant)
+
+                mixedExpression.greaterThanOrEqualTo(siblingview)
+                mixedExpression.greaterThanOrEqualTo(siblingview, constant: constant)
+                mixedExpression.greaterThanOrEqualTo(siblingview, inwardOffset: constant)
+
+                mixedExpression.lessThanOrEqualTo(siblingview)
+                mixedExpression.lessThanOrEqualTo(siblingview, constant: constant)
+                mixedExpression.lessThanOrEqualTo(siblingview, inwardOffset: constant)
+            }
+
+            let constrints = anchors.constraints(item: subview, toItem: superview)
+
+            let nsAttribute = attribute.attribute
+            let inwardConstant = constant * attribute.inwardDirectionFactor
+            let expected = [
+                NSLayoutConstraint(item: subview, attribute: nsAttribute, relatedBy: .equal, toItem: superview, attribute: nsAttribute, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: nsAttribute, relatedBy: .equal, toItem: superview, attribute: nsAttribute, multiplier: 1.0, constant: constant),
+                NSLayoutConstraint(item: subview, attribute: nsAttribute, relatedBy: .equal, toItem: superview, attribute: nsAttribute, multiplier: 1.0, constant: inwardConstant),
+
+                NSLayoutConstraint(item: subview, attribute: nsAttribute, relatedBy: .greaterThanOrEqual, toItem: superview, attribute: nsAttribute, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: nsAttribute, relatedBy: .greaterThanOrEqual, toItem: superview, attribute: nsAttribute, multiplier: 1.0, constant: constant),
+                NSLayoutConstraint(item: subview, attribute: nsAttribute, relatedBy: .greaterThanOrEqual, toItem: superview, attribute: nsAttribute, multiplier: 1.0, constant: inwardConstant),
+
+                NSLayoutConstraint(item: subview, attribute: nsAttribute, relatedBy: .lessThanOrEqual, toItem: superview, attribute: nsAttribute, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: nsAttribute, relatedBy: .lessThanOrEqual, toItem: superview, attribute: nsAttribute, multiplier: 1.0, constant: constant),
+                NSLayoutConstraint(item: subview, attribute: nsAttribute, relatedBy: .lessThanOrEqual, toItem: superview, attribute: nsAttribute, multiplier: 1.0, constant: inwardConstant),
+
+                NSLayoutConstraint(item: subview, attribute: nsAttribute, relatedBy: .equal, toItem: siblingview, attribute: nsAttribute, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: nsAttribute, relatedBy: .equal, toItem: siblingview, attribute: nsAttribute, multiplier: 1.0, constant: constant),
+                NSLayoutConstraint(item: subview, attribute: nsAttribute, relatedBy: .equal, toItem: siblingview, attribute: nsAttribute, multiplier: 1.0, constant: inwardConstant),
+
+                NSLayoutConstraint(item: subview, attribute: nsAttribute, relatedBy: .greaterThanOrEqual, toItem: siblingview, attribute: nsAttribute, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: nsAttribute, relatedBy: .greaterThanOrEqual, toItem: siblingview, attribute: nsAttribute, multiplier: 1.0, constant: constant),
+                NSLayoutConstraint(item: subview, attribute: nsAttribute, relatedBy: .greaterThanOrEqual, toItem: siblingview, attribute: nsAttribute, multiplier: 1.0, constant: inwardConstant),
+
+                NSLayoutConstraint(item: subview, attribute: nsAttribute, relatedBy: .lessThanOrEqual, toItem: siblingview, attribute: nsAttribute, multiplier: 1.0, constant: 0.0),
+                NSLayoutConstraint(item: subview, attribute: nsAttribute, relatedBy: .lessThanOrEqual, toItem: siblingview, attribute: nsAttribute, multiplier: 1.0, constant: constant),
+                NSLayoutConstraint(item: subview, attribute: nsAttribute, relatedBy: .lessThanOrEqual, toItem: siblingview, attribute: nsAttribute, multiplier: 1.0, constant: inwardConstant)
+            ]
+
+            #expect(isEqual(constrints, expected, tags))
+        }
+    }
+    #endif
+
     @Test
     func mixedExpressionChaining() {
         @AnchorsBuilder
@@ -753,19 +912,11 @@ extension AnchorsImplementationTests {
                 .trailing
                 .left
                 .right
-                .centerXWithinMargins
-                .leftMargin
-                .rightMargin
-                .leadingMargin
-                .trailingMargin
                 .centerY
                 .top
                 .bottom
                 .firstBaseline
                 .lastBaseline
-                .centerYWithinMargins
-                .topMargin
-                .bottomMargin
                 .height
                 .width
         }
@@ -778,25 +929,50 @@ extension AnchorsImplementationTests {
             NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .left, relatedBy: .equal, toItem: superview, attribute: .left, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .right, relatedBy: .equal, toItem: superview, attribute: .right, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .centerXWithinMargins, relatedBy: .equal, toItem: superview, attribute: .centerXWithinMargins, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .leftMargin, relatedBy: .equal, toItem: superview, attribute: .leftMargin, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .rightMargin, relatedBy: .equal, toItem: superview, attribute: .rightMargin, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .leadingMargin, relatedBy: .equal, toItem: superview, attribute: .leadingMargin, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .trailingMargin, relatedBy: .equal, toItem: superview, attribute: .trailingMargin, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .centerY, relatedBy: .equal, toItem: superview, attribute: .centerY, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .firstBaseline, relatedBy: .equal, toItem: superview, attribute: .firstBaseline, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .lastBaseline, relatedBy: .equal, toItem: superview, attribute: .lastBaseline, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .centerYWithinMargins, relatedBy: .equal, toItem: superview, attribute: .centerYWithinMargins, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .topMargin, relatedBy: .equal, toItem: superview, attribute: .topMargin, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .bottomMargin, relatedBy: .equal, toItem: superview, attribute: .bottomMargin, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .height, relatedBy: .equal, toItem: superview, attribute: .height, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: superview, attribute: .width, multiplier: 1.0, constant: 0.0)
         ]
 
         #expect(isEqual(constraints, expected, tags))
     }
+
+    #if canImport(UIKit)
+    @Test
+    func mixedExpressionChainingMargins() {
+        @AnchorsBuilder
+        var anchors: Anchors {
+            AnchorsMixedExpression(from: AnchorsExpression<AnchorsXAxisAttribute>(), appendedAttribute: AnchorsXAxisAttribute.centerXWithinMargins)
+                .centerXWithinMargins
+                .leftMargin
+                .rightMargin
+                .leadingMargin
+                .trailingMargin
+                .centerYWithinMargins
+                .topMargin
+                .bottomMargin
+        }
+        let constraints = anchors.constraints(item: subview, toItem: superview)
+        let expected = [
+            NSLayoutConstraint(item: subview, attribute: .centerXWithinMargins, relatedBy: .equal, toItem: superview, attribute: .centerXWithinMargins, multiplier: 1.0, constant: 0.0),
+
+            NSLayoutConstraint(item: subview, attribute: .centerXWithinMargins, relatedBy: .equal, toItem: superview, attribute: .centerXWithinMargins, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .leftMargin, relatedBy: .equal, toItem: superview, attribute: .leftMargin, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .rightMargin, relatedBy: .equal, toItem: superview, attribute: .rightMargin, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .leadingMargin, relatedBy: .equal, toItem: superview, attribute: .leadingMargin, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .trailingMargin, relatedBy: .equal, toItem: superview, attribute: .trailingMargin, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .centerYWithinMargins, relatedBy: .equal, toItem: superview, attribute: .centerYWithinMargins, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .topMargin, relatedBy: .equal, toItem: superview, attribute: .topMargin, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .bottomMargin, relatedBy: .equal, toItem: superview, attribute: .bottomMargin, multiplier: 1.0, constant: 0.0)
+        ]
+
+        #expect(isEqual(constraints, expected, tags))
+    }
+    #endif
 
     @Test
     func expressionSafeArea() {
@@ -837,19 +1013,11 @@ extension AnchorsImplementationTests {
             Anchors.trailing
             Anchors.left
             Anchors.right
-            Anchors.centerXWithinMargins
-            Anchors.leftMargin
-            Anchors.rightMargin
-            Anchors.leadingMargin
-            Anchors.trailingMargin
             Anchors.centerY
             Anchors.top
             Anchors.bottom
             Anchors.firstBaseline
             Anchors.lastBaseline
-            Anchors.centerYWithinMargins
-            Anchors.topMargin
-            Anchors.bottomMargin
             Anchors.height
             Anchors.width
         }
@@ -860,25 +1028,47 @@ extension AnchorsImplementationTests {
             NSLayoutConstraint(item: subview, attribute: .trailing, relatedBy: .equal, toItem: superview, attribute: .trailing, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .left, relatedBy: .equal, toItem: superview, attribute: .left, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .right, relatedBy: .equal, toItem: superview, attribute: .right, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .centerXWithinMargins, relatedBy: .equal, toItem: superview, attribute: .centerXWithinMargins, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .leftMargin, relatedBy: .equal, toItem: superview, attribute: .leftMargin, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .rightMargin, relatedBy: .equal, toItem: superview, attribute: .rightMargin, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .leadingMargin, relatedBy: .equal, toItem: superview, attribute: .leadingMargin, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .trailingMargin, relatedBy: .equal, toItem: superview, attribute: .trailingMargin, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .centerY, relatedBy: .equal, toItem: superview, attribute: .centerY, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .top, relatedBy: .equal, toItem: superview, attribute: .top, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .bottom, relatedBy: .equal, toItem: superview, attribute: .bottom, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .firstBaseline, relatedBy: .equal, toItem: superview, attribute: .firstBaseline, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .lastBaseline, relatedBy: .equal, toItem: superview, attribute: .lastBaseline, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .centerYWithinMargins, relatedBy: .equal, toItem: superview, attribute: .centerYWithinMargins, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .topMargin, relatedBy: .equal, toItem: superview, attribute: .topMargin, multiplier: 1.0, constant: 0.0),
-            NSLayoutConstraint(item: subview, attribute: .bottomMargin, relatedBy: .equal, toItem: superview, attribute: .bottomMargin, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .height, relatedBy: .equal, toItem: superview, attribute: .height, multiplier: 1.0, constant: 0.0),
             NSLayoutConstraint(item: subview, attribute: .width, relatedBy: .equal, toItem: superview, attribute: .width, multiplier: 1.0, constant: 0.0)
         ]
 
         #expect(isEqual(constraints, expected, tags))
     }
+
+    #if canImport(UIKit)
+    @Test
+    func staticsSingleMargins() {
+        @AnchorsBuilder
+        var anchors: Anchors {
+            Anchors.centerXWithinMargins
+            Anchors.leftMargin
+            Anchors.rightMargin
+            Anchors.leadingMargin
+            Anchors.trailingMargin
+            Anchors.centerYWithinMargins
+            Anchors.topMargin
+            Anchors.bottomMargin
+        }
+        let constraints = anchors.constraints(item: subview, toItem: superview)
+        let expected = [
+            NSLayoutConstraint(item: subview, attribute: .centerXWithinMargins, relatedBy: .equal, toItem: superview, attribute: .centerXWithinMargins, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .leftMargin, relatedBy: .equal, toItem: superview, attribute: .leftMargin, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .rightMargin, relatedBy: .equal, toItem: superview, attribute: .rightMargin, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .leadingMargin, relatedBy: .equal, toItem: superview, attribute: .leadingMargin, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .trailingMargin, relatedBy: .equal, toItem: superview, attribute: .trailingMargin, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .centerYWithinMargins, relatedBy: .equal, toItem: superview, attribute: .centerYWithinMargins, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .topMargin, relatedBy: .equal, toItem: superview, attribute: .topMargin, multiplier: 1.0, constant: 0.0),
+            NSLayoutConstraint(item: subview, attribute: .bottomMargin, relatedBy: .equal, toItem: superview, attribute: .bottomMargin, multiplier: 1.0, constant: 0.0)
+        ]
+
+        #expect(isEqual(constraints, expected, tags))
+    }
+    #endif
 
     @Test
     func staticsMultipleHorizontal() {
@@ -1110,7 +1300,7 @@ extension AnchorsImplementationTests {
         let height: CGFloat = 37
         let offsetX: CGFloat = 11
         let offsetY: CGFloat = 37
-        let priority: UILayoutPriority = .defaultLow
+        let priority: SLLayoutPriority = .defaultLow
 
         @AnchorsBuilder
         var anchors: Anchors {

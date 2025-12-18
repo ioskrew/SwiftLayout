@@ -1,5 +1,48 @@
-import UIKit
+import SwiftLayoutPlatform
 
+/// A result builder for constructing view hierarchies declaratively.
+///
+/// `LayoutBuilder` enables the DSL syntax used throughout SwiftLayout for defining
+/// view hierarchies and their relationships.
+///
+/// ## Overview
+///
+/// Use `LayoutBuilder` with the `@LayoutBuilder` attribute to create layout definitions:
+///
+/// ```swift
+/// @LayoutBuilder var layout: some Layout {
+///     parentView.sl.sublayout {
+///         headerView.sl.anchors {
+///             Anchors.top.leading.trailing.equalToSuper()
+///         }
+///         contentView.sl.anchors {
+///             Anchors.top.equalTo(headerView, attribute: .bottom)
+///             Anchors.leading.trailing.bottom.equalToSuper()
+///         }
+///     }
+/// }
+/// ```
+///
+/// ## Supported Constructs
+///
+/// `LayoutBuilder` supports standard Swift control flow:
+/// - **Conditionals**: `if`, `if-else`, `switch`
+/// - **Loops**: `for-in`
+/// - **Optionals**: Optional layout expressions
+/// - **Availability**: `#available` checks
+///
+/// ```swift
+/// @LayoutBuilder var layout: some Layout {
+///     container.sl.sublayout {
+///         if showHeader {
+///             headerView
+///         }
+///         for item in items {
+///             item.view.sl.anchors { ... }
+///         }
+///     }
+/// }
+/// ```
 @MainActor
 @resultBuilder
 public struct LayoutBuilder {
@@ -9,24 +52,35 @@ public struct LayoutBuilder {
     }
 
     public static func buildExpression<L: Layout>(_ layout: L?) -> OptionalLayout<L> {
-        OptionalLayout(layout: layout)
+        OptionalLayout(sublayout: layout)
     }
 
-    public static func buildExpression<V: UIView>(_ uiView: V) -> ViewLayout<V> {
-        ViewLayout(uiView)
+    public static func buildExpression<V: SLView>(_ view: V) -> ViewLayout<V, EmptyLayout> {
+        ViewLayout(view, sublayout: EmptyLayout())
     }
 
-    public static func buildExpression<V: UIView>(_ uiView: V?) -> OptionalLayout<ViewLayout<V>> {
-        var viewLayout: ViewLayout<V>?
-        if let view = uiView {
-            viewLayout = ViewLayout(view)
+    public static func buildExpression<V: SLView>(_ view: V?) -> OptionalLayout<ViewLayout<V, EmptyLayout>> {
+        var viewLayout: ViewLayout<V, EmptyLayout>?
+        if let view {
+            viewLayout = ViewLayout(view, sublayout: EmptyLayout())
         }
 
-        return OptionalLayout(layout: viewLayout)
+        return OptionalLayout(sublayout: viewLayout)
+    }
+
+    public static func buildExpression<LayoutGuide: SLLayoutGuide>(_ layoutGuide: LayoutGuide) -> GuideLayout<LayoutGuide> {
+        GuideLayout(layoutGuide)
+    }
+
+    public static func buildExpression<LayoutGuide: SLLayoutGuide>(_ layoutGuide: LayoutGuide?) -> OptionalLayout<GuideLayout<LayoutGuide>> {
+        var guideLayout: GuideLayout<LayoutGuide>?
+        if let layoutGuide {
+            guideLayout = GuideLayout(layoutGuide)
+        }
+
+        return OptionalLayout(sublayout: guideLayout)
     }
 }
-
-// swiftlint:disable identifier_name
 
 extension LayoutBuilder {
 
@@ -34,52 +88,21 @@ extension LayoutBuilder {
         layout
     }
 
-    public static func buildBlock<L: Layout, L1: Layout>(_ l: L, _ l1: L1) -> some Layout {
-        ListLayout(l, ListLayout(l1))
-    }
-
-    public static func buildBlock<L: Layout, L1: Layout, L2: Layout>(_ l: L, _ l1: L1, _ l2: L2) -> some Layout {
-        ListLayout(l, ListLayout(l1, ListLayout(l2)))
-    }
-
-    public static func buildBlock<L: Layout, L1: Layout, L2: Layout, L3: Layout>(_ l: L, _ l1: L1, _ l2: L2, _ l3: L3) -> some Layout {
-        ListLayout(l, ListLayout(l1, ListLayout(l2, ListLayout(l3))))
-    }
-
-    public static func buildBlock<L: Layout, L1: Layout, L2: Layout, L3: Layout, L4: Layout>(_ l: L, _ l1: L1, _ l2: L2, _ l3: L3, _ l4: L4) -> some Layout {
-        ListLayout(l, ListLayout(l1, ListLayout(l2, ListLayout(l3, ListLayout(l4)))))
-    }
-
-    public static func buildBlock<L: Layout, L1: Layout, L2: Layout, L3: Layout, L4: Layout, L5: Layout>(_ l: L, _ l1: L1, _ l2: L2, _ l3: L3, _ l4: L4, _ l5: L5) -> some Layout {
-        ListLayout(l, ListLayout(l1, ListLayout(l2, ListLayout(l3, ListLayout(l4, ListLayout(l5))))))
-    }
-
-    public static func buildBlock<L: Layout, L1: Layout, L2: Layout, L3: Layout, L4: Layout, L5: Layout, L6: Layout>(_ l: L, _ l1: L1, _ l2: L2, _ l3: L3, _ l4: L4, _ l5: L5, _ l6: L6) -> some Layout {
-        ListLayout(l, ListLayout(l1, ListLayout(l2, ListLayout(l3, ListLayout(l4, ListLayout(l5, ListLayout(l6)))))))
-    }
-
-    public static func buildBlock<L: Layout, L1: Layout, L2: Layout, L3: Layout, L4: Layout, L5: Layout, L6: Layout, L7: Layout>(_ l: L, _ l1: L1, _ l2: L2, _ l3: L3, _ l4: L4, _ l5: L5, _ l6: L6, _ l7: L7) -> some Layout {
-        ListLayout(l, ListLayout(l1, ListLayout(l2, ListLayout(l3, ListLayout(l4, ListLayout(l5, ListLayout(l6, ListLayout(l7))))))))
-    }
-
-    public static func buildBlock<L: Layout, L1: Layout, L2: Layout, L3: Layout, L4: Layout, L5: Layout, L6: Layout, L7: Layout, L8: Layout>(_ l: L, _ l1: L1, _ l2: L2, _ l3: L3, _ l4: L4, _ l5: L5, _ l6: L6, _ l7: L7, _ l8: L8) -> some Layout {
-        ListLayout(l, ListLayout(l1, ListLayout(l2, ListLayout(l3, ListLayout(l4, ListLayout(l5, ListLayout(l6, ListLayout(l7, ListLayout(l8)))))))))
-    }
-
-    public static func buildBlock<L: Layout, L1: Layout, L2: Layout, L3: Layout, L4: Layout, L5: Layout, L6: Layout, L7: Layout, L8: Layout, L9: Layout>(_ l: L, _ l1: L1, _ l2: L2, _ l3: L3, _ l4: L4, _ l5: L5, _ l6: L6, _ l7: L7, _ l8: L8, _ l9: L9) -> some Layout {
-        ListLayout(l, ListLayout(l1, ListLayout(l2, ListLayout(l3, ListLayout(l4, ListLayout(l5, ListLayout(l6, ListLayout(l7, ListLayout(l8, ListLayout(l9))))))))))
+    @available(iOS 17, macOS 14, tvOS 17, visionOS 1, *)
+    public static func buildBlock<each L: Layout>(_ layouts: repeat each L) -> TupleLayout<repeat each L> {
+        TupleLayout(layouts: (repeat each layouts))
     }
 
     public static func buildArray<L: Layout>(_ components: [L]) -> ArrayLayout<L> {
-        ArrayLayout<L>(layouts: components)
+        ArrayLayout(sublayouts: components)
     }
 
     public static func buildOptional<L: Layout>(_ component: L?) -> OptionalLayout<L> {
-        OptionalLayout(layout: component)
+        OptionalLayout(sublayout: component)
     }
 
     public static func buildIf<L: Layout>(_ component: L?) -> OptionalLayout<L> {
-        OptionalLayout(layout: component)
+        OptionalLayout(sublayout: component)
     }
 
     public static func buildEither<True: Layout, False: Layout>(first component: True) -> ConditionalLayout<True, False> {
@@ -95,4 +118,61 @@ extension LayoutBuilder {
     }
 }
 
-// swiftlint:enable identifier_name
+// MARK: - buildBlock (Legacy: iOS 16 / macOS 12-13)
+
+extension LayoutBuilder {
+
+    public static func buildBlock<L0: Layout, L1: Layout>(
+        _ l0: L0, _ l1: L1
+    ) -> TupleLayout2<L0, L1> {
+        TupleLayout2(l0, l1)
+    }
+
+    public static func buildBlock<L0: Layout, L1: Layout, L2: Layout>(
+        _ l0: L0, _ l1: L1, _ l2: L2
+    ) -> TupleLayout3<L0, L1, L2> {
+        TupleLayout3(l0, l1, l2)
+    }
+
+    public static func buildBlock<L0: Layout, L1: Layout, L2: Layout, L3: Layout>(
+        _ l0: L0, _ l1: L1, _ l2: L2, _ l3: L3
+    ) -> TupleLayout4<L0, L1, L2, L3> {
+        TupleLayout4(l0, l1, l2, l3)
+    }
+
+    public static func buildBlock<L0: Layout, L1: Layout, L2: Layout, L3: Layout, L4: Layout>(
+        _ l0: L0, _ l1: L1, _ l2: L2, _ l3: L3, _ l4: L4
+    ) -> TupleLayout5<L0, L1, L2, L3, L4> {
+        TupleLayout5(l0, l1, l2, l3, l4)
+    }
+
+    public static func buildBlock<L0: Layout, L1: Layout, L2: Layout, L3: Layout, L4: Layout, L5: Layout>(
+        _ l0: L0, _ l1: L1, _ l2: L2, _ l3: L3, _ l4: L4, _ l5: L5
+    ) -> TupleLayout6<L0, L1, L2, L3, L4, L5> {
+        TupleLayout6(l0, l1, l2, l3, l4, l5)
+    }
+
+    public static func buildBlock<L0: Layout, L1: Layout, L2: Layout, L3: Layout, L4: Layout, L5: Layout, L6: Layout>(
+        _ l0: L0, _ l1: L1, _ l2: L2, _ l3: L3, _ l4: L4, _ l5: L5, _ l6: L6
+    ) -> TupleLayout7<L0, L1, L2, L3, L4, L5, L6> {
+        TupleLayout7(l0, l1, l2, l3, l4, l5, l6)
+    }
+
+    public static func buildBlock<L0: Layout, L1: Layout, L2: Layout, L3: Layout, L4: Layout, L5: Layout, L6: Layout, L7: Layout>(
+        _ l0: L0, _ l1: L1, _ l2: L2, _ l3: L3, _ l4: L4, _ l5: L5, _ l6: L6, _ l7: L7
+    ) -> TupleLayout8<L0, L1, L2, L3, L4, L5, L6, L7> {
+        TupleLayout8(l0, l1, l2, l3, l4, l5, l6, l7)
+    }
+
+    public static func buildBlock<L0: Layout, L1: Layout, L2: Layout, L3: Layout, L4: Layout, L5: Layout, L6: Layout, L7: Layout, L8: Layout>(
+        _ l0: L0, _ l1: L1, _ l2: L2, _ l3: L3, _ l4: L4, _ l5: L5, _ l6: L6, _ l7: L7, _ l8: L8
+    ) -> TupleLayout9<L0, L1, L2, L3, L4, L5, L6, L7, L8> {
+        TupleLayout9(l0, l1, l2, l3, l4, l5, l6, l7, l8)
+    }
+
+    public static func buildBlock<L0: Layout, L1: Layout, L2: Layout, L3: Layout, L4: Layout, L5: Layout, L6: Layout, L7: Layout, L8: Layout, L9: Layout>(
+        _ l0: L0, _ l1: L1, _ l2: L2, _ l3: L3, _ l4: L4, _ l5: L5, _ l6: L6, _ l7: L7, _ l8: L8, _ l9: L9
+    ) -> TupleLayout10<L0, L1, L2, L3, L4, L5, L6, L7, L8, L9> {
+        TupleLayout10(l0, l1, l2, l3, l4, l5, l6, l7, l8, l9)
+    }
+}

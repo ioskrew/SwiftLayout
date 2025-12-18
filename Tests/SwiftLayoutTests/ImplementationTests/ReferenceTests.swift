@@ -7,13 +7,13 @@
 
 import SwiftLayout
 import Testing
-import UIKit
+import SwiftLayoutPlatform
 
 @MainActor
 final class ReferenceTests {
 
     var view: SelfReferenceView?
-    weak var weakView: UIView?
+    weak var weakView: SLView?
 
     @Test
     func testReferenceReleasing() async throws {
@@ -38,7 +38,7 @@ final class ReferenceTests {
         await checkReleaseReference()
     }
 
-    class DeinitView: UIView {
+    class DeinitView: SLView {
         static var deinitCount: Int = 0
 
         deinit {
@@ -48,7 +48,7 @@ final class ReferenceTests {
         }
     }
 
-    class SelfReferenceView: UIView, Layoutable {
+    class SelfReferenceView: SLView, Layoutable {
         var layout: some Layout {
             self.sl.sublayout {
                 DeinitView().sl.anchors {

@@ -5,7 +5,7 @@
 //  Created by aiden_h on 2023/04/19.
 //
 
-import UIKit
+import SwiftLayoutPlatform
 
 @MainActor
 public protocol AnchorsExpressionOmitable {

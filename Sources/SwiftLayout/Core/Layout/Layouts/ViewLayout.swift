@@ -1,121 +1,131 @@
-import UIKit
+import SwiftLayoutPlatform
 
-public struct ViewLayout<V: UIView>: Layout {
-
-    private let innerView: V
-
-    public private(set) var sublayouts: [any Layout]
-
-    public private(set) var anchors: Anchors
-
-    public var option: LayoutOption? { LayoutOption.none }
+/// A layout that wraps a view with optional anchors, sublayouts, and activation callbacks.
+///
+/// `ViewLayout` is the primary layout type created when using the `.sl` extension methods
+/// on views. It represents a view in the layout hierarchy along with its constraints
+/// and child layouts.
+///
+/// ## Overview
+///
+/// You typically create `ViewLayout` instances through the `.sl` extension:
+///
+/// ```swift
+/// parentView.sl.sublayout {
+///     childView.sl.anchors {
+///         Anchors.allSides.equalToSuper()
+///     }
+/// }
+/// ```
+///
+/// ## Method Chaining
+///
+/// `ViewLayout` supports fluent method chaining:
+///
+/// ```swift
+/// view.sl
+///     .identifying("myView")
+///     .onActivate { $0.backgroundColor = .red }
+///     .anchors { Anchors.center.equalToSuper() }
+///     .sublayout { childView }
+/// ```
+public struct ViewLayout<V: SLView, Sublayout: Layout>: Layout {
+    private var view: V
+    private let sublayout: Sublayout
+    private let anchors: Anchors
 
     typealias OnActivateBlock = (V) -> Void
 
     private let onActivateBlock: OnActivateBlock?
 
-    init(_ view: V, sublayouts: [any Layout] = [], anchors: Anchors = Anchors(), onActivate: OnActivateBlock? = nil) {
-        self.innerView = view
-        self.sublayouts = sublayouts
+    init(_ view: V, sublayout: Sublayout, anchors: Anchors = Anchors(), onActivate: OnActivateBlock? = nil) {
+        self.view = view
+        self.sublayout = sublayout
         self.anchors = anchors
         self.onActivateBlock = onActivate
     }
 
-    public var view: UIView? {
-        self.innerView
+    public func layoutComponents(superview: SLView?, option: LayoutOption) -> [LayoutComponent] {
+        let component = LayoutComponent(superview: superview, node: ViewNode(view), anchors: anchors, option: option)
+        let sublayoutComponents: [LayoutComponent] = sublayout.layoutComponents(superview: view, option: .none)
+
+        return [component] + sublayoutComponents
     }
 
     public func layoutWillActivate() {
-        self.onActivateBlock?(innerView)
+        onActivateBlock?(view)
+
+        sublayout.layoutWillActivate()
+    }
+
+    public func layoutDidActivate() {
+        sublayout.layoutDidActivate()
     }
 }
-
 extension ViewLayout {
 
-    ///
-    /// Add anchors coordinator to this layout
+    /// Adds anchors (constraints) to this layout.
     ///
     /// ``Anchors`` express **NSLayoutConstraint** and can be applied through this method.
+    ///
     /// ```swift
-    /// // The constraint of the view can be expressed as follows.
-    ///
-    /// subView.anchors {
-    ///     Anchors(.top).equalTo(rootView, constant: 10)
-    ///     Anchors(.centerX).equalTo(rootView)
-    ///     Anchors(.width, .height).equalTo(rootView).setMultiplier(0.5)
+    /// subView.sl.anchors {
+    ///     Anchors.top.equalTo(rootView, constant: 10)
+    ///     Anchors.centerX.equalTo(rootView)
+    ///     Anchors.size.equalTo(rootView).multiplier(0.5)
     /// }
-    ///
-    /// // The following code performs the same role as the code above.
-    ///
-    /// NSLayoutConstraint.activate([
-    ///     subView.topAnchor.constraint(equalTo: rootView.topAnchor, constant: 10),
-    ///     subView.centerXAnchor.constraint(equalTo: rootView.centerXAnchor),
-    ///     subView.widthAnchor.constraint(equalTo: rootView.widthAnchor, multiplier: 0.5),
-    ///     subView.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.5)
-    /// ])
     /// ```
     ///
-    /// - Parameter build: A ``AnchorsBuilder`` that  create ``Anchors`` to be applied to this layout
-    /// - Returns: The layout itself  with anchors coordinator added
-    ///
+    /// - Parameter build: An ``AnchorsBuilder`` closure that creates ``Anchors`` to be applied.
+    /// - Returns: The layout with anchors added.
     public func anchors(@AnchorsBuilder _ build: () -> Anchors) -> Self {
         let anchors = self.anchors
         anchors.append(build())
-        return Self(innerView, sublayouts: sublayouts, anchors: anchors, onActivate: onActivateBlock)
+        return Self(view, sublayout: sublayout, anchors: anchors, onActivate: onActivateBlock)
     }
 
+    /// Adds sublayouts (child views) to this layout.
     ///
-    /// Add sublayout coordinator to this layout
-    ///
-    /// Sublayouts contained within the builder block are added to the view hierarchy through **addSubview(_:)** to the view object of the current layout.
-    /// ```swift
-    /// // The hierarchy of views can be expressed as follows,
-    /// // and means that UILabel is a subview of UIView.
-    ///
-    /// UIView().sublayout {
-    ///     UILabel()
-    /// }
-    /// ```
-    ///
-    /// - Parameter build: A ``LayoutBuilder`` that  create sublayouts of this layout.
-    /// - Returns: The layout itself with sublayout coordinator added
-    ///
-    public func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> Self {
-        var sublayouts = self.sublayouts
-        sublayouts.append(build())
-        return Self(innerView, sublayouts: sublayouts, anchors: anchors, onActivate: onActivateBlock)
-    }
-
-    ///
-    /// Add an action to this layout to always perform before every activation, including updates.
+    /// Sublayouts are added to the view hierarchy through `addSubview(_:)`.
     ///
     /// ```swift
-    /// // Create an instant view within the layout block
-    /// // and modify the properties of the view as follows
-    ///
-    /// var layout: some Layout {
-    ///     UILabel().sl.onActivate { view in
-    ///         view.backgroundColor = .blue
-    ///         view.text = "hello"
+    /// parentView.sl.sublayout {
+    ///     childView.sl.anchors {
+    ///         Anchors.allSides.equalToSuper()
     ///     }
     /// }
     /// ```
     ///
-    /// - Parameter onActivate: A perform block for this layout.
-    /// - Returns: The layout itself with onActivate action added
-    ///
-    public func onActivate(_ perform: @escaping (V) -> Void) -> Self {
-        Self(innerView, sublayouts: sublayouts, anchors: anchors, onActivate: perform)
+    /// - Parameter build: A ``LayoutBuilder`` closure that creates sublayouts.
+    /// - Returns: The layout with sublayouts added.
+    public func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<V, TupleLayout2<Sublayout, L>> {
+        let sublayout = TupleLayout2(self.sublayout, build())
+        return ViewLayout<V, TupleLayout2<Sublayout, L>>(view, sublayout: sublayout, anchors: anchors, onActivate: onActivateBlock)
     }
 
+    /// Adds an action to perform before every activation, including updates.
     ///
-    /// Set  **accessibilityIdentifier** of view.
+    /// ```swift
+    /// var layout: some Layout {
+    ///     label.sl.onActivate { label in
+    ///         label.backgroundColor = .blue
+    ///         label.text = "hello"
+    ///     }
+    /// }
+    /// ```
     ///
-    /// - Parameter accessibilityIdentifier: A string containing the identifier of the element.
-    /// - Returns: The layout itself with the accessibilityIdentifier applied
+    /// - Parameter perform: A closure to execute before activation.
+    /// - Returns: The layout with the onActivate action added.
+    public func onActivate(_ perform: @escaping (V) -> Void) -> Self {
+        Self(view, sublayout: sublayout, anchors: anchors, onActivate: perform)
+    }
+
+    /// Sets the view's `accessibilityIdentifier`.
     ///
+    /// - Parameter accessibilityIdentifier: A string identifier for the view.
+    /// - Returns: The layout with the identifier applied.
     public func identifying(_ accessibilityIdentifier: String) -> Self {
-        innerView.accessibilityIdentifier = accessibilityIdentifier
+        SwiftLayoutPlatformHelper.setViewIdentifier(view, accessibilityIdentifier)
         return self
     }
 }

@@ -1,22 +1,38 @@
-private protocol AnyLayoutBox: Layout {}
-private struct _AnyLayoutBox<L: Layout>: AnyLayoutBox {
+import SwiftLayoutPlatform
 
-    let layout: L
-
-    var sublayouts: [any Layout] {
-        [layout]
-    }
-}
-
+/// A type-erased wrapper for any Layout type.
+///
+/// Use `AnyLayout` when you need to store or return layouts of different concrete types:
+///
+/// ```swift
+/// func makeLayout(for style: Style) -> AnyLayout {
+///     switch style {
+///     case .compact:
+///         return compactView.sl.anchors { ... }.eraseToAnyLayout()
+///     case .expanded:
+///         return expandedView.sl.anchors { ... }.eraseToAnyLayout()
+///     }
+/// }
+/// ```
+///
+/// You can also use the ``Layout/eraseToAnyLayout()`` method on any layout.
 public struct AnyLayout: Layout {
-
-    private let box: AnyLayoutBox
-
-    init<L: Layout>(_ layout: L) {
-        self.box = _AnyLayoutBox(layout: layout)
+    /// Creates a type-erased layout from the given layout.
+    public init<Sublayout: Layout>(_ sublayout: Sublayout) {
+        self.sublayout = sublayout
     }
 
-    public var sublayouts: [any Layout] {
-        box.sublayouts
+    private var sublayout: any Layout
+
+    public func layoutComponents(superview: SLView?, option: LayoutOption) -> [LayoutComponent] {
+        sublayout.layoutComponents(superview: superview, option: option)
+    }
+
+    public func layoutWillActivate() {
+        sublayout.layoutWillActivate()
+    }
+
+    public func layoutDidActivate() {
+        sublayout.layoutDidActivate()
     }
 }

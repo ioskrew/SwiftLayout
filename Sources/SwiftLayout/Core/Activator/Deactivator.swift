@@ -5,13 +5,13 @@
 //  Created by aiden_h on 8/8/24.
 //
 
-import UIKit
+import SwiftLayoutPlatform
 
 @MainActor
 struct Deactivator {
-    func deactivate(views: [UIView], constraints: Set<WeakConstraint>) {
+    func deactivate(hierarchyInfo: [HierarchyInfo], constraints: Set<WeakConstraint>) {
         deactiveConstraints(constraints)
-        deactiveViews(views)
+        deactiveHierarchy(hierarchyInfo)
     }
 
     private func deactiveConstraints(_ constraints: Set<WeakConstraint>) {
@@ -19,9 +19,9 @@ struct Deactivator {
         NSLayoutConstraint.deactivate(constraints)
     }
 
-    private func deactiveViews(_ views: [UIView]) {
-        for view in views where views.contains(where: { $0 == view.superview }) {
-            view.removeFromSuperview()
+    private func deactiveHierarchy(_ hierarchyInfos: [HierarchyInfo]) {
+        for hierarchyInfos in hierarchyInfos {
+            hierarchyInfos.removeFromSuperview()
         }
     }
 }

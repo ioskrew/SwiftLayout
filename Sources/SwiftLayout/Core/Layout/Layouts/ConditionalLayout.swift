@@ -1,22 +1,41 @@
-public struct ConditionalLayout<True: Layout, False: Layout>: Layout {
+import SwiftLayoutPlatform
 
-    enum _ConditionalLayout {
-        case trueLayout(True)
-        case falseLayout(False)
+public struct ConditionalLayout<TrueLayout: Layout, FalseLayout: Layout>: Layout {
+    enum Sublayout {
+        case trueLayout(TrueLayout)
+        case falseLayout(FalseLayout)
     }
 
-    private let layout: _ConditionalLayout
+    private var sublayout: Sublayout
 
-    init(layout: _ConditionalLayout) {
-        self.layout = layout
+    init(layout: Sublayout) {
+        self.sublayout = layout
     }
 
-    public var sublayouts: [any Layout] {
-        switch layout {
-        case .trueLayout(let layout):
-            return [layout]
-        case .falseLayout(let layout):
-            return [layout]
+    public func layoutComponents(superview: SLView?, option: LayoutOption) -> [LayoutComponent] {
+        switch sublayout {
+        case .trueLayout(let trueLayout):
+            return trueLayout.layoutComponents(superview: superview, option: option)
+        case .falseLayout(let falseLayout):
+            return falseLayout.layoutComponents(superview: superview, option: option)
+        }
+    }
+
+    public func layoutWillActivate() {
+        switch sublayout {
+        case .trueLayout(let trueLayout):
+            trueLayout.layoutWillActivate()
+        case .falseLayout(let falseLayout):
+            falseLayout.layoutWillActivate()
+        }
+    }
+
+    public func layoutDidActivate() {
+        switch sublayout {
+        case .trueLayout(let trueLayout):
+            trueLayout.layoutDidActivate()
+        case .falseLayout(let falseLayout):
+            falseLayout.layoutDidActivate()
         }
     }
 }

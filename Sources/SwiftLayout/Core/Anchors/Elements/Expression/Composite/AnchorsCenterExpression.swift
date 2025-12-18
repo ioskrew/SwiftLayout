@@ -5,8 +5,24 @@
 //  Created by aiden_h on 2023/04/19.
 //
 
-import UIKit
+import SwiftLayoutPlatform
 
+/// An expression type for defining centerX and centerY constraints together.
+///
+/// Access through ``Anchors/center``:
+///
+/// ```swift
+/// view.sl.anchors {
+///     // Center in superview
+///     Anchors.center.equalToSuper()
+///
+///     // Center with offset
+///     Anchors.center.equalToSuper(xOffset: 10, yOffset: -20)
+///
+///     // Center relative to another view
+///     Anchors.center.equalTo(otherView)
+/// }
+/// ```
 @MainActor
 public struct AnchorsCenterExpression: AnchorsExpressionOmitable {
     init() {}

@@ -1,16 +1,16 @@
 //
 //  expeactView.swift
-//  
+//
 
 import Foundation
 import Testing
-import UIKit
+import SwiftLayoutPlatform
 
 @MainActor
 func expectView(
-    _ view: @autoclosure () throws -> UIView,
-    superview: @autoclosure () throws -> UIView?,
-    subviews: @autoclosure () throws -> [UIView]?,
+    _ view: @autoclosure () throws -> SLView,
+    superview: @autoclosure () throws -> SLView?,
+    subviews: @autoclosure () throws -> [SLView]?,
     _ sourceLocation: Testing.SourceLocation = #_sourceLocation
 ) rethrows {
     let view = try view()
@@ -47,13 +47,72 @@ func expectView(
     }
 }
 
-private extension UIAccessibilityIdentification {
+@MainActor
+func expectLayoutGuides(
+    _ view: @autoclosure () throws -> SLView,
+    layoutGuides: @autoclosure () throws -> [SLLayoutGuide]?,
+    _ sourceLocation: Testing.SourceLocation = #_sourceLocation
+) rethrows {
+    let view = try view()
+    let guides = try layoutGuides() ?? []
+    let guidesInView = view.layoutGuides.map(\.testDescription)
+    let guidesForTest = guides.map(\.testDescription)
+    if !guidesInView.elementsEqual(guidesForTest) {
+        Issue.record(
+            Comment(rawValue: "view<\(view.testDescription)>.layoutGuides(\(guidesInView.count))[\(guidesInView.joined(separator: ", "))] is not equal with layoutGuides(\(guidesForTest.count))[\(guidesForTest.joined(separator: ", "))]"),
+            sourceLocation: sourceLocation
+        )
+    }
+}
+
+@MainActor
+func expectOwnerView(
+    _ guide: @autoclosure () throws -> SLLayoutGuide,
+    ownerView: @autoclosure () throws -> SLView?,
+    _ sourceLocation: Testing.SourceLocation = #_sourceLocation
+) rethrows {
+    let guide = try guide()
+    let owner = try ownerView()
+    if guide.owningView !== owner {
+        if let owning = guide.owningView, let owner = owner {
+            Issue.record(
+                Comment(
+                    rawValue: "layoutGuide<\(guide.testDescription)>.owningView(\(owning.testDescription)) is not equal with ownerView<\(owner.testDescription)>"
+                ),
+                sourceLocation: sourceLocation
+            )
+        } else if let owning = guide.owningView {
+            Issue.record(
+                Comment(
+                    rawValue: "layoutGuide<\(guide.testDescription)>.owningView<\(owning.testDescription)> is not equal with ownerView<nil>"
+                ),
+                sourceLocation: sourceLocation
+            )
+        } else if let owner = owner {
+            Issue.record(
+                Comment(
+                    rawValue: "layoutGuide<\(guide.testDescription)>.owningView<nil> is not equal with ownerView<\(owner.testDescription)>"
+                ),
+                sourceLocation: sourceLocation
+            )
+        }
+    }
+}
+
+private extension SLView {
     @MainActor
     var testDescription: String {
-        if let identifier = accessibilityIdentifier {
+        if let identifier = testIdentifier {
             return "\(type(of: self)): \(identifier)"
         } else {
             return "\(type(of: self)): \(Unmanaged.passUnretained(self).toOpaque())"
         }
+    }
+}
+
+private extension SLLayoutGuide {
+    @MainActor
+    var testDescription: String {
+        return "\(type(of: self)): \(testIdentifier)"
     }
 }

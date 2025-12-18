@@ -2,7 +2,7 @@
 
 *Yesterday never dies*
 
-**A swifty way to use UIKit**
+**A swifty way to use UIKit & AppKit**
 
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fioskrew%2FSwiftLayout%2Fbadge%3Ftype%3Dswift-versions)](https://github.com/ioskrew/SwiftLayout)
 
@@ -42,13 +42,23 @@
 
 # 요구조건
 
-- iOS 13+
+**SwiftLayout 5.x**는 다양한 Apple 플랫폼을 지원합니다:
 
-  | Swift version  | SwiftLayout version                                          |
-  | -------------- | ------------------------------------------------------------ |
-  | **Swift 6.0+** | **4.0.0**                                                    |
-  | Swift 5.7      | [2.8.0](https://github.com/ioskrew/SwiftLayout/releases/tag/2.8.0) |
-  | Swift 5.5      | [2.7.0](https://github.com/ioskrew/SwiftLayout/releases/tag/2.7.0) |
+| 플랫폼   | 최소 버전 |
+| -------- | --------- |
+| iOS      | 15.0+     |
+| macOS    | 12.0+     |
+| tvOS     | 15.0+     |
+| visionOS | 1.0+      |
+
+| Swift version  | SwiftLayout version                                          |
+| -------------- | ------------------------------------------------------------ |
+| **Swift 6.0+** | **5.x** (현재)                                               |
+| Swift 5.7      | [2.8.0](https://github.com/ioskrew/SwiftLayout/releases/tag/2.8.0) |
+| Swift 5.5      | [2.7.0](https://github.com/ioskrew/SwiftLayout/releases/tag/2.7.0) |
+
+> 참고
+> - iOS 13–14 또는 Swift 5.x를 타깃팅하는 프로젝트는 위 표의 2.x 버전을 사용해주세요.
 
 # 설치
 
@@ -56,18 +66,19 @@
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "4.0.0"),
+  .package(url: "https://github.com/ioskrew/SwiftLayout", from: "5.0.0"),
 ],
 ```
 
 # 주요기능
 
-- `addSubview` 와 `removeFromSuperview`를 대체하는 DSL이 제공됩니다
-- `NSLayoutConstraint`, `NSLayoutAnchor` 를 대체하는 DSL이 제공됩니다.
-- view와 constraint에 대한 선택적 갱신이 가능합니다.
-- `if else`, `swift case`, `for` 등 조건문, 반복문을 통한 view, constraint 설정이 가능합니다.
-- 값의 변경을 통한 layout 갱신을 자동으로 할 수 있게 도와주는 propertyWrapper를 제공합니다.
-- constraint의 연결을 돕는 다양한 API 제공합니다.
+- **멀티 플랫폼 지원**: UIKit (iOS, tvOS, visionOS) 및 AppKit (macOS) 지원
+- `addSubview` 와 `removeFromSuperview`를 대체하는 DSL 제공
+- `NSLayoutConstraint`, `NSLayoutAnchor` 를 대체하는 DSL 제공
+- view와 constraint에 대한 선택적 갱신 가능
+- `if else`, `switch case`, `for` 등 조건문, 반복문을 통한 view, constraint 설정 가능
+- layout 갱신을 자동으로 처리하는 PropertyWrapper 제공
+- constraint 연결을 위한 다양한 API 제공
 
 # 사용법
 
@@ -149,7 +160,7 @@ Layout의 메소드인 `anchors` 안에서 주로 사용됩니다.
   ```swift
   superview.sl.sublayout {
     selfview.sl.anchors {
-      Anchors.sl.top.bottom
+      Anchors.top.bottom
     }
   }
   ```
@@ -344,84 +355,33 @@ var layout: some Layout {
 
 ### Animations
 
-`Layoutable`의 오토레이아웃을 변경한 경우 애니메이션을 시작할 수 있습니다. 방법은 다음과 같이 간단합니다.
-
-- `UIView`의 animation 블럭 안에서 `updateLayout` 을 `forceLayout` 매개변수를 true로 호출해주세요.
+`Layoutable`에서 제약조건 변경을 애니메이션하려면 `UIView.animate` 블럭 안에서 `updateLayout`을 `forceLayout: true`로 호출하세요:
 
 ```swift
-final class PreviewView: UIView, Layoutable {
-  var capTop = true {
+final class AnimatedView: UIView, Layoutable {
+  var activation: Activation?
+  var isExpanded = false {
     didSet {
-      // start animation for change constraints
-      UIView.animate(withDuration: 1.0) {
+      UIView.animate(withDuration: 0.3) {
         self.sl.updateLayout(forceLayout: true)
       }
     }
   }
-  // or just use the convenient propertyWrapper like below
-  // @AnimatableLayoutProperty(duration: 1.0) var capTop = true
-  
-  let capButton = UIButton()
-  let shoeButton = UIButton()
-  let titleLabel = UILabel()
-  
-  var topView: UIButton { capTop ? capButton : shoeButton }
-  var bottomView: UIButton { capTop ? shoeButton : capButton }
-  
-  var activation: Activation?
-  
+  // 또는 편리한 property wrapper를 사용할 수 있습니다:
+  // @AnimatableLayoutProperty(duration: 0.3) var isExpanded = false
+
+  let contentView = UIView()
+
   var layout: some Layout {
     self.sl.sublayout {
-      topView.sl.anchors {
-        Anchors.cap
-      }
-      bottomView.sl.anchors {
-        Anchors.top.equalTo(topView.bottomAnchor)
-        Anchors.height.equalTo(topView)
-        Anchors.shoe
-      }
-      titleLabel.sl.onActivate { label in
-        label.text = "Top Title"
-        UIView.transition(with: label, duration: 1.0, options: [.beginFromCurrentState, .transitionCrossDissolve]) {
-          label.textColor = self.capTop ? .black : .yellow
-        }
-      }.anchors {
-        Anchors.center.equalTo(topView)
-      }
-      UILabel().sl.onActivate { label in
-        label.text = "Bottom Title"
-        label.textColor = self.capTop ? .yellow : .black
-      }.identifying("title.bottom").anchors {
-        Anchors.center.equalTo(bottomView)
+      contentView.sl.anchors {
+        Anchors.top.horizontal.equalToSuper()
+        Anchors.height.equalTo(constant: isExpanded ? 200 : 50)
       }
     }
   }
-  
-  override init(frame: CGRect) {
-    super.init(frame: frame)
-    initViews()
-  }
-  
-  required init?(coder: NSCoder) {
-    super.init(coder: coder)
-    initViews()
-  }
-  
-  func initViews() {
-    capButton.backgroundColor = .yellow
-    shoeButton.backgroundColor = .black
-    capButton.addAction(.init(handler: { [weak self] _ in
-      self?.capTop.toggle()
-    }), for: .touchUpInside)
-    shoeButton.addAction(.init(handler: { [weak self] _ in
-      self?.capTop.toggle()
-    }), for: .touchUpInside)
-    self.sl.updateLayout()
-  }
 }
 ```
-
-[![animation in update layout](https://user-images.githubusercontent.com/3011832/189062670-93b3bcef-fdea-458b-b18f-f37cce1ec8ee.png)](https://user-images.githubusercontent.com/3011832/189063286-f106ae90-fea1-464a-a798-3586109dac2f.mp4)
 
 ## 그 밖의 유용한 기능들
 
@@ -447,7 +407,7 @@ contentView.sl.sublayout {
 
 ```swift
 contentView.sl.sublayout {
-  nameLabel.sl.identifying("name").sl.anchors {
+  nameLabel.sl.identifying("name").anchors {
     Anchors.cap
   }
   ageLabel.sl.anchors {
@@ -459,142 +419,145 @@ contentView.sl.sublayout {
 
 - 디버깅의 관점에서 보면 identifying을 설정한 경우 NSLayoutConstraint의 description에 해당 문자열이 함께 출력됩니다.
 
-### SwiftUI에서 사용하기
+### 제약조건 동적 업데이트
 
-`UIView` 혹은, `UIViewController`에서 `Layoutable`을 구현한 경우 `SwiftUI`에서도 쉽게 사용이 가능합니다.
+`ConstraintUpdater`를 사용하여 identifier가 지정된 제약조건의 `constant`나 `priority`를 런타임에 업데이트할 수 있습니다.
 
 ```swift
-class ViewUIView: UIView, Layoutable {
-  var layout: some Layout { 
-    ...
-  }
-}
+class MyView: UIView, Layoutable {
+  var activation: Activation?
 
-...
-
-struct SomeView: View {
-  var body: some View {
-    VStack {
-      ...
-	    ViewUIView().sl.swiftUI
-      ...
+  var layout: some Layout {
+    self.sl.sublayout {
+      headerView.sl.anchors {
+        Anchors.top.equalToSuper(constant: 20).identifier("headerTop")
+        Anchors.horizontal.equalToSuper()
+        Anchors.height.equalTo(constant: 100).identifier("headerHeight")
+      }
     }
   }
-}
 
-struct ViewUIView_Previews: PreviewProvider {
-  static var previews: some Previews {
-    ViewUIView().sl.swiftUI
+  func expandHeader() {
+    // 단일 제약조건 업데이트
+    activation?.anchors("headerHeight").update(constant: 200)
+
+    // priority와 함께 업데이트
+    activation?.anchors("headerTop").update(constant: 0, priority: .required)
   }
 }
 ```
 
+동일한 identifier를 공유하는 여러 제약조건 중 특정 attribute만 필터링하여 업데이트할 수도 있습니다:
 
+```swift
+// "size" identifier를 가진 제약조건 중 width만 업데이트
+activation?.anchors("size", attribute: .width).update(constant: 300)
 
-### SwiftLayoutUtil
+// 또는 커스텀 predicate 사용
+activation?.anchors("insets", predicate: { $0.constant > 0 }).update(constant: 20)
+```
 
-#### LayoutPrinter
+### `UIVisualEffectView`와 함께 작업하기
 
-개발하는 과정에서 조건문이나 반복문 등의 사용으로 LayoutBuilder로 구성된 Layout이 원하는 바와 같은지 확인할 필요 때 유용하게 사용할 수 있는 유틸리티 객체입니다.
+SwiftLayout은 `UIVisualEffectView`의 서브뷰를 자동으로 `contentView`에 추가합니다:
 
-- Layout의 계층과 anchors로 작성된 트리를 출력해줍니다.
-  
-  ```swift
+```swift
+@LayoutBuilder var layout: some Layout {
+  self.sl.sublayout {
+    blurView.sl.sublayout {  // UIVisualEffectView
+      // 이 뷰들은 자동으로 blurView.contentView에 추가됩니다
+      titleLabel.sl.anchors {
+        Anchors.center.equalToSuper()
+      }
+      iconView.sl.anchors {
+        Anchors.bottom.equalTo(titleLabel, attribute: .top, constant: -10)
+        Anchors.centerX.equalToSuper()
+      }
+    }
+  }
+}
+```
+
+`UIVisualEffectView` 내부에서 Layout Guide도 지원됩니다:
+
+```swift
+blurView.sl.sublayout {
+  UILayoutGuide().sl.identifying("contentGuide").sl.anchors {
+    Anchors.allSides.equalToSuper(constant: 20)
+  }
+  label.sl.anchors {
+    Anchors.center.equalTo("contentGuide")
+  }
+}
+```
+
+### `UILayoutGuide`와 함께 작업하기
+
+SwiftLayout은 UIView와 동일한 문법으로 `UILayoutGuide`를 완전히 지원하여, 뷰 계층에 추가적인 뷰를 추가하지 않고도 유연한 레이아웃을 쉽게 만들 수 있습니다.
+
+```swift
+@LayoutBuilder var layout: some Layout {
+  containerView.sl.sublayout {
+    // 레이아웃 가이드 생성 및 설정
+    UILayoutGuide().sl.identifying("centerGuide").sl.anchors {
+      Anchors.centerX.centerY.equalToSuper()
+      Anchors.width.height.equalTo(constant: 200)
+    }
+    
+    // 레이아웃 가이드를 기준으로 뷰 위치 설정
+    titleLabel.sl.anchors {
+      Anchors.centerX.equalTo("centerGuide")
+      Anchors.bottom.equalTo("centerGuide", attribute: .top, constant: -10)
+    }
+    
+    imageView.sl.anchors {
+      Anchors.center.equalTo("centerGuide")
+      Anchors.size.equalTo(width: 100, height: 100)
+    }
+    
+    descriptionLabel.sl.anchors {
+      Anchors.centerX.equalTo("centerGuide")
+      Anchors.top.equalTo("centerGuide", attribute: .bottom, constant: 10)
+    }
+  }
+}
+```
+
+### SwiftUI에서 사용하기
+
+뷰 또는 뷰 컨트롤러에서 `Layoutable`을 구현하면 SwiftUI에서 쉽게 사용할 수 있습니다.
+
+**iOS/tvOS/visionOS (UIKit)**:
+```swift
+class MyUIView: UIView, Layoutable {
+  var activation: Activation?
   var layout: some Layout {
-    root.sl.sublayout {
-      child.sl.anchors {
-        Anchors.top
-        Anchors.leading.trailing
-      }
-      friend.sl.anchors {
-        Anchors.top.equalTo(child, attribute: .bottom)
-        Anchors.bottom
-        Anchors.leading.trailing
-      }
-    }
+    self.sl.sublayout { ... }
   }
-  ```
+}
 
-- LayoutPrinter는 소스 안에서는 물론 디버그 콘솔에서 사용할 수 있습니다.
-  
-  > (lldb)  po import SwiftLayoutUtil; LayoutPrinter(layout).print()
-  
-  ```
-  ViewLayout - view: root
-  └─ TupleLayout
-     ├─ ViewLayout - view: child
-     └─ ViewLayout - view: friend
-  ```
-
-- 필요하다면 layout에 적용된 Anchors도 함께 출력할 수 있습니다.
-  
-  > (lldb)  po import SwiftLayoutUtil; LayoutPrinter(layout, withAnchors: true).print()
-  
-  ```
-  ViewLayout - view: root
-  └─ TupleLayout
-     ├─ ViewLayout - view: child
-     │        .top == superview.top
-     │        .leading == superview.leading
-     │        .trailing == superview.trailing
-     └─ ViewLayout - view: friend
-              .top == child.bottom
-              .bottom == superview.bottom
-              .leading == superview.leading
-              .trailing == superview.trailing
-  ```
-
-#### ViewPrinter
-
-xib혹은 UIKit으로 직접 구현되어 있는 뷰를 SwiftLayout으로 마이그레이션 할 때 유용하게 사용할 수 있는 유틸리티 객체입니다.
-
-- UIView의 계층과 오토레이아웃 관계를 SwiftLayout의 문법으로 출력해줍니다.
-  
-  ```swift
-  let contentView: UIView
-  let firstNameLabel: UILabel
-  contentView.addSubview(firstNameLabel)
-  ```
-
-- ViewPrinter는 소스 안에서는 물론 디버그 콘솔에서 사용할 수 있습니다.
-  
-  > (lldb) po import SwiftLayoutUtil; ViewPrinter(contentView).print()
-  
-  ```swift
-  // 별도의 identifiying 설정이 없는 경우 주소값:View타입의 형태로 뷰를 표시합니다.
-  0x01234567890:UIView { // contentView
-    0x01234567891:UILabel // firstNameLabel
+struct ContentView: View {
+  var body: some View {
+    MyUIView().sl.swiftUI
   }
-  ```
+}
+```
 
-- 다음과 같은 매개변수 설정을 통해 view의 label를 쉽게 출력할 수 있습니다.
-  
-  ```swift
-  class SomeView {
-    let root: UIView // subview of SomeView
-    let child: UIView // subview of root
-    let friend: UIView // subview of root
+**macOS (AppKit)**:
+```swift
+class MyNSView: NSView, Layoutable {
+  var activation: Activation?
+  var layout: some Layout {
+    self.sl.sublayout { ... }
   }
-  let someView = SomeView()
-  ```
-  
-  > (lldb) po import SwiftLayoutUtil; ViewPrinter(someView, tags: [someView: "SomeView"]).updateIdentifiers().print()
-  
-  ```swift
-  SomeView {
-    root.sl.sublayout {
-      child.sl.anchors {
-        Anchors.top
-        Anchors.leading.trailing
-      }
-      friend.sl.anchors {
-        Anchors.top.equalTo(child, attribute: .bottom)
-        Anchors.bottom
-        Anchors.leading.trailing
-      }
-    }
+}
+
+struct ContentView: View {
+  var body: some View {
+    MyNSView().sl.swiftUI
   }
-  ```
+}
+```
 
 # Credits
 
