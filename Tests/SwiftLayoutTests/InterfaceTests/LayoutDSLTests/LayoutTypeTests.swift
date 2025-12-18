@@ -380,7 +380,7 @@ extension LayoutDSLTests {
             activation = layout.active()
 
             // Verify identifier is set
-            #expect(layoutGuide.identifier == "myGuide")
+            #expect(layoutGuide.testIdentifier == "myGuide")
 
             // Verify can retrieve via activation
             let retrievedGuide = activation?.layoutGuideForIdentifier("myGuide")

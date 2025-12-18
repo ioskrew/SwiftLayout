@@ -134,7 +134,10 @@ final class ViewNode<View: SLView>: HierarchyNodable {
     }
 
     var baseObject: NSObject? { base }
-    var nodeIdentifier: String? { base?.accessibilityIdentifier() }
+    var nodeIdentifier: String? {
+        guard let id = base?.accessibilityIdentifier(), !id.isEmpty else { return nil }
+        return id
+    }
 
     func updateTranslatesAutoresizingMaskIntoConstraints() {
         base?.translatesAutoresizingMaskIntoConstraints = false
