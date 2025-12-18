@@ -5,32 +5,32 @@
 //  Created by aiden_h on 8/1/25.
 //
 
-import UIKit
+import SwiftLayoutPlatform
 
 // MARK: - HierarchyNodable Protocol
 
 /// Protocol for types that can participate in view hierarchy.
-/// Use `any HierarchyNodable` to store heterogeneous hierarchy nodes in collections.
 @MainActor
 protocol HierarchyNodable: AnyObject {
     var nodeIdentifier: String? { get }
     var baseObject: NSObject? { get }
-    /// Object identifier of the base view/guide, captured at init for nonisolated hash access.
     nonisolated var baseObjectIdentifier: ObjectIdentifier { get }
 
     func updateTranslatesAutoresizingMaskIntoConstraints()
-    func addToSuperview(_ superview: UIView?, option: LayoutOption)
-    func removeFromSuperview(_ superview: UIView?)
-
+    func addToSuperview(_ superview: SLView?, option: LayoutOption)
+    func removeFromSuperview(_ superview: SLView?)
     func forceLayout()
     func removeSizeAndPositionAnimation()
 }
 
-// MARK: - ViewNode (Wrapper for UIView)
+// MARK: - Platform-specific implementations
 
-/// A class wrapper that holds UIView weakly and provides hierarchy operations.
+#if canImport(UIKit)
+
+// MARK: - iOS ViewNode
+
 @MainActor
-final class ViewNode<View: UIView>: HierarchyNodable {
+final class ViewNode<View: SLView>: HierarchyNodable {
     weak var base: View?
     nonisolated let baseObjectIdentifier: ObjectIdentifier
 
@@ -40,27 +40,26 @@ final class ViewNode<View: UIView>: HierarchyNodable {
     }
 
     var baseObject: NSObject? { base }
-
     var nodeIdentifier: String? { base?.accessibilityIdentifier }
 
     func updateTranslatesAutoresizingMaskIntoConstraints() {
         base?.translatesAutoresizingMaskIntoConstraints = false
     }
 
-    func addToSuperview(_ superview: UIView?, option: LayoutOption) {
+    func addToSuperview(_ superview: SLView?, option: LayoutOption) {
         guard let base else { return }
-        if let stackView = superview as? UIStackView, !option.contains(.isNotArranged) {
+        if let stackView = superview as? SLStackView, !option.contains(.isNotArranged) {
             stackView.addArrangedSubview(base)
-        } else if let visualEffectView = superview as? UIVisualEffectView {
+        } else if let visualEffectView = superview as? SLVisualEffectView {
             visualEffectView.contentView.addSubview(base)
         } else {
             superview?.addSubview(base)
         }
     }
 
-    func removeFromSuperview(_ superview: UIView?) {
+    func removeFromSuperview(_ superview: SLView?) {
         guard let base else { return }
-        if let visualEffectView = superview as? UIVisualEffectView {
+        if let visualEffectView = superview as? SLVisualEffectView {
             guard visualEffectView.contentView == base.superview else { return }
         } else {
             guard superview == base.superview else { return }
@@ -79,11 +78,10 @@ final class ViewNode<View: UIView>: HierarchyNodable {
     }
 }
 
-// MARK: - GuideNode (Wrapper for UILayoutGuide)
+// MARK: - iOS GuideNode
 
-/// A class wrapper that holds UILayoutGuide weakly and provides hierarchy operations.
 @MainActor
-final class GuideNode<Guide: UILayoutGuide>: HierarchyNodable {
+final class GuideNode<Guide: SLLayoutGuide>: HierarchyNodable {
     weak var base: Guide?
     nonisolated let baseObjectIdentifier: ObjectIdentifier
 
@@ -93,25 +91,22 @@ final class GuideNode<Guide: UILayoutGuide>: HierarchyNodable {
     }
 
     var baseObject: NSObject? { base }
-
     var nodeIdentifier: String? { base?.identifier }
 
-    func updateTranslatesAutoresizingMaskIntoConstraints() {
-        // UILayoutGuide does not have translatesAutoresizingMaskIntoConstraints
-    }
+    func updateTranslatesAutoresizingMaskIntoConstraints() {}
 
-    func addToSuperview(_ superview: UIView?, option: LayoutOption) {
+    func addToSuperview(_ superview: SLView?, option: LayoutOption) {
         guard let base else { return }
-        if let visualEffectView = superview as? UIVisualEffectView {
+        if let visualEffectView = superview as? SLVisualEffectView {
             visualEffectView.contentView.addLayoutGuide(base)
         } else {
             superview?.addLayoutGuide(base)
         }
     }
 
-    func removeFromSuperview(_ superview: UIView?) {
+    func removeFromSuperview(_ superview: SLView?) {
         guard let base else { return }
-        if let visualEffectView = superview as? UIVisualEffectView {
+        if let visualEffectView = superview as? SLVisualEffectView {
             guard visualEffectView.contentView == base.owningView else { return }
             visualEffectView.contentView.removeLayoutGuide(base)
         } else {
@@ -120,11 +115,87 @@ final class GuideNode<Guide: UILayoutGuide>: HierarchyNodable {
         }
     }
 
+    func forceLayout() {}
+    func removeSizeAndPositionAnimation() {}
+}
+
+#else
+
+// MARK: - macOS ViewNode
+
+@MainActor
+final class ViewNode<View: SLView>: HierarchyNodable {
+    weak var base: View?
+    nonisolated let baseObjectIdentifier: ObjectIdentifier
+
+    init(_ base: View) {
+        self.base = base
+        self.baseObjectIdentifier = ObjectIdentifier(base)
+    }
+
+    var baseObject: NSObject? { base }
+    var nodeIdentifier: String? { base?.accessibilityIdentifier() }
+
+    func updateTranslatesAutoresizingMaskIntoConstraints() {
+        base?.translatesAutoresizingMaskIntoConstraints = false
+    }
+
+    func addToSuperview(_ superview: SLView?, option: LayoutOption) {
+        guard let base else { return }
+        if let stackView = superview as? SLStackView, !option.contains(.isNotArranged) {
+            stackView.addArrangedSubview(base)
+        } else {
+            superview?.addSubview(base)
+        }
+    }
+
+    func removeFromSuperview(_ superview: SLView?) {
+        guard let base else { return }
+        guard superview == base.superview else { return }
+        base.removeFromSuperview()
+    }
+
     func forceLayout() {
-        // UILayoutGuide does not need force layout
+        base?.needsLayout = true
+        base?.layoutSubtreeIfNeeded()
     }
 
     func removeSizeAndPositionAnimation() {
-        // UILayoutGuide does not have animations
+        base?.layer?.removeAnimation(forKey: "bounds.size")
+        base?.layer?.removeAnimation(forKey: "position")
     }
 }
+
+// MARK: - macOS GuideNode
+
+@MainActor
+final class GuideNode<Guide: SLLayoutGuide>: HierarchyNodable {
+    weak var base: Guide?
+    nonisolated let baseObjectIdentifier: ObjectIdentifier
+
+    init(_ base: Guide) {
+        self.base = base
+        self.baseObjectIdentifier = ObjectIdentifier(base)
+    }
+
+    var baseObject: NSObject? { base }
+    var nodeIdentifier: String? { base?.identifier.rawValue }
+
+    func updateTranslatesAutoresizingMaskIntoConstraints() {}
+
+    func addToSuperview(_ superview: SLView?, option: LayoutOption) {
+        guard let base else { return }
+        superview?.addLayoutGuide(base)
+    }
+
+    func removeFromSuperview(_ superview: SLView?) {
+        guard let base else { return }
+        guard superview == base.owningView else { return }
+        superview?.removeLayoutGuide(base)
+    }
+
+    func forceLayout() {}
+    func removeSizeAndPositionAnimation() {}
+}
+
+#endif

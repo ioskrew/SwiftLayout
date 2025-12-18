@@ -1,5 +1,6 @@
-import UIKit
+import SwiftLayoutPlatform
 
+@available(iOS 17, macOS 14, tvOS 17, visionOS 1, *)
 public struct TupleLayout<each Sublayout: Layout>: Layout {
     private let sublayouts: (repeat each Sublayout)
 
@@ -7,7 +8,7 @@ public struct TupleLayout<each Sublayout: Layout>: Layout {
         self.sublayouts = layouts
     }
 
-    public func layoutComponents(superview: UIView?, option: LayoutOption) -> [LayoutComponent] {
+    public func layoutComponents(superview: SLView?, option: LayoutOption) -> [LayoutComponent] {
         var components: [LayoutComponent] = []
         for sublayout in repeat each sublayouts {
             components.append(contentsOf: sublayout.layoutComponents(superview: superview, option: option))

@@ -1,4 +1,4 @@
-import UIKit
+import SwiftLayoutPlatform
 
 public struct AnyLayout: Layout {
     public init<Sublayout: Layout>(_ sublayout: Sublayout) {
@@ -7,7 +7,7 @@ public struct AnyLayout: Layout {
 
     private var sublayout: any Layout
 
-    public func layoutComponents(superview: UIView?, option: LayoutOption) -> [LayoutComponent] {
+    public func layoutComponents(superview: SLView?, option: LayoutOption) -> [LayoutComponent] {
         sublayout.layoutComponents(superview: superview, option: option)
     }
 

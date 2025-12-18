@@ -1,10 +1,10 @@
-import UIKit
+import SwiftLayoutPlatform
 
 public struct EmptyLayout: Layout {
     init() {
     }
 
-    public func layoutComponents(superview: UIView?, option: LayoutOption) -> [LayoutComponent] {
+    public func layoutComponents(superview: SLView?, option: LayoutOption) -> [LayoutComponent] {
         return []
     }
 

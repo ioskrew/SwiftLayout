@@ -5,7 +5,7 @@
 //  Created by aiden_h on 2022/03/28.
 //
 
-import UIKit
+import SwiftLayoutPlatform
 
 @MainActor
 @propertyWrapper
@@ -14,14 +14,14 @@ public final class AnimatableLayoutProperty<Value> {
     private var stored: Value
     private var duration: TimeInterval
     private var delay: TimeInterval
-    private var options: UIView.AnimationOptions
+    private var options: SLAnimationOptions
     private var completion: ((Bool) -> Void)?
 
     public init(
         wrappedValue: Value,
         duration: TimeInterval,
         delay: TimeInterval = .zero,
-        options: UIView.AnimationOptions = [],
+        options: SLAnimationOptions = [],
         completion: ((Bool) -> Void)? = nil
     ) {
         self.stored = wrappedValue
@@ -42,8 +42,8 @@ public final class AnimatableLayoutProperty<Value> {
         set {
             instance[keyPath: storageKeyPath].stored = newValue
 
-            UIView.animate(
-                withDuration: instance[keyPath: storageKeyPath].duration,
+            SwiftLayoutPlatformHelper.animate(
+                duration: instance[keyPath: storageKeyPath].duration,
                 delay: instance[keyPath: storageKeyPath].delay,
                 options: instance[keyPath: storageKeyPath].options,
                 animations: { [weak instance] in

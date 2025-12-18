@@ -2,7 +2,7 @@
 
 *Yesterday never dies*
 
-**A swifty way to use UIKit**
+**A swifty way to use UIKit & AppKit**
 
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fioskrew%2FSwiftLayout%2Fbadge%3Ftype%3Dswift-versions)](https://github.com/ioskrew/SwiftLayout)
 
@@ -46,17 +46,23 @@
 
 # Requirements
 
-- iOS 17+ (for SwiftLayout 4.x)
+**SwiftLayout 4.x** supports multiple Apple platforms:
 
-  | Swift version  | SwiftLayout version                                          |
-  | -------------- | ------------------------------------------------------------ |
-  | **Swift 6.0+** | **4.0.1**                                                    |
-  | Swift 5.7      | [2.8.0](https://github.com/ioskrew/SwiftLayout/releases/tag/2.8.0) |
-  | Swift 5.5      | [2.7.0](https://github.com/ioskrew/SwiftLayout/releases/tag/2.7.0) |
+| Platform | Minimum Version |
+| -------- | --------------- |
+| iOS      | 15.0+           |
+| macOS    | 12.0+           |
+| tvOS     | 15.0+           |
+| visionOS | 1.0+            |
+
+| Swift version  | SwiftLayout version                                          |
+| -------------- | ------------------------------------------------------------ |
+| **Swift 6.0+** | **4.x** (current)                                            |
+| Swift 5.7      | [2.8.0](https://github.com/ioskrew/SwiftLayout/releases/tag/2.8.0) |
+| Swift 5.5      | [2.7.0](https://github.com/ioskrew/SwiftLayout/releases/tag/2.7.0) |
 
 > Note
-> - The current main branch targets iOS 17+ to align with Package.swift.
-> - For projects targeting iOS 13–16 or Swift 5.x, use the corresponding 2.x releases linked above.
+> - For projects targeting iOS 13–14 or Swift 5.x, use the corresponding 2.x releases linked above.
 
 # Installation
 
@@ -70,12 +76,13 @@ dependencies: [
 
 # Features
 
+- **Multi-platform support**: Works with UIKit (iOS, tvOS, visionOS) and AppKit (macOS)
 - DSL features for `addSubview` and `removeFromSuperview`
 - DSL features for `NSLayoutConstraint`, `NSLayoutAnchor` and activation
-- can updates only required in view states.
-- using conditional and loop statements like `if else`, `swift case`, `for` in view hierarhcy and autolayout constraints.
-- offer propertyWrapper for automatically updating of layout
-- offering varierty features for relations of constraints.
+- Selective updates only when view states change
+- Conditional and loop statements like `if else`, `switch case`, `for` in view hierarchy and autolayout constraints
+- PropertyWrapper for automatically updating layout
+- Various APIs for constraint relationships
 
 # Usage
 
@@ -496,30 +503,36 @@ SwiftLayout provides full support for `UILayoutGuide` with the same syntax as UI
 
 ### Using in `SwiftUI`
 
-implement `Layoutable` on `UIView` or `UIViewController` you can easily using it in `SwiftUI`.
+Implement `Layoutable` on your view or view controller to easily use it in SwiftUI.
 
+**iOS/tvOS/visionOS (UIKit)**:
 ```swift
-class ViewUIView: UIView, Layoutable {
-  var layout: some Layout { 
-    ...
+class MyUIView: UIView, Layoutable {
+  var activation: Activation?
+  var layout: some Layout {
+    self.sl.sublayout { ... }
   }
 }
 
-...
-
-struct SomeView: View {
+struct ContentView: View {
   var body: some View {
-    VStack {
-      ...
-	    ViewUIView().sl.swiftUI
-      ...
-    }
+    MyUIView().sl.swiftUI
+  }
+}
+```
+
+**macOS (AppKit)**:
+```swift
+class MyNSView: NSView, Layoutable {
+  var activation: Activation?
+  var layout: some Layout {
+    self.sl.sublayout { ... }
   }
 }
 
-struct ViewUIView_Previews: PreviewProvider {
-  static var previews: some Previews {
-    ViewUIView().sl.swiftUI
+struct ContentView: View {
+  var body: some View {
+    MyNSView().sl.swiftUI
   }
 }
 ```

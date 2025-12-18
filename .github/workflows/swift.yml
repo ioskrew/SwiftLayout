@@ -2,25 +2,61 @@ name: SwiftLayout
 
 on:
   push:
-    branches: [ develop ]
+    branches: [ main, develop ]
   pull_request:
-    branches: [ develop ]
+    branches: [ main, develop ]
+  workflow_dispatch:
 
 jobs:
   test-ios:
     runs-on: macos-15
+    name: iOS
     steps:
       - uses: actions/checkout@v4
-
-      - uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: "26.0.1"
-
       - name: Build & Test
         run: |
           xcodebuild \
             -scheme SwiftLayout \
             -sdk iphonesimulator \
-            -destination "platform=iOS Simulator,name=iPhone 17,OS=26.0.1" \
+            -destination "platform=iOS Simulator,name=iPhone 16" \
+            -skipPackagePluginValidation \
+            test
+
+  test-macos:
+    runs-on: macos-15
+    name: macOS
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build & Test
+        run: swift test
+
+  test-tvos:
+    runs-on: macos-15
+    name: tvOS
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build & Test
+        run: |
+          xcodebuild \
+            -scheme SwiftLayout \
+            -sdk appletvsimulator \
+            -destination "platform=tvOS Simulator,name=Apple TV 4K (3rd generation)" \
+            -skipPackagePluginValidation \
+            test
+
+  test-visionos:
+    runs-on: macos-14
+    name: visionOS
+    steps:
+      - uses: actions/checkout@v4
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: "16.2"
+      - name: Build & Test
+        run: |
+          xcodebuild \
+            -scheme SwiftLayout \
+            -sdk xrsimulator \
+            -destination "platform=visionOS Simulator,name=Apple Vision Pro" \
             -skipPackagePluginValidation \
             test

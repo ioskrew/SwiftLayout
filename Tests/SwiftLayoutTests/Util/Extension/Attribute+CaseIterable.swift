@@ -1,16 +1,23 @@
 //
 //  Attribute+CaseIterable.swift
-//  
+//
 
 import SwiftLayout
 import Testing
-import UIKit
+import SwiftLayoutPlatform
 
 extension NSLayoutConstraint.Attribute: @retroactive CaseIterable {
     public static var allCases: [NSLayoutConstraint.Attribute] {
+        #if canImport(UIKit)
         (0...20).compactMap {
             NSLayoutConstraint.Attribute(rawValue: $0)
         }
+        #else
+        // AppKit doesn't have margin attributes (rawValues 13-20)
+        (0...12).compactMap {
+            NSLayoutConstraint.Attribute(rawValue: $0)
+        }
+        #endif
     }
 
     static var allCasesForXAis: [NSLayoutConstraint.Attribute] {
@@ -39,6 +46,7 @@ extension NSLayoutConstraint.Attribute: @retroactive CaseIterable {
         case .centerY: return .yAxis
         case .lastBaseline: return .yAxis
         case .firstBaseline: return .yAxis
+        #if canImport(UIKit)
         case .leftMargin: return .xAxis
         case .rightMargin: return .xAxis
         case .topMargin: return .yAxis
@@ -47,6 +55,7 @@ extension NSLayoutConstraint.Attribute: @retroactive CaseIterable {
         case .trailingMargin: return .xAxis
         case .centerXWithinMargins: return .xAxis
         case .centerYWithinMargins: return .yAxis
+        #endif
         case .notAnAttribute: return .unknown
         @unknown default: return .unknown
         }
@@ -75,6 +84,7 @@ extension NSLayoutConstraint.Attribute: @retroactive CustomTestStringConvertible
         case .centerY: return "centerY"
         case .lastBaseline: return "lastBaseline"
         case .firstBaseline: return "firstBaseline"
+        #if canImport(UIKit)
         case .leftMargin: return "leftMargin"
         case .rightMargin: return "rightMargin"
         case .topMargin: return "topMargin"
@@ -83,6 +93,7 @@ extension NSLayoutConstraint.Attribute: @retroactive CustomTestStringConvertible
         case .trailingMargin: return "trailingMargin"
         case .centerXWithinMargins: return "centerXWithinMargins"
         case .centerYWithinMargins: return "centerYWithinMargins"
+        #endif
         case .notAnAttribute: return "notAnAttribute"
         @unknown default: return "unknown"
         }

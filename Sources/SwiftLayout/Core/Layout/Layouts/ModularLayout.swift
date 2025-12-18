@@ -1,4 +1,4 @@
-import UIKit
+import SwiftLayoutPlatform
 
 @MainActor
 public protocol ModularLayout: Layout {
@@ -8,7 +8,7 @@ public protocol ModularLayout: Layout {
 }
 
 extension ModularLayout {
-    public func layoutComponents(superview: UIView?, option: LayoutOption) -> [LayoutComponent] {
+    public func layoutComponents(superview: SLView?, option: LayoutOption) -> [LayoutComponent] {
         return layout.layoutComponents(superview: superview, option: option)
     }
 

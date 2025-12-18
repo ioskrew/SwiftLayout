@@ -1,4 +1,4 @@
-import UIKit
+import SwiftLayoutPlatform
 
 public struct ArrayLayout<Sublayout: Layout>: Layout {
     private var sublayouts: [Sublayout]
@@ -7,7 +7,7 @@ public struct ArrayLayout<Sublayout: Layout>: Layout {
         self.sublayouts = sublayouts
     }
 
-    public func layoutComponents(superview: UIView?, option: LayoutOption) -> [LayoutComponent] {
+    public func layoutComponents(superview: SLView?, option: LayoutOption) -> [LayoutComponent] {
         return sublayouts.flatMap { $0.layoutComponents(superview: superview, option: option) }
     }
 

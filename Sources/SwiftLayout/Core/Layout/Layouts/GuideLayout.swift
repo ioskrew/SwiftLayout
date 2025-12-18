@@ -1,6 +1,6 @@
-import UIKit
+import SwiftLayoutPlatform
 
-public struct GuideLayout<LayoutGuide: UILayoutGuide>: Layout {
+public struct GuideLayout<LayoutGuide: SLLayoutGuide>: Layout {
     private var guide: LayoutGuide
     private let anchors: Anchors
 
@@ -9,7 +9,7 @@ public struct GuideLayout<LayoutGuide: UILayoutGuide>: Layout {
         self.anchors = anchors
     }
 
-    public func layoutComponents(superview: UIView?, option: LayoutOption) -> [LayoutComponent] {
+    public func layoutComponents(superview: SLView?, option: LayoutOption) -> [LayoutComponent] {
         let component = LayoutComponent(superview: superview, node: GuideNode(guide), anchors: anchors, option: option)
 
         return [component]
@@ -62,7 +62,7 @@ extension GuideLayout {
     /// - Returns: The layout itself with the identifier applied.
     ///
     public func identifying(_ identifier: String) -> Self {
-        guide.identifier = identifier
+        SwiftLayoutPlatformHelper.setGuideIdentifier(guide, identifier)
         return self
     }
 }

@@ -1,6 +1,6 @@
 @testable import SwiftLayout
 import Testing
-import UIKit
+import SwiftLayoutPlatform
 
 extension Tag {
     @Tag
@@ -12,21 +12,21 @@ struct AnchorsDSLTests { // swiftlint:disable:this type_body_length
 
     @MainActor
     class AnchorsDSLTestsBase {
-        var superview: UIView = UIView()
-        var subview: UIView = UIView()
-        var siblingview: UIView = UIView()
-        var layoutGuied: UILayoutGuide = UILayoutGuide()
+        var superview: SLView = SLView()
+        var subview: SLView = SLView()
+        var siblingview: SLView = SLView()
+        var layoutGuied: SLLayoutGuide = SLLayoutGuide()
 
         var activation: Activation?
 
-        var tags: [UIView: String] {
+        var tags: [SLView: String] {
             [superview: "superview", subview: "subview", siblingview: "siblingview"]
         }
 
         init() {
-            superview = UIView()
-            subview = UIView()
-            siblingview = UIView()
+            superview = SLView()
+            subview = SLView()
+            siblingview = SLView()
         }
     }
 
@@ -685,7 +685,7 @@ struct AnchorsDSLTests { // swiftlint:disable:this type_body_length
 
         @Test
         func identifier() {
-            let identifyingView = UIView()
+            let identifyingView = SLView()
 
             @LayoutBuilder
             var layout: some Layout {
@@ -694,7 +694,7 @@ struct AnchorsDSLTests { // swiftlint:disable:this type_body_length
                         Anchors.cap.equalToSuper()
                         Anchors.bottom.equalTo("someIdentifier", attribute: .top)
                     }
-                    identifyingView.sl.identifying("someIdentifier").sl.anchors {
+                    identifyingView.sl.identifying("someIdentifier").anchors {
                         Anchors.width.equalTo(constant: 37)
                         Anchors.height.equalToSuper().multiplier(0.5)
                         Anchors.centerX
@@ -912,6 +912,7 @@ struct AnchorsDSLTests { // swiftlint:disable:this type_body_length
             #expect(hasSameElements(siblingview.constraints, expectedSiblingviewConstraints, tags))
         }
 
+        #if canImport(UIKit)
         @Test
         func forceLayoutAndCheckFrame() {
             let width: CGFloat = 300
@@ -947,5 +948,49 @@ struct AnchorsDSLTests { // swiftlint:disable:this type_body_length
             #expect(subview.frame == .init(x: .zero, y: .zero, width: width, height: height * (1 - siblingHeightMultiplier)))
             #expect(siblingview.frame == .init(x: (width - siblingWidth) / 2, y: height * (1 - siblingHeightMultiplier), width: siblingWidth, height: height * siblingHeightMultiplier))
         }
+        #else
+        @Test
+        func forceLayoutAndCheckFrame() {
+            let width: CGFloat = 300
+            let height: CGFloat = 300
+            let siblingWidth: CGFloat = 38
+            let siblingHeightMultiplier: CGFloat = 0.5
+
+            let window = NSWindow(
+                contentRect: .init(x: .zero, y: .zero, width: width, height: height),
+                styleMask: [],
+                backing: .buffered,
+                defer: false
+            )
+            let rootView = window.contentView!
+            rootView.frame = .init(x: .zero, y: .zero, width: width, height: height)
+
+            @LayoutBuilder
+            var layout: some Layout {
+                rootView.sl.sublayout {
+                    superview.sl.sublayout {
+                        subview.sl.anchors {
+                            Anchors.cap.equalToSuper()
+                            Anchors.bottom.equalTo(siblingview, attribute: .top)
+                        }
+                        siblingview.sl.anchors {
+                            Anchors.width.equalTo(constant: siblingWidth)
+                            Anchors.height.equalToSuper().multiplier(siblingHeightMultiplier)
+                            Anchors.centerX
+                            Anchors.bottom
+                        }
+                    }.anchors {
+                        Anchors.allSides.equalToSuper()
+                    }
+                }
+            }
+
+            layout.finalActive(forceLayout: true)
+
+            #expect(superview.frame == .init(x: .zero, y: .zero, width: width, height: height))
+            #expect(subview.frame == .init(x: .zero, y: height * siblingHeightMultiplier, width: width, height: height * (1 - siblingHeightMultiplier)))
+            #expect(siblingview.frame == .init(x: (width - siblingWidth) / 2, y: .zero, width: siblingWidth, height: height * siblingHeightMultiplier))
+        }
+        #endif
     }
 }

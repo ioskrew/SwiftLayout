@@ -1,8 +1,8 @@
-import UIKit
+import SwiftLayoutPlatform
 
 @MainActor
 public struct LayoutComponent {
-    var superview: UIView?
+    var superview: SLView?
     var node: any HierarchyNodable
     var anchors: Anchors
     var option: LayoutOption

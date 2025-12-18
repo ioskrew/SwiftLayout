@@ -1,14 +1,14 @@
 //
-//  LayoutMethodWrapper+UILayoutGuide.swift
+//  LayoutMethodWrapper+SLLayoutGuide.swift
 //
 //
 //  Created by oozoofrog on 2022/03/13.
 //
 
-import UIKit
+import SwiftLayoutPlatform
 
-// MARK: - Public UILayoutGuide API
-public extension LayoutMethodWrapper where Base: UILayoutGuide {
+// MARK: - Public SLLayoutGuide API
+public extension LayoutMethodWrapper where Base: SLLayoutGuide {
 
     /// Creates a ``GuideLayout`` containing this layout guide with the specified anchors.
     ///
@@ -34,16 +34,24 @@ public extension LayoutMethodWrapper where Base: UILayoutGuide {
         AnyLayout(GuideLayout(self.base))
     }
 
-    /// Sets the layout guide's `identifier`.
+    /// Sets the layout guide's `identifier` and returns a layout for method chaining.
     ///
     /// ```swift
-    /// let guide = UILayoutGuide().sl.identifying("myGuide")
+    /// // Can be used in sublayout builders
+    /// root.sl.sublayout {
+    ///     guide.sl.identifying("myGuide")
+    /// }
+    ///
+    /// // Supports method chaining
+    /// guide.sl.identifying("myGuide").anchors {
+    ///     Anchors.allSides.equalToSuper()
+    /// }
     /// ```
     ///
     /// - Parameter identifier: A string that uniquely identifies the layout guide.
-    /// - Returns: The layout guide itself with the identifier applied.
-    func identifying(_ identifier: String) -> Base {
-        self.base.identifier = identifier
-        return self.base
+    /// - Returns: A ``GuideLayout`` for method chaining and use in layout builders.
+    func identifying(_ identifier: String) -> GuideLayout<Base> {
+        SwiftLayoutPlatformHelper.setGuideIdentifier(self.base, identifier)
+        return GuideLayout(self.base)
     }
 }

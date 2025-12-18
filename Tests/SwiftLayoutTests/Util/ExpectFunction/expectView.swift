@@ -4,13 +4,13 @@
 
 import Foundation
 import Testing
-import UIKit
+import SwiftLayoutPlatform
 
 @MainActor
 func expectView(
-    _ view: @autoclosure () throws -> UIView,
-    superview: @autoclosure () throws -> UIView?,
-    subviews: @autoclosure () throws -> [UIView]?,
+    _ view: @autoclosure () throws -> SLView,
+    superview: @autoclosure () throws -> SLView?,
+    subviews: @autoclosure () throws -> [SLView]?,
     _ sourceLocation: Testing.SourceLocation = #_sourceLocation
 ) rethrows {
     let view = try view()
@@ -49,8 +49,8 @@ func expectView(
 
 @MainActor
 func expectLayoutGuides(
-    _ view: @autoclosure () throws -> UIView,
-    layoutGuides: @autoclosure () throws -> [UILayoutGuide]?,
+    _ view: @autoclosure () throws -> SLView,
+    layoutGuides: @autoclosure () throws -> [SLLayoutGuide]?,
     _ sourceLocation: Testing.SourceLocation = #_sourceLocation
 ) rethrows {
     let view = try view()
@@ -67,8 +67,8 @@ func expectLayoutGuides(
 
 @MainActor
 func expectOwnerView(
-    _ guide: @autoclosure () throws -> UILayoutGuide,
-    ownerView: @autoclosure () throws -> UIView?,
+    _ guide: @autoclosure () throws -> SLLayoutGuide,
+    ownerView: @autoclosure () throws -> SLView?,
     _ sourceLocation: Testing.SourceLocation = #_sourceLocation
 ) rethrows {
     let guide = try guide()
@@ -99,10 +99,10 @@ func expectOwnerView(
     }
 }
 
-private extension UIAccessibilityIdentification {
+private extension SLView {
     @MainActor
     var testDescription: String {
-        if let identifier = accessibilityIdentifier {
+        if let identifier = testIdentifier {
             return "\(type(of: self)): \(identifier)"
         } else {
             return "\(type(of: self)): \(Unmanaged.passUnretained(self).toOpaque())"
@@ -110,8 +110,9 @@ private extension UIAccessibilityIdentification {
     }
 }
 
-private extension UILayoutGuide {
+private extension SLLayoutGuide {
+    @MainActor
     var testDescription: String {
-        return "\(type(of: self)): \(identifier)"
+        return "\(type(of: self)): \(testIdentifier)"
     }
 }

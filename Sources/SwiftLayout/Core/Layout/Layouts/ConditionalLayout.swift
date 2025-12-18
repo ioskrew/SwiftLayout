@@ -1,4 +1,4 @@
-import UIKit
+import SwiftLayoutPlatform
 
 public struct ConditionalLayout<TrueLayout: Layout, FalseLayout: Layout>: Layout {
     enum Sublayout {
@@ -12,7 +12,7 @@ public struct ConditionalLayout<TrueLayout: Layout, FalseLayout: Layout>: Layout
         self.sublayout = layout
     }
 
-    public func layoutComponents(superview: UIView?, option: LayoutOption) -> [LayoutComponent] {
+    public func layoutComponents(superview: SLView?, option: LayoutOption) -> [LayoutComponent] {
         switch sublayout {
         case .trueLayout(let trueLayout):
             return trueLayout.layoutComponents(superview: superview, option: option)
