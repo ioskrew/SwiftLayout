@@ -942,7 +942,7 @@ struct AnchorsDSLTests { // swiftlint:disable:this type_body_length
                 }
             }
 
-            layout.finalActive(forceLayout: true)
+            layout.finalActive(mode: .forced)
 
             #expect(superview.frame == .init(x: .zero, y: .zero, width: width, height: height))
             #expect(subview.frame == .init(x: .zero, y: .zero, width: width, height: height * (1 - siblingHeightMultiplier)))
@@ -985,7 +985,7 @@ struct AnchorsDSLTests { // swiftlint:disable:this type_body_length
                 }
             }
 
-            layout.finalActive(forceLayout: true)
+            layout.finalActive(mode: .forced)
 
             #expect(superview.frame == .init(x: .zero, y: .zero, width: width, height: height))
             #expect(subview.frame == .init(x: .zero, y: height * siblingHeightMultiplier, width: width, height: height * (1 - siblingHeightMultiplier)))

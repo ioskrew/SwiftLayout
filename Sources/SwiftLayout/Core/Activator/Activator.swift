@@ -9,11 +9,11 @@ import SwiftLayoutPlatform
 
 @MainActor
 enum Activator {
-    static func active<L: Layout>(layout: L, forceLayout: Bool = false) -> Activation {
-        return update(layout: layout, fromActivation: Activation(), forceLayout: forceLayout)
+    static func active<L: Layout>(layout: L, mode: ActivateMode = .normal) -> Activation {
+        return update(layout: layout, fromActivation: Activation(), mode: mode)
     }
 
-    static func update<L: Layout>(layout: L, fromActivation activation: Activation, forceLayout: Bool) -> Activation {
+    static func update<L: Layout>(layout: L, fromActivation activation: Activation, mode: ActivateMode) -> Activation {
         willActivate(layout: layout)
 
         let prevInfoHashValues = Set(activation.hierarchyInfos.map(\.hashValue))
@@ -26,7 +26,7 @@ enum Activator {
         let constraints = elements.viewConstraints
         updateConstraints(activation: activation, constraints: constraints)
 
-        if forceLayout {
+        if mode == .forced {
             layoutIfNeeded(hierarchyInfos, prevInfoHashValues)
         }
 
@@ -37,7 +37,7 @@ enum Activator {
 }
 
 extension Activator {
-    static func finalActive<L: Layout>(layout: L, forceLayout: Bool) {
+    static func finalActive<L: Layout>(layout: L, mode: ActivateMode) {
         willActivate(layout: layout)
 
         let elements = LayoutElements(layout: layout)
@@ -48,7 +48,7 @@ extension Activator {
         let constraints = elements.viewConstraints
         updateConstraints(constraints: constraints)
 
-        if forceLayout {
+        if mode == .forced {
             layoutIfNeeded(hierarchyInfos)
         }
 

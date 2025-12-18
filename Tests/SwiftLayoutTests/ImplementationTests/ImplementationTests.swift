@@ -275,7 +275,7 @@ extension ImplementationTests {
         var bView: SLView {
             stack.bView
         }
-        stack.sl.updateLayout(forceLayout: true)
+        stack.sl.updateLayout(.forced)
         #if canImport(UIKit)
         // Frame expectations are iOS-specific due to UIStackView behavior
         #expect(aView.frame.debugDescription == "(20.0, 0.0, 0.0, 40.0)")
@@ -283,14 +283,14 @@ extension ImplementationTests {
         #endif
 
         stack.isA = false
-        stack.sl.updateLayout(forceLayout: true)
+        stack.sl.updateLayout(.forced)
 
         #if canImport(UIKit)
         #expect(bView.frame.debugDescription == "(20.0, 0.0, 0.0, 80.0)")
         #endif
 
         stack.isA = true
-        stack.sl.updateLayout(forceLayout: true)
+        stack.sl.updateLayout(.forced)
 
         #expect(stack.stack.arrangedSubviews.compactMap(\.testIdentifier) == [aView, bView].compactMap(\.testIdentifier))
         #if canImport(UIKit)
@@ -357,7 +357,7 @@ extension ImplementationTests {
 
         @MainActor
         func activeLayoutAndForceDeactivate() async {
-            activation = layout.active(forceLayout: true)
+            activation = layout.active(mode: .forced)
 
             NSLayoutConstraint.deactivate(superview.constraints)
             superview.slSetNeedsLayout()
@@ -366,7 +366,7 @@ extension ImplementationTests {
 
         @MainActor
         func layoutUpdateAfterForceDeactivate() async {
-            activation = layout.update(fromActivation: activation, forceLayout: true)
+            activation = layout.update(fromActivation: activation, mode: .forced)
         }
 
         await activeLayoutAndForceDeactivate()

@@ -86,7 +86,7 @@ struct LayoutableTests {
         view.frame = .init(x: 0, y: 0, width: 90, height: 90)
         view.slLayoutIfNeeded()
         view.flag = false
-        view.sl.updateLayout(forceLayout: true)
+        view.sl.updateLayout(.forced)
 
         #expect(view.root.frame == CGRect(x: 20, y: 20, width: 50, height: 50))
         #expect(view.friend.frame == CGRect(x: .zero, y: .zero, width: 50, height: 50))
@@ -123,7 +123,7 @@ struct LayoutableTests {
     }
 
     final class LayoutableView: SLView, Layoutable {
-        @LayoutProperty var flag = true
+        @LayoutProperty(mode: .immediate) var flag = true
 
         let root = CallCountView()
         let child = CallCountView()

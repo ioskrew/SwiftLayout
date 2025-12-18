@@ -123,7 +123,7 @@ struct LayoutDSLTest { // swiftlint:disable:this type_body_length
             }
 
             // active
-            activation = layout.active(forceLayout: true)
+            activation = layout.active(mode: .forced)
 
             expectView(parentView, superview: nil, subviews: [childView_0])
             expectView(childView_0, superview: parentView, subviews: [])
@@ -134,7 +134,7 @@ struct LayoutDSLTest { // swiftlint:disable:this type_body_length
             #expect(childView_1.removeFromSuperviewCallCount == 0)
 
             // update without change
-            activation = layout.update(fromActivation: activation!, forceLayout: true)
+            activation = layout.update(fromActivation: activation!, mode: .forced)
 
             expectView(parentView, superview: nil, subviews: [childView_0])
             expectView(childView_0, superview: parentView, subviews: [])
@@ -146,7 +146,7 @@ struct LayoutDSLTest { // swiftlint:disable:this type_body_length
 
             // "update with change
             flag.toggle()
-            activation = layout.update(fromActivation: activation!, forceLayout: true)
+            activation = layout.update(fromActivation: activation!, mode: .forced)
 
             expectView(parentView, superview: nil, subviews: [childView_1])
             expectView(childView_0, superview: nil, subviews: [])
