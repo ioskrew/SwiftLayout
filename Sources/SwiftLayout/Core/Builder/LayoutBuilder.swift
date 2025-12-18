@@ -1,5 +1,48 @@
 import SwiftLayoutPlatform
 
+/// A result builder for constructing view hierarchies declaratively.
+///
+/// `LayoutBuilder` enables the DSL syntax used throughout SwiftLayout for defining
+/// view hierarchies and their relationships.
+///
+/// ## Overview
+///
+/// Use `LayoutBuilder` with the `@LayoutBuilder` attribute to create layout definitions:
+///
+/// ```swift
+/// @LayoutBuilder var layout: some Layout {
+///     parentView.sl.sublayout {
+///         headerView.sl.anchors {
+///             Anchors.top.leading.trailing.equalToSuper()
+///         }
+///         contentView.sl.anchors {
+///             Anchors.top.equalTo(headerView, attribute: .bottom)
+///             Anchors.leading.trailing.bottom.equalToSuper()
+///         }
+///     }
+/// }
+/// ```
+///
+/// ## Supported Constructs
+///
+/// `LayoutBuilder` supports standard Swift control flow:
+/// - **Conditionals**: `if`, `if-else`, `switch`
+/// - **Loops**: `for-in`
+/// - **Optionals**: Optional layout expressions
+/// - **Availability**: `#available` checks
+///
+/// ```swift
+/// @LayoutBuilder var layout: some Layout {
+///     container.sl.sublayout {
+///         if showHeader {
+///             headerView
+///         }
+///         for item in items {
+///             item.view.sl.anchors { ... }
+///         }
+///     }
+/// }
+/// ```
 @MainActor
 @resultBuilder
 public struct LayoutBuilder {

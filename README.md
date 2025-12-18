@@ -159,7 +159,7 @@ It is mainly used within `anchors`, a method of Layout.
   ```swift
   superview.sl.sublayout {
     selfview.sl.anchors {
-      Anchors.sl.top.bottom
+      Anchors.top.bottom
     }
   }
   ```
@@ -354,84 +354,33 @@ var layout: some Layout {
 
 ### Animations
 
-You can start animation by updating constraint in `Layoutable`, And the method is as easy as the following
-
-- in the animation block of `UIView`, call `updateLayout` with `forceLayout` parameter set to true.
+You can animate constraint changes in `Layoutable` by calling `updateLayout` with `forceLayout: true` inside a `UIView.animate` block:
 
 ```swift
-final class PreviewView: UIView, Layoutable {
-  var capTop = true {
+final class AnimatedView: UIView, Layoutable {
+  var activation: Activation?
+  var isExpanded = false {
     didSet {
-      // start animation for change constraints
-      UIView.animate(withDuration: 1.0) {
+      UIView.animate(withDuration: 0.3) {
         self.sl.updateLayout(forceLayout: true)
       }
     }
   }
-  // or just use the convenient propertyWrapper like below
-  // @AnimatableLayoutProperty(duration: 1.0) var capTop = true
-  
-  let capButton = UIButton()
-  let shoeButton = UIButton()
-  let titleLabel = UILabel()
-  
-  var topView: UIButton { capTop ? capButton : shoeButton }
-  var bottomView: UIButton { capTop ? shoeButton : capButton }
-  
-  var activation: Activation?
-  
+  // or use the convenient property wrapper:
+  // @AnimatableLayoutProperty(duration: 0.3) var isExpanded = false
+
+  let contentView = UIView()
+
   var layout: some Layout {
     self.sl.sublayout {
-      topView.sl.anchors {
-        Anchors.cap
-      }
-      bottomView.sl.anchors {
-        Anchors.top.equalTo(topView.bottomAnchor)
-        Anchors.height.equalTo(topView)
-        Anchors.shoe
-      }
-      titleLabel.sl.onActivate { label in
-        label.text = "Top Title"
-        UIView.transition(with: label, duration: 1.0, options: [.beginFromCurrentState, .transitionCrossDissolve]) {
-          label.textColor = self.capTop ? .black : .yellow
-        }
-      }.anchors {
-        Anchors.center.equalTo(topView)
-      }
-      UILabel().sl.onActivate { label in
-        label.text = "Bottom Title"
-        label.textColor = self.capTop ? .yellow : .black
-      }.identifying("title.bottom").anchors {
-        Anchors.center.equalTo(bottomView)
+      contentView.sl.anchors {
+        Anchors.top.horizontal.equalToSuper()
+        Anchors.height.equalTo(constant: isExpanded ? 200 : 50)
       }
     }
   }
-  
-  override init(frame: CGRect) {
-    super.init(frame: frame)
-    initViews()
-  }
-  
-  required init?(coder: NSCoder) {
-    super.init(coder: coder)
-    initViews()
-  }
-  
-  func initViews() {
-    capButton.backgroundColor = .yellow
-    shoeButton.backgroundColor = .black
-    capButton.addAction(.init(handler: { [weak self] _ in
-      self?.capTop.toggle()
-    }), for: .touchUpInside)
-    shoeButton.addAction(.init(handler: { [weak self] _ in
-      self?.capTop.toggle()
-    }), for: .touchUpInside)
-    self.sl.updateLayout()
-  }
 }
 ```
-
-[![animation in update layout](https://user-images.githubusercontent.com/3011832/189062670-93b3bcef-fdea-458b-b18f-f37cce1ec8ee.png)](https://user-images.githubusercontent.com/3011832/189063286-f106ae90-fea1-464a-a798-3586109dac2f.mp4)
 
 ## Other useful features
 
@@ -457,7 +406,7 @@ You can set `accessibilityIdentifier` and use that instead of the view reference
 
 ```swift
 contentView.sl.sublayout {
-  nameLabel.sl.identifying("name").sl.anchors {
+  nameLabel.sl.identifying("name").anchors {
     Anchors.cap
   }
   ageLabel.sl.anchors {
@@ -468,6 +417,78 @@ contentView.sl.sublayout {
 ```
 
 - from a debugging point, if you set identifier, the corresponding string is output together in the description of NSLayoutConstraint.
+
+### Updating Constraints Dynamically
+
+You can tag constraints with an identifier and update their `constant` or `priority` at runtime using `ConstraintUpdater`.
+
+```swift
+class MyView: UIView, Layoutable {
+  var activation: Activation?
+
+  var layout: some Layout {
+    self.sl.sublayout {
+      headerView.sl.anchors {
+        Anchors.top.equalToSuper(constant: 20).identifier("headerTop")
+        Anchors.horizontal.equalToSuper()
+        Anchors.height.equalTo(constant: 100).identifier("headerHeight")
+      }
+    }
+  }
+
+  func expandHeader() {
+    // Update a single constraint
+    activation?.anchors("headerHeight").update(constant: 200)
+
+    // Update with priority
+    activation?.anchors("headerTop").update(constant: 0, priority: .required)
+  }
+}
+```
+
+You can also filter constraints by attribute when multiple constraints share the same identifier:
+
+```swift
+// Update only the width constraint among "size" identified constraints
+activation?.anchors("size", attribute: .width).update(constant: 300)
+
+// Or use a custom predicate
+activation?.anchors("insets", predicate: { $0.constant > 0 }).update(constant: 20)
+```
+
+### Working with `UIVisualEffectView`
+
+SwiftLayout automatically handles `UIVisualEffectView` by adding subviews to its `contentView`:
+
+```swift
+@LayoutBuilder var layout: some Layout {
+  self.sl.sublayout {
+    blurView.sl.sublayout {  // UIVisualEffectView
+      // These views are automatically added to blurView.contentView
+      titleLabel.sl.anchors {
+        Anchors.center.equalToSuper()
+      }
+      iconView.sl.anchors {
+        Anchors.bottom.equalTo(titleLabel, attribute: .top, constant: -10)
+        Anchors.centerX.equalToSuper()
+      }
+    }
+  }
+}
+```
+
+Layout guides are also supported inside `UIVisualEffectView`:
+
+```swift
+blurView.sl.sublayout {
+  UILayoutGuide().sl.identifying("contentGuide").sl.anchors {
+    Anchors.allSides.equalToSuper(constant: 20)
+  }
+  label.sl.anchors {
+    Anchors.center.equalTo("contentGuide")
+  }
+}
+```
 
 ### Working with `UILayoutGuide`
 

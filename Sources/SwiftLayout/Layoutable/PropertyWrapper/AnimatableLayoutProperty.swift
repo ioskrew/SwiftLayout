@@ -7,6 +7,36 @@
 
 import SwiftLayoutPlatform
 
+/// A property wrapper that automatically animates layout changes when the value changes.
+///
+/// Use `AnimatableLayoutProperty` to create properties that trigger animated layout updates:
+///
+/// ```swift
+/// class MyView: SLView, Layoutable {
+///     var activation: Activation?
+///
+///     @AnimatableLayoutProperty(duration: 0.3)
+///     var isExpanded = false
+///
+///     var layout: some Layout {
+///         self.sl.sublayout {
+///             contentView.sl.anchors {
+///                 Anchors.horizontal.equalToSuper()
+///                 if isExpanded {
+///                     Anchors.height.equalTo(constant: 200)
+///                 } else {
+///                     Anchors.height.equalTo(constant: 50)
+///                 }
+///             }
+///         }
+///     }
+/// }
+///
+/// // Changing the value animates the layout
+/// myView.isExpanded = true
+/// ```
+///
+/// > Warning: This property wrapper must only be used in types conforming to ``Layoutable``.
 @MainActor
 @propertyWrapper
 public final class AnimatableLayoutProperty<Value> {

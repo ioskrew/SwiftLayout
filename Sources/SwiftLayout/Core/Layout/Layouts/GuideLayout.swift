@@ -1,5 +1,29 @@
 import SwiftLayoutPlatform
 
+/// A layout that wraps a layout guide with optional anchors.
+///
+/// `GuideLayout` represents a `UILayoutGuide` (or `NSLayoutGuide` on macOS) in the layout hierarchy.
+/// Layout guides provide a rectangular area for positioning views without adding extra views
+/// to the hierarchy.
+///
+/// ## Overview
+///
+/// Create layout guides within a view's sublayout:
+///
+/// ```swift
+/// containerView.sl.sublayout {
+///     UILayoutGuide().sl.identifying("spacer").anchors {
+///         Anchors.top.equalToSuper()
+///         Anchors.horizontal.equalToSuper()
+///         Anchors.height.equalTo(constant: 50)
+///     }
+///
+///     contentView.sl.anchors {
+///         Anchors.top.equalTo("spacer", attribute: .bottom)
+///         Anchors.horizontal.equalToSuper()
+///     }
+/// }
+/// ```
 public struct GuideLayout<LayoutGuide: SLLayoutGuide>: Layout {
     private var guide: LayoutGuide
     private let anchors: Anchors
@@ -23,44 +47,30 @@ public struct GuideLayout<LayoutGuide: SLLayoutGuide>: Layout {
 }
 extension GuideLayout {
 
+    /// Adds anchors (constraints) to this layout guide.
     ///
-    /// Add anchors coordinator to this layout guide.
+    /// ``Anchors`` express **NSLayoutConstraint** and can be applied through this method.
     ///
-    /// ``Anchors`` express **NSLayoutConstraint**  can be applied through this method.
     /// ```swift
-    /// // The constraints of the layout guide can be expressed as follows.
-    ///
-    /// layoutGuide.anchors {
-    ///     Anchors(.top).equalTo(rootView, constant: 10)
-    ///     Anchors(.centerX).equalTo(rootView)
-    ///     Anchors(.width, .height).equalTo(rootView).setMultiplier(0.5)
+    /// layoutGuide.sl.anchors {
+    ///     Anchors.top.equalTo(rootView, constant: 10)
+    ///     Anchors.centerX.equalTo(rootView)
+    ///     Anchors.size.equalTo(rootView).multiplier(0.5)
     /// }
-    ///
-    /// // The following code performs the same role as the code above.
-    ///
-    /// NSLayoutConstraint.activate([
-    ///     layoutGuide.topAnchor.constraint(equalTo: rootView.topAnchor, constant: 10),
-    ///     layoutGuide.centerXAnchor.constraint(equalTo: rootView.centerXAnchor),
-    ///     layoutGuide.widthAnchor.constraint(equalTo: rootView.widthAnchor, multiplier: 0.5),
-    ///     layoutGuide.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.5)
-    /// ])
     /// ```
     ///
-    /// - Parameter build: An ``AnchorsBuilder`` closure that creates ``Anchors`` to be applied to this layout guide.
-    /// - Returns: The layout itself with the anchors coordinator added.
-    ///
+    /// - Parameter build: An ``AnchorsBuilder`` closure that creates ``Anchors`` to be applied.
+    /// - Returns: The layout with anchors added.
     public func anchors(@AnchorsBuilder _ build: () -> Anchors) -> Self {
         let anchors = self.anchors
         anchors.append(build())
         return Self(guide, anchors: anchors)
     }
 
-    ///
-    /// Set the **identifier** of the layout guide.
+    /// Sets the layout guide's `identifier`.
     ///
     /// - Parameter identifier: A string that uniquely identifies the layout guide.
-    /// - Returns: The layout itself with the identifier applied.
-    ///
+    /// - Returns: The layout with the identifier applied.
     public func identifying(_ identifier: String) -> Self {
         SwiftLayoutPlatformHelper.setGuideIdentifier(guide, identifier)
         return self

@@ -1,5 +1,34 @@
 import SwiftLayoutPlatform
 
+/// A layout that wraps a view with optional anchors, sublayouts, and activation callbacks.
+///
+/// `ViewLayout` is the primary layout type created when using the `.sl` extension methods
+/// on views. It represents a view in the layout hierarchy along with its constraints
+/// and child layouts.
+///
+/// ## Overview
+///
+/// You typically create `ViewLayout` instances through the `.sl` extension:
+///
+/// ```swift
+/// parentView.sl.sublayout {
+///     childView.sl.anchors {
+///         Anchors.allSides.equalToSuper()
+///     }
+/// }
+/// ```
+///
+/// ## Method Chaining
+///
+/// `ViewLayout` supports fluent method chaining:
+///
+/// ```swift
+/// view.sl
+///     .identifying("myView")
+///     .onActivate { $0.backgroundColor = .red }
+///     .anchors { Anchors.center.equalToSuper() }
+///     .sublayout { childView }
+/// ```
 public struct ViewLayout<V: SLView, Sublayout: Layout>: Layout {
     private var view: V
     private let sublayout: Sublayout
@@ -35,87 +64,66 @@ public struct ViewLayout<V: SLView, Sublayout: Layout>: Layout {
 }
 extension ViewLayout {
 
-    ///
-    /// Add anchors coordinator to this layout
+    /// Adds anchors (constraints) to this layout.
     ///
     /// ``Anchors`` express **NSLayoutConstraint** and can be applied through this method.
+    ///
     /// ```swift
-    /// // The constraint of the view can be expressed as follows.
-    ///
-    /// subView.anchors {
-    ///     Anchors(.top).equalTo(rootView, constant: 10)
-    ///     Anchors(.centerX).equalTo(rootView)
-    ///     Anchors(.width, .height).equalTo(rootView).setMultiplier(0.5)
+    /// subView.sl.anchors {
+    ///     Anchors.top.equalTo(rootView, constant: 10)
+    ///     Anchors.centerX.equalTo(rootView)
+    ///     Anchors.size.equalTo(rootView).multiplier(0.5)
     /// }
-    ///
-    /// // The following code performs the same role as the code above.
-    ///
-    /// NSLayoutConstraint.activate([
-    ///     subView.topAnchor.constraint(equalTo: rootView.topAnchor, constant: 10),
-    ///     subView.centerXAnchor.constraint(equalTo: rootView.centerXAnchor),
-    ///     subView.widthAnchor.constraint(equalTo: rootView.widthAnchor, multiplier: 0.5),
-    ///     subView.heightAnchor.constraint(equalTo: rootView.heightAnchor, multiplier: 0.5)
-    /// ])
     /// ```
     ///
-    /// - Parameter build: A ``AnchorsBuilder`` that  create ``Anchors`` to be applied to this layout
-    /// - Returns: The layout itself  with anchors coordinator added
-    ///
+    /// - Parameter build: An ``AnchorsBuilder`` closure that creates ``Anchors`` to be applied.
+    /// - Returns: The layout with anchors added.
     public func anchors(@AnchorsBuilder _ build: () -> Anchors) -> Self {
         let anchors = self.anchors
         anchors.append(build())
         return Self(view, sublayout: sublayout, anchors: anchors, onActivate: onActivateBlock)
     }
 
+    /// Adds sublayouts (child views) to this layout.
     ///
-    /// Add sublayout coordinator to this layout
+    /// Sublayouts are added to the view hierarchy through `addSubview(_:)`.
     ///
-    /// Sublayouts contained within the builder block are added to the view hierarchy through **addSubview(_:)** to the view object of the current layout.
     /// ```swift
-    /// // The hierarchy of views can be expressed as follows,
-    /// // and means that UILabel is a subview of UIView.
-    ///
-    /// UIView().sublayout {
-    ///     UILabel()
+    /// parentView.sl.sublayout {
+    ///     childView.sl.anchors {
+    ///         Anchors.allSides.equalToSuper()
+    ///     }
     /// }
     /// ```
     ///
-    /// - Parameter build: A ``LayoutBuilder`` that  create sublayouts of this layout.
-    /// - Returns: The layout itself with sublayout coordinator added
-    ///
+    /// - Parameter build: A ``LayoutBuilder`` closure that creates sublayouts.
+    /// - Returns: The layout with sublayouts added.
     public func sublayout<L: Layout>(@LayoutBuilder _ build: () -> L) -> ViewLayout<V, TupleLayout2<Sublayout, L>> {
         let sublayout = TupleLayout2(self.sublayout, build())
         return ViewLayout<V, TupleLayout2<Sublayout, L>>(view, sublayout: sublayout, anchors: anchors, onActivate: onActivateBlock)
     }
 
-    ///
-    /// Add an action to this layout to always perform before every activation, including updates.
+    /// Adds an action to perform before every activation, including updates.
     ///
     /// ```swift
-    /// // Create an instant view within the layout block
-    /// // and modify the properties of the view as follows
-    ///
     /// var layout: some Layout {
-    ///     UILabel().sl.onActivate { view in
-    ///         view.backgroundColor = .blue
-    ///         view.text = "hello"
+    ///     label.sl.onActivate { label in
+    ///         label.backgroundColor = .blue
+    ///         label.text = "hello"
     ///     }
     /// }
     /// ```
     ///
-    /// - Parameter perform: A perform block for this layout.
-    /// - Returns: The layout itself with onActivate action added
-    ///
+    /// - Parameter perform: A closure to execute before activation.
+    /// - Returns: The layout with the onActivate action added.
     public func onActivate(_ perform: @escaping (V) -> Void) -> Self {
         Self(view, sublayout: sublayout, anchors: anchors, onActivate: perform)
     }
 
+    /// Sets the view's `accessibilityIdentifier`.
     ///
-    /// Set  **accessibilityIdentifier** of view.
-    ///
-    /// - Parameter accessibilityIdentifier: A string containing the identifier of the element.
-    /// - Returns: The layout itself with the accessibilityIdentifier applied
-    ///
+    /// - Parameter accessibilityIdentifier: A string identifier for the view.
+    /// - Returns: The layout with the identifier applied.
     public func identifying(_ accessibilityIdentifier: String) -> Self {
         SwiftLayoutPlatformHelper.setViewIdentifier(view, accessibilityIdentifier)
         return self

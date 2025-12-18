@@ -1,12 +1,29 @@
 //
 //  AnchorsSizeExpression.swift
-//  
+//
 //
 //  Created by aiden_h on 2023/04/19.
 //
 
 import SwiftLayoutPlatform
 
+/// An expression type for defining width and height constraints together.
+///
+/// Access through ``Anchors/size``:
+///
+/// ```swift
+/// view.sl.anchors {
+///     // Fixed size
+///     Anchors.size.equalTo(width: 100, height: 50)
+///     Anchors.size.equalTo(CGSize(width: 100, height: 50))
+///
+///     // Match superview size
+///     Anchors.size.equalToSuper()
+///
+///     // Match another view with offset
+///     Anchors.size.equalTo(otherView, widthOffset: -20, heightOffset: -20)
+/// }
+/// ```
 @MainActor
 public struct AnchorsSizeExpression: AnchorsExpressionOmitable {
     init() {}

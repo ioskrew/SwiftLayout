@@ -1,7 +1,44 @@
 //
 //  AnchorsBuilder.swift
-//  
+//
 
+/// A result builder for constructing Auto Layout constraints declaratively.
+///
+/// `AnchorsBuilder` enables the DSL syntax used within `.anchors { }` blocks
+/// for defining layout constraints.
+///
+/// ## Overview
+///
+/// Use `AnchorsBuilder` within the `anchors` method to define constraints:
+///
+/// ```swift
+/// view.sl.anchors {
+///     Anchors.top.equalToSuper(constant: 16)
+///     Anchors.leading.trailing.equalToSuper()
+///     Anchors.height.equalTo(constant: 44)
+/// }
+/// ```
+///
+/// ## Supported Constructs
+///
+/// `AnchorsBuilder` supports conditionals and loops:
+///
+/// ```swift
+/// view.sl.anchors {
+///     Anchors.horizontal.equalToSuper()
+///     if isCompact {
+///         Anchors.height.equalTo(constant: 44)
+///     } else {
+///         Anchors.height.equalTo(constant: 88)
+///     }
+/// }
+/// ```
+///
+/// ## Topics
+///
+/// ### Related Types
+/// - ``Anchors``
+/// - ``AnchorsExpression``
 @MainActor
 @resultBuilder
 public struct AnchorsBuilder {

@@ -11,8 +11,15 @@ import Foundation
 public protocol Layoutable: AnyObject, LayoutMethodAccessible {
     associatedtype LayoutBody: Layout
 
+    /// Stores the current activation state of the layout.
+    ///
+    /// This property holds the ``Activation`` instance returned from layout activation,
+    /// which is used to track and update the layout state.
     var activation: Activation? { get set }
 
+    /// The declarative layout definition for this view.
+    ///
+    /// Define your view hierarchy and constraints using ``LayoutBuilder`` DSL syntax.
     @LayoutBuilder var layout: LayoutBody { get }
 }
 

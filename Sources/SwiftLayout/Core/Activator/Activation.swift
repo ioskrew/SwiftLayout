@@ -7,6 +7,33 @@
 
 import SwiftLayoutPlatform
 
+/// Represents the active state of a layout, including view hierarchy and constraints.
+///
+/// `Activation` is returned when you call ``Layout/active(mode:)`` and holds references
+/// to the activated constraints and view hierarchy information. Use it to:
+/// - Update the layout when state changes
+/// - Deactivate the layout when no longer needed
+/// - Access views or layout guides by their identifiers
+/// - Update constraint constants dynamically
+///
+/// ## Overview
+///
+/// ```swift
+/// // Activate a layout and store the activation
+/// var activation = layout.active()
+///
+/// // Update when state changes
+/// activation = layout.update(fromActivation: activation)
+///
+/// // Access views by identifier
+/// let myView = activation.viewForIdentifier("myView")
+///
+/// // Update constraints dynamically
+/// activation.anchors("headerHeight").update(constant: 200)
+///
+/// // Deactivate when done
+/// activation.deactive()
+/// ```
 public final class Activation: Hashable {
     var hierarchyInfos: [HierarchyInfo]
     var constraints: Set<WeakConstraint>

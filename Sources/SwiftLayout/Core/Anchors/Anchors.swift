@@ -1,12 +1,66 @@
 //
 //  Anchors.swift
-//  
+//
 //
 //  Created by aiden_h on 2022/03/27.
 //
 
 import SwiftLayoutPlatform
 
+/// A class that represents a collection of Auto Layout constraint definitions.
+///
+/// `Anchors` provides a fluent API for defining NSLayoutConstraint properties declaratively.
+/// Use the static properties to start building constraint expressions.
+///
+/// ## Overview
+///
+/// Access constraint attributes through static properties and chain them together:
+///
+/// ```swift
+/// view.sl.anchors {
+///     // Single attribute
+///     Anchors.top.equalToSuper(constant: 16)
+///
+///     // Multiple attributes
+///     Anchors.leading.trailing.equalToSuper()
+///
+///     // Composite shortcuts
+///     Anchors.allSides.equalToSuper()      // top, bottom, leading, trailing
+///     Anchors.center.equalToSuper()         // centerX, centerY
+///     Anchors.size.equalTo(width: 100, height: 50)
+/// }
+/// ```
+///
+/// ## Available Attributes
+///
+/// ### Position (X-Axis)
+/// - ``leading``, ``trailing``, ``left``, ``right``, ``centerX``
+/// - ``horizontal`` (leading + trailing)
+///
+/// ### Position (Y-Axis)
+/// - ``top``, ``bottom``, ``centerY``, ``firstBaseline``, ``lastBaseline``
+/// - ``vertical`` (top + bottom)
+///
+/// ### Size
+/// - ``width``, ``height``
+/// - ``size`` (width + height)
+///
+/// ### Composite
+/// - ``allSides`` (top, bottom, leading, trailing)
+/// - ``cap`` (top, leading, trailing)
+/// - ``shoe`` (bottom, leading, trailing)
+/// - ``center`` (centerX, centerY)
+///
+/// ## Modifiers
+///
+/// Apply modifiers to customize constraints:
+///
+/// ```swift
+/// Anchors.width.equalToSuper()
+///     .multiplier(0.5)           // 50% of superview width
+///     .priority(.defaultHigh)    // Set priority
+///     .identifier("myConstraint") // For debugging/updates
+/// ```
 @MainActor
 public final class Anchors {
 

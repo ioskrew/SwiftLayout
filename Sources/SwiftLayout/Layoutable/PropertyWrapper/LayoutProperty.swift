@@ -6,12 +6,12 @@
 //
 
 /**
- 
- a property wrapper that can update states of layout in Layoutable.
- 
- update layout in Layoutable always needs call `updateLayout` function of `Layoutable`.
+
+ A property wrapper that can update states of layout in Layoutable.
+
+ Updating layout in Layoutable always requires calling `updateLayout` function of `Layoutable`.
  ``LayoutProperty`` can hide calling it directly:
- 
+
  ```swift
  class FlagView: SLView, Layoutable {
      var activation: Activation?
@@ -21,7 +21,7 @@
      @LayoutProperty(mode: .immediate) var otherFlag = false
 
      var layout: some Layout {
-         self {
+         self.sl.sublayout {
              if showName {
                  nameLabel
              }
@@ -30,7 +30,7 @@
  }
  ```
 
- > ``LayoutProperty`` must using only in Layoutable, otherwise, cause of crash.
+ > Warning: ``LayoutProperty`` must be used only in Layoutable conforming types, otherwise it will cause a crash.
  */
 @MainActor
 @propertyWrapper

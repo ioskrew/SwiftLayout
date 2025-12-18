@@ -160,7 +160,7 @@ Layout의 메소드인 `anchors` 안에서 주로 사용됩니다.
   ```swift
   superview.sl.sublayout {
     selfview.sl.anchors {
-      Anchors.sl.top.bottom
+      Anchors.top.bottom
     }
   }
   ```
@@ -355,84 +355,33 @@ var layout: some Layout {
 
 ### Animations
 
-`Layoutable`의 오토레이아웃을 변경한 경우 애니메이션을 시작할 수 있습니다. 방법은 다음과 같이 간단합니다.
-
-- `UIView`의 animation 블럭 안에서 `updateLayout` 을 `forceLayout` 매개변수를 true로 호출해주세요.
+`Layoutable`에서 제약조건 변경을 애니메이션하려면 `UIView.animate` 블럭 안에서 `updateLayout`을 `forceLayout: true`로 호출하세요:
 
 ```swift
-final class PreviewView: UIView, Layoutable {
-  var capTop = true {
+final class AnimatedView: UIView, Layoutable {
+  var activation: Activation?
+  var isExpanded = false {
     didSet {
-      // start animation for change constraints
-      UIView.animate(withDuration: 1.0) {
+      UIView.animate(withDuration: 0.3) {
         self.sl.updateLayout(forceLayout: true)
       }
     }
   }
-  // or just use the convenient propertyWrapper like below
-  // @AnimatableLayoutProperty(duration: 1.0) var capTop = true
-  
-  let capButton = UIButton()
-  let shoeButton = UIButton()
-  let titleLabel = UILabel()
-  
-  var topView: UIButton { capTop ? capButton : shoeButton }
-  var bottomView: UIButton { capTop ? shoeButton : capButton }
-  
-  var activation: Activation?
-  
+  // 또는 편리한 property wrapper를 사용할 수 있습니다:
+  // @AnimatableLayoutProperty(duration: 0.3) var isExpanded = false
+
+  let contentView = UIView()
+
   var layout: some Layout {
     self.sl.sublayout {
-      topView.sl.anchors {
-        Anchors.cap
-      }
-      bottomView.sl.anchors {
-        Anchors.top.equalTo(topView.bottomAnchor)
-        Anchors.height.equalTo(topView)
-        Anchors.shoe
-      }
-      titleLabel.sl.onActivate { label in
-        label.text = "Top Title"
-        UIView.transition(with: label, duration: 1.0, options: [.beginFromCurrentState, .transitionCrossDissolve]) {
-          label.textColor = self.capTop ? .black : .yellow
-        }
-      }.anchors {
-        Anchors.center.equalTo(topView)
-      }
-      UILabel().sl.onActivate { label in
-        label.text = "Bottom Title"
-        label.textColor = self.capTop ? .yellow : .black
-      }.identifying("title.bottom").anchors {
-        Anchors.center.equalTo(bottomView)
+      contentView.sl.anchors {
+        Anchors.top.horizontal.equalToSuper()
+        Anchors.height.equalTo(constant: isExpanded ? 200 : 50)
       }
     }
   }
-  
-  override init(frame: CGRect) {
-    super.init(frame: frame)
-    initViews()
-  }
-  
-  required init?(coder: NSCoder) {
-    super.init(coder: coder)
-    initViews()
-  }
-  
-  func initViews() {
-    capButton.backgroundColor = .yellow
-    shoeButton.backgroundColor = .black
-    capButton.addAction(.init(handler: { [weak self] _ in
-      self?.capTop.toggle()
-    }), for: .touchUpInside)
-    shoeButton.addAction(.init(handler: { [weak self] _ in
-      self?.capTop.toggle()
-    }), for: .touchUpInside)
-    self.sl.updateLayout()
-  }
 }
 ```
-
-[![animation in update layout](https://user-images.githubusercontent.com/3011832/189062670-93b3bcef-fdea-458b-b18f-f37cce1ec8ee.png)](https://user-images.githubusercontent.com/3011832/189063286-f106ae90-fea1-464a-a798-3586109dac2f.mp4)
 
 ## 그 밖의 유용한 기능들
 
@@ -458,7 +407,7 @@ contentView.sl.sublayout {
 
 ```swift
 contentView.sl.sublayout {
-  nameLabel.sl.identifying("name").sl.anchors {
+  nameLabel.sl.identifying("name").anchors {
     Anchors.cap
   }
   ageLabel.sl.anchors {
@@ -469,6 +418,78 @@ contentView.sl.sublayout {
 ```
 
 - 디버깅의 관점에서 보면 identifying을 설정한 경우 NSLayoutConstraint의 description에 해당 문자열이 함께 출력됩니다.
+
+### 제약조건 동적 업데이트
+
+`ConstraintUpdater`를 사용하여 identifier가 지정된 제약조건의 `constant`나 `priority`를 런타임에 업데이트할 수 있습니다.
+
+```swift
+class MyView: UIView, Layoutable {
+  var activation: Activation?
+
+  var layout: some Layout {
+    self.sl.sublayout {
+      headerView.sl.anchors {
+        Anchors.top.equalToSuper(constant: 20).identifier("headerTop")
+        Anchors.horizontal.equalToSuper()
+        Anchors.height.equalTo(constant: 100).identifier("headerHeight")
+      }
+    }
+  }
+
+  func expandHeader() {
+    // 단일 제약조건 업데이트
+    activation?.anchors("headerHeight").update(constant: 200)
+
+    // priority와 함께 업데이트
+    activation?.anchors("headerTop").update(constant: 0, priority: .required)
+  }
+}
+```
+
+동일한 identifier를 공유하는 여러 제약조건 중 특정 attribute만 필터링하여 업데이트할 수도 있습니다:
+
+```swift
+// "size" identifier를 가진 제약조건 중 width만 업데이트
+activation?.anchors("size", attribute: .width).update(constant: 300)
+
+// 또는 커스텀 predicate 사용
+activation?.anchors("insets", predicate: { $0.constant > 0 }).update(constant: 20)
+```
+
+### `UIVisualEffectView`와 함께 작업하기
+
+SwiftLayout은 `UIVisualEffectView`의 서브뷰를 자동으로 `contentView`에 추가합니다:
+
+```swift
+@LayoutBuilder var layout: some Layout {
+  self.sl.sublayout {
+    blurView.sl.sublayout {  // UIVisualEffectView
+      // 이 뷰들은 자동으로 blurView.contentView에 추가됩니다
+      titleLabel.sl.anchors {
+        Anchors.center.equalToSuper()
+      }
+      iconView.sl.anchors {
+        Anchors.bottom.equalTo(titleLabel, attribute: .top, constant: -10)
+        Anchors.centerX.equalToSuper()
+      }
+    }
+  }
+}
+```
+
+`UIVisualEffectView` 내부에서 Layout Guide도 지원됩니다:
+
+```swift
+blurView.sl.sublayout {
+  UILayoutGuide().sl.identifying("contentGuide").sl.anchors {
+    Anchors.allSides.equalToSuper(constant: 20)
+  }
+  label.sl.anchors {
+    Anchors.center.equalTo("contentGuide")
+  }
+}
+```
 
 ### `UILayoutGuide`와 함께 작업하기
 

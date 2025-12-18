@@ -7,11 +7,57 @@
 
 import SwiftLayoutPlatform
 
+/// A protocol that represents a declarative layout structure.
+///
+/// `Layout` is the fundamental building block of SwiftLayout's DSL. It defines a tree structure
+/// of views and their constraints that can be activated, updated, or deactivated.
+///
+/// ## Overview
+///
+/// You typically don't conform to `Layout` directly. Instead, use the built-in layout types
+/// created through ``LayoutBuilder`` and the `.sl` extension methods:
+///
+/// ```swift
+/// @LayoutBuilder var layout: some Layout {
+///     parentView.sl.sublayout {
+///         childView.sl.anchors {
+///             Anchors.allSides.equalToSuper()
+///         }
+///     }
+/// }
+/// ```
+///
+/// ## Activation
+///
+/// Use the following methods to apply layouts:
+/// - ``active(forceLayout:)`` - Activates and returns an ``Activation`` for later updates
+/// - ``finalActive(forceLayout:)`` - Activates permanently without returning activation state
+/// - ``update(fromActivation:forceLayout:)`` - Updates an existing activation with changes
+///
+/// ## Built-in Layout Types
+///
+/// - ``ViewLayout`` - Wraps a view with optional anchors and sublayouts
+/// - ``GuideLayout`` - Wraps a layout guide with anchors
+/// - ``GroupLayout`` - Groups multiple layouts with shared options
+/// - ``AnyLayout`` - Type-erased layout wrapper
 @MainActor
 public protocol Layout {
+    /// Returns the layout components for activation.
+    ///
+    /// - Parameters:
+    ///   - superview: The parent view for this layout's root elements.
+    ///   - option: Layout options affecting how views are added.
+    /// - Returns: An array of layout components to be processed.
     func layoutComponents(superview: SLView?, option: LayoutOption) -> [LayoutComponent]
 
+    /// Called before the layout is activated.
+    ///
+    /// Override this method to perform setup before views are added to the hierarchy.
     func layoutWillActivate()
+
+    /// Called after the layout is activated.
+    ///
+    /// Override this method to perform additional setup after constraints are activated.
     func layoutDidActivate()
 }
 
