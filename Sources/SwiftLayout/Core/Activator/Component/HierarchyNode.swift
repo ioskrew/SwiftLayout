@@ -49,6 +49,7 @@ final class ViewNode<View: SLView>: HierarchyNodable {
     func addToSuperview(_ superview: SLView?, option: LayoutOption) {
         guard let base else { return }
         if let stackView = superview as? SLStackView, !option.contains(.isNotArranged) {
+            stackView.addSubview(base)
             stackView.addArrangedSubview(base)
         } else if let visualEffectView = superview as? SLVisualEffectView {
             visualEffectView.contentView.addSubview(base)
@@ -146,6 +147,7 @@ final class ViewNode<View: SLView>: HierarchyNodable {
     func addToSuperview(_ superview: SLView?, option: LayoutOption) {
         guard let base else { return }
         if let stackView = superview as? SLStackView, !option.contains(.isNotArranged) {
+            stackView.addSubview(base)
             stackView.addArrangedSubview(base)
         } else {
             superview?.addSubview(base)
