@@ -354,7 +354,7 @@ var layout: some Layout {
 
 ### Animations
 
-You can animate constraint changes in `Layoutable` by calling `updateLayout` with `forceLayout: true` inside a `UIView.animate` block:
+You can animate constraint changes in `Layoutable` by calling `updateLayout(.forced)` inside a `UIView.animate` block:
 
 ```swift
 final class AnimatedView: UIView, Layoutable {
@@ -362,7 +362,7 @@ final class AnimatedView: UIView, Layoutable {
   var isExpanded = false {
     didSet {
       UIView.animate(withDuration: 0.3) {
-        self.sl.updateLayout(forceLayout: true)
+        self.sl.updateLayout(.forced)
       }
     }
   }

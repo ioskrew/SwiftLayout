@@ -164,6 +164,41 @@ extension LayoutDSLTests {
             #expect(stackView.arrangedSubviews.contains(notArrangedview1) == false)
             #expect(stackView.arrangedSubviews.contains(notArrangedview2) == false)
         }
+
+        @Test
+        func groupLayoutWithOption_zOrderPreservedAfterUpdate() {
+            let stackView = SLStackView()
+            let backgroundView1 = SLView().withIdentifier("backgroundView1")
+            let backgroundView2 = SLView().withIdentifier("backgroundView2")
+            let arrangedView1 = SLView().withIdentifier("arrangedView1")
+            let arrangedView2 = SLView().withIdentifier("arrangedView2")
+
+            @LayoutBuilder
+            var layout: some Layout {
+                root.sl.sublayout {
+                    stackView.sl.sublayout {
+                        GroupLayout(option: .isNotArranged) {
+                            backgroundView1
+                            backgroundView2
+                        }
+
+                        arrangedView1
+                        arrangedView2
+                    }
+                }
+            }
+
+            activation = layout.active()
+
+            let expectedSubviewOrder = [backgroundView1, backgroundView2, arrangedView1, arrangedView2]
+            expectView(stackView, superview: root, subviews: expectedSubviewOrder)
+            #expect(stackView.arrangedSubviews == [arrangedView1, arrangedView2])
+
+            activation = layout.update(fromActivation: activation!)
+
+            expectView(stackView, superview: root, subviews: expectedSubviewOrder)
+            #expect(stackView.arrangedSubviews == [arrangedView1, arrangedView2])
+        }
     }
 
     // MARK: - ModularLayout Tests

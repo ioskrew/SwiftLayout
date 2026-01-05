@@ -355,7 +355,7 @@ var layout: some Layout {
 
 ### Animations
 
-`Layoutable`에서 제약조건 변경을 애니메이션하려면 `UIView.animate` 블럭 안에서 `updateLayout`을 `forceLayout: true`로 호출하세요:
+`Layoutable`에서 제약조건 변경을 애니메이션하려면 `UIView.animate` 블럭 안에서 `updateLayout(.forced)`를 호출하세요:
 
 ```swift
 final class AnimatedView: UIView, Layoutable {
@@ -363,7 +363,7 @@ final class AnimatedView: UIView, Layoutable {
   var isExpanded = false {
     didSet {
       UIView.animate(withDuration: 0.3) {
-        self.sl.updateLayout(forceLayout: true)
+        self.sl.updateLayout(.forced)
       }
     }
   }
